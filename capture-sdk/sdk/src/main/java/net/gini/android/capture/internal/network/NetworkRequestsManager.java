@@ -246,23 +246,16 @@ public class NetworkRequestsManager {
                                 });
 
                 future.handle(
-                        new CompletableFuture.BiFun<NetworkRequestResult<GiniCaptureDocument>,
-                                Throwable, NetworkRequestResult<GiniCaptureDocument>>() {
-                            @Override
-                            public NetworkRequestResult<GiniCaptureDocument> apply(
-                                    final NetworkRequestResult<GiniCaptureDocument>
-                                            networkRequestResult,
-                                    final Throwable throwable) {
-                                if (throwable != null) {
-                                    if (isCancellation(throwable)) {
-                                        cancellationToken.cancel();
-                                    } else {
-                                        ErrorLogger.log(new ErrorLog("Document upload failed", throwable));
-                                    }
-                                    mDocumentUploadFutures.remove(document.getId());
+                        (networkRequestResult, throwable) -> {
+                            if (throwable != null) {
+                                if (isCancellation(throwable)) {
+                                    cancellationToken.cancel();
+                                } else {
+                                    ErrorLogger.log(new ErrorLog("Document upload failed", throwable));
                                 }
-                                return networkRequestResult;
+                                mDocumentUploadFutures.remove(document.getId());
                             }
+                            return networkRequestResult;
                         });
             }
 
@@ -300,24 +293,15 @@ public class NetworkRequestsManager {
         final List<CompletableFuture> documentFutures = collectRelatedFutures(document);
         return CompletableFuture
                 .allOf(documentFutures.toArray(new CompletableFuture[documentFutures.size()]))
-                .handle(new CompletableFuture.BiFun<Void, Throwable, Boolean>() {
-                    @Override
-                    public Boolean apply(final Void aVoid, final Throwable throwable) {
-                        if (throwable != null) {
-                            return false;
-                        }
-                        return true;
+                .handle((aVoid, throwable) -> {
+                    if (throwable != null) {
+                        return false;
                     }
+                    return true;
                 })
                 .thenCompose(
-                        new CompletableFuture.Fun<Boolean,
-                                CompletableFuture<NetworkRequestResult<GiniCaptureDocument>>>() {
-                            @Override
-                            public CompletableFuture<NetworkRequestResult<
-                                    GiniCaptureDocument>> apply(
-                                    final Boolean relatedFuturesSucceeded) {
-                                return deleteDocument(document, relatedFuturesSucceeded);
-                            }
+                        relatedFuturesSucceeded -> {
+                            return deleteDocument(document, relatedFuturesSucceeded);
                         });
     }
 
@@ -419,27 +403,21 @@ public class NetworkRequestsManager {
                         });
 
         future.handle(
-                new CompletableFuture.BiFun<NetworkRequestResult<GiniCaptureDocument>,
-                        Throwable, NetworkRequestResult<GiniCaptureDocument>>() {
-                    @Override
-                    public NetworkRequestResult<GiniCaptureDocument> apply(
-                            final NetworkRequestResult<GiniCaptureDocument> requestResult,
-                            final Throwable throwable) {
-                        if (throwable != null) {
-                            if (isCancellation(throwable)) {
-                                cancellationToken.cancel();
-                            } else {
-                                ErrorLogger.log(new ErrorLog("Document deletion failed", throwable));
-                            }
-                        } else if (requestResult != null) {
-                            mDocumentUploadFutures.remove(document.getId());
-                            mDocumentAnalyzeFutures.remove(
-                                    document.getId());
-                            mApiDocumentIds.remove(document.getId());
+                (requestResult, throwable) -> {
+                    if (throwable != null) {
+                        if (isCancellation(throwable)) {
+                            cancellationToken.cancel();
+                        } else {
+                            ErrorLogger.log(new ErrorLog("Document deletion failed", throwable));
                         }
-                        mDocumentDeleteFutures.remove(document.getId());
-                        return requestResult;
+                    } else if (requestResult != null) {
+                        mDocumentUploadFutures.remove(document.getId());
+                        mDocumentAnalyzeFutures.remove(
+                                document.getId());
+                        mApiDocumentIds.remove(document.getId());
                     }
+                    mDocumentDeleteFutures.remove(document.getId());
+                    return requestResult;
                 });
 
         return future;
@@ -462,14 +440,8 @@ public class NetworkRequestsManager {
         return CompletableFuture
                 .allOf(documentFutures.toArray(new CompletableFuture[documentFutures.size()]))
                 .thenCompose(
-                        new CompletableFuture.Fun<Void, CompletableFuture<
-                                AnalysisNetworkRequestResult<GiniCaptureMultiPageDocument>>>() {
-                            @Override
-                            public CompletableFuture<AnalysisNetworkRequestResult<
-                                    GiniCaptureMultiPageDocument>> apply(
-                                    final Void aVoid) {
-                                return analyzeDocument(multiPageDocument);
-                            }
+                        aVoid -> {
+                            return analyzeDocument(multiPageDocument);
                         });
     }
 
@@ -538,24 +510,17 @@ public class NetworkRequestsManager {
                         });
 
         future.handle(
-                new CompletableFuture.BiFun<NetworkRequestResult<GiniCaptureMultiPageDocument>,
-                        Throwable, NetworkRequestResult<GiniCaptureMultiPageDocument>>() {
-                    @Override
-                    public NetworkRequestResult<GiniCaptureMultiPageDocument> apply(
-                            final NetworkRequestResult<GiniCaptureMultiPageDocument>
-                                    networkRequestResult,
-                            final Throwable throwable) {
-                        if (throwable != null) {
-                            if (isCancellation(throwable)) {
-                                cancellationToken.cancel();
-                            } else {
-                                ErrorLogger.log(new ErrorLog("Document analysis failed", throwable));
-                            }
-                            mDocumentAnalyzeFutures.remove(
-                                    multiPageDocument.getId());
+                (networkRequestResult, throwable) -> {
+                    if (throwable != null) {
+                        if (isCancellation(throwable)) {
+                            cancellationToken.cancel();
+                        } else {
+                            ErrorLogger.log(new ErrorLog("Document analysis failed", throwable));
                         }
-                        return networkRequestResult;
+                        mDocumentAnalyzeFutures.remove(
+                                multiPageDocument.getId());
                     }
+                    return networkRequestResult;
                 });
         return future;
     }
