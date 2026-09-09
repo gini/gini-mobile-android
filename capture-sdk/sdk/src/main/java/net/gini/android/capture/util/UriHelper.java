@@ -6,7 +6,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.OpenableColumns;
-import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
 import java.io.File;
@@ -95,8 +94,8 @@ public final class UriHelper {
         final Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
         if (cursor == null) {
             final String filename = getFilenameForPath(uri.getPath());
-            if (TextUtils.isEmpty(filename)) {
-                throw new IllegalStateException("Could not retrieve fhe filename");
+            if (filename == null || filename.isEmpty()) {
+                throw new IllegalStateException("Could not retrieve the filename");
             }
             return filename;
         }
