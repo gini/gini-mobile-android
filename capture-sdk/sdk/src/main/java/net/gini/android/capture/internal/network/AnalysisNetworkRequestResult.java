@@ -5,7 +5,7 @@ import net.gini.android.capture.network.AnalysisResult;
 
 import androidx.annotation.NonNull;
 
-/**
+/*
  * Created by Alpar Szotyori on 16.04.2018.
  *
  * Copyright (c) 2018 Gini GmbH.

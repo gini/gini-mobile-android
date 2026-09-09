@@ -17,7 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import jersey.repackaged.jsr166e.CompletableFuture;
 
-/**
+/*
  * Created by Alpar Szotyori on 04.02.2019.
  *
  * Copyright (c) 2019 Gini GmbH.

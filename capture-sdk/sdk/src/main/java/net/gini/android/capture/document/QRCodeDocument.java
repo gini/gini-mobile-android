@@ -15,7 +15,7 @@ import java.io.UnsupportedEncodingException;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 
-/**
+/*
  * Created by Alpar Szotyori on 12.01.2018.
  *
  * Copyright (c) 2018 Gini GmbH.

@@ -28,7 +28,7 @@ import jersey.repackaged.jsr166e.CompletableFuture;
 
 import static net.gini.android.capture.internal.network.NetworkRequestsManager.isCancellation;
 
-/**
+/*
  * Created by Alpar Szotyori on 09.05.2019.
  * <p>
  * Copyright (c) 2019 Gini GmbH.

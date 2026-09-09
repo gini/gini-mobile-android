@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
+/*
  * Created by Alpar Szotyori on 27.03.2018.
  *
  * Copyright (c) 2018 Gini GmbH.

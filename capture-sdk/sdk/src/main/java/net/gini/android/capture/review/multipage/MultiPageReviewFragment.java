@@ -82,7 +82,7 @@ import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLay
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewScreenEvent;
 
-/**
+/*
  * Created by Alpar Szotyori on 07.05.2018.
  * <p>
  * Copyright (c) 2018 Gini GmbH.

@@ -20,7 +20,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.internal.util.WindowExtensionsKt;
 
-/**
+/*
  * Created by Alpar Szotyori on 05.06.2018.
  *
  * Copyright (c) 2018 Gini GmbH.

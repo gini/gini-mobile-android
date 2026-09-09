@@ -20,7 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
+/*
  * Created by Alpar Szotyori on 29.01.2018.
  * <p>
  * Copyright (c) 2018 Gini GmbH.

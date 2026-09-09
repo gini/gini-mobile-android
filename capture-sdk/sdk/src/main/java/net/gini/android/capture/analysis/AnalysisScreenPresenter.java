@@ -55,7 +55,7 @@ import kotlin.Unit;
 
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
-/**
+/*
  * Created by Alpar Szotyori on 08.05.2019.
  * <p>
  * Copyright (c) 2019 Gini GmbH.

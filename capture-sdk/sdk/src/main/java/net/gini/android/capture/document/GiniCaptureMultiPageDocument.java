@@ -13,7 +13,7 @@ import java.util.Map;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-/**
+/*
  * Created by Alpar Szotyori on 19.02.2018.
  *
  * Copyright (c) 2018 Gini GmbH.

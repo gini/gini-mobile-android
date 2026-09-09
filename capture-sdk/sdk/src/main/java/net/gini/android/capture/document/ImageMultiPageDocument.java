@@ -6,7 +6,7 @@ import net.gini.android.capture.internal.util.MimeType;
 
 import androidx.annotation.NonNull;
 
-/**
+/*
  * Created by Alpar Szotyori on 14.03.2018.
  *
  * Copyright (c) 2018 Gini GmbH.

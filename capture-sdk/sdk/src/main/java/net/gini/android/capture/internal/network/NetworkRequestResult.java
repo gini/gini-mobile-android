@@ -4,7 +4,7 @@ import net.gini.android.capture.document.GiniCaptureDocument;
 
 import androidx.annotation.NonNull;
 
-/**
+/*
  * Created by Alpar Szotyori on 16.04.2018.
  * <p>
  * Copyright (c) 2018 Gini GmbH.

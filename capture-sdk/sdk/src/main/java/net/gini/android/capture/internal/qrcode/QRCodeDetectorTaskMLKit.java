@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-/**
+/*
  * Created by Alpar Szotyori on 11.12.2017.
  * <p>
  * Copyright (c) 2017 Gini GmbH.

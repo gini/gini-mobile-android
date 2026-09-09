@@ -21,7 +21,7 @@ import java.util.UUID;
 
 import static net.gini.android.capture.util.UriHelper.getFileExtension;
 
-/**
+/*
  * Created by Alpar Szotyori on 20.03.2018.
  *
  * Copyright (c) 2018 Gini GmbH.

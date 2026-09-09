@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-/**
+/*
  * Created by Alpar Szotyori on 25.05.2018.
  *
  * Copyright (c) 2018 Gini GmbH.

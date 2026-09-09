@@ -17,7 +17,7 @@ import androidx.annotation.Nullable;
 
 import net.gini.android.capture.R;
 
-/**
+/*
  * Created by Alpar Szotyori on 19.02.2018.
  *
  * Copyright (c) 2018 Gini GmbH.

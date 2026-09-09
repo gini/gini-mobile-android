@@ -10,7 +10,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import net.gini.android.capture.GiniCapture;
-/**
+/*
  * Created by Alpar Szotyori on 04.02.2019.
  *
  * Copyright (c) 2019 Gini GmbH.

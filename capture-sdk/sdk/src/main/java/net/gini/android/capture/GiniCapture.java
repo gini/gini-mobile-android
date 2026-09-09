@@ -64,7 +64,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
 
-/**
+/*
  * Created by Alpar Szotyori on 22.02.2018.
  * <p>
  * Copyright (c) 2018 Gini GmbH.
