@@ -805,6 +805,9 @@ public class GiniCapture {
      * For now, it is kept with default false value because it is still used in multiple places.
      * <p>
      * For now marking it as deprecated to indicate it should not be used anymore.
+     *
+     * @deprecated The bottom navigation bar was removed and this method always returns
+     * {@code false}. It will be removed together with the remaining usages.
      */
     @Deprecated
     public boolean isBottomNavigationBarEnabled() {
