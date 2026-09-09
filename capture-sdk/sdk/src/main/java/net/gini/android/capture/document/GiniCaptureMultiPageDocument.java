@@ -91,7 +91,7 @@ public class GiniCaptureMultiPageDocument<T extends GiniCaptureDocument,
     }
 
     @Override
-    public void loadData(@NonNull final Context context,
+    public synchronized void loadData(@NonNull final Context context,
             @NonNull final AsyncCallback<byte[], Exception> callback) {
         loadImageDocuments(0, context, callback);
     }
