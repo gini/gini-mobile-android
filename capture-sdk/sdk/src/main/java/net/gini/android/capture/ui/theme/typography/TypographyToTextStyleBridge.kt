@@ -139,9 +139,9 @@ fun textStyleFromTextAppearance(
                         0f
                     ).em
                 }
-                // FIXME: Normally we'd use TextUnit.Unspecified,
-                // but this can cause a crash due to mismatched Sp and Em TextUnits
-                // https://issuetracker.google.com/issues/182881244
+                // Workaround: normally we'd use TextUnit.Unspecified, but this can cause a
+                // crash due to mismatched Sp and Em TextUnits. Nothing to change on our side
+                // until https://issuetracker.google.com/issues/182881244 is resolved.
                 else -> 0.em
             }
         )
