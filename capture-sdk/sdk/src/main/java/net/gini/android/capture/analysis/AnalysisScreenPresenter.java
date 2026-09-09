@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
+import java.time.ZoneId;
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.BankSDKBridge;
 import net.gini.android.capture.Document;
@@ -721,7 +722,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     }
     private int calculateRemainingDays(@NonNull String paymentDueDate) {
         try {
-            LocalDate today = LocalDate.now();
+            LocalDate today = LocalDate.now(ZoneId.systemDefault());
             LocalDate dueDate = LocalDate.parse(paymentDueDate);
 
             return (int) ChronoUnit.DAYS.between(today, dueDate);
