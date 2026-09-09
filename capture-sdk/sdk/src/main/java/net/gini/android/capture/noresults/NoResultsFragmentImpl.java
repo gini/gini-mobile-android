@@ -205,9 +205,8 @@ class NoResultsFragmentImpl {
                                         ? mFragment.getActivity().getString(R.string.gc_title_no_results)
                                         : ""
                         );
-                        injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> {
-                            navigateToCameraScreen(UserAnalyticsEvent.CLOSE_TAPPED);
-                        }));
+                        injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(
+                                v -> navigateToCameraScreen(UserAnalyticsEvent.CLOSE_TAPPED)));
                     }
             ));
         }
@@ -220,9 +219,8 @@ class NoResultsFragmentImpl {
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
             topBarContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(
                     GiniCapture.getInstance().internal().getErrorNavigationBarBottomAdapterInstance(),
-                    injectedViewAdapter -> injectedViewAdapter.setOnBackClickListener(new IntervalClickListener(v -> {
-                        navigateToCameraScreen(UserAnalyticsEvent.CLOSE_TAPPED);
-                    }))
+                    injectedViewAdapter -> injectedViewAdapter.setOnBackClickListener(new IntervalClickListener(
+                            v -> navigateToCameraScreen(UserAnalyticsEvent.CLOSE_TAPPED)))
             ));
         }
 
