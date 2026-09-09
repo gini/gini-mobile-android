@@ -303,23 +303,18 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
             return Unit.INSTANCE;
         });
         mAnalysisInteractor.analyzeMultiPageDocument(mMultiPageDocument)
-                .handle(new CompletableFuture.BiFun<
-                        AnalysisInteractor.ResultHolder, Throwable, Void>() {
-                    @Override
-                    public Void apply(final AnalysisInteractor.ResultHolder resultHolder,
-                                      final Throwable throwable) {
+                .handle((resultHolder, throwable) -> {
 
-                        stopScanAnimation();
-                        if (isStopped()) {
-                            return null;
-                        }
-                        if (throwable != null) {
-                            handleAnalysisError(throwable);
-                            return null;
-                        }
-                        handleAnalysisResult(resultHolder);
+                    stopScanAnimation();
+                    if (isStopped()) {
                         return null;
                     }
+                    if (throwable != null) {
+                        handleAnalysisError(throwable);
+                        return null;
+                    }
+                    handleAnalysisResult(resultHolder);
+                    return null;
                 });
     }
 
@@ -450,11 +445,8 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                             return;
                         }
                         getView().waitForViewLayout()
-                                .thenRun(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        onViewLayoutFinished();
-                                    }
+                                .thenRun(() -> {
+                                    onViewLayoutFinished();
                                 });
                     }
 
