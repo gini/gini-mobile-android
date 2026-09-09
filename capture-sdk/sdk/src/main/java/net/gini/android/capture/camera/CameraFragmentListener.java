@@ -3,11 +3,7 @@ package net.gini.android.capture.camera;
 import androidx.annotation.NonNull;
 
 import net.gini.android.capture.Document;
-import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
-import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
-import net.gini.android.capture.document.QRCodeDocument;
-import net.gini.android.capture.network.GiniCaptureNetworkService;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 
 import java.util.Map;
