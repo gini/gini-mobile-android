@@ -6,7 +6,6 @@ package net.gini.android.capture.network;
  * Copyright (c) 2018 Gini GmbH.
  */
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
