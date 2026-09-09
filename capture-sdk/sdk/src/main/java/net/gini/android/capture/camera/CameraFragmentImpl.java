@@ -715,7 +715,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             final ImageMultiPageDocument multiPageDocument =
                     GiniCapture.getInstance().internal()
                             .getImageMultiPageDocumentMemoryStore().getMultiPageDocument();
-            if (multiPageDocument != null && multiPageDocument.getDocuments().size() > 0) {
+            if (multiPageDocument != null && !multiPageDocument.getDocuments().isEmpty()) {
                 mMultiPageDocument = multiPageDocument;
                 mInMultiPageState = true;
                 updatePhotoThumbnail();
