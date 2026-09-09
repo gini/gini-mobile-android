@@ -35,8 +35,6 @@ public class OnboardingPageFragment extends Fragment implements OnboardingPageCo
 
     private OnboardingPageContract.Presenter mPresenter;
 
-    private boolean isLastPage;
-
     private TextView mTextTitle;
     private TextView mTextMessage;
     private InjectedViewContainer<OnboardingIllustrationAdapter> injectedIconContainer;
@@ -62,7 +60,6 @@ public class OnboardingPageFragment extends Fragment implements OnboardingPageCo
             throw new IllegalStateException("Missing activity for fragment.");
         }
 
-        isLastPage = getIsLastPage();
 
         initPresenter(activity, getOnboardingPage());
     }
