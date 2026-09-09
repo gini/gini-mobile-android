@@ -78,11 +78,8 @@
     <ID>MaxLineLength:DigitalInvoiceFragment.kt$DigitalInvoiceFragment$InjectedViewAdapterHolder</ID>
     <ID>MaxLineLength:DigitalInvoiceFragment.kt$DigitalInvoiceFragment.Companion$internal</ID>
     <ID>MaxLineLength:DigitalInvoiceHelpFragment.kt$DigitalInvoiceHelpFragment$InjectedViewAdapterHolder</ID>
-    <ID>MaxLineLength:DigitalInvoiceHelpNavigationBarBottomAdapter.kt$DefaultDigitalInvoiceHelpNavigationBarBottomAdapter$val binding = GbsHelpNavigationBarBottomBinding.inflate(LayoutInflater.from(container.context), container, false)</ID>
-    <ID>MaxLineLength:DigitalInvoiceNavigationBarBottomAdapter.kt$DefaultDigitalInvoiceNavigationBarBottomAdapter$binding = GbsDigitalInvoiceNavigationBarBottomBinding.inflate(LayoutInflater.from(container.context), container, false)</ID>
     <ID>MaxLineLength:DigitalInvoiceOnboardingFragment.kt$DigitalInvoiceOnboardingFragment$*</ID>
     <ID>MaxLineLength:DigitalInvoiceOnboardingFragment.kt$DigitalInvoiceOnboardingFragment$InjectedViewAdapterHolder(GiniBank.digitalInvoiceOnboardingIllustrationAdapterInstance) { it.onVisible() }</ID>
-    <ID>MaxLineLength:DigitalInvoiceOnboardingNavigationBarBottomAdapter.kt$DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter$val binding = GbsDigitalInvoiceOnboardingNavigationBarBottomBinding.inflate(LayoutInflater.from(container.context), container, false)</ID>
     <ID>MaxLineLength:DigitalInvoiceScreenPresenter.kt$DigitalInvoiceScreenPresenter$totalGrossPriceIntegralAndFractionalParts = digitalInvoice.totalPriceIntegralAndFractionalParts()</ID>
     <ID>MaxLineLength:GiniBank.kt$GiniBank$"Please use sendTransferSummary() to provide the required transfer summary first (if the user has completed TAN verification) and then releaseCapture() to let the SDK free up used resources."</ID>
     <ID>MaxLineLength:GiniBank.kt$GiniBank$"Please use setCaptureConfiguration(context, captureConfiguration) which allows instance recreation without having to call releaseCapture()"</ID>
@@ -113,9 +110,7 @@
     <ID>NewLineAtEndOfFile:DigitalInvoiceException.kt$net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceException.kt</ID>
     <ID>NewLineAtEndOfFile:DigitalInvoiceFragmentListener.kt$net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragmentListener.kt</ID>
     <ID>NewLineAtEndOfFile:DigitalInvoiceHelpFragment.kt$net.gini.android.bank.sdk.capture.digitalinvoice.help.DigitalInvoiceHelpFragment.kt</ID>
-    <ID>NewLineAtEndOfFile:DigitalInvoiceNavigationBarBottomAdapter.kt$net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceNavigationBarBottomAdapter.kt</ID>
     <ID>NewLineAtEndOfFile:DigitalInvoiceOnboardingFragmentListener.kt$net.gini.android.bank.sdk.capture.digitalinvoice.onboarding.DigitalInvoiceOnboardingFragmentListener.kt</ID>
-    <ID>NewLineAtEndOfFile:DigitalInvoiceOnboardingNavigationBarBottomAdapter.kt$net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceOnboardingNavigationBarBottomAdapter.kt</ID>
     <ID>NewLineAtEndOfFile:DigitalInvoiceScreenContract.kt$net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceScreenContract.kt</ID>
     <ID>NewLineAtEndOfFile:DigitalInvoiceScreenPresenter.kt$net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceScreenPresenter.kt</ID>
     <ID>NewLineAtEndOfFile:DigitalOnboardingScreenContract.kt$net.gini.android.bank.sdk.capture.digitalinvoice.onboarding.DigitalOnboardingScreenContract.kt</ID>
@@ -140,7 +135,6 @@
     <ID>NewLineAtEndOfFile:SkontoFragmentViewModel.kt$net.gini.android.bank.sdk.capture.skonto.viewmodel.SkontoFragmentViewModel.kt</ID>
     <ID>NewLineAtEndOfFile:SkontoInfoDialogColors.kt$net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoInfoDialogColors.kt</ID>
     <ID>NewLineAtEndOfFile:SkontoInvoiceScanSectionColors.kt$net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoInvoiceScanSectionColors.kt</ID>
-    <ID>NewLineAtEndOfFile:SkontoNavigationBarBottomAdapter.kt$net.gini.android.bank.sdk.capture.skonto.SkontoNavigationBarBottomAdapter.kt</ID>
     <ID>NewLineAtEndOfFile:SkontoScreenModule.kt$net.gini.android.bank.sdk.capture.skonto.SkontoScreenModule.kt</ID>
     <ID>NewLineAtEndOfFile:SkontoSectionColors.kt$net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoSectionColors.kt</ID>
     <ID>NewLineAtEndOfFile:WithoutSkontoSectionColors.kt$net.gini.android.bank.sdk.capture.skonto.colors.section.WithoutSkontoSectionColors.kt</ID>

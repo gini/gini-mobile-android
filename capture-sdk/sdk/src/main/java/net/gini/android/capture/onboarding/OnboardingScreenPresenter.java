@@ -144,17 +144,9 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
 
     private void updateButtons() {
         if (isOnLastPage()) {
-            if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
-                getView().showGetStartedButtonInNavigationBarBottom();
-            } else {
-                getView().showGetStartedButton();
-            }
+            getView().showGetStartedButton();
         } else {
-            if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
-                getView().showSkipAndNextButtonsInNavigationBarBottom();
-            } else {
-                getView().showSkipAndNextButtons();
-            }
+            getView().showSkipAndNextButtons();
         }
     }
 
@@ -166,22 +158,10 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
         getView().scrollToPage(mCurrentPageIndex);
         getView().activatePageIndicatorForPage(mCurrentPageIndex);
 
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
-            setupNavigationBarBottom();
-        }
-
         updateButtons();
 
         trackOnboardingScreenEvent(OnboardingScreenEvent.START);
         addUserAnalyticsEvent(mCurrentPageIndex, UserAnalyticsEvent.SCREEN_SHOWN);
-    }
-
-    private void setupNavigationBarBottom() {
-        if (GiniCapture.hasInstance()) {
-            getView().setNavigationBarBottomAdapterInstance(
-                    GiniCapture.getInstance().internal().getOnboardingNavigationBarBottomAdapterInstance());
-            getView().hideButtons();
-        }
     }
 
     @Override

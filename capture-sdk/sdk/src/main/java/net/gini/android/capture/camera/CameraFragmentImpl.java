@@ -45,7 +45,6 @@ import net.gini.android.capture.ImportImageFileUrisAsyncTask;
 import net.gini.android.capture.ImportedFileValidationException;
 import net.gini.android.capture.ProductTag;
 import net.gini.android.capture.R;
-import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter;
 import net.gini.android.capture.document.DocumentFactory;
 import net.gini.android.capture.document.GiniCaptureDocument;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
@@ -265,7 +264,6 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
     private InjectedViewContainer<CustomLoadingIndicatorAdapter> mLoadingIndicator;
-    private InjectedViewContainer<CameraNavigationBarBottomAdapter> mBottomInjectedContainer;
 
     private IBANRecognizerFilter ibanRecognizerFilter;
     private CropToCameraFrameTextRecognizer cropToCameraFrameTextRecognizer;
@@ -428,7 +426,6 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
         if (isOnlyQRCodeScanningEnabled()) {
             initOnlyQRScanning();
-            mBottomInjectedContainer.setInjectedViewAdapterHolder(null);
             mImportButtonGroup.setVisibility(View.GONE);
             mImportDocumentButtonEnabled = false;
             releaseIBANRecognizerFilter();
@@ -440,7 +437,6 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             params.leftMargin = (int) activity.getResources().getDimension(R.dimen.gc_medium);
             params.rightMargin = (int) activity.getResources().getDimension(R.dimen.gc_medium);
             mImageFrame.setLayoutParams(params);
-            setBottomInjectedViewContainer();
             initViews();
             if (GiniCapture.hasInstance()
                     && GiniCapture.getInstance().getEntryPoint() == EntryPoint.FIELD) {
@@ -513,7 +509,6 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         initMultiPageDocument();
 
         setTopBarInjectedViewContainer();
-        setBottomInjectedViewContainer();
         createPopups(view);
         initOnlyQRScanning();
 
@@ -718,12 +713,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 updatePhotoThumbnail();
 
                 topAdapterInjectedViewContainer.modifyAdapterIfOwned(injectedViewAdapter -> {
-                    final boolean isBottomNavigationBarEnabled = GiniCapture.getInstance().isBottomNavigationBarEnabled();
-                    injectedViewAdapter.setNavButtonType(isBottomNavigationBarEnabled ? NavButtonType.NONE : NavButtonType.BACK);
-                    return Unit.INSTANCE;
-                });
-                mBottomInjectedContainer.modifyAdapterIfOwned(injectedViewAdapter -> {
-                    injectedViewAdapter.setBackButtonVisibility(View.VISIBLE);
+                    injectedViewAdapter.setNavButtonType(NavButtonType.BACK);
                     return Unit.INSTANCE;
                 });
             } else {
@@ -733,10 +723,6 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
                 topAdapterInjectedViewContainer.modifyAdapterIfOwned(injectedViewAdapter -> {
                     injectedViewAdapter.setNavButtonType(NavButtonType.CLOSE);
-                    return Unit.INSTANCE;
-                });
-                mBottomInjectedContainer.modifyAdapterIfOwned(injectedViewAdapter -> {
-                    injectedViewAdapter.setBackButtonVisibility(View.GONE);
                     return Unit.INSTANCE;
                 });
             }
@@ -931,7 +917,6 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 view.findViewById(R.id.gc_activity_indicator_background);
         mPhotoThumbnail = view.findViewById(R.id.gc_photo_thumbnail);
         topAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
-        mBottomInjectedContainer = view.findViewById(R.id.gc_injected_navigation_bar_container_bottom);
         mImageFrame = view.findViewById(R.id.gc_camera_frame);
         mCameraFrameWrapper = view.findViewById(R.id.gc_camera_frame_wrapper);
         mPaneWrapper = view.findViewById(R.id.gc_pane_wrapper);
@@ -979,12 +964,10 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 if (mFragment.getActivity() == null)
                     return;
 
-                boolean isBottomBarEnabled = GiniCapture.getInstance().isBottomNavigationBarEnabled();
-
                 if (isOnlyQRCodeScanningEnabled()) {
                     injectedViewAdapter.setNavButtonType(NavButtonType.CLOSE);
                 } else if (mMultiPageDocument != null && !mMultiPageDocument.getDocuments().isEmpty()) {
-                    injectedViewAdapter.setNavButtonType(isBottomBarEnabled ? NavButtonType.NONE : NavButtonType.BACK);
+                    injectedViewAdapter.setNavButtonType(NavButtonType.BACK);
                 } else {
                     injectedViewAdapter.setNavButtonType(NavButtonType.CLOSE);
                 }
@@ -1008,7 +991,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                     }
                 }
 
-                if (!isBottomBarEnabled && !isOnlyQRCodeScanningEnabled()) {
+                if (!isOnlyQRCodeScanningEnabled()) {
                     injectedViewAdapter.setMenuResource(R.menu.gc_camera);
                     injectedViewAdapter.setOnMenuItemClickListener(new IntervalToolbarMenuItemIntervalClickListener(item -> {
                         if (item.getItemId() == R.id.gc_action_show_onboarding) {
@@ -1030,27 +1013,6 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         }
     }
 
-
-    private void setBottomInjectedViewContainer() {
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled() && !isOnlyQRCodeScanningEnabled()) {
-            mBottomInjectedContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(
-                    GiniCapture.getInstance().internal().getCameraNavigationBarBottomAdapterInstance(),
-                    injectedViewAdapter -> {
-                        boolean isEmpty = mMultiPageDocument == null || mMultiPageDocument.getDocuments().isEmpty();
-                        injectedViewAdapter.setBackButtonVisibility(isEmpty ? View.GONE : View.VISIBLE);
-
-                        injectedViewAdapter.setOnBackButtonClickListener(new IntervalClickListener(v -> {
-                            trackCameraAccessPermissionRequiredCloseClickedEventIfNeeded();
-                            trackCameraScreenCloseTappedEventIfNeeded();
-                            onBackPressed();
-                        }));
-
-                        injectedViewAdapter.setOnHelpButtonClickListener(new IntervalClickListener(v -> {
-                            startHelpActivity();
-                        }));
-                    }));
-        }
-    }
 
     private void setCustomLoadingIndicator() {
         if (GiniCapture.hasInstance()) {

@@ -11,15 +11,6 @@ import net.gini.android.bank.sdk.capture.CaptureFlowFragment
 import net.gini.android.bank.sdk.capture.CaptureImportInput
 import net.gini.android.bank.sdk.capture.applyConfiguration
 import net.gini.android.bank.sdk.capture.di.skonto.captureSdkDiBridge
-import net.gini.android.bank.sdk.capture.digitalinvoice.help.view.DefaultDigitalInvoiceHelpNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.capture.digitalinvoice.help.view.DigitalInvoiceHelpNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.DigitalInvoiceSkontoNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.capture.digitalinvoice.view.DefaultDigitalInvoiceNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.capture.digitalinvoice.view.DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceOnboardingNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.capture.skonto.SkontoNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.capture.skonto.help.SkontoHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.di.BankSdkIsolatedKoinContext
 import net.gini.android.bank.sdk.error.AmountParsingException
 import net.gini.android.bank.sdk.invoice.InvoicePreviewFragment
@@ -96,35 +87,6 @@ object GiniBank {
             digitalInvoiceOnboardingIllustrationAdapterInstance = InjectedViewAdapterInstance(value)
         }
         get() = digitalInvoiceOnboardingIllustrationAdapterInstance.viewAdapter
-
-    /**
-     * Below listed internal bottom bar instances are only kept here because they are used in many
-     * places, Once the code clean up happens, these must be removed as we drop support for custom
-     * bottom bars.
-     * - [digitalInvoiceNavigationBarBottomAdapterInstance]
-     * - [digitalInvocieSkontoNavigationBarBottomAdapterInstance]
-     * - [digitalInvoiceHelpNavigationBarBottomAdapterInstance]
-     * - [digitalInvoiceOnboardingNavigationBarBottomAdapterInstance]
-     * - [skontoHelpNavigationBarBottomAdapterInstance]
-     * - [skontoNavigationBarBottomAdapterInstance]
-     * */
-    internal var digitalInvoiceOnboardingNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceOnboardingNavigationBarBottomAdapter> =
-        InjectedViewAdapterInstance(DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter())
-
-    internal var digitalInvoiceHelpNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceHelpNavigationBarBottomAdapter> =
-        InjectedViewAdapterInstance(DefaultDigitalInvoiceHelpNavigationBarBottomAdapter())
-
-    internal var digitalInvoiceNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceNavigationBarBottomAdapter> =
-        InjectedViewAdapterInstance(DefaultDigitalInvoiceNavigationBarBottomAdapter())
-
-    internal var skontoNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>? =
-        null
-
-    internal var digitalInvocieSkontoNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>? =
-        null
-
-    internal var skontoHelpNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<SkontoHelpNavigationBarBottomAdapter>? =
-        null
 
     internal fun getCaptureConfiguration() = captureConfiguration
 

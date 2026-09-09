@@ -46,7 +46,6 @@
     <!-- Strings for ConfigurationActivity -->
     <string name="configuration_activity_title">Configuration</string>
     <string name="configuration_feature_label">Features</string>
-    <string name="configuration_bottom_nav_label">Bottom navigation bar</string>
     <string name="configuration_onboarding_label">Onboarding</string>
     <string name="configuration_camera_label">Camera</string>
     <string name="configuration_analysis_label">Analysis</string>
@@ -78,15 +77,6 @@
     <string name="document_import_file_types_only_pdf_button_label">PDF</string>
     <string name="document_import_file_types_pdf_and_image_button_label">PDF &amp; Images</string>
     <string name="document_import_file_types_segmented_button_label">Document Import File Types</string>
-    <string name="bottom_navbar_switch_label">Bottom navigation bar</string>
-    <string name="help_screens_bottom_navbar_switch_label">Help screens custom bottom navigation bar</string>
-    <string name="error_screens_bottom_navbar_switch_label">Error screens custom bottom navigation bar</string>
-    <string name="custom_bottom_navbar_switch_description">The custom bottom navigation bar is shown if \'Bottom navigation bar\' is also enabled.</string>
-    <string name="camera_screen_custom_bottom_navbar_switch_label">Camera screen custom bottom navigation bar</string>
-    <string name="review_screen_custom_bottom_navbar_switch_label">Review screen custom bottom navigation bar</string>
-    <string name="skonto_screen_custom_bottom_navbar_switch_label">Skonto screen custom bottom navigation bar</string>
-    <string name="skonto_help_screen_custom_bottom_navbar_switch_label">Skonto help screen custom bottom navigation bar</string>
-    <string name="digital_invoice_skonto_screen_custom_bottom_navbar_switch_label">Return Assistant Skonto screen custom bottom navigation bar</string>
     <string name="onboarding_screens_at_every_launch_switch_label">Onboarding screens at every launch</string>
     <string name="onboarding_screens_at_first_launch_switch_label">Onboarding screens at first launch</string>
     <string name="onboarding_screens_at_every_launch_switch_description">Overwrites \'Onboarding screens at first launch\'.</string>
@@ -98,8 +88,6 @@
     <string name="custom_onboarding_multi_page_switch_label">Onboarding \`multi page\` page custom illustration</string>
     <string name="configuration_button_remove_saf_data">Remove SAF Data</string>
 
-    <string name="onboarding_custom_bottom_nav_bar_switch_label">Onboarding custom bottom navigation bar</string>
-    <string name="onboarding_custom_bottom_nav_bar_switch_description">The custom bottom navigation bar is shown if \`Bottom navigation bar\` is also enabled.</string>
 
 
     <string name="buttons_custom_loading_indicator_switch_label">Buttons custom loading indicator</string>
@@ -120,10 +108,6 @@
     <string name="skonto_feature_switch_label">Skonto feature</string>
     <string name="transaction_docs_feature_switch_label">Transaction Docs feature</string>
     <string name="return_assistant_onboarding_custom_illustration_switch_label">Return assistant onboarding custom illustration</string>
-    <string name="return_assistant_help_bottom_navigation_bar_switch_label">Return assistant help bottom navigation bar</string>
-    <string name="return_assistant_bottom_navigation_bar_switch_description">The custom bottom navigation bar is shown if both \`Bottom navigation bar\` and \`Return assistant feature\` are enabled.</string>
-    <string name="return_assistant_onboarding_bottom_navigation_bar_switch_label">Return assistant onboarding bottom navigation bar</string>
-    <string name="return_assistant_bottom_navigation_bar_switch_label">Return assistant bottom navigation bar</string>
     <string name="event_tracker_switch_label">Event tracker</string>
     <string name="save_invoices_feature_label">Save Invoices Locally</string>
     <string name="gini_error_switch_label">Gini error logger</string>

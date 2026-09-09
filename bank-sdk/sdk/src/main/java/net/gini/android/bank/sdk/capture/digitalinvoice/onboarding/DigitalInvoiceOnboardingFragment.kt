@@ -15,7 +15,6 @@ import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceOnboardingBinding
 import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.internal.ui.IntervalClickListener
 import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
@@ -134,7 +133,6 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
         super.onViewCreated(view, savedInstanceState)
         setInputHandlers()
         setupImageIllustrationAdapter()
-        setupOnboardingBottomNavigationBar()
         trackAnalyticsScreenShownEvent()
     }
 
@@ -143,26 +141,6 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
         if (GiniCapture.hasInstance()) {
             binding.digitalInvoiceImageContainer.injectedViewAdapterHolder =
                 InjectedViewAdapterHolder(GiniBank.digitalInvoiceOnboardingIllustrationAdapterInstance) { it.onVisible() }
-        }
-    }
-
-    private fun setupOnboardingBottomNavigationBar() {
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
-
-            binding.doneButton.visibility = View.INVISIBLE
-            binding.doneButton.isEnabled = false
-
-            binding.gbsInjectedNavigationBarContainerBottom.injectedViewAdapterHolder =
-                InjectedViewAdapterHolder(
-                    GiniBank.digitalInvoiceOnboardingNavigationBarBottomAdapterInstance
-                ) { injectedViewAdapter ->
-                    injectedViewAdapter.setGetStartedButtonClickListener(
-                        IntervalClickListener {
-                            presenter?.dismisOnboarding(false)
-                            trackAnalyticsGetStartedTappedEvent()
-                        }
-                    )
-                }
         }
     }
 
