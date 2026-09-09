@@ -122,7 +122,7 @@ public class FileImportValidator {
 
     private boolean isPdf(final List<String> mimeTypes) {
         for (final String mimeType : mimeTypes) {
-            if (MimeType.APPLICATION_PDF.equals(mimeType)) {
+            if (MimeType.APPLICATION_PDF.matches(mimeType)) {
                 return true;
             }
         }
@@ -131,8 +131,8 @@ public class FileImportValidator {
 
     private boolean isXml(final List<String> mimeTypes) {
         for (final String mimeType : mimeTypes) {
-            if (MimeType.APPLICATION_XML.equals(mimeType) ||
-                    MimeType.TEXT_XML.equals(mimeType)) {
+            if (MimeType.APPLICATION_XML.matches(mimeType) ||
+                    MimeType.TEXT_XML.matches(mimeType)) {
                 return true;
             }
         }
@@ -147,9 +147,9 @@ public class FileImportValidator {
             return true;
         }
         for (final String mimeType : mimeTypes) {
-            if (MimeType.IMAGE_JPEG.equals(mimeType)
-                    || MimeType.IMAGE_PNG.equals(mimeType)
-                    || MimeType.IMAGE_GIF.equals(mimeType)) {
+            if (MimeType.IMAGE_JPEG.matches(mimeType)
+                    || MimeType.IMAGE_PNG.matches(mimeType)
+                    || MimeType.IMAGE_GIF.matches(mimeType)) {
                 return true;
             }
         }

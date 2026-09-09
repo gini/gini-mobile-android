@@ -53,7 +53,10 @@ public enum MimeType {
         return mMimeType;
     }
 
-    public boolean equals(final String mimeType) { // NOPMD
+    /**
+     * @return {@code true} if the given mime type string denotes this mime type
+     */
+    public boolean matches(final String mimeType) {
         return mMimeType.equals(mimeType);
     }
 }
