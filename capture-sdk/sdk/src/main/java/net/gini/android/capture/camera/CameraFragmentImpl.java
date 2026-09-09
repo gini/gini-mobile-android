@@ -1053,9 +1053,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                             onBackPressed();
                         }));
 
-                        injectedViewAdapter.setOnHelpButtonClickListener(new IntervalClickListener(v -> {
-                            startHelpActivity();
-                        }));
+                        injectedViewAdapter.setOnHelpButtonClickListener(new IntervalClickListener(v -> startHelpActivity()));
                     }));
         }
     }
@@ -1198,9 +1196,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             onBackPressed();
         });
 
-        ClickListenerExtKt.setIntervalClickListener(mDetectionErrorDismissButton, v -> {
-            mDetectionErrorLayout.setVisibility(View.GONE);
-        });
+        ClickListenerExtKt.setIntervalClickListener(mDetectionErrorDismissButton,
+                v -> mDetectionErrorLayout.setVisibility(View.GONE));
     }
 
     @VisibleForTesting
@@ -1771,9 +1768,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 },
                 null,
                 null,
-                (dialogInterface -> {
-                    resetGenericDialogState();
-                }));
+                dialogInterface -> resetGenericDialogState());
     }
 
     private void resetGenericDialogState() {
