@@ -7,12 +7,11 @@ import net.gini.android.capture.Document;
 import net.gini.android.capture.internal.qrcode.PaymentQRCodeData;
 import net.gini.android.capture.internal.util.MimeType;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.UnsupportedEncodingException;
 
 import androidx.annotation.NonNull;
+
+import java.nio.charset.StandardCharsets;
 import androidx.annotation.VisibleForTesting;
 
 /*
@@ -34,8 +33,6 @@ import androidx.annotation.VisibleForTesting;
  */
 public final class QRCodeDocument extends GiniCaptureDocument {
 
-    private static final Logger LOG = LoggerFactory.getLogger(QRCodeDocument.class);
-
     /**
      * Creates an instance with the provided QR Code data.
      *
@@ -46,12 +43,7 @@ public final class QRCodeDocument extends GiniCaptureDocument {
      */
     public static QRCodeDocument fromPaymentQRCodeData(
             @NonNull final PaymentQRCodeData paymentQRCodeData) {
-        byte[] jsonBytes = new byte[]{};
-        try {
-            jsonBytes = paymentQRCodeData.toJson().getBytes("UTF-8");
-        } catch (final UnsupportedEncodingException e) {
-            LOG.error("UTF-8 encoding not available", e);
-        }
+        final byte[] jsonBytes = paymentQRCodeData.toJson().getBytes(StandardCharsets.UTF_8);
         return new QRCodeDocument(jsonBytes, paymentQRCodeData, Source.newCameraSource(),
                 ImportMethod.NONE);
     }
