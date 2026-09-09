@@ -695,7 +695,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
 
     private void deleteFromMultiPageDocument(@NonNull final ImageDocument document) {
         mMultiPageDocument.getDocuments().remove(document);
-        if (mMultiPageDocument.getDocuments().size() == 0
+        if (mMultiPageDocument.getDocuments().isEmpty()
                 && GiniCapture.hasInstance()) {
             GiniCapture.getInstance().internal().getImageMultiPageDocumentMemoryStore().clear();
         }
@@ -730,7 +730,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     }
 
     private void updateNextButtonVisibility() {
-        if (mMultiPageDocument.getDocuments().size() == 0) {
+        if (mMultiPageDocument.getDocuments().isEmpty()) {
             setNextButtonEnabled(false);
             return;
         }
