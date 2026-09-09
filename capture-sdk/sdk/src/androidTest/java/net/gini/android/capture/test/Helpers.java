@@ -216,7 +216,7 @@ public class Helpers {
         return new File(Helpers.getFileProviderDir(), assetFilePath);
     }
 
-    private static File createAndGetFileProviderDir() throws IOException {
+    private static File createAndGetFileProviderDir() {
         final File fileProviderDir = getFileProviderDir();
         if (!fileProviderDir.exists()) {
             //noinspection ResultOfMethodCallIgnored

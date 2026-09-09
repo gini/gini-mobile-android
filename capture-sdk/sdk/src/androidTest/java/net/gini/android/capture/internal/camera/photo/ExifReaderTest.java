@@ -58,7 +58,7 @@ public class ExifReaderTest {
     }
 
     @Test
-    public void should_throwException_ifByteArray_wasNotJpeg() throws Exception {
+    public void should_throwException_ifByteArray_wasNotJpeg() {
         // Given
         ExifReaderException exception = null;
         try {
