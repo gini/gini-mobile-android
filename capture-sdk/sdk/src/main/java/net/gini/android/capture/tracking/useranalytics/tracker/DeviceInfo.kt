@@ -90,15 +90,11 @@ class DeviceInfo(private val context: Context) {
         private val locale: Locale
             get() {
                 val configuration = Resources.getSystem().configuration
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     val localeList = configuration.locales
-                    if (localeList.isEmpty) {
-                        return Locale.getDefault()
-                    } else {
-                        return localeList.get(0)
-                    }
+                    if (localeList.isEmpty) Locale.getDefault() else localeList.get(0)
                 } else {
-                    return configuration.locale
+                    configuration.locale
                 }
             }
 
