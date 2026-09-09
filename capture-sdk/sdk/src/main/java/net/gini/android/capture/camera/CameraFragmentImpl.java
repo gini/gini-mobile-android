@@ -2021,11 +2021,6 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         }
     }
 
-    private boolean isNoPermissionViewVisible() {
-        return mLayoutNoPermission != null
-                && mLayoutNoPermission.getVisibility() == View.VISIBLE;
-    }
-
     private void inflateNoPermissionStub() {
         if (mLayoutNoPermission == null) {
             LOG.debug("Inflating no permission view");
