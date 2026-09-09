@@ -38,7 +38,7 @@ import net.gini.android.capture.paymentHints.GetPaymentScheduleHintEnabledUseCas
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.EventTrackingHelper
 
-internal class AnalysisScreenPresenterExtension(
+internal class AnalysisScreenPresenterExtension @JvmOverloads constructor(
     private val view: View,
     private val mainDispatcher: CoroutineDispatcher = Dispatchers.Main,
 ) {
