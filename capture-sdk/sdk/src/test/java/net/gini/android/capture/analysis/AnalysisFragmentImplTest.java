@@ -86,13 +86,10 @@ public class AnalysisFragmentImplTest {
 
             // When
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.setListener(mock(AnalysisFragmentListener.class));
-                        }
+                    activity -> {
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
+                        analysisFragment.setListener(mock(AnalysisFragmentListener.class));
                     });
 
             // Then
@@ -114,11 +111,8 @@ public class AnalysisFragmentImplTest {
                                 Document.Source.newCameraSource(), Document.ImportMethod.NONE);
                         final AnalysisFragmentImpl analysisFragmentImpl = new AnalysisFragmentImpl(
                                 fragment,
-                                new CancelListener() {
-                                    @Override
-                                    public void onCancelFlow() {
-                                        // No-op
-                                    }
+                                () -> {
+                                    // No-op
                                 },
                                 document, null, false) {
 
@@ -178,16 +172,12 @@ public class AnalysisFragmentImplTest {
 
             // When
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
+                    activity -> {
 
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
 
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-
-                            analysisFragment.showScanAnimation(false);
-                        }
+                        analysisFragment.showScanAnimation(false);
                     });
 
             // Then
@@ -212,14 +202,11 @@ public class AnalysisFragmentImplTest {
 
             // When
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showScanAnimation(false);
-                            analysisFragment.hideScanAnimation();
-                        }
+                    activity -> {
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
+                        analysisFragment.showScanAnimation(false);
+                        analysisFragment.hideScanAnimation();
                     });
 
             // Then
@@ -243,15 +230,12 @@ public class AnalysisFragmentImplTest {
 
             // When
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            final CompletableFuture<Void> future =
-                                    analysisFragment.waitForViewLayout();
-                            futureRef.set(future);
-                        }
+                    activity -> {
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
+                        final CompletableFuture<Void> future =
+                                analysisFragment.waitForViewLayout();
+                        futureRef.set(future);
                     });
         }
 
@@ -272,13 +256,10 @@ public class AnalysisFragmentImplTest {
 
             // When
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showPdfTitle("PdfTitle");
-                        }
+                    activity -> {
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
+                        analysisFragment.showPdfTitle("PdfTitle");
                     });
 
             // Then
@@ -301,13 +282,10 @@ public class AnalysisFragmentImplTest {
             pdfPreviewSize = new AtomicReference<>();
 
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            pdfPreviewSize.set(analysisFragment.getPdfPreviewSize());
-                        }
+                    activity -> {
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
+                        pdfPreviewSize.set(analysisFragment.getPdfPreviewSize());
                     });
 
             // Then
@@ -333,13 +311,10 @@ public class AnalysisFragmentImplTest {
             bitmap = photo.getBitmapPreview();
 
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showBitmap(bitmap, 0);
-                        }
+                    activity -> {
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
+                        analysisFragment.showBitmap(bitmap, 0);
                     });
 
             // Then
@@ -362,13 +337,10 @@ public class AnalysisFragmentImplTest {
             final Bitmap bitmap = photo.getBitmapPreview();
 
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showBitmap(bitmap, 180);
-                        }
+                    activity -> {
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
+                        analysisFragment.showBitmap(bitmap, 180);
                     });
 
             // Then
@@ -387,18 +359,15 @@ public class AnalysisFragmentImplTest {
 
             // When
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showAlertDialog("Message",
-                                    "PositiveButtonTitle",
-                                    mock(DialogInterface.OnClickListener.class),
-                                    "NegativeButtonTitle",
-                                    mock(DialogInterface.OnClickListener.class),
-                                    mock(DialogInterface.OnCancelListener.class));
-                        }
+                    activity -> {
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
+                        analysisFragment.showAlertDialog("Message",
+                                "PositiveButtonTitle",
+                                mock(DialogInterface.OnClickListener.class),
+                                "NegativeButtonTitle",
+                                mock(DialogInterface.OnClickListener.class),
+                                mock(DialogInterface.OnCancelListener.class));
                     });
 
             // Then
@@ -419,13 +388,10 @@ public class AnalysisFragmentImplTest {
             // When
             hints = AnalysisHint.getArray();
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showHints(hints);
-                        }
+                    activity -> {
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
+                        analysisFragment.showHints(hints);
                     });
 
             // Then
@@ -447,22 +413,16 @@ public class AnalysisFragmentImplTest {
 
             // When
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            try {
-                                analysisFragment.showWarning(WarningType.SCHEDULE_PAYMENT,
-                                        "13.08.2026", new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                // no-op: the call must fail before running this
-                                            }
-                                        }, null);
-                            } catch (final IllegalArgumentException e) {
-                                thrownRef.set(e);
-                            }
+                    activity -> {
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
+                        try {
+                            analysisFragment.showWarning(WarningType.SCHEDULE_PAYMENT,
+                                    "13.08.2026", () -> {
+                                        // no-op: the call must fail before running this
+                                    }, null);
+                        } catch (final IllegalArgumentException e) {
+                            thrownRef.set(e);
                         }
                     });
 
@@ -482,21 +442,15 @@ public class AnalysisFragmentImplTest {
 
             // When
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            activity.findViewById(R.id.gc_analysis_hint_container)
-                                    .setVisibility(android.view.View.VISIBLE);
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showWarning(WarningType.PAYMENT_DUE_DATE,
-                                    "13.08.2026", new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            // no-op: the test only verifies hint suppression
-                                        }
-                                    }, null);
-                        }
+                    activity -> {
+                        activity.findViewById(R.id.gc_analysis_hint_container)
+                                .setVisibility(android.view.View.VISIBLE);
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
+                        analysisFragment.showWarning(WarningType.PAYMENT_DUE_DATE,
+                                "13.08.2026", () -> {
+                                    // no-op: the test only verifies hint suppression
+                                }, null);
                     });
 
             // Then
@@ -517,26 +471,17 @@ public class AnalysisFragmentImplTest {
 
             // When
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            activity.findViewById(R.id.gc_analysis_hint_container)
-                                    .setVisibility(android.view.View.VISIBLE);
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showWarning(WarningType.SCHEDULE_PAYMENT,
-                                    "13.08.2026", new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            // no-op: the test only verifies hint suppression
-                                        }
-                                    }, new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            // no-op: the test only verifies hint suppression
-                                        }
-                                    });
-                        }
+                    activity -> {
+                        activity.findViewById(R.id.gc_analysis_hint_container)
+                                .setVisibility(android.view.View.VISIBLE);
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
+                        analysisFragment.showWarning(WarningType.SCHEDULE_PAYMENT,
+                                "13.08.2026", () -> {
+                                    // no-op: the test only verifies hint suppression
+                                }, () -> {
+                                    // no-op: the test only verifies hint suppression
+                                });
                     });
 
             // Then
@@ -557,21 +502,15 @@ public class AnalysisFragmentImplTest {
 
             // When
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            activity.findViewById(R.id.gc_analysis_hint_container)
-                                    .setVisibility(android.view.View.VISIBLE);
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showWarning(
-                                    WarningType.DOCUMENT_MARKED_AS_PAID, null, new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            // no-op: the test only verifies hint suppression
-                                        }
-                                    }, null);
-                        }
+                    activity -> {
+                        activity.findViewById(R.id.gc_analysis_hint_container)
+                                .setVisibility(android.view.View.VISIBLE);
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
+                        analysisFragment.showWarning(
+                                WarningType.DOCUMENT_MARKED_AS_PAID, null, () -> {
+                                    // no-op: the test only verifies hint suppression
+                                }, null);
                     });
 
             // Then
