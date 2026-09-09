@@ -159,73 +159,27 @@ class Exif {
         @NonNull
         public Builder setRequiredTags(@NonNull final RequiredTags requiredTags)
                 throws ImageReadException, ImageWriteException {
-            // Make
-            if (requiredTags.make != null) {
-                try {
-                    final TiffOutputField makeField = createTiffOutputField(requiredTags.make);
-                    mIfd0Directory.add(makeField);
-                } catch (final Exception e) { // NOPMD
-                    // Shouldn't happen, but ignore it, if it does
-                }
-            }
-            // Model
-            if (requiredTags.model != null) {
-                try {
-                    final TiffOutputField modelField = createTiffOutputField(requiredTags.model);
-                    mIfd0Directory.add(modelField);
-                } catch (final Exception e) { // NOPMD
-                    // Shouldn't happen, but ignore it, if it does
-                }
-            }
-            // ISO
-            if (requiredTags.iso != null) {
-                try {
-                    final TiffOutputField isoField = createTiffOutputField(requiredTags.iso);
-                    mExifDirectory.add(isoField);
-                } catch (final Exception e) { // NOPMD
-                    // Ignore, ClassCastException was thrown on a Galaxy Nexus w. Android 4.3
-                }
-            }
-            // Exposure
-            if (requiredTags.exposure != null) {
-                try {
-                    final TiffOutputField exposureField = createTiffOutputField(
-                            requiredTags.exposure);
-                    mExifDirectory.add(exposureField);
-                } catch (final Exception e) { // NOPMD
-                    // Shouldn't happen, but ignore it, if it does
-                }
-            }
-            // Aperture
-            if (requiredTags.aperture != null) {
-                try {
-                    final TiffOutputField apertureField = createTiffOutputField(
-                            requiredTags.aperture);
-                    mExifDirectory.add(apertureField);
-                } catch (final Exception e) { // NOPMD
-                    // Shouldn't happen, but ignore it, if it does
-                }
-            }
-            // Flash
-            if (requiredTags.flash != null) {
-                try {
-                    final TiffOutputField flashField = createTiffOutputField(requiredTags.flash);
-                    mExifDirectory.add(flashField);
-                } catch (final Exception e) { // NOPMD
-                    // Shouldn't happen, but ignore it, if it does
-                }
-            }
-            // Compressed bits per pixel
-            if (requiredTags.compressedBitsPerPixel != null) {
-                try {
-                    final TiffOutputField compressedBitsPerPixelField = createTiffOutputField(
-                            requiredTags.compressedBitsPerPixel);
-                    mExifDirectory.add(compressedBitsPerPixelField);
-                } catch (final Exception e) { // NOPMD
-                    // Shouldn't happen, but ignore it, if it does
-                }
-            }
+            addTagIfPresent(mIfd0Directory, requiredTags.make);
+            addTagIfPresent(mIfd0Directory, requiredTags.model);
+            addTagIfPresent(mExifDirectory, requiredTags.iso);
+            addTagIfPresent(mExifDirectory, requiredTags.exposure);
+            addTagIfPresent(mExifDirectory, requiredTags.aperture);
+            addTagIfPresent(mExifDirectory, requiredTags.flash);
+            addTagIfPresent(mExifDirectory, requiredTags.compressedBitsPerPixel);
             return this;
+        }
+
+        private void addTagIfPresent(@NonNull final TiffOutputDirectory directory,
+                @Nullable final TiffField tag) {
+            if (tag == null) {
+                return;
+            }
+            try {
+                directory.add(createTiffOutputField(tag));
+            } catch (final Exception e) { // NOPMD
+                // Shouldn't happen, but ignore it, if it does. A ClassCastException was seen
+                // for the ISO tag on a Galaxy Nexus w. Android 4.3
+            }
         }
 
         @NonNull
