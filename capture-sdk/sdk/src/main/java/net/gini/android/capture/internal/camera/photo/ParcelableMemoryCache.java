@@ -109,9 +109,9 @@ public enum ParcelableMemoryCache {
         public static final Creator<Token> CREATOR = new Creator<Token>() {
             @Override
             public Token createFromParcel(final Parcel source) {
-                final int token = source.readInt();
-                final String tag = source.readString();
-                return new Token(token, tag);
+                final int tokenId = source.readInt();
+                final String parceledTag = source.readString();
+                return new Token(tokenId, parceledTag);
             }
 
             @Override
