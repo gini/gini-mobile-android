@@ -43,24 +43,15 @@ public final class FileImportHelper {
                     activity.getString(R.string.gc_file_import_default_app_dialog_message,
                             fileType),
                     activity.getString(R.string.gc_file_import_default_app_dialog_positive_button),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(final DialogInterface dialog, final int which) {
-                            startApplicationDetailsSettings(activity);
-                        }
+                    (dialog, which) -> {
+                        startApplicationDetailsSettings(activity);
                     },
                     activity.getString(R.string.gc_file_import_default_app_dialog_negative_button),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(final DialogInterface dialog, final int which) {
-                            alertCompletion.complete(null);
-                        }
+                    (dialog, which) -> {
+                        alertCompletion.complete(null);
                     },
-                    new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(final DialogInterface dialog) {
-                            alertCompletion.completeExceptionally(new CancellationException());
-                        }
+                    dialog -> {
+                        alertCompletion.completeExceptionally(new CancellationException());
                     });
         } else {
             alertCompletion.complete(null);
