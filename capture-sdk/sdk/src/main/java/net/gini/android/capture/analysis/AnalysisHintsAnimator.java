@@ -62,12 +62,9 @@ class AnalysisHintsAnimator {
     }
 
     public void start() {
-        mHintCycleRunnable = new Runnable() {
-            @Override
-            public void run() {
-                mHintAnimation = getSlideDownAnimation();
-                mHintAnimation.start();
-            }
+        mHintCycleRunnable = () -> {
+            mHintAnimation = getSlideDownAnimation();
+            mHintAnimation.start();
         };
         mHandler.postDelayed(mHintCycleRunnable, HINT_START_DELAY);
     }
