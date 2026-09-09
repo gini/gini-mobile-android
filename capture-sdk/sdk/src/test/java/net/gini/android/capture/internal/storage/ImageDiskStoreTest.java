@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import static org.mockito.Mockito.doThrow;
 
 /**
  * Created by Alpar Szotyori on 04.07.2019.
@@ -204,7 +205,7 @@ public class ImageDiskStoreTest {
 
         // When
         imageDiskStore.save(appContext, getTestJpeg());
-        Mockito.doThrow(new IOException()).when(imageDiskStore).writeToFile(any(File.class),
+        doThrow(new IOException()).when(imageDiskStore).writeToFile(any(File.class),
                 any(byte[].class));
         final boolean result = imageDiskStore.update(Uri.EMPTY, bytes);
 
