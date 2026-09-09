@@ -1024,15 +1024,12 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     public void onDestroy() {
         super.onDestroy();
 
-        if (!mInstanceStateSaved) {
-            // Instance state wasn't saved meaning that this fragment won't restart
-            if (!mNextClicked) {
-                // Delete documents because the Multi-Page Review Fragment
-                // acts as the root screen and when it's destroyed it means
-                // the user will exit the SDK
-                deleteUploadedDocuments();
-                clearMultiPageDocument();
-            }
+        // Instance state wasn't saved meaning that this fragment won't restart and the user
+        // did not proceed to the next screen: delete the documents because the Multi-Page Review
+        // Fragment acts as the root screen and when it's destroyed the user will exit the SDK
+        if (!mInstanceStateSaved && !mNextClicked) {
+            deleteUploadedDocuments();
+            clearMultiPageDocument();
         }
 
         if (mPreviewFragmentListener != null) {
