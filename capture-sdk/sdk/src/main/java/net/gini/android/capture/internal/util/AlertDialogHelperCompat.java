@@ -39,10 +39,9 @@ public final class AlertDialogHelperCompat {
                 .setNegativeButton(negativeButtonTitle, negativeButtonClickListener)
                 .setOnCancelListener(cancelListener)
                 .create();
-        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().getAllowScreenshots()) {
-            if (alertDialog.getWindow() != null) {
-                WindowExtensionsKt.disallowScreenshots(alertDialog.getWindow());
-            }
+        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().getAllowScreenshots()
+                && alertDialog.getWindow() != null) {
+            WindowExtensionsKt.disallowScreenshots(alertDialog.getWindow());
         }
         alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.show();
