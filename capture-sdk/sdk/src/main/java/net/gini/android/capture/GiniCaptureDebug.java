@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.Date;
 
 /**
  * <p>
@@ -91,7 +90,7 @@ public final class GiniCaptureDebug {
         if (!sEnabled) {
             return;
         }
-        final long time = new Date().getTime();
+        final long time = System.currentTimeMillis();
         final String jpegFilename = time + suffix + ".jpeg";
         final File giniCaptureDir = createGiniCaptureDir(context);
         if (giniCaptureDir == null) {
