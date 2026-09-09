@@ -85,7 +85,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
     private InjectedViewContainer<CustomLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
     private boolean isScanAnimationActive;
-    private final UserAnalyticsScreen screenName = UserAnalyticsScreen.Analysis.INSTANCE;
+    private static final UserAnalyticsScreen screenName = UserAnalyticsScreen.Analysis.INSTANCE;
     UserAnalyticsEventTracker userAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
     AnalysisFragmentExtension fragmentExtension = new AnalysisFragmentExtension();
 
