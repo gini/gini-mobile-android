@@ -7,6 +7,8 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 
+import java.util.Random;
+
 /**
  * Created by Alpar Szotyori on 16.04.2018.
  *
@@ -16,7 +18,7 @@ import androidx.annotation.NonNull;
 public class GiniCaptureDocumentHelper {
 
     public static ImageDocument newImageDocument() {
-        final int random = (int) (1 + Math.round(Math.random() * 5));
+        final int random = 1 + new Random().nextInt(6);
         return new ImageDocument(new byte[]{
                 (byte) ((random + 1) * 5), (byte) ((random + 2) * 5), (byte) ((random + 3) * 5)},
                 Document.Source.newUnknownSource(), Document.ImportMethod.NONE);
