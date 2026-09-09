@@ -1893,7 +1893,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 (dialogInterface, i) -> {
                     dialogInterface.dismiss();
                     resetGenericDialogState();
-                }, (dialogInterface) -> {
+                }, dialogInterface -> {
                     dialogInterface.dismiss();
                     resetGenericDialogState();
                 });
