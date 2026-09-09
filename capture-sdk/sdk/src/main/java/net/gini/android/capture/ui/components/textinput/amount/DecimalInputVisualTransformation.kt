@@ -44,9 +44,6 @@ class DecimalInputVisualTransformation(
          */
 
         override fun originalToTransformed(offset: Int): Int {
-            val thousandSeparatorCount =
-                formatted.count { it == formattingSymbols.groupingSeparator }
-
             val lastIndex = when (source.length) {
                 in 1..3 -> formatted.length
                 4 -> 5
