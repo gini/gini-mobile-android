@@ -117,7 +117,7 @@ class ImmutablePhoto implements Photo {
     }
 
     @Override
-    public void setData(final byte[] data) {
+    public synchronized void setData(final byte[] data) {
         // No-op
     }
 
