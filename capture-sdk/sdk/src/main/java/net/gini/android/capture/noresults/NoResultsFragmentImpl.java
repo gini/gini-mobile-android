@@ -60,7 +60,7 @@ class NoResultsFragmentImpl {
     private EnterManuallyButtonListener mListener;
     private TextView mTitleTextView;
     private UserAnalyticsEventTracker mUserAnalyticsEventTracker;
-    private final UserAnalyticsScreen screenName = UserAnalyticsScreen.NoResults.INSTANCE;
+    private static final UserAnalyticsScreen screenName = UserAnalyticsScreen.NoResults.INSTANCE;
 
     NoResultsFragmentImpl(@NonNull final FragmentImplCallback fragment,
                           @NonNull final Document document,
