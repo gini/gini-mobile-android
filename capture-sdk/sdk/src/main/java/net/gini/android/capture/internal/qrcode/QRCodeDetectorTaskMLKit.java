@@ -37,7 +37,6 @@ import java.util.concurrent.ExecutionException;
 public class QRCodeDetectorTaskMLKit implements QRCodeDetectorTask {
 
     private static final boolean DEBUG = false;
-//    private static final Logger LOG = LoggerFactory.getLogger(QRCodeDetectorTaskMLKit.class);
     private static final Logger LOG = NOPLogger.NOP_LOGGER;
     private final BarcodeScanner mBarcodeScanner;
 
