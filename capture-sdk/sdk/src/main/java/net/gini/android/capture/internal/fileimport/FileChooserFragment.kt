@@ -237,7 +237,7 @@ class FileChooserFragment : BottomSheetDialogFragment() {
             pdfProviderItems = getPdfProviderItems(pdfProviderResolveInfos)
         }
         providerItems.addAll(imageProviderItems)
-        if (!imageProviderItems.isEmpty() && !pdfProviderItems.isEmpty()) {
+        if (imageProviderItems.isNotEmpty() && pdfProviderItems.isNotEmpty()) {
             providerItems.add(ProvidersSeparatorItem())
         }
         providerItems.addAll(pdfProviderItems)
