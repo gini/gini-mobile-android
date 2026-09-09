@@ -10,6 +10,7 @@ import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import androidx.core.os.BundleCompat
 import android.os.Parcelable
 import android.provider.MediaStore
 import android.view.LayoutInflater
@@ -72,14 +73,11 @@ class FileChooserFragment : BottomSheetDialogFragment() {
         userAnalyticsEventTracker =
             UserAnalytics.getAnalyticsEventTracker()
         arguments?.let {
-            docImportEnabledFileTypes = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                it.getSerializable(
-                    ARG_DOCUMENT_IMPORT_FILE_TYPES,
-                    DocumentImportEnabledFileTypes::class.java
-                )
-            } else {
-                it.getSerializable(ARG_DOCUMENT_IMPORT_FILE_TYPES) as? DocumentImportEnabledFileTypes
-            }
+            docImportEnabledFileTypes = BundleCompat.getSerializable(
+                it,
+                ARG_DOCUMENT_IMPORT_FILE_TYPES,
+                DocumentImportEnabledFileTypes::class.java
+            )
         }
         setupFileChooserListener()
     }
