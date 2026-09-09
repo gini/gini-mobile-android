@@ -272,7 +272,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
     private IBANRecognizerFilter ibanRecognizerFilter;
     private CropToCameraFrameTextRecognizer cropToCameraFrameTextRecognizer;
-    private final UserAnalyticsScreen screenName = UserAnalyticsScreen.Camera.INSTANCE;
+    private static final UserAnalyticsScreen screenName = UserAnalyticsScreen.Camera.INSTANCE;
     private View mDetectionErrorDismissButton;
 
     CameraFragmentImpl(@NonNull final FragmentImplCallback fragment, @NonNull final CancelListener cancelListener, final boolean addPages) {
