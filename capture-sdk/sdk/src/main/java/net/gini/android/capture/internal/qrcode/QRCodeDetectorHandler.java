@@ -64,7 +64,7 @@ class QRCodeDetectorHandler extends Handler {
                     mListener.onQRCodesDetected(qrCodes);
                 });
             }
-            mUIExecutor.runOnUiThread(() -> imageData.callback.onDetectionFinished());
+            mUIExecutor.runOnUiThread(imageData.callback::onDetectionFinished);
         } catch (Exception e) {
             mUIExecutor.runOnUiThread(() -> mListener.onQRCodeScannerError(e));
         }
