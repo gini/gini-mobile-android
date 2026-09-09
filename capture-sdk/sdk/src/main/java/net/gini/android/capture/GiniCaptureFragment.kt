@@ -398,15 +398,15 @@ class CaptureFragmentFactory(
     private val cancelListener: CancelListener
 ) : FragmentFactory() {
     override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
-        when (className) {
-            CameraFragment::class.java.name -> return CameraFragment().apply {
+        return when (className) {
+            CameraFragment::class.java.name -> CameraFragment().apply {
                 setListener(
                     cameraListener
                 )
                 setCancelListener(cancelListener)
             }
 
-            AnalysisFragment::class.java.name -> return AnalysisFragment()
+            AnalysisFragment::class.java.name -> AnalysisFragment()
                 .apply {
                     setListener(
                         analysisFragmentListener
@@ -415,7 +415,7 @@ class CaptureFragmentFactory(
                     setCancelListener(cancelListener)
                 }
 
-            ErrorFragment::class.java.name -> return ErrorFragment().apply {
+            ErrorFragment::class.java.name -> ErrorFragment().apply {
                 setListener(
                     listener = enterManuallyButtonListener,
                 )
@@ -424,7 +424,7 @@ class CaptureFragmentFactory(
                 )
             }
 
-            NoResultsFragment::class.java.name -> return NoResultsFragment()
+            NoResultsFragment::class.java.name -> NoResultsFragment()
                 .apply {
                     setListeners(
                         enterManuallyButtonListener
@@ -434,11 +434,11 @@ class CaptureFragmentFactory(
                     )
                 }
 
-            MultiPageReviewFragment::class.java.name -> return MultiPageReviewFragment().apply {
+            MultiPageReviewFragment::class.java.name -> MultiPageReviewFragment().apply {
                 setCancelListener(cancelListener)
             }
 
-            else -> return super.instantiate(classLoader, className)
+            else -> super.instantiate(classLoader, className)
         }
     }
 }
