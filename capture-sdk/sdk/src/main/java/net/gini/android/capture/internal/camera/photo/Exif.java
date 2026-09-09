@@ -157,8 +157,7 @@ class Exif {
         }
 
         @NonNull
-        public Builder setRequiredTags(@NonNull final RequiredTags requiredTags)
-                throws ImageReadException, ImageWriteException {
+        public Builder setRequiredTags(@NonNull final RequiredTags requiredTags) {
             addTagIfPresent(mIfd0Directory, requiredTags.make);
             addTagIfPresent(mIfd0Directory, requiredTags.model);
             addTagIfPresent(mExifDirectory, requiredTags.iso);
