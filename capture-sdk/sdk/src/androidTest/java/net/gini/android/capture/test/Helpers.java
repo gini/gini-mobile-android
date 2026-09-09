@@ -180,7 +180,7 @@ public class Helpers {
 
                 r = (argb[index] & 0xff0000) >> 16;
                 g = (argb[index] & 0xff00) >> 8;
-                b = (argb[index] & 0xff) >> 0;
+                b = argb[index] & 0xff;
 
                 // well known RGB to YUV algorithm
                 y = ((66 * r + 129 * g + 25 * b + 128) >> 8) + 16;
