@@ -764,7 +764,7 @@ public final class net/gini/android/capture/analysis/LastAnalyzedDocumentProvide
 	public static final field $stable I
 	public fun <init> (Lkotlinx/coroutines/CoroutineDispatcher;Lnet/gini/android/capture/tracking/useranalytics/UserAnalyticsEventTracker;)V
 	public final fun clear ()V
-	public final fun getData ()Lkotlinx/coroutines/flow/MutableStateFlow;
+	public final fun getData ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun provide ()Lnet/gini/android/capture/analysis/RemoteAnalyzedDocument;
 	public final fun update (Lnet/gini/android/capture/analysis/RemoteAnalyzedDocument;)V
 }
@@ -3008,8 +3008,8 @@ public final class net/gini/android/capture/internal/util/MimeType : java/lang/E
 	public static final field TEXT_XML Lnet/gini/android/capture/internal/util/MimeType;
 	public static final field UNKNOWN Lnet/gini/android/capture/internal/util/MimeType;
 	public fun asString ()Ljava/lang/String;
-	public fun equals (Ljava/lang/String;)Z
 	public static fun fromString (Ljava/lang/String;)Lnet/gini/android/capture/internal/util/MimeType;
+	public fun matches (Ljava/lang/String;)Z
 	public static fun valueOf (Ljava/lang/String;)Lnet/gini/android/capture/internal/util/MimeType;
 	public static fun values ()[Lnet/gini/android/capture/internal/util/MimeType;
 }
