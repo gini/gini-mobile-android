@@ -99,7 +99,7 @@ public final class GiniCaptureDebug {
             return;
         }
         final File jpegFile = new File(giniCaptureDir, jpegFilename);
-        PhotoFactory.newPhotoFromDocument((ImageDocument) document).saveToFile(jpegFile);
+        PhotoFactory.newPhotoFromDocument(document).saveToFile(jpegFile);
         LOG.debug("Document written to {}", jpegFile.getAbsolutePath());
     }
 
