@@ -1,12 +1,9 @@
 package net.gini.android.capture.onboarding;
 
-import static com.google.common.truth.Truth.assertAbout;
 
-import static net.gini.android.capture.onboarding.PageIndicatorImageViewSubject.pageIndicatorImageView;
 
 import com.google.common.truth.Truth;
 
-import net.gini.android.capture.R;
 
 public final class PageIndicatorsHelper {
 
