@@ -34,6 +34,7 @@ final class AmountAndCurrencyNormalizer {
                 }
                 return amountBigDecimal.toPlainString() + ":" + currency;
             } catch (final NumberFormatException ignored) {
+                // Not a valid amount: fall through and return an empty string
             }
         }
         return "";
