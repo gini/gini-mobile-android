@@ -996,17 +996,6 @@ public final class net/gini/android/capture/databinding/GcActivityNoresultsBindi
 	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/capture/databinding/GcActivityNoresultsBinding;
 }
 
-public final class net/gini/android/capture/databinding/GcCameraBottomBarBinding : androidx/viewbinding/ViewBinding {
-	public final field gcCameraTitle Landroid/widget/TextView;
-	public final field gcGoBack Landroid/widget/ImageButton;
-	public final field gcHelp Landroid/widget/ImageButton;
-	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcCameraBottomBarBinding;
-	public synthetic fun getRoot ()Landroid/view/View;
-	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
-	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/capture/databinding/GcCameraBottomBarBinding;
-	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/capture/databinding/GcCameraBottomBarBinding;
-}
-
 public final class net/gini/android/capture/databinding/GcDetectionErrorLayoutBinding : androidx/viewbinding/ViewBinding {
 	public final field gcDetectionErrorPopupDismissButton Landroid/widget/TextView;
 	public final field gcErrorDescription Landroid/widget/TextView;

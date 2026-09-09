@@ -1774,7 +1774,6 @@ public final class net/gini/android/bank/sdk/databinding/GbsFragmentDigitalInvoi
 	public final field gbsArticleTxt Landroid/widget/TextView;
 	public final field gbsBarrierFooter Landroidx/constraintlayout/widget/Barrier;
 	public final field gbsBarrierSkontoDiscount Landroidx/constraintlayout/widget/Barrier;
-	public final field gbsBottomBarNavigation Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gbsBottomDivider Lcom/google/android/material/divider/MaterialDivider;
 	public final field gbsBottomWrapper Landroidx/constraintlayout/widget/ConstraintLayout;
 	public final field gbsComposeView Landroidx/compose/ui/platform/ComposeView;
