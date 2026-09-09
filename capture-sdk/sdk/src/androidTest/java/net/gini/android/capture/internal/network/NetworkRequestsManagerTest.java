@@ -257,20 +257,14 @@ public class NetworkRequestsManagerTest {
             @Override
             public CancellationToken upload(@NonNull final Document document,
                     @NonNull final GiniCaptureNetworkCallback<Result, Error> callback) {
-                final Thread delayThread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep((long) (200 + Math.random() * 300));
-                            uploadCompletionRunnables.add(new Runnable() {
-                                @Override
-                                public void run() {
-                                    callback.success(new Result(DEFAULT_DOCUMENT_ID, DEFAULT_DOCUMENT_FILENAME));
-                                }
-                            });
-                        } catch (final InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                final Thread delayThread = new Thread(() -> {
+                    try {
+                        Thread.sleep((long) (200 + Math.random() * 300));
+                        uploadCompletionRunnables.add(() -> {
+                            callback.success(new Result(DEFAULT_DOCUMENT_ID, DEFAULT_DOCUMENT_FILENAME));
+                        });
+                    } catch (final InterruptedException e) {
+                        e.printStackTrace();
                     }
                 });
                 delayThread.start();
@@ -285,14 +279,11 @@ public class NetworkRequestsManagerTest {
         // Wait for completion on a secondary thread
         final AtomicReference<NetworkRequestResult<GiniCaptureDocument>> requestResult =
                 new AtomicReference<>();
-        final Thread waitThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    requestResult.set(networkRequestsManager.delete(document).get());
-                } catch (final InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
+        final Thread waitThread = new Thread(() -> {
+            try {
+                requestResult.set(networkRequestsManager.delete(document).get());
+            } catch (final InterruptedException | ExecutionException e) {
+                e.printStackTrace();
             }
         });
         waitThread.start();
@@ -376,20 +367,14 @@ public class NetworkRequestsManagerTest {
             @Override
             public CancellationToken upload(@NonNull final Document document,
                     @NonNull final GiniCaptureNetworkCallback<Result, Error> callback) {
-                final Thread delayThread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep((long) (200 + Math.random() * 300));
-                            uploadCompletionRunnables.add(new Runnable() {
-                                @Override
-                                public void run() {
-                                    callback.success(new Result(DEFAULT_DOCUMENT_ID, DEFAULT_DOCUMENT_FILENAME));
-                                }
-                            });
-                        } catch (final InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                final Thread delayThread = new Thread(() -> {
+                    try {
+                        Thread.sleep((long) (200 + Math.random() * 300));
+                        uploadCompletionRunnables.add(() -> {
+                            callback.success(new Result(DEFAULT_DOCUMENT_ID, DEFAULT_DOCUMENT_FILENAME));
+                        });
+                    } catch (final InterruptedException e) {
+                        e.printStackTrace();
                     }
                 });
                 delayThread.start();
@@ -408,14 +393,11 @@ public class NetworkRequestsManagerTest {
         // Wait for completion on a secondary thread
         final AtomicReference<NetworkRequestResult<GiniCaptureMultiPageDocument>> requestResult =
                 new AtomicReference<>();
-        final Thread waitThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    requestResult.set(networkRequestsManager.analyze(multiPageDocument).get());
-                } catch (final InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
+        final Thread waitThread = new Thread(() -> {
+            try {
+                requestResult.set(networkRequestsManager.analyze(multiPageDocument).get());
+            } catch (final InterruptedException | ExecutionException e) {
+                e.printStackTrace();
             }
         });
         waitThread.start();
@@ -489,11 +471,8 @@ public class NetworkRequestsManagerTest {
             @Override
             public CancellationToken delete(@NonNull final String giniApiDocumentId,
                     @NonNull final GiniCaptureNetworkCallback<Result, Error> callback) {
-                return new CancellationToken() {
-                    @Override
-                    public void cancel() {
-                        callback.cancelled();
-                    }
+                return () -> {
+                    callback.cancelled();
                 };
             }
         });
