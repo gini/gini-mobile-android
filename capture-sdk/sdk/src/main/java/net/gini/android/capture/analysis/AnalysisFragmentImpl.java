@@ -56,6 +56,7 @@ import net.gini.android.capture.view.NavigationBarTopAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -130,11 +131,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
             userAnalyticsEventTracker.trackEvent(
                     UserAnalyticsEvent.SCREEN_SHOWN,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                        }
-                    }
+                    new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName)))
             );
         }
     }
@@ -493,11 +490,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         if (!popBackStack) {
             if (userAnalyticsEventTracker != null) {
                 userAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
-                        new HashSet<UserAnalyticsEventProperty>() {
-                            {
-                                add(new UserAnalyticsEventProperty.Screen(screenName));
-                            }
-                        });
+                        new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
             }
 
             trackAnalysisScreenEvent(AnalysisScreenEvent.CANCEL);
