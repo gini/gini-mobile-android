@@ -28,7 +28,7 @@ import org.apache.commons.imaging.formats.tiff.write.TiffOutputSet;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteOrder;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -221,7 +221,7 @@ class Exif {
             // ASCII character code
             final byte[] characterCode = new byte[]{0x41, 0x53, 0x43, 0x49, 0x49, 0x00, 0x00, 0x00};
 
-            final byte[] comment = value.getBytes(Charset.forName("US-ASCII"));
+            final byte[] comment = value.getBytes(StandardCharsets.US_ASCII);
             final byte[] userComment = new byte[characterCode.length + comment.length];
 
             System.arraycopy(characterCode, 0, userComment, 0, characterCode.length);
