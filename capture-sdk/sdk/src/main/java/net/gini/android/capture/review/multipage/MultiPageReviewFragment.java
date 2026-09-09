@@ -126,11 +126,11 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     private boolean mShouldScrollToLastPage = false;
     private CancelListener mCancelListener;
     private int mScrollToPosition = -1;
-    private final String KEY_SHOULD_SCROLL_TO_LAST_PAGE = "GC_SHOULD_SCROLL_TO_LAST_PAGE";
-    private final String KEY_SCROLL_TO_POSITION = "GC_SHOULD_SCROLL_TO_LAST_PAGE";
+    private static final String KEY_SHOULD_SCROLL_TO_LAST_PAGE = "GC_SHOULD_SCROLL_TO_LAST_PAGE";
+    private static final String KEY_SCROLL_TO_POSITION = "GC_SHOULD_SCROLL_TO_LAST_PAGE";
     private UserAnalyticsEventTracker mUserAnalyticsEventTracker;
 
-    private final UserAnalyticsScreen screenName = UserAnalyticsScreen.Review.INSTANCE;
+    private static final UserAnalyticsScreen screenName = UserAnalyticsScreen.Review.INSTANCE;
 
     private SnappedItemChangeRecyclerViewListener mAnalyticsPageScrolledListener;
 
