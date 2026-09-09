@@ -47,6 +47,7 @@ public final class UriHelper {
                 try {
                     inputStream.close();
                 } catch (final IOException ignored) {
+                    // The stream was only opened for reading; nothing to recover from
                 }
             }
         }
@@ -66,11 +67,13 @@ public final class UriHelper {
             inputStream = context.getContentResolver().openInputStream(uri);
             return inputStream != null;
         } catch (final IOException ignored) {
+            // Not being able to open the stream means it is not available
         } finally {
             if (inputStream != null) {
                 try {
                     inputStream.close();
                 } catch (final IOException ignored) {
+                    // The stream was only opened for reading; nothing to recover from
                 }
             }
         }
