@@ -45,6 +45,20 @@ class CaptureScreen {
         return this
     }
 
+    /**
+     * Whether the "document can only have a maximum of 10 pages" alert is up.
+     *
+     * Matched on the SDK's own string resolved at runtime — `ErrorType.FILE_IMPORT_PAGE_COUNT`
+     * carries `gc_error_file_import_page_count_title`, and hard-coding the copy would break
+     * in any locale but the device's. UiAutomator rather than Espresso because the alert is a
+     * dialog window, outside the activity's view hierarchy.
+     */
+    fun isTooManyPagesAlertDisplayed(): Boolean {
+        val message = InstrumentationRegistry.getInstrumentation().targetContext
+            .getString(net.gini.android.capture.R.string.gc_error_file_import_page_count_title)
+        return device.findObject(UiSelector().textContains(message)).waitForExists(ALERT_TIMEOUT)
+    }
+
     fun clickCancelButton(): CaptureScreen {
         onView(withId(net.gini.android.capture.R.id.gc_navigation_bar)).perform(click())
         return this
@@ -114,5 +128,10 @@ class CaptureScreen {
         val idlingResource = SimpleIdlingResource(500)
         IdlingRegistry.getInstance().register(idlingResource)
         idlingResource.waitForIdle()
+    }
+
+
+    private companion object {
+        const val ALERT_TIMEOUT = 10_000L
     }
 }

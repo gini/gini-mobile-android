@@ -133,15 +133,15 @@ internal class UiTestMockNetworkService(
     private fun lineItems(): GiniCaptureCompoundExtraction =
         GiniCaptureCompoundExtraction(
             "lineItems",
-            listOf(
-                linkedMapOf(
-                    "description" to extraction("description", "UI test article", "text"),
-                    "quantity" to extraction("quantity", "1", "number"),
-                    "baseGross" to extraction("baseGross", LINE_ITEM_GROSS, "amount"),
-                    "artNumber" to extraction("artNumber", "UITEST-1", "text")
-                )
-            )
+            listOf(lineItem("UI test article", "UITEST-1"))
         )
+
+    private fun lineItem(description: String, artNumber: String) = linkedMapOf(
+        "description" to extraction("description", description, "text"),
+        "quantity" to extraction("quantity", "1", "number"),
+        "baseGross" to extraction("baseGross", LINE_ITEM_GROSS, "amount"),
+        "artNumber" to extraction("artNumber", artNumber, "text")
+    )
 
     private fun extraction(name: String, value: String, entity: String) =
         GiniCaptureSpecificExtraction(name, value, entity, null, emptyList())
