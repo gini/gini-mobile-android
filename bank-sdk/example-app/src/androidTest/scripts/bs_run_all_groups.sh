@@ -15,7 +15,7 @@ set -e
 # (SmokeJourneyTestBase, WarningBottomSheetTestBase), to be absent.
 #
 # bs_run_group_smoke.sh is NOT one of these shards and is deliberately not triggered here:
-# it is a curated cross-cutting selection (see ../COVERAGE.md) that overlaps several
+# it is a curated cross-cutting selection covering the Xray smoke set, and it overlaps several
 # shards, so running it alongside them would execute those tests twice.
 #
 # PACING: each shard reserves one session per device, so this script asks for (shards x

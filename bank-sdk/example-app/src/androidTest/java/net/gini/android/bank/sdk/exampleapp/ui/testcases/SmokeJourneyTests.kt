@@ -24,8 +24,8 @@ import org.junit.Test
  * instead of the plain extraction screen, and the assertion would fail for the wrong
  * reason. `GiniSmokeUITests.disableReturnAssistantAndSkonto` on iOS does the same thing.
  *
- * See `bank-sdk/example-app/src/androidTest/COVERAGE.md` for how these map onto the manual
- * smoke set.
+ * These map onto the manual smoke set in Xray (TC-001…TC-026, Jira PP-3415…PP-3442); each
+ * test's KDoc names the case it covers.
  */
 class SmokeJourneyTests : SmokeJourneyTestBase() {
 

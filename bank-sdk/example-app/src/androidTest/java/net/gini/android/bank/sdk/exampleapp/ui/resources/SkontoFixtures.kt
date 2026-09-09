@@ -21,7 +21,6 @@ import java.time.LocalDate
  * |---|---|---|---|
  * | [VALID_ASSET] | 05.08.2028 | 19.08.2028 | claimable, no line items |
  * | [RA_VALID_ASSET] | 05.08.2028 | 19.08.2028 | skonto only — its position table does not extract |
- * | [RA_SKONTO_ASSET] | 05.08.2024 | 19.08.2024 | line items + skonto terms, discount expired |
  * | [PAST_ASSET] | 01.08.2025 | 08.08.2025 | expired, no line items |
  * | [RA_PAST_ASSET] | 15.08.2024 | 29.08.2024 | expired, two line items |
  *
@@ -36,6 +35,22 @@ import java.time.LocalDate
  * comfortably in the future. Re-validate the regenerated fixtures against the Gini API
  * before committing them — a different font produces different image bytes, and the
  * extraction is not guaranteed to survive that.
+ *
+ * ## No fixture yields line items *and* a skonto discount
+ *
+ * The digital invoice screen only shows a skonto row when a single analysis result carries
+ * `lineItems` **and** `skontoDiscounts`. Build `13a5f54e` measured both candidates on a real
+ * device and each returned exactly one of the two:
+ *
+ * | Candidate | `lineItems` | `skontoDiscounts` |
+ * |---|---|---|
+ * | [RA_VALID_ASSET] (generated, prints a position table) | no | yes |
+ * | [RA_PAST_ASSET] (OTTO invoice, prints skonto terms) | yes | no |
+ *
+ * So a printed position table is not necessarily extracted, and neither are printed skonto
+ * terms — which is why a fixture has to be measured against the API rather than chosen by
+ * reading it. That gap is what keeps [net.gini.android.bank.sdk.exampleapp.ui.testcases.DigitalInvoiceSkontoTests]
+ * out of every BrowserStack script.
  */
 object SkontoFixtures {
 
@@ -45,8 +60,7 @@ object SkontoFixtures {
     /**
      * Generated with a claimable discount and a printed position table — but the table is
      * **not** extracted as `lineItems`, so it lands on the standalone Skonto screen and is
-     * unusable for the digital invoice case (build `13a5f54e`). Retained only so the
-     * generator's output has a name; [RA_SKONTO_ASSET] is what the tests use.
+     * unusable for the digital invoice case (build `13a5f54e`).
      */
     const val RA_VALID_ASSET = "skonto_ra_valid.jpeg"
 
@@ -54,32 +68,14 @@ object SkontoFixtures {
     const val PAST_ASSET = "skonto_past.pdf"
 
     /**
-     * Line items **and** skonto terms in one document: the digital invoice screen's skonto
-     * row. Its discount expired in 2024, so the row arrives with the toggle off.
+     * The repository's Return-Assistant-plus-skonto invoice: an OTTO invoice printing a
+     * position table *and* skonto terms.
      *
-     * ## What was measured before settling on this one
-     *
-     * The digital invoice screen only shows a skonto row when a single analysis result
-     * carries `lineItems` *and* `skontoDiscounts`. Build `13a5f54e` measured the
-     * alternatives, and each gave exactly one of the two:
-     *
-     * | Candidate | `lineItems` | `skontoDiscounts` |
-     * |---|---|---|
-     * | `skonto_ra_valid.jpeg` (generated, prints a position table) | no | yes |
-     * | `Testrechnung-RA-Skonto.pdf` (OTTO invoice) | yes | no |
-     *
-     * So a printed position table is not necessarily extracted, and neither are printed
-     * skonto terms — which is why a fixture has to be measured against the API rather than
-     * chosen by reading it. This one prints "Bei Zahlung innerhalb von 14 Tagen werden 5 %
-     * Skonto gewährt" and a position table with a gift-card addon; **whether the backend
-     * returns both is still unverified.**
-     */
-    const val RA_SKONTO_ASSET = "Testrechnung-RA-Giftcard-Skonto.pdf"
-
-    /**
-     * Line items only — its skonto terms did not extract (build `13a5f54e`, which reached
-     * the digital invoice screen showing "1x Bettwäsche 2tg" with no skonto row). Kept as a
-     * documented fallback rather than deleted, so the measurement is not lost.
+     * Only the line items extract — build `13a5f54e` reached the digital invoice screen
+     * showing "1x Bettwäsche 2tg" with no skonto row, so `skontoDiscounts` came back empty.
+     * It is still the closest fixture the repository has to TC-013, which is why
+     * [net.gini.android.bank.sdk.exampleapp.ui.testcases.DigitalInvoiceSkontoTests] uses it,
+     * and why that class is excluded from every run rather than deleted.
      */
     const val RA_PAST_ASSET = "Testrechnung-RA-Skonto.pdf"
 

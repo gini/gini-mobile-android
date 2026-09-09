@@ -151,7 +151,7 @@ class SkontoScreenTests : SmokeJourneyTestBase() {
      *
      * So this asserts the two things that *are* true and stable: the extracted deadline
      * reaches the field, and the field opens its picker. Actually changing the date stays a
-     * manual step — recorded in COVERAGE.md.
+     * manual step.
      */
     @Test
     fun test4_expiryDateShowsExtractedDeadlineAndOpensPicker() {

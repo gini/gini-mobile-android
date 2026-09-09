@@ -17,7 +17,7 @@ set -e
 #   bs_run_group_import.sh         – Import / FileImportError / ErrorScreen / OpenWith
 #   bs_run_group_duedate.sh        – Due Date Hint / Schedule Payment bottom sheet
 #   bs_run_group_creditnote.sh     – Credit Note warning bottom sheet
-#   bs_run_group_smoke.sh          – the Xray smoke selection (see COVERAGE.md)
+#   bs_run_group_smoke.sh          – the Xray smoke selection (the release gate)
 #   bs_run_all_groups.sh           – builds+uploads ONCE, then triggers every shard
 #
 # BrowserStack credentials must be set via environment variables:

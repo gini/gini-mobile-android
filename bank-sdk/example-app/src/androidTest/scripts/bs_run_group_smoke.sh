@@ -5,22 +5,21 @@ set -e
 #
 # Unlike the six bs_run_group_*.sh shards, this is not a slice of the suite: it is the
 # selection that covers the manual smoke test set (TC-001…TC-026, Jira PP-3415…PP-3442).
-# The authoritative mapping lives in ../COVERAGE.md — every entry below is a row marked
-# `automated` there, and the two must be changed together. Adding a test here without a
-# COVERAGE.md row (or the reverse) is the one way this stops being usable as the gate.
+# The Xray test set is the authoritative mapping: every entry below covers a case marked
+# `automation-testing` there, and each test's KDoc names its TC id. Adding a test here that
+# maps to no case (or the reverse) is the one way this stops being usable as the gate.
 #
 # No camera injection: BrowserStack does not support it for Espresso (a build asking for it
 # is rejected with BROWSERSTACK_INVALID_PARAMETER), so on a device the camera photographs the
 # rack — and the SDK rejects those photos as not-a-document ("The document couldn't be
-# accepted"). Every capture-based case therefore stays manual (TC-002, TC-023) — see
-# ../COVERAGE.md.
+# accepted"). Every capture-based case therefore stays manual (TC-002, TC-023).
 #
 # DigitalInvoiceSkontoTests is deliberately NOT in this list. It is written and compiles,
-# but no fixture yields `lineItems` and `skontoDiscounts` in one analysis result — three
+# but no fixture yields `lineItems` and `skontoDiscounts` in one analysis result — both
 # candidates were measured, each gave one of the two (see SkontoFixtures). Running it would
 # add a guaranteed failure to the release gate, which is worse than an honest gap. Re-add it
-# the moment a document extracts both, or if the case moves to the mock. TC-013 is `manual`
-# in ../COVERAGE.md until then.
+# the moment a document extracts both, or if the case moves to the mock. TC-013 stays a
+# manual case in Xray until then.
 #
 # Every test in this list runs against the real API. The mock backend (UiTestMockBackend) is
 # now only used for the backend client-configuration FLAGS, by CreditNoteMockBackendTests,
@@ -29,7 +28,7 @@ set -e
 #
 # CaptureScreenTests is included even though every capture *case* is manual. It asserts only
 # the camera screen itself — the flash icon and its on/off state — which needs no valid photo,
-# and it passes on BrowserStack. It maps to no TC id; see "Camera screen" in ../COVERAGE.md.
+# and it passes on BrowserStack. It maps to no TC id of its own.
 #
 # Espresso `class` filters match EXACTLY, so a Class#method entry runs that method alone
 # and needs no test renaming. (The iOS suite has the opposite problem — XCUITest matches

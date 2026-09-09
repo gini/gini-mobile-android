@@ -12,10 +12,10 @@ import org.junit.Test
  * ## NOT RUN — excluded from every BrowserStack script
  *
  * This class compiles and its logic is finished, but it cannot pass: **no document yields
- * `lineItems` and `skontoDiscounts` in one analysis result.** Three candidates were measured
- * on real devices and each returned exactly one of the two — the table in [SkontoFixtures]
- * records which. Every document that produced line items produced no skonto, and vice versa,
- * even though all three print skonto terms.
+ * `lineItems` and `skontoDiscounts` in one analysis result.** Both candidates in the repository
+ * were measured on a real device and each returned exactly one of the two — the table in
+ * [SkontoFixtures] records which. The document that produced line items produced no skonto,
+ * and vice versa, even though both print skonto terms.
  *
  * It is therefore left out of `bs_run_group_smoke.sh` and `bs_run_all_groups.sh` rather than
  * deleted: a guaranteed failure in the release gate teaches the team to ignore the gate,
@@ -30,18 +30,17 @@ import org.junit.Test
  * 3. Backend confirms whether skonto extraction is suppressed once line items are
  *    detected — that single answer would explain all three measurements.
  *
- * TC-013 is `manual` in COVERAGE.md until then.
+ * TC-013 stays a manual case in Xray until then.
  *
  * ## Fixture
  *
- * [SkontoFixtures.RA_SKONTO_ASSET] — an invoice with a position table, a gift-card addon,
- * and printed terms "Bei Zahlung innerhalb von 14 Tagen werden 5 % Skonto gewährt". Its
- * KDoc records why the two earlier candidates were rejected: each extracted only one of the
- * two things this screen needs.
+ * [SkontoFixtures.RA_PAST_ASSET] — the repository's OTTO invoice, which prints both a
+ * position table and skonto terms. Its KDoc records the measurement: the line items
+ * extract, the skonto discount does not.
  *
  * ## Why the assertions do not assume the discount is claimable
  *
- * This fixture's invoice date is 05.08.2024, so its deadline passed long ago and
+ * This fixture's invoice date is 15.08.2024, so its deadline passed long ago and
  * `GetSkontoEdgeCaseUseCase` reports `SkontoExpired` — the row arrives with the toggle
  * **off**. TC-013 as written says "valid Sconto", and no committed real invoice can satisfy
  * that: a skonto window is only 7-14 days wide, so a real document stops being claimable a
@@ -51,7 +50,7 @@ import org.junit.Test
  * So these tests read the toggle's *initial* state and assert the direction of change that
  * state implies, rather than hard-coding "on". That covers the substance of the case — the
  * skonto row exists on the digital invoice screen, and both toggles move the total — and
- * leaves the claimable-discount variant to manual, which COVERAGE.md records.
+ * leaves the claimable-discount variant to manual QA.
  *
  * Everything here is View-based: the skonto row is an ordinary RecyclerView item
  * (`gbs_item_digital_invoice_skonto.xml`) addressed by view id, so unlike the standalone
@@ -67,8 +66,9 @@ class DigitalInvoiceSkontoTests : SmokeJourneyTestBase() {
     /**
      * Imports the fixture and steps through the Return Assistant's onboarding screen.
      *
-     * Whether this fixture yields `lineItems` **and** `skontoDiscounts` from the live backend
-     * is unverified — the two earlier candidates each yielded only one. The assertions below
+     * This fixture is known to yield `lineItems` without `skontoDiscounts`, so
+     * [test1_digitalInvoiceCarriesSkontoRow] fails on the skonto row by design until the
+     * blocker above clears — which is why the class is excluded. The assertions below
      * dump the visible text on failure, so a run separates "no line items" (the standalone
      * Skonto screen appears) from "no skonto" (the digital invoice screen appears without a
      * skonto row).
@@ -78,7 +78,7 @@ class DigitalInvoiceSkontoTests : SmokeJourneyTestBase() {
             returnAssistantEnabled = true,
             skontoEnabled = true
         )
-        importPdfAndAwaitAnalysis(SkontoFixtures.RA_SKONTO_ASSET)
+        importPdfAndAwaitAnalysis(SkontoFixtures.RA_PAST_ASSET)
         // The Return Assistant opens on its own onboarding screen first.
         digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
     }

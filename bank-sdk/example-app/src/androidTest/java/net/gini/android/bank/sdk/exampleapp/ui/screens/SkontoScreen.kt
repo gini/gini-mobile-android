@@ -211,8 +211,8 @@ class SkontoScreen {
      * There is deliberately no "pick a day" counterpart. `getSkontoSelectableDates` limits
      * the picker to now through six months out, while a fixture whose discount is still
      * claimable has to be dated years ahead — so no day in the month the picker opens on is
-     * selectable, and a tap on one silently does nothing. Changing the date is a manual
-     * step; see COVERAGE.md.
+     * selectable, and a tap on one silently does nothing. Changing the date stays a manual
+     * step.
      */
     fun openAndDismissDatePicker(): Boolean {
         val selectLabel = sdkString(net.gini.android.capture.R.string.gc_date_picker_select)
