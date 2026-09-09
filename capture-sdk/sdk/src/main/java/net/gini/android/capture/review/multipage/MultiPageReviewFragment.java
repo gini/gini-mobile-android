@@ -735,7 +735,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         }
 
         boolean uploadFailed = false;
-        for (final Boolean uploadSuccess : mDocumentUploadResults.values()) {
+        for (final boolean uploadSuccess : mDocumentUploadResults.values()) {
             if (!uploadSuccess) {
                 uploadFailed = true;
                 break;
