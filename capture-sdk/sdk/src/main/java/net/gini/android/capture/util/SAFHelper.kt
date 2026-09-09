@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -117,8 +118,9 @@ internal object SAFHelper {
         context: Context,
         folderUri: Uri,
         sourceUris: List<Uri>,
+        ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     ): Int = runBlocking {
-        withContext(Dispatchers.IO) {
+        withContext(ioDispatcher) {
             val pickedDir = DocumentFile.fromTreeUri(context, folderUri) ?: return@withContext 0
 
             val results = sourceUris.mapIndexed { suffixForFileName, uri ->
