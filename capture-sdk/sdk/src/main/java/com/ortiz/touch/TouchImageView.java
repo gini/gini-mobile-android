@@ -757,17 +757,10 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
         matrix.getValues(m);
         final float x = m[Matrix.MTRANS_X];
 
-        if (getImageWidth() < getWidth()) {
-            return false;
-
-        } else if (x >= -1 && direction < 0) {
-            return false;
-
-        } else if (Math.abs(x) + getWidth() + 1 >= getImageWidth() && direction > 0) {
-            return false;
-        }
-
-        return true;
+        final boolean imageFitsView = getImageWidth() < getWidth();
+        final boolean atLeftEdge = x >= -1 && direction < 0;
+        final boolean atRightEdge = Math.abs(x) + getWidth() + 1 >= getImageWidth() && direction > 0;
+        return !imageFitsView && !atLeftEdge && !atRightEdge;
     }
 
     /**
