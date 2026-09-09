@@ -173,12 +173,11 @@ public class Helpers {
         int yIndex = 0;
         int uvIndex = frameSize;
 
-        int a, R, G, B, Y, U, V;
+        int R, G, B, Y, U, V;
         int index = 0;
         for (int j = 0; j < height; j++) {
             for (int i = 0; i < width; i++) {
 
-                a = (argb[index] & 0xff000000) >> 24; // a is not used obviously
                 R = (argb[index] & 0xff0000) >> 16;
                 G = (argb[index] & 0xff00) >> 8;
                 B = (argb[index] & 0xff) >> 0;
