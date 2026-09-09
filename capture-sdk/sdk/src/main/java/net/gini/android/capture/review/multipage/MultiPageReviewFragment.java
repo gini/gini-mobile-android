@@ -817,26 +817,13 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
             observeViewTree();
         }
         showAlertIfOpenWithDocumentAndAppIsDefault(activity,
-                mMultiPageDocument, new FileImportHelper.ShowAlertCallback() {
-                    @Override
-                    public void showAlertDialog(@NonNull final String message,
-                                                @NonNull final String positiveButtonTitle,
-                                                @NonNull final DialogInterface.OnClickListener
-                                                        positiveButtonClickListener,
-                                                @Nullable final String negativeButtonTitle,
-                                                @Nullable final DialogInterface.OnClickListener
-                                                        negativeButtonClickListener,
-                                                @Nullable final DialogInterface.OnCancelListener cancelListener) {
-                        MultiPageReviewFragment.this.showAlertDialog(message, positiveButtonTitle,
-                                positiveButtonClickListener,
-                                negativeButtonTitle, negativeButtonClickListener, cancelListener);
-                    }
+                mMultiPageDocument, (message, positiveButtonTitle, positiveButtonClickListener, negativeButtonTitle, negativeButtonClickListener, cancelListener) -> {
+                    MultiPageReviewFragment.this.showAlertDialog(message, positiveButtonTitle,
+                            positiveButtonClickListener,
+                            negativeButtonTitle, negativeButtonClickListener, cancelListener);
                 })
-                .thenRun(new Runnable() {
-                    @Override
-                    public void run() {
-                        uploadDocuments();
-                    }
+                .thenRun(() -> {
+                    uploadDocuments();
                 });
     }
 
