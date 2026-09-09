@@ -4713,8 +4713,7 @@ public final class net/gini/android/capture/ui/components/textinput/amount/Decim
 
 public final class net/gini/android/capture/ui/components/textinput/amount/DecimalInputVisualTransformation$CustomOffsetMapping : androidx/compose/ui/text/input/OffsetMapping {
 	public static final field $stable I
-	public fun <init> (Ljava/text/DecimalFormatSymbols;Ljava/lang/String;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/text/DecimalFormatSymbols;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 	public fun originalToTransformed (I)I
 	public fun transformedToOriginal (I)I
 }
