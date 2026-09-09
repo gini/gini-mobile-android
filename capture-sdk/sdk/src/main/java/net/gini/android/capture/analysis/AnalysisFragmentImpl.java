@@ -233,7 +233,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
      * @param folderUri The folder URI to check.
      * @return True if the URI is valid and write permission is granted.
      */
-    private Boolean haveSavePermission(String folderUri) {
+    private boolean haveSavePermission(String folderUri) {
         return folderUri != null && !folderUri.isEmpty() &&
                 SAFHelper.INSTANCE.hasWritePermission(
                         Objects.requireNonNull(mFragment.getActivity()), Uri.parse(folderUri));
@@ -267,7 +267,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
                 SAF_STORAGE_URI_KEY,
                 Objects.requireNonNull(mFragment.getActivity()));
 
-        Boolean haveSavePermission = haveSavePermission(folderUri);
+        final boolean haveSavePermission = haveSavePermission(folderUri);
         if (haveSavePermission)
             saveInvoices(folderUri);
         else {
