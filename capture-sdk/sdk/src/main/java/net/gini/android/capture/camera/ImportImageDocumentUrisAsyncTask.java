@@ -2,7 +2,6 @@ package net.gini.android.capture.camera;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.Document;
