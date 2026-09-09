@@ -61,10 +61,9 @@ public class AlertDialogFragment extends DialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().getAllowScreenshots()) {
-            if (getDialog() != null && getDialog().getWindow() != null) {
-                WindowExtensionsKt.disallowScreenshots(getDialog().getWindow());
-            }
+        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().getAllowScreenshots()
+                && getDialog() != null && getDialog().getWindow() != null) {
+            WindowExtensionsKt.disallowScreenshots(getDialog().getWindow());
         }
     }
 
