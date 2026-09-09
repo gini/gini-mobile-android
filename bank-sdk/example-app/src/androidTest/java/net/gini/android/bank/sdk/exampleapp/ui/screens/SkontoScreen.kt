@@ -123,18 +123,15 @@ class SkontoScreen {
     // region amounts
 
     /**
-     * The footer's total as a number.
+     * Reads the footer total, once it has stopped moving, as a number.
      *
-     * Returned as [BigDecimal] rather than [String] because the tests compare totals
-     * before and after a toggle — and "1.234,56 €" vs "1.334,56 €" is not an ordering.
-     */
-    /**
-     * Reads the footer total once it has stopped moving.
+     * `FooterSection` animates the total through `animateFloatAsState` and formats the text
+     * from the animating value, so a single read lands on an in-flight frame and compares the
+     * wrong number. This polls until two consecutive reads agree, which is what makes the
+     * before/after comparisons in the tests meaningful.
      *
-     * `FooterSection` animates the total through `animateFloatAsState`, and the text is
-     * formatted from the animating value — so a single read lands on an in-flight frame and
-     * compares the wrong number. This polls until two consecutive reads agree, which is
-     * what makes the before/after comparisons in the tests meaningful.
+     * Returned as [BigDecimal] rather than [String] because those comparisons need an
+     * ordering, and "1.234,56 €" against "1.334,56 €" is not one.
      */
     fun readFooterTotal(): BigDecimal {
         var previous = AmountText.parse(requireTagged(FOOTER_TOTAL).text)
@@ -203,18 +200,11 @@ class SkontoScreen {
     }
 
     /**
-     * Opens the expiry-date picker and selects [dayOfMonth] in the month it opens on.
+     * Opens the expiry-date picker, confirms it appeared, and dismisses it again.
      *
      * The dialog is `GiniDatePickerDialog` — a Material 3 `DatePicker` in its own Compose
-     * root, so its nodes carry no test tags: the day cell is matched by its number and the
-     * confirm button by the SDK's own `gc_date_picker_select` string.
-     *
-     * [dayOfMonth] must be selectable: `getSkontoSelectableDates` in `SkontoScreenContent`
-     * restricts the picker to today through six months out, so callers pass a day at or
-     * after the one already selected.
-     */
-    /**
-     * Opens the expiry-date picker, confirms it appeared, and dismisses it again.
+     * root — so its nodes carry no test tags and are matched by the SDK's own
+     * `gc_date_picker_select` and `gc_date_picker_cancel` strings.
      *
      * Returns whether it opened, so a test can assert on it.
      *
@@ -330,10 +320,14 @@ class SkontoScreen {
         const val DEFAULT_TIMEOUT = 5_000L
 
         /**
-         * The Skonto suite is mock-backed, so analysis returns immediately and the screen
-         * only has to compose. Deliberately not the 30s a real round trip needed: six tests
-         * each burning 30s before failing is what starved a BrowserStack session and left
-         * most of the class unreported.
+         * How long to wait for the Skonto screen's own composition, *not* for the analysis
+         * that precedes it — `SkontoScreenTests` runs against the real API and does its
+         * waiting through `SmokeJourneyTestBase.idlingTimeoutMs`, so by the time these
+         * lookups run the navigation has already happened.
+         *
+         * Deliberately not the 30s an earlier revision used: six tests each burning 30s
+         * before failing is what starved a BrowserStack session and left most of the class
+         * unreported.
          */
         const val SCREEN_TIMEOUT = 10_000L
 

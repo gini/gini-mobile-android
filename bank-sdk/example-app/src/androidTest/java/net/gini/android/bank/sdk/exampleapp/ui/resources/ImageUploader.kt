@@ -6,11 +6,11 @@ import android.os.Environment
 import android.os.SystemClock
 import android.provider.MediaStore
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiScrollable
-import androidx.test.uiautomator.By
-import java.util.regex.Pattern
 import androidx.test.uiautomator.UiSelector
+import java.util.regex.Pattern
 
 
 class ImageUploader {
@@ -196,20 +196,6 @@ class ImageUploader {
     }
 
     /**
-     * Selects [count] different photos in the open system picker.
-     *
-     * Clicks by **coordinate**, not by node. Two reasons, both learned the hard way
-     * elsewhere in this suite: a `UiObject2` goes stale as soon as the tap rebinds the grid,
-     * and a selected tile's content description changes (it gains a "selected" prefix), so
-     * an `.instance(n)` selector would renumber itself mid-loop and re-tap tiles it had
-     * already chosen. Bounds captured up front are immune to both.
-     *
-     * Only tiles currently on screen can be selected — the grid is not scrolled. If the
-     * picker shows fewer than [count], the failure says how many it found rather than
-     * silently selecting too few, which would make the caller's assertion wrong for the
-     * wrong reason.
-     */
-    /**
      * What the picker did when asked for more photos than it allows.
      *
      * @param accepted how many it ended up with, read from its own confirm label.
@@ -270,6 +256,25 @@ class ImageUploader {
         return device.findObject(
             UiSelector().textMatches("(?i).*(up to|only|maximum|max\\.?|bis zu).*10.*")
         ).exists()
+    }
+
+    /**
+     * Closes the system picker if it is still open.
+     *
+     * The picker is a separate activity, so a test that leaves it in front hands the next
+     * test a foreground that is not the app — which is how this suite produced a
+     * `NoActivityResumedException` from an Espresso call that looked unrelated. Every test
+     * that opens the picker without confirming a selection has to close it again.
+     *
+     * A no-op when no picker is showing, and capped at two back presses so it can never walk
+     * out of the app itself.
+     */
+    fun dismissPicker() {
+        repeat(MAX_DISMISS_PRESSES) {
+            if (photoTileBounds().isEmpty()) return
+            device.pressBack()
+            device.waitForIdle()
+        }
     }
 
     /** The number in the confirm button's label ("Add (10)" -> 10), or null if unreadable. */
@@ -356,5 +361,8 @@ class ImageUploader {
         private const val TILE_TIMEOUT = 5_000L
         private const val CONFIRM_TIMEOUT = 3_000L
         private const val POLL_INTERVAL = 250L
+
+        /** Back presses allowed when closing the picker — never enough to leave the app. */
+        private const val MAX_DISMISS_PRESSES = 2
     }
 }

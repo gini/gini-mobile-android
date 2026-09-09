@@ -12,14 +12,14 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiCollection
-import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.UiDevice
-import androidx.test.uiautomator.Until
+import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.UiSelector
-import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.`is`
+import androidx.test.uiautomator.Until
 import net.gini.android.bank.sdk.exampleapp.ui.resources.AmountText
 import net.gini.android.bank.sdk.exampleapp.ui.resources.AppResources
+import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.`is`
 
 
 class DigitalInvoiceScreen {

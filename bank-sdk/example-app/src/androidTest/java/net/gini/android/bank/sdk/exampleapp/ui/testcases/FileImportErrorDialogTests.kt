@@ -96,6 +96,11 @@ class FileImportErrorDialogTests {
         captureScreen.clickPhotos()
 
         val selection = imageUploader.selectPhotosFromPicker(ATTEMPTED_PICTURES)
+        // Closed before asserting, not after: the picker is a separate activity, and leaving
+        // it in front would hand the next test a foreground that is not the app. Both facts
+        // this test needs are already captured in `selection`, so dismissing first costs
+        // nothing and also covers the path where an assertion below fails.
+        imageUploader.dismissPicker()
 
         assertEquals(
             "Tapped $ATTEMPTED_PICTURES photos and expected the picker to stop at " +
