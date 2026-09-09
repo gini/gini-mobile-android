@@ -450,9 +450,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
                 injectedViewAdapter.setNavButtonType(NavButtonType.CLOSE);
                 injectedViewAdapter.setTitle(mFragment.getActivity().getResources().getString(R.string.gc_title_analysis));
 
-                injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> {
-                    onBack();
-                }));
+                injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> onBack()));
             }));
         }
     }
