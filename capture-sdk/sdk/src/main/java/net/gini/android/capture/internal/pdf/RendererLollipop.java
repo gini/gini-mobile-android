@@ -153,14 +153,14 @@ class RendererLollipop implements Renderer {
             // height of the pdf page
             // to the preview and resize the width according to the pdf page's aspect ratio
             final int height = newPreviewSize.height;
-            final int width = (int) ((float) height * pageRatio);
+            final int width = (int) (height * pageRatio);
             return new Size(width, height);
         } else {
             // The PDF page is wider than tall, or at least more so than the preview => fit the
             // width of the pdf page
             // to the preview and resize the height according to the pdf page's aspect ratio
             final int width = newPreviewSize.width;
-            final int height = (int) ((float) width / pageRatio);
+            final int height = (int) (width / pageRatio);
             return new Size(width, height);
         }
     }
