@@ -1177,7 +1177,7 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
                 minY = maxY = startY;
             }
 
-            scroller.fling(startX, startY, (int) velocityX, (int) velocityY, minX,
+            scroller.fling(startX, startY, velocityX, velocityY, minX,
                     maxX, minY, maxY);
             currX = startX;
             currY = startY;
