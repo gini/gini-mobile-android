@@ -1617,13 +1617,14 @@ public class net/gini/android/capture/document/ImageMultiPageDocument : net/gini
 	public fun <init> (Lnet/gini/android/capture/Document$Source;Lnet/gini/android/capture/Document$ImportMethod;)V
 	public fun <init> (Lnet/gini/android/capture/document/ImageDocument;)V
 	public fun describeContents ()I
-	public fun writeToParcel (Landroid/os/Parcel;I)V
 }
 
 public class net/gini/android/capture/document/PdfDocument : net/gini/android/capture/document/GiniCaptureDocument {
 	public static final field CREATOR Landroid/os/Parcelable$Creator;
 	public fun describeContents ()I
+	public fun equals (Ljava/lang/Object;)Z
 	public fun getFilename ()Ljava/lang/String;
+	public fun hashCode ()I
 	public fun loadFilename (Landroid/content/Context;)V
 	public fun writeToParcel (Landroid/os/Parcel;I)V
 }
@@ -1633,7 +1634,6 @@ public class net/gini/android/capture/document/PdfMultiPageDocument : net/gini/a
 	public fun <init> (Lnet/gini/android/capture/Document$Source;Lnet/gini/android/capture/Document$ImportMethod;)V
 	public fun <init> (Lnet/gini/android/capture/document/PdfDocument;)V
 	public fun describeContents ()I
-	public fun writeToParcel (Landroid/os/Parcel;I)V
 }
 
 public final class net/gini/android/capture/document/QRCodeDocument : net/gini/android/capture/document/GiniCaptureDocument {
@@ -1650,7 +1650,6 @@ public class net/gini/android/capture/document/QRCodeMultiPageDocument : net/gin
 	public fun <init> (Lnet/gini/android/capture/Document$Source;Lnet/gini/android/capture/Document$ImportMethod;)V
 	public fun <init> (Lnet/gini/android/capture/document/QRCodeDocument;)V
 	public fun describeContents ()I
-	public fun writeToParcel (Landroid/os/Parcel;I)V
 }
 
 public final class net/gini/android/capture/document/XmlDocument : net/gini/android/capture/document/GiniCaptureDocument {
@@ -1874,7 +1873,7 @@ public final class net/gini/android/capture/help/PhotoTipsHelpFragment$Companion
 }
 
 public class net/gini/android/capture/help/SupportedFormatsAdapter : androidx/recyclerview/widget/RecyclerView$Adapter {
-	public fun <init> (Ljava/lang/Boolean;)V
+	public fun <init> (Z)V
 	public fun getItemCount ()I
 	public fun getItemViewType (I)I
 	public synthetic fun onBindViewHolder (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;I)V
@@ -2925,12 +2924,12 @@ public final class net/gini/android/capture/internal/util/ApplicationHelper {
 public final class net/gini/android/capture/internal/util/BundleHelperKt {
 	public static final fun fromMap (Ljava/util/Map;)Landroid/os/Bundle;
 	public static final fun fromMapList (Ljava/util/List;)Ljava/util/List;
-	public static final fun toMap (Landroid/os/Bundle;)Ljava/util/Map;
-	public static final fun toMap (Landroid/os/Bundle;Ljava/lang/ClassLoader;)Ljava/util/Map;
-	public static synthetic fun toMap$default (Landroid/os/Bundle;Ljava/lang/ClassLoader;ILjava/lang/Object;)Ljava/util/Map;
-	public static final fun toMapList (Ljava/util/List;)Ljava/util/List;
-	public static final fun toMapList (Ljava/util/List;Ljava/lang/ClassLoader;)Ljava/util/List;
-	public static synthetic fun toMapList$default (Ljava/util/List;Ljava/lang/ClassLoader;ILjava/lang/Object;)Ljava/util/List;
+	public static final fun toMap (Landroid/os/Bundle;Ljava/lang/Class;)Ljava/util/Map;
+	public static final fun toMap (Landroid/os/Bundle;Ljava/lang/Class;Ljava/lang/ClassLoader;)Ljava/util/Map;
+	public static synthetic fun toMap$default (Landroid/os/Bundle;Ljava/lang/Class;Ljava/lang/ClassLoader;ILjava/lang/Object;)Ljava/util/Map;
+	public static final fun toMapList (Ljava/util/List;Ljava/lang/Class;)Ljava/util/List;
+	public static final fun toMapList (Ljava/util/List;Ljava/lang/Class;Ljava/lang/ClassLoader;)Ljava/util/List;
+	public static synthetic fun toMapList$default (Ljava/util/List;Ljava/lang/Class;Ljava/lang/ClassLoader;ILjava/lang/Object;)Ljava/util/List;
 }
 
 public abstract interface class net/gini/android/capture/internal/util/CancelListener {

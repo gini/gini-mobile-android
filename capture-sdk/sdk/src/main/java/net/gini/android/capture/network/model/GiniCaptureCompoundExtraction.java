@@ -51,7 +51,8 @@ public class GiniCaptureCompoundExtraction implements Parcelable {
         mName = in.readString();
         final List<Bundle> bundleList = new ArrayList<>();
         in.readTypedList(bundleList, Bundle.CREATOR);
-        mSpecificExtractionMaps = toMapList(bundleList, getClass().getClassLoader());
+        mSpecificExtractionMaps = toMapList(bundleList, GiniCaptureSpecificExtraction.class,
+                getClass().getClassLoader());
     }
 
     @Override

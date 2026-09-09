@@ -2,6 +2,7 @@ package net.gini.android.capture.internal.util
 
 import android.os.Bundle
 import android.os.Parcelable
+import androidx.core.os.BundleCompat
 import java.util.*
 
 /**
@@ -19,17 +20,24 @@ fun <V : Parcelable> fromMap(map: Map<String, V>): Bundle = Bundle().apply {
 fun <V : Parcelable> fromMapList(mapList: List<Map<String, V>>): List<Bundle> = mapList.map { fromMap(it) }
 
 @JvmOverloads
-fun <V : Parcelable> toMap(bundle: Bundle, classLoader: ClassLoader? = null): Map<String, V> = HashMap<String, V>().apply {
+fun <V : Parcelable> toMap(
+    bundle: Bundle,
+    valueClass: Class<V>,
+    classLoader: ClassLoader? = null
+): Map<String, V> = HashMap<String, V>().apply {
     if (classLoader != null) {
         bundle.classLoader = classLoader
     }
     for (key in bundle.keySet()) {
-        bundle.getParcelable<V>(key)?.let { parcelable ->
+        BundleCompat.getParcelable(bundle, key, valueClass)?.let { parcelable ->
             put(key, parcelable)
         }
     }
 }
 
 @JvmOverloads
-fun <V : Parcelable> toMapList(bundleList: List<Bundle>,
-                               classLoader: ClassLoader? = null): List<Map<String, V>> = bundleList.map { toMap<V>(it, classLoader) }
+fun <V : Parcelable> toMapList(
+    bundleList: List<Bundle>,
+    valueClass: Class<V>,
+    classLoader: ClassLoader? = null
+): List<Map<String, V>> = bundleList.map { toMap(it, valueClass, classLoader) }
