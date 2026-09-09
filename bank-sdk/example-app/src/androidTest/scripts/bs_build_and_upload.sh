@@ -17,7 +17,8 @@ set -e
 #   bs_run_group_import.sh         – Import / FileImportError / ErrorScreen / OpenWith
 #   bs_run_group_duedate.sh        – Due Date Hint / Schedule Payment bottom sheet
 #   bs_run_group_creditnote.sh     – Credit Note warning bottom sheet
-#   bs_run_all_groups.sh           – builds+uploads ONCE, then triggers all six shards
+#   bs_run_group_smoke.sh          – the Xray smoke selection (see COVERAGE.md)
+#   bs_run_all_groups.sh           – builds+uploads ONCE, then triggers every shard
 #
 # BrowserStack credentials must be set via environment variables:
 #   export BS_USER="your_username"
@@ -51,8 +52,16 @@ TEST_APK="$APK_DIR/androidTest/$FLAVOR/$BUILD_TYPE/example-app-dev-exampleApp-de
 
 # Media files live in the androidTest assets (single source of truth — the test APK
 # copies them onto the device itself for local runs; this script uploads the same files
-# to BrowserStack's device storage). camera_injection_image.jpeg is deliberately NOT the
-# same file as test_image.jpeg — it is the image BrowserStack injects into the camera.
+# to BrowserStack's device storage).
+#
+# camera_injection_image.jpeg is NOT injected into the camera, despite its name.
+# BrowserStack does not support camera image injection for Espresso at all — a build
+# requesting it is rejected with:
+#   [BROWSERSTACK_INVALID_PARAMETER] Currently, we do not support image injection feature
+#   with this framework.
+# (Injection is an Appium/XCUITest feature.) The file is uploaded as ordinary device media
+# like the other two. On a BrowserStack device the camera therefore photographs the device
+# rack, so a test may capture pages but must never assert on what the photo contains.
 TEST_ASSETS="$SCRIPT_DIR/../assets"
 TEST_IMAGE="$TEST_ASSETS/camera_injection_image.jpeg"
 TEST_PDF="$TEST_ASSETS/Testrechnung-RA-1.pdf"

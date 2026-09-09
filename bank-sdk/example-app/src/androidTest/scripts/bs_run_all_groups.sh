@@ -1,10 +1,19 @@
 #!/bin/bash
 set -e
 #
-# Runs the ENTIRE UI suite as 6 sharded BrowserStack builds — but builds the APKs and
-# uploads them (and the media) only ONCE, then triggers all six builds reusing those
-# artifacts. Much faster than running the six group scripts separately (which would
+# Runs the ENTIRE UI suite as sharded BrowserStack builds — but builds the APKs and
+# uploads them (and the media) only ONCE, then triggers every build reusing those
+# artifacts. Much faster than running the group scripts separately (which would
 # rebuild + re-upload each time).
+#
+# The shard list below is the whole suite: every test class appears in exactly one shard.
+# When you add a test class, add it to a shard here too, or `all_groups` silently stops
+# meaning "everything". `ls ../java/net/gini/android/bank/sdk/exampleapp/ui/testcases/`
+# against the run_group calls below is the check.
+#
+# bs_run_group_smoke.sh is NOT one of these shards and is deliberately not triggered here:
+# it is a curated cross-cutting selection (see ../COVERAGE.md) that overlaps several
+# shards, so running it alongside them would execute those tests twice.
 #
 # PACING: each shard reserves one session per device, so this script asks for (shards x
 # devices) parallel sessions at once — more than most plans allow. When the plan cannot
@@ -42,11 +51,14 @@ if [ -z "$APP_URL" ] || [ -z "$TEST_URL" ]; then
 fi
 
 # ── Step B: trigger each shard, reusing the uploaded artifacts ───────────────────
-# Group name -> class list. Together these cover all 16 UI test classes, no overlap.
+# Group name -> class list. Together these cover every UI test class, no overlap.
 FAILED_SHARDS=()
+
+SHARD_NAMES=()
 
 run_group() {
   local name="$1"; shift
+  SHARD_NAMES+=("$name")
   echo ""
   echo "=== Triggering shard: $name ==="
   # Run it as an `if` condition so errexit does not apply to it. Without this, `set -e`
@@ -78,8 +90,13 @@ run_group "creditnote" \
   CreditNoteWarningTests \
   CreditNoteMockBackendTests
 
+# DigitalInvoiceSkontoTests is left out on purpose — see bs_run_group_smoke.sh's header.
+run_group "smokejourneys" \
+  SmokeJourneyTests \
+  SkontoScreenTests
+
 echo ""
-echo "=== All 6 shards triggered. Check the BrowserStack dashboard for the 6 builds. ==="
+echo "=== All ${#SHARD_NAMES[@]} shards triggered. Check the BrowserStack dashboard. ==="
 
 if [ ${#FAILED_SHARDS[@]} -gt 0 ]; then
   echo ""
