@@ -204,9 +204,8 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     }
 
     private void setCameraFragmentResultListener() {
-        getParentFragmentManager().setFragmentResultListener(CameraFragment.REQUEST_KEY, getViewLifecycleOwner(), (requestKey, result) -> {
-            mShouldScrollToLastPage = result.getBoolean(CameraFragment.RESULT_KEY_SHOULD_SCROLL_TO_LAST_PAGE);
-        });
+        getParentFragmentManager().setFragmentResultListener(CameraFragment.REQUEST_KEY, getViewLifecycleOwner(),
+                (requestKey, result) -> mShouldScrollToLastPage = result.getBoolean(CameraFragment.RESULT_KEY_SHOULD_SCROLL_TO_LAST_PAGE));
     }
 
     @Override
