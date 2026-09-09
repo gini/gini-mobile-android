@@ -19,7 +19,6 @@ import org.slf4j.helpers.NOPLogger;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -52,14 +51,15 @@ public class QRCodeDetectorTaskMLKit implements QRCodeDetectorTask {
     @NonNull
     @Override
     public List<String> detect(@NonNull final Image image, @NonNull final Size imageSize,
-                               final int rotation) throws Exception {
+                               final int rotation) throws ExecutionException, InterruptedException {
         final InputImage inputImage = InputImage.fromMediaImage(image, rotation);
         return doDetection(inputImage);
     }
 
     @NonNull
     @Override
-    public List<String> detect(@NonNull byte[] image, @NonNull Size imageSize, int rotation) throws Exception {
+    public List<String> detect(@NonNull byte[] image, @NonNull Size imageSize, int rotation)
+            throws ExecutionException, InterruptedException {
         // Reduce width and height by 1 to pass this check in the InputImage constructor: byteBuffer.limit() > width * height
         final InputImage inputImage = InputImage.fromByteArray(image,
                 imageSize.width - 1, imageSize.height - 1, rotation, InputImage.IMAGE_FORMAT_NV21);
@@ -76,31 +76,20 @@ public class QRCodeDetectorTaskMLKit implements QRCodeDetectorTask {
         mBarcodeScanner.close();
     }
 
-    private List<String> doDetection(@NonNull final InputImage inputImage) throws Exception {
-            final Task<List<Barcode>> processingTask = mBarcodeScanner.process(inputImage);
-
-            try {
-                if (DEBUG) {
-                    LOG.debug("Processing started");
-                }
-                final List<Barcode> barcodes = Tasks.await(processingTask);
-                if (DEBUG) {
-                    LOG.debug("Processing finished");
-                }
-                if (barcodes.size() > 0 && DEBUG) {
-                    LOG.debug("Detected QRCodes:\n{}", barcodesToString(barcodes));
-                }
-                return barcodesToStrings(barcodes);
-            } catch (ExecutionException | InterruptedException e) {
-                LOG.error("QRCode detection failed", e);
-                throw e;
-            } catch (CancellationException e) {
-                LOG.error("QRCode detection cancelled");
-                throw e;
-            } catch (Exception e) {
-                LOG.error("QRCode detection failed with unknown exception" ,e);
-                throw e;
-            }
+    private List<String> doDetection(@NonNull final InputImage inputImage)
+            throws ExecutionException, InterruptedException {
+        final Task<List<Barcode>> processingTask = mBarcodeScanner.process(inputImage);
+        if (DEBUG) {
+            LOG.debug("Processing started");
+        }
+        final List<Barcode> barcodes = Tasks.await(processingTask);
+        if (DEBUG) {
+            LOG.debug("Processing finished");
+        }
+        if (barcodes.size() > 0 && DEBUG) {
+            LOG.debug("Detected QRCodes:\n{}", barcodesToString(barcodes));
+        }
+        return barcodesToStrings(barcodes);
     }
 
     private List<String> barcodesToStrings(final List<Barcode> barcodes) {
