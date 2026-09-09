@@ -359,7 +359,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         try {
             extension.getAttachDocToTransactionDialogProvider().update(remoteAnalyzedDocument);
         } catch (Exception ignored) {
-
+            // The provider is only available when the SDK is used through the Bank SDK
         }
     }
 
