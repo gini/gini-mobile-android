@@ -116,6 +116,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -1142,12 +1143,9 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             if (mUserAnalyticsEventTracker != null) {
                 mUserAnalyticsEventTracker.trackEvent(
                         UserAnalyticsEvent.CAPTURE_TAPPED,
-                        new HashSet<UserAnalyticsEventProperty>() {
-                            {
-                                add(new UserAnalyticsEventProperty.Screen(screenName));
-                                add(new UserAnalyticsEventProperty.IbanDetectionLayerVisible(isIbanDetectedOnceForUserAnalytics));
-                            }
-                        }
+                        new HashSet<>(Arrays.asList(
+                                new UserAnalyticsEventProperty.Screen(screenName),
+                                new UserAnalyticsEventProperty.IbanDetectionLayerVisible(isIbanDetectedOnceForUserAnalytics)))
                 );
             }
             onCameraTriggerClicked();
@@ -1157,12 +1155,9 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             if (mUserAnalyticsEventTracker != null) {
                 mUserAnalyticsEventTracker.trackEvent(
                         UserAnalyticsEvent.FLASH_TAPPED,
-                        new HashSet<UserAnalyticsEventProperty>() {
-                            {
-                                add(new UserAnalyticsEventProperty.Screen(screenName));
-                                add(new UserAnalyticsEventProperty.FlashActive(mCameraController.isFlashEnabled()));
-                            }
-                        }
+                        new HashSet<>(Arrays.asList(
+                                new UserAnalyticsEventProperty.Screen(screenName),
+                                new UserAnalyticsEventProperty.FlashActive(mCameraController.isFlashEnabled())))
                 );
             }
             mIsFlashEnabled = !mCameraController.isFlashEnabled();
@@ -1172,11 +1167,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         ClickListenerExtKt.setIntervalClickListener(mButtonImportDocument, v -> {
             if (mUserAnalyticsEventTracker != null) {
                 mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.IMPORT_FILES_TAPPED,
-                        new HashSet<UserAnalyticsEventProperty>() {
-                            {
-                                add(new UserAnalyticsEventProperty.Screen(screenName));
-                            }
-                        });
+                        new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
             }
             showFileChooser();
         });
@@ -1185,12 +1176,9 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             if (mUserAnalyticsEventTracker != null) {
                 mUserAnalyticsEventTracker.trackEvent(
                         UserAnalyticsEvent.MULTIPLE_PAGES_CAPTURED_TAPPED,
-                        new HashSet<UserAnalyticsEventProperty>() {
-                            {
-                                add(new UserAnalyticsEventProperty.Screen(screenName));
-                                add(new UserAnalyticsEventProperty.DocumentPageNumber(mMultiPageDocument.getDocuments().size()));
-                            }
-                        }
+                        new HashSet<>(Arrays.asList(
+                                new UserAnalyticsEventProperty.Screen(screenName),
+                                new UserAnalyticsEventProperty.DocumentPageNumber(mMultiPageDocument.getDocuments().size())))
                 );
             }
             onBackPressed();
@@ -1257,12 +1245,9 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             if (mUserAnalyticsEventTracker != null) {
                 mUserAnalyticsEventTracker.trackEvent(
                         UserAnalyticsEvent.QR_CODE_SCANNED,
-                        new HashSet<UserAnalyticsEventProperty>() {
-                            {
-                                add(new UserAnalyticsEventProperty.Screen(screenName));
-                                add(new UserAnalyticsEventProperty.QrCodeValid(validQRCode));
-                            }
-                        }
+                        new HashSet<>(Arrays.asList(
+                                new UserAnalyticsEventProperty.Screen(screenName),
+                                new UserAnalyticsEventProperty.QrCodeValid(validQRCode)))
                 );
             }
             shouldSendUserAnalyticsTrackerForQrCodes = false;
@@ -1735,12 +1720,9 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         if (mUserAnalyticsEventTracker != null) {
             mUserAnalyticsEventTracker.trackEvent(
                     UserAnalyticsEvent.ERROR_DIALOG_SHOWN,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                            add(new UserAnalyticsEventProperty.ErrorMessage(errorMessage));
-                        }
-                    }
+                    new HashSet<>(Arrays.asList(
+                            new UserAnalyticsEventProperty.Screen(screenName),
+                            new UserAnalyticsEventProperty.ErrorMessage(errorMessage)))
             );
         }
         final Activity activity = mFragment.getActivity();
@@ -2268,11 +2250,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private void trackCameraScreenCloseTappedEventIfNeeded() {
         if ((mLayoutNoPermission == null || mLayoutNoPermission.getVisibility() != View.VISIBLE) && mUserAnalyticsEventTracker != null) {
             mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                        }
-                    });
+                    new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
         }
 
     }
@@ -2280,22 +2258,14 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private void trackCameraScreenShownEvent() {
         if (mUserAnalyticsEventTracker != null) {
             mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                        }
-                    });
+                    new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
         }
     }
 
     private void trackCameraScreenHelpTappedIfNeeded() {
         if ((mLayoutNoPermission == null || mLayoutNoPermission.getVisibility() != View.VISIBLE) && mUserAnalyticsEventTracker != null)
             mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.HELP_TAPPED,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                        }
-                    });
+                    new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
 
     }
 
@@ -2303,11 +2273,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         if (mUserAnalyticsEventTracker != null) {
             mUserAnalyticsEventTracker.trackEvent(
                     UserAnalyticsEvent.SCREEN_SHOWN,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(sScreenNamePermission));
-                        }
-                    }
+                    new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(sScreenNamePermission)))
             );
         }
     }
@@ -2315,33 +2281,21 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private void trackCameraAccessPermissionRequiredGetAccessClickedEvent() {
         if (mUserAnalyticsEventTracker != null) {
             mUserAnalyticsEventTracker.trackEvent(
-                    UserAnalyticsEvent.GIVE_ACCESS_TAPPED, new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(sScreenNamePermission));
-                        }
-                    });
+                    UserAnalyticsEvent.GIVE_ACCESS_TAPPED, new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(sScreenNamePermission))));
         }
     }
 
     private void trackCameraAccessPermissionRequiredHelpClickedEventIfNeeded() {
         if (mLayoutNoPermission != null && mLayoutNoPermission.getVisibility() == View.VISIBLE && mUserAnalyticsEventTracker != null)
             mUserAnalyticsEventTracker.trackEvent(
-                    UserAnalyticsEvent.HELP_TAPPED, new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(sScreenNamePermission));
-                        }
-                    });
+                    UserAnalyticsEvent.HELP_TAPPED, new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(sScreenNamePermission))));
 
     }
 
     private void trackCameraAccessPermissionRequiredCloseClickedEventIfNeeded() {
         if (mLayoutNoPermission != null && mLayoutNoPermission.getVisibility() == View.VISIBLE && mUserAnalyticsEventTracker != null)
             mUserAnalyticsEventTracker.trackEvent(
-                    UserAnalyticsEvent.CLOSE_TAPPED, new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(sScreenNamePermission));
-                        }
-                    });
+                    UserAnalyticsEvent.CLOSE_TAPPED, new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(sScreenNamePermission))));
 
     }
 
