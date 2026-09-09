@@ -137,7 +137,7 @@ public class ZoomInPreviewFragment extends Fragment {
 
                         @Override
                         public void onError(final Exception exception) {
-                            //showPreviewError(context);
+                            // Preview errors are not surfaced on the zoom screen
                         }
 
                         @Override
