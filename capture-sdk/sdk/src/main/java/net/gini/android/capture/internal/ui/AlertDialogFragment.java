@@ -98,26 +98,20 @@ public class AlertDialogFragment extends DialogFragment {
             builder.setMessage(mMessage);
         }
         if (mPositiveButtonTitle != 0) {
-            builder.setPositiveButton(mPositiveButtonTitle, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(final DialogInterface dialog, final int which) {
-                    final FragmentActivity activity = getActivity();
-                    if (activity instanceof AlertDialogFragmentListener) {
-                        ((AlertDialogFragmentListener) activity).onPositiveButtonClicked(
-                                dialog, mDialogId);
-                    }
+            builder.setPositiveButton(mPositiveButtonTitle, (dialog, which) -> {
+                final FragmentActivity activity = getActivity();
+                if (activity instanceof AlertDialogFragmentListener) {
+                    ((AlertDialogFragmentListener) activity).onPositiveButtonClicked(
+                            dialog, mDialogId);
                 }
             });
         }
         if (mNegativeButtonTitle != 0) {
-            builder.setNegativeButton(mNegativeButtonTitle, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(final DialogInterface dialog, final int which) {
-                    final FragmentActivity activity = getActivity();
-                    if (activity instanceof AlertDialogFragmentListener) {
-                        ((AlertDialogFragmentListener) activity).onNegativeButtonClicked(dialog,
-                                mDialogId);
-                    }
+            builder.setNegativeButton(mNegativeButtonTitle, (dialog, which) -> {
+                final FragmentActivity activity = getActivity();
+                if (activity instanceof AlertDialogFragmentListener) {
+                    ((AlertDialogFragmentListener) activity).onNegativeButtonClicked(dialog,
+                            mDialogId);
                 }
             });
         }
