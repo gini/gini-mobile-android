@@ -1062,13 +1062,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
     private void setCustomLoadingIndicator() {
         if (GiniCapture.hasInstance()) {
-//            mLoadingIndicator.invalidate();
             mLoadingIndicator.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(GiniCapture.getInstance().internal().getLoadingIndicatorAdapterInstance(), injectedViewAdapter -> {
             }));
-//            mLoadingIndicator.setInjectedViewAdapter(GiniCapture.getInstance().getloadingIndicatorAdapter());
-
-//            if (mLoadingIndicator.getInjectedViewAdapter() != null)
-//                mLoadingIndicator.getInjectedViewAdapter().onHidden();
         }
     }
 
@@ -1139,9 +1134,6 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     }
 
     private boolean isDocumentImportEnabled(@NonNull final Activity activity) {
-//        return getDocumentImportEnabledFileTypes()
-//                != DocumentImportEnabledFileTypes.NONE
-//                && FileChooserActivity.canChooseFiles(activity);
         return getDocumentImportEnabledFileTypes()
                 != DocumentImportEnabledFileTypes.NONE
                 && FileChooserFragment.canChooseFiles(activity);
