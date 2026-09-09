@@ -153,7 +153,7 @@ public class NetworkRequestsManagerTest {
                 networkRequestsManager.upload(mContext, document).get();
         // Then
         assertThat(firstRequestResult).isEqualTo(secondRequestResult);
-        Mockito.verify(mGiniCaptureNetworkService)
+        verify(mGiniCaptureNetworkService)
                 .upload(eq(document), any(GiniCaptureNetworkCallback.class));
     }
 
