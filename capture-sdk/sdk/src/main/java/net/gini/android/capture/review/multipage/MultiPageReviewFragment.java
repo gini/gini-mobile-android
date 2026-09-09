@@ -409,51 +409,51 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-
-                //Wait to state goes in IDLE
-                //Make the middle page rect blue
-                //Update position of tablayout
-                //Save the position for screen change
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-
-                    View viewAtPosition = showHideBlueRect(View.VISIBLE);
-
-                    if (viewAtPosition != null) {
-                        int position = mRecyclerView.getChildAdapterPosition(viewAtPosition);
-                        updateTabIndicatorPosition(position);
-                        setScrollToPosition(position);
-                        if (position < mMultiPageDocument.getDocuments().size() - 1)
-                            mShouldScrollToLastPage = false;
-                    }
-
+                    onPageScrollSettled();
                 } else if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
                     showHideBlueRect(View.INVISIBLE);
                 }
             }
-
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-            }
         });
 
-        //Scroll to the last captured document
-        if (mMultiPageDocument.getDocuments().size() > 1) {
-            if (mShouldScrollToLastPage) {
-                scrollToCorrectPosition(mMultiPageDocument.getDocuments().size() - 1, true);
-            } else {
-                if (getScrollPosition() > -1)
-                    scrollToCorrectPosition(getScrollPosition(), true);
-                else scrollToCorrectPosition(mMultiPageDocument.getDocuments().size() - 1, true);
-            }
-        }
-
-        //If there is one document highlight it
-        if (mMultiPageDocument.getDocuments().size() == 1) {
-            mRecyclerView.post(() -> showHideBlueRect(View.VISIBLE));
-        }
+        scrollToInitialPage();
 
         mRecyclerView.addOnScrollListener(mAnalyticsPageScrolledListener);
+    }
+
+    /**
+     * Once scrolling is idle: highlight the middle page, update the tab layout position and
+     * remember the position for configuration changes.
+     */
+    private void onPageScrollSettled() {
+        final View viewAtPosition = showHideBlueRect(View.VISIBLE);
+        if (viewAtPosition == null) {
+            return;
+        }
+        final int position = mRecyclerView.getChildAdapterPosition(viewAtPosition);
+        updateTabIndicatorPosition(position);
+        setScrollToPosition(position);
+        if (position < mMultiPageDocument.getDocuments().size() - 1) {
+            mShouldScrollToLastPage = false;
+        }
+    }
+
+    /**
+     * Scrolls to the last captured document (or the remembered position) and highlights the
+     * only document if there is just one.
+     */
+    private void scrollToInitialPage() {
+        final int documentCount = mMultiPageDocument.getDocuments().size();
+        if (documentCount > 1) {
+            if (!mShouldScrollToLastPage && getScrollPosition() > -1) {
+                scrollToCorrectPosition(getScrollPosition(), true);
+            } else {
+                scrollToCorrectPosition(documentCount - 1, true);
+            }
+        } else if (documentCount == 1) {
+            mRecyclerView.post(() -> showHideBlueRect(View.VISIBLE));
+        }
     }
 
 
