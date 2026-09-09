@@ -82,6 +82,7 @@ public class ImageDiskStore {
                 try {
                     inputStream.close();
                 } catch (final IOException ignored) {
+                    // The stream was fully consumed; nothing to recover from
                 }
             }
         }
