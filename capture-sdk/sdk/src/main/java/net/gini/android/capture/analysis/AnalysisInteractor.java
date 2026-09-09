@@ -66,15 +66,8 @@ public class AnalysisInteractor {
             networkRequestsManager.upload(mApp, giniCaptureDocument);
         }
         return networkRequestsManager.analyze(multiPageDocument)
-                .handle(new CompletableFuture.BiFun<AnalysisNetworkRequestResult<
-                        GiniCaptureMultiPageDocument>, Throwable, ResultHolder>() {
-                    @Override
-                    public ResultHolder apply(
-                            final AnalysisNetworkRequestResult<GiniCaptureMultiPageDocument>
-                                    requestResult,
-                            final Throwable throwable) {
-                        return toResultHolder(requestResult, throwable);
-                    }
+                .handle((requestResult, throwable) -> {
+                    return toResultHolder(requestResult, throwable);
                 });
     }
 
@@ -120,37 +113,26 @@ public class AnalysisInteractor {
             final GiniCaptureMultiPageDocument<GiniCaptureDocument, GiniCaptureDocumentError>
                     multiPageDocument) {
         return deleteDocument(multiPageDocument)
-                .handle(new CompletableFuture.BiFun<NetworkRequestResult<GiniCaptureDocument>,
-                        Throwable, Void>() {
-                    @Override
-                    public Void apply(
-                            final NetworkRequestResult<GiniCaptureDocument>
-                                    giniCaptureDocumentNetworkRequestResult,
-                            final Throwable throwable) {
-                        return null;
-                    }
+                .handle((giniCaptureDocumentNetworkRequestResult, throwable) -> {
+                    return null;
                 })
                 .thenCompose(
-                        new CompletableFuture.Fun<Void, CompletableFuture<Void>>() {
-                            @Override
-                            public CompletableFuture<Void> apply(
-                                    final Void result) {
-                                final NetworkRequestsManager networkRequestsManager =
-                                        GiniCapture.getInstance()
-                                                .internal().getNetworkRequestsManager();
-                                if (networkRequestsManager == null) {
-                                    return CompletableFuture.completedFuture(null);
-                                }
-                                final List<CompletableFuture<NetworkRequestResult<
-                                        GiniCaptureDocument>>> futures = new ArrayList<>();
-                                for (final GiniCaptureDocument document
-                                        : multiPageDocument.getDocuments()) {
-                                    networkRequestsManager.cancel(document);
-                                    futures.add(networkRequestsManager.delete(document));
-                                }
-                                return CompletableFuture.allOf(
-                                        futures.toArray(new CompletableFuture[0]));
+                        result -> {
+                            final NetworkRequestsManager networkRequestsManager =
+                                    GiniCapture.getInstance()
+                                            .internal().getNetworkRequestsManager();
+                            if (networkRequestsManager == null) {
+                                return CompletableFuture.completedFuture(null);
                             }
+                            final List<CompletableFuture<NetworkRequestResult<
+                                    GiniCaptureDocument>>> futures = new ArrayList<>();
+                            for (final GiniCaptureDocument document
+                                    : multiPageDocument.getDocuments()) {
+                                networkRequestsManager.cancel(document);
+                                futures.add(networkRequestsManager.delete(document));
+                            }
+                            return CompletableFuture.allOf(
+                                    futures.toArray(new CompletableFuture[0]));
                         });
     }
 
