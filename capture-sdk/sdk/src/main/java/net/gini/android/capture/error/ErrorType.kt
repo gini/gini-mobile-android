@@ -104,64 +104,49 @@ enum class ErrorType(
         const val ERROR_KEY = "error"
         const val GRANT_VALUE = "invalid_grant"
 
-        @Suppress("MagicNumber", "CyclomaticComplexMethod", "ReturnCount")
         @JvmStatic
         fun typeFromError(error: Error, isEInvoiceEnabled: Boolean = false): ErrorType {
-
-            if (error.cause != null && (error.cause is UnknownHostException)) {
+            if (error.cause is UnknownHostException) {
                 return NO_CONNECTION
             }
-
-            error.statusCode?.let {
-                if (it == 500) {
-                    return OUTAGE
-                }
-                if (it == 503) {
-                    return MAINTENANCE
-                }
-                if (it > 500) {
-                    return SERVER
-                }
-
-                if (it == 401) {
-                    return AUTH
-                }
-
-                if (it == 400 && isInvalidUserError(error)) {
-                    return AUTH
-                }
-
-                if (it == 400 || (it in 402..498) && it != 404) {
-                    return UPLOAD
-                }
-
-                return GENERAL
+            val statusCode = error.statusCode
+            return if (statusCode != null) {
+                typeFromStatusCode(statusCode, error)
+            } else {
+                typeFromLocalError(error, isEInvoiceEnabled)
             }
+        }
 
-            if (error.statusCode == null) {
-                (error.cause as? SocketTimeoutException)?.let {
-                    return UPLOAD
-                }
+        @Suppress("MagicNumber")
+        private fun typeFromStatusCode(statusCode: Int, error: Error): ErrorType = when {
+            statusCode == 500 -> OUTAGE
+            statusCode == 503 -> MAINTENANCE
+            statusCode > 500 -> SERVER
+            statusCode == 401 -> AUTH
+            statusCode == 400 && isInvalidUserError(error) -> AUTH
+            statusCode == 400 || (statusCode in 402..498 && statusCode != 404) -> UPLOAD
+            else -> GENERAL
+        }
 
-                return when (error.fileImportErrors) {
-                    FileImportValidator.Error.SIZE_TOO_LARGE -> FILE_IMPORT_SIZE
-                    FileImportValidator.Error.TYPE_NOT_SUPPORTED ->
-                        if (isEInvoiceEnabled) {
-                            FILE_IMPORT_UNSUPPORTED_WITH_EINVOICE
-                        } else {
-                            FILE_IMPORT_UNSUPPORTED
-                        }
-
-                    FileImportValidator.Error.PASSWORD_PROTECTED_PDF -> FILE_IMPORT_PASSWORD
-                    FileImportValidator.Error.TOO_MANY_PDF_PAGES -> FILE_IMPORT_PAGE_COUNT
-                    FileImportValidator.Error.TOO_MANY_DOCUMENT_PAGES -> FILE_IMPORT_PAGE_COUNT
-                    else -> {
-                        GENERAL
+        private fun typeFromLocalError(error: Error, isEInvoiceEnabled: Boolean): ErrorType {
+            if (error.cause is SocketTimeoutException) {
+                return UPLOAD
+            }
+            return when (error.fileImportErrors) {
+                FileImportValidator.Error.SIZE_TOO_LARGE -> FILE_IMPORT_SIZE
+                FileImportValidator.Error.TYPE_NOT_SUPPORTED ->
+                    if (isEInvoiceEnabled) {
+                        FILE_IMPORT_UNSUPPORTED_WITH_EINVOICE
+                    } else {
+                        FILE_IMPORT_UNSUPPORTED
                     }
-                }
-            }
 
-            return GENERAL
+                FileImportValidator.Error.PASSWORD_PROTECTED_PDF -> FILE_IMPORT_PASSWORD
+                FileImportValidator.Error.TOO_MANY_PDF_PAGES,
+                FileImportValidator.Error.TOO_MANY_DOCUMENT_PAGES -> FILE_IMPORT_PAGE_COUNT
+
+                else -> GENERAL
+            }
         }
 
         @JvmStatic
