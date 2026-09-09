@@ -312,8 +312,7 @@ public class NetworkRequestsManagerTest {
         final ImageMultiPageDocument multiPageDocument =
                 GiniCaptureDocumentHelper.newMultiPageDocument();
         // When
-        final NetworkRequestResult<GiniCaptureDocument> requestResult =
-                networkRequestsManager.delete(multiPageDocument).get();
+        networkRequestsManager.delete(multiPageDocument).get();
     }
 
     @Test
