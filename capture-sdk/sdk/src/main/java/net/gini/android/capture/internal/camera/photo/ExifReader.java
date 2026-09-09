@@ -9,7 +9,7 @@ import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants;
 import org.apache.commons.imaging.formats.tiff.constants.TiffTagConstants;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import androidx.annotation.NonNull;
@@ -55,9 +55,9 @@ final class ExifReader {
 
         if (rawUserComment.length >= 8) {
             return new String(Arrays.copyOfRange(rawUserComment, 8, rawUserComment.length),
-                    Charset.forName("US-ASCII"));
+                    StandardCharsets.US_ASCII);
         } else {
-            return new String(rawUserComment, Charset.forName("US-ASCII"));
+            return new String(rawUserComment, StandardCharsets.US_ASCII);
         }
     }
 
