@@ -50,9 +50,4 @@ public class ImageMultiPageDocument extends
     public int describeContents() {
         return 0;
     }
-
-    @Override
-    public void writeToParcel(@NonNull final Parcel dest, final int flags) {
-        super.writeToParcel(dest, flags);
-    }
 }
