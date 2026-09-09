@@ -65,7 +65,8 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
     // MTRANS_X and MTRANS_Y are the other values used. prevMatrix is the matrix
     // saved prior to the screen rotating.
     //
-    private Matrix matrix, prevMatrix;
+    private Matrix matrix;
+    private Matrix prevMatrix;
 
     private static enum State {
         NONE,
@@ -95,12 +96,16 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
     //
     // Size of view and previous view size (ie before rotation)
     //
-    private int prevViewWidth, prevViewHeight;
+    private int prevViewWidth;
+    private int prevViewHeight;
 
     //
     // Size of image when it is stretched to fit view. Before and After rotation.
     //
-    private float matchViewWidth, matchViewHeight, prevMatchViewWidth, prevMatchViewHeight;
+    private float matchViewWidth;
+    private float matchViewHeight;
+    private float prevMatchViewWidth;
+    private float prevMatchViewHeight;
 
     private ScaleGestureDetector mScaleDetector;
     private GestureDetector mGestureDetector;
@@ -1141,7 +1146,8 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
     private class Fling implements Runnable {
 
         CompatScroller scroller;
-        int currX, currY;
+        int currX;
+        int currY;
 
         Fling(final int velocityX, final int velocityY) {
             setState(State.FLING);
