@@ -71,6 +71,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -154,11 +156,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         mUserAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
         if (mUserAnalyticsEventTracker != null) {
             mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                        }
-                    });
+                    new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
         }
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
@@ -166,11 +164,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
                 trackReviewScreenEvent(ReviewScreenEvent.BACK);
                 if (mUserAnalyticsEventTracker != null) {
                     mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
-                            new HashSet<UserAnalyticsEventProperty>() {
-                                {
-                                    add(new UserAnalyticsEventProperty.Screen(screenName));
-                                }
-                            });
+                            new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
                 }
                 setEnabled(false);
                 remove();
@@ -520,11 +514,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
                         injectedViewAdapter.setOnAddPageButtonClickListener(new IntervalClickListener(v -> {
                             if (mUserAnalyticsEventTracker != null) {
                                 mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.ADD_PAGES_TAPPED,
-                                        new HashSet<UserAnalyticsEventProperty>() {
-                                            {
-                                                add(new UserAnalyticsEventProperty.Screen(screenName));
-                                            }
-                                        });
+                                        new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
                             }
                             NavHostFragment.findNavController(this).navigate(MultiPageReviewFragmentDirections.toCameraFragmentForAddingPages());
                         }));
@@ -610,11 +600,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
                             trackReviewScreenEvent(ReviewScreenEvent.BACK);
                             if (mUserAnalyticsEventTracker != null) {
                                 mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
-                                        new HashSet<UserAnalyticsEventProperty>() {
-                                            {
-                                                add(new UserAnalyticsEventProperty.Screen(screenName));
-                                            }
-                                        });
+                                        new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
                             }
                             onBack();
                         }));
@@ -636,11 +622,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         ClickListenerExtKt.setIntervalClickListener(mAddPagesButton, v -> {
             if (mUserAnalyticsEventTracker != null) {
                 mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.ADD_PAGES_TAPPED,
-                        new HashSet<UserAnalyticsEventProperty>() {
-                            {
-                                add(new UserAnalyticsEventProperty.Screen(screenName));
-                            }
-                        });
+                        new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
             }
             NavHostFragment.findNavController(this).navigate(MultiPageReviewFragmentDirections.toCameraFragmentForAddingPages());
         });
@@ -778,13 +760,9 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         if (mUserAnalyticsEventTracker != null) {
             mUserAnalyticsEventTracker.trackEvent(
                     UserAnalyticsEvent.PROCEED_TAPPED,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                            add(new UserAnalyticsEventProperty
-                                    .DocumentPageNumber(mMultiPageDocument.getDocuments().size()));
-                        }
-                    }
+                    new HashSet<>(Arrays.asList(
+                            new UserAnalyticsEventProperty.Screen(screenName),
+                            new UserAnalyticsEventProperty .DocumentPageNumber(mMultiPageDocument.getDocuments().size())))
             );
         }
         mNextClicked = true;
@@ -1074,11 +1052,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     public void onPageClicked(@NonNull ImageDocument document) {
         if (mUserAnalyticsEventTracker != null) {
             mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.FULL_SCREEN_PAGE_TAPPED,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                        }
-                    });
+                    new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
         }
         NavHostFragment.findNavController(this).navigate(MultiPageReviewFragmentDirections.toZoomInPreviewFragment(document));
     }
@@ -1086,11 +1060,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     private void trackPageSwipedAnalyticsEvent() {
         if (mUserAnalyticsEventTracker != null) {
             mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.PAGE_SWIPED,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                        }
-                    });
+                    new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
         }
     }
 }
