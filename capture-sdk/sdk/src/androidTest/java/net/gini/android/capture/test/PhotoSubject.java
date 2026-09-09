@@ -13,13 +13,7 @@ public class PhotoSubject extends Subject {
     private final JpegByteArraySubject mJpegByteArraySubject;
 
     public static Factory<PhotoSubject, Photo> photo() {
-        return new Factory<PhotoSubject, Photo>() {
-
-            @Override
-            public PhotoSubject createSubject(FailureMetadata metadata, Photo actual) {
-                return new PhotoSubject(metadata, actual);
-            }
-        };
+        return PhotoSubject::new;
     }
 
     private final Photo actual;

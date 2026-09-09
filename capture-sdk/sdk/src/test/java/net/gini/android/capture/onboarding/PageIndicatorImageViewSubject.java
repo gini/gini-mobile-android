@@ -17,12 +17,7 @@ import static com.google.common.truth.Fact.simpleFact;
 public class PageIndicatorImageViewSubject extends Subject {
 
     public static Factory<PageIndicatorImageViewSubject, ImageView> pageIndicatorImageView() {
-        return new Factory<PageIndicatorImageViewSubject, ImageView>() {
-            @Override
-            public PageIndicatorImageViewSubject createSubject(FailureMetadata metadata, ImageView actual) {
-                return new PageIndicatorImageViewSubject(metadata, actual);
-            }
-        };
+        return PageIndicatorImageViewSubject::new;
     }
 
     private final ImageView actual;

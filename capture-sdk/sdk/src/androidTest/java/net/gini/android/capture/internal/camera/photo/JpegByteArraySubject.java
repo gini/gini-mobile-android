@@ -12,13 +12,7 @@ import static com.google.common.truth.Fact.simpleFact;
 public class JpegByteArraySubject extends Subject {
 
     static Factory<JpegByteArraySubject, byte[]> jpegByteArray() {
-        return new Factory<JpegByteArraySubject, byte[]>() {
-
-            @Override
-            public JpegByteArraySubject createSubject(FailureMetadata metadata, byte[] actual) {
-                return new JpegByteArraySubject(metadata, actual);
-            }
-        };
+        return JpegByteArraySubject::new;
     }
 
     private final byte[] actual;
