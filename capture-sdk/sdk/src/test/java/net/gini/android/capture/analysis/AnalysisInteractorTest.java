@@ -54,13 +54,13 @@ public class AnalysisInteractorTest {
     private AnalysisInteractor mAnalysisInteractor;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         initMocks(this);
         mAnalysisInteractor = new AnalysisInteractor(mApp);
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         GiniCaptureHelper.setGiniCaptureInstance(null);
     }
 
@@ -112,7 +112,7 @@ public class AnalysisInteractorTest {
     }
 
     @Test
-    public void should_uploadEveryPage_ofMultiPageDocument() throws Exception {
+    public void should_uploadEveryPage_ofMultiPageDocument() {
         // Given
         //noinspection unchecked
         final GiniCaptureMultiPageDocument<GiniCaptureDocument, GiniCaptureDocumentError>
@@ -344,7 +344,7 @@ public class AnalysisInteractorTest {
     }
 
     @Test
-    public void should_deleteMultiPageDocument() throws Exception {
+    public void should_deleteMultiPageDocument() {
         // Given
         //noinspection unchecked
         final GiniCaptureMultiPageDocument<GiniCaptureDocument, GiniCaptureDocumentError>
@@ -380,7 +380,7 @@ public class AnalysisInteractorTest {
     }
 
     @Test
-    public void should_deleteEveryPage_ofMultiPageDocument() throws Exception {
+    public void should_deleteEveryPage_ofMultiPageDocument() {
         // Given
         //noinspection unchecked
         final GiniCaptureMultiPageDocument<GiniCaptureDocument, GiniCaptureDocumentError>
@@ -411,8 +411,7 @@ public class AnalysisInteractorTest {
     }
 
     @Test
-    public void should_deleteEverypPage_ofMultiPageDocument_whenDeletion_ofMultiPageDocumentFailes()
-            throws Exception {
+    public void should_deleteEverypPage_ofMultiPageDocument_whenDeletion_ofMultiPageDocumentFailes() {
         // Given
         //noinspection unchecked
         final GiniCaptureMultiPageDocument<GiniCaptureDocument, GiniCaptureDocumentError>
@@ -484,7 +483,7 @@ public class AnalysisInteractorTest {
     }
 
     @Test
-    public void should_deleteDocument() throws Exception {
+    public void should_deleteDocument() {
         // Given
         final GiniCaptureDocument document = mock(GiniCaptureDocument.class);
 

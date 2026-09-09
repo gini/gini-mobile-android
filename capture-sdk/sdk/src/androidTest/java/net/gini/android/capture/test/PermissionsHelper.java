@@ -27,7 +27,7 @@ public class PermissionsHelper {
         grantCameraPermission(getApplicationContext().getPackageName());
     }
 
-    public static void grantCameraPermission(final String packageName) throws InterruptedException {
+    public static void grantCameraPermission(final String packageName) {
         grantPermission(Manifest.permission.CAMERA, packageName);
     }
 
@@ -41,7 +41,7 @@ public class PermissionsHelper {
         }
     }
 
-    public static void revokeCameraPermission() throws InterruptedException {
+    public static void revokeCameraPermission() {
         revokePermission(Manifest.permission.CAMERA, getApplicationContext().getPackageName());
     }
 

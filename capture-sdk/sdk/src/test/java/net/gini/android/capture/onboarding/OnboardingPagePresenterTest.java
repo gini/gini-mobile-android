@@ -30,7 +30,7 @@ public class OnboardingPagePresenterTest {
     private OnboardingPageContract.View mView;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         initMocks(this);
     }
 

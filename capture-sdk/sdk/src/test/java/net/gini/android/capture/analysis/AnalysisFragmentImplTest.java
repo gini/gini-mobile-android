@@ -67,7 +67,7 @@ import static org.mockito.Mockito.verify;
 public class AnalysisFragmentImplTest {
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         AnalysisFragmentCompatFake.sFragmentImplFactory = null;
         DialogShadow.cleanup();
         AnalysisHintsAnimatorShadow.cleanup();
@@ -75,7 +75,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_forwardAnalysisFragmentInterfaceMethods_toPresenter() throws Exception {
+    public void should_forwardAnalysisFragmentInterfaceMethods_toPresenter() {
         // Given
         final AnalysisScreenPresenter presenter = mock(AnalysisScreenPresenter.class);
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
@@ -134,7 +134,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_notShowScanAnimation_byDefault() throws Exception {
+    public void should_notShowScanAnimation_byDefault() {
         // Given
         GiniCapture.newInstance(InstrumentationRegistry.getInstrumentation().getTargetContext())
                 .setGiniCaptureNetworkService(mock(GiniCaptureNetworkService.class))
@@ -158,7 +158,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_showScanAnimation_whenRequested() throws Exception {
+    public void should_showScanAnimation_whenRequested() {
         // Given
         GiniCapture.newInstance(InstrumentationRegistry.getInstrumentation().getTargetContext())
                 .setGiniCaptureNetworkService(mock(GiniCaptureNetworkService.class))
@@ -188,7 +188,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_hideScanAnimation_whenRequested() throws Exception {
+    public void should_hideScanAnimation_whenRequested() {
         // Given
         GiniCapture.newInstance(InstrumentationRegistry.getInstrumentation().getTargetContext())
                 .setGiniCaptureNetworkService(mock(GiniCaptureNetworkService.class))
@@ -217,7 +217,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_waitForViewLayout_whenRequested() throws Exception {
+    public void should_waitForViewLayout_whenRequested() {
         // Given
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
                 new AtomicReference<>();
@@ -246,7 +246,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_showPdfTitle() throws Exception {
+    public void should_showPdfTitle() {
         // Given
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
                 new AtomicReference<>();
@@ -269,7 +269,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_getSize_forPdfPreview() throws Exception {
+    public void should_getSize_forPdfPreview() {
         // Given
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
                 new AtomicReference<>();
@@ -349,7 +349,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_showAlertDialog() throws Exception {
+    public void should_showAlertDialog() {
         // Given
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
                 new AtomicReference<>();
@@ -376,7 +376,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_showHints() throws Exception {
+    public void should_showHints() {
         // Given
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
                 new AtomicReference<>();
@@ -521,7 +521,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_startPresenter_onStart() throws Exception {
+    public void should_startPresenter_onStart() {
         // Given
         final AnalysisScreenPresenter presenter = mock(AnalysisScreenPresenter.class);
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
@@ -536,7 +536,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_stopHintsAnimatior_onStop() throws Exception {
+    public void should_stopHintsAnimatior_onStop() {
         // Given
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
                 new AtomicReference<>();
@@ -553,7 +553,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void shold_stopPresenter_onDestroy() throws Exception {
+    public void shold_stopPresenter_onDestroy() {
         // Given
         final AnalysisScreenPresenter presenter = mock(AnalysisScreenPresenter.class);
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
@@ -571,7 +571,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_finishPresenter_onDestroy_whenActivity_isFinishing() throws Exception {
+    public void should_finishPresenter_onDestroy_whenActivity_isFinishing() {
         // Given
         final AnalysisScreenPresenter presenter = mock(AnalysisScreenPresenter.class);
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
@@ -589,7 +589,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_notFinishPresenter_onDestroy_whenActivity_isNotFinishing() throws Exception {
+    public void should_notFinishPresenter_onDestroy_whenActivity_isNotFinishing() {
         // Given
         final AnalysisScreenPresenter presenter = mock(AnalysisScreenPresenter.class);
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
