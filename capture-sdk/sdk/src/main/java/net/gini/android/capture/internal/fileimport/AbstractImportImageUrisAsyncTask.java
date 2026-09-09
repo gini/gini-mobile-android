@@ -77,7 +77,7 @@ public abstract class AbstractImportImageUrisAsyncTask extends
                 LogSanitizer.sanitize(mImportMethod));
         final ImageMultiPageDocument multiPageDocument = new ImageMultiPageDocument(mSource,
                 mImportMethod);
-        FileImportValidator fileImportValidator = new FileImportValidator(mContext, mGiniCapture.getImportedFileSizeBytesLimit());
+        final FileImportValidator fileImportValidator = new FileImportValidator(mContext, mGiniCapture.getImportedFileSizeBytesLimit());
         if (!fileImportValidator.matchesCriteria(uris)) {
             onHaltingError(new ImportedFileValidationException(fileImportValidator.getError()));
             return null;
@@ -88,37 +88,8 @@ public abstract class AbstractImportImageUrisAsyncTask extends
                 LOG.debug(LOG_IMPORT_CANCELLED, LogSanitizer.sanitize(uri));
                 return null;
             }
-            if (!UriHelper.isUriInputStreamAvailable(uri, mContext)) {
-                LOG.error("Uri input stream not available for uri {}", LogSanitizer.sanitize(uri));
-                if (shouldHaltOnError(multiPageDocument, new ImportedFileValidationException( // NOPMD
-                        "InputStream not available for one of the Intent's data Uris"))) {
-                    LOG.debug(LOG_HALT_ON_ERROR, LogSanitizer.sanitize(uri));
-                    return null;
-                }
-                continue;
-            }
-            fileImportValidator = new FileImportValidator(mContext, mGiniCapture.getImportedFileSizeBytesLimit()); // NOPMD
-            if (fileImportValidator.matchesCriteria(uri)) {
-                if (isCancelled()) {
-                    LOG.debug(LOG_IMPORT_CANCELLED, LogSanitizer.sanitize(uri));
-                    return null;
-                }
-                if (isImage(uri)) {
-                    final ImageDocument imageDocument = processImageUri(uri, multiPageDocument);
-                    if (imageDocument == null) {
-                        // Stop, because no document means processing has to be abandoned
-                        // (cancellation or stopping on an error was requested)
-                        return null;
-                    }
-                }
-            } else {
-                LOG.error("File validation failed for uri {} with error {}", LogSanitizer.sanitize(uri),
-                        LogSanitizer.sanitize(fileImportValidator.getError()));
-                if (shouldHaltOnError(multiPageDocument,
-                        new ImportedFileValidationException(fileImportValidator.getError()))) { // NOPMD
-                    LOG.debug(LOG_HALT_ON_ERROR, LogSanitizer.sanitize(uri));
-                    return null;
-                }
+            if (!importUri(uri, multiPageDocument)) {
+                return null;
             }
         }
         if (isCancelled()) {
@@ -133,6 +104,46 @@ public abstract class AbstractImportImageUrisAsyncTask extends
         LOG.debug("Finished importing uris from source {} and with import method {}", LogSanitizer.sanitize(mSource),
                 LogSanitizer.sanitize(mImportMethod));
         return multiPageDocument;
+    }
+
+    /**
+     * Validates and imports a single uri into the multi-page document.
+     *
+     * @return {@code false} if the import has to be abandoned (cancellation or halting on an
+     * error was requested), {@code true} to continue with the next uri
+     */
+    private boolean importUri(@NonNull final Uri uri,
+            @NonNull final ImageMultiPageDocument multiPageDocument) {
+        if (!UriHelper.isUriInputStreamAvailable(uri, mContext)) {
+            LOG.error("Uri input stream not available for uri {}", LogSanitizer.sanitize(uri));
+            if (shouldHaltOnError(multiPageDocument, new ImportedFileValidationException( // NOPMD
+                    "InputStream not available for one of the Intent's data Uris"))) {
+                LOG.debug(LOG_HALT_ON_ERROR, LogSanitizer.sanitize(uri));
+                return false;
+            }
+            return true;
+        }
+        final FileImportValidator fileImportValidator = new FileImportValidator(mContext, mGiniCapture.getImportedFileSizeBytesLimit()); // NOPMD
+        if (!fileImportValidator.matchesCriteria(uri)) {
+            LOG.error("File validation failed for uri {} with error {}", LogSanitizer.sanitize(uri),
+                    LogSanitizer.sanitize(fileImportValidator.getError()));
+            if (shouldHaltOnError(multiPageDocument,
+                    new ImportedFileValidationException(fileImportValidator.getError()))) { // NOPMD
+                LOG.debug(LOG_HALT_ON_ERROR, LogSanitizer.sanitize(uri));
+                return false;
+            }
+            return true;
+        }
+        if (isCancelled()) {
+            LOG.debug(LOG_IMPORT_CANCELLED, LogSanitizer.sanitize(uri));
+            return false;
+        }
+        if (isImage(uri)) {
+            // No document means processing has to be abandoned
+            // (cancellation or stopping on an error was requested)
+            return processImageUri(uri, multiPageDocument) != null;
+        }
+        return true;
     }
 
     private ImageDocument processImageUri(@NonNull final Uri uri,
