@@ -5489,8 +5489,8 @@ public final class net/gini/android/capture/ui/theme/typography/GiniTypographyKt
 }
 
 public final class net/gini/android/capture/ui/theme/typography/TypographyToTextStyleBridgeKt {
-	public static final fun textStyleFromAttribute (ILandroidx/compose/ui/unit/Density;ZLandroidx/compose/runtime/Composer;II)Landroidx/compose/ui/text/TextStyle;
-	public static final fun textStyleFromTextAppearance (ILandroidx/compose/ui/unit/Density;ZLandroidx/compose/runtime/Composer;II)Landroidx/compose/ui/text/TextStyle;
+	public static final fun textStyleFromAttribute (ILandroidx/compose/ui/unit/Density;Landroidx/compose/runtime/Composer;II)Landroidx/compose/ui/text/TextStyle;
+	public static final fun textStyleFromTextAppearance (ILandroidx/compose/ui/unit/Density;Landroidx/compose/runtime/Composer;II)Landroidx/compose/ui/text/TextStyle;
 }
 
 public final class net/gini/android/capture/util/AccessibilityHelpersKt {

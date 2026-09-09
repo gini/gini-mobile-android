@@ -35,12 +35,10 @@ import kotlin.concurrent.getOrSet
 fun textStyleFromAttribute(
     @AttrRes attr: Int,
     density: Density = Density(LocalContext.current),
-    setTextColors: Boolean = true
 ): TextStyle {
     return textStyleFromTextAppearance(
         getResourceFromAttr(LocalContext.current, attr),
         density,
-        setTextColors
     )
 }
 
@@ -48,7 +46,6 @@ fun textStyleFromAttribute(
 fun textStyleFromTextAppearance(
     @StyleRes id: Int,
     density: Density = Density(LocalContext.current),
-    setTextColors: Boolean = true
 ): TextStyle {
     return LocalContext.current.obtainStyledAttributes(
         id,
