@@ -74,11 +74,11 @@ class IBANRecognizerFilter @JvmOverloads constructor(
         listenerScope.coroutineContext.cancelChildren()
     }
 
-    interface Listener {
+    fun interface Listener {
         fun onIBANsReceived(ibans: List<String>)
     }
 
-    interface ProcessingListener {
+    fun interface ProcessingListener {
         fun onProcessingFinished()
     }
 }
