@@ -332,7 +332,7 @@ public class NetworkRequestsManager {
 
     @NonNull
     private CompletableFuture<NetworkRequestResult<GiniCaptureDocument>> deleteDocument(
-            @NonNull final GiniCaptureDocument document, final Boolean relatedFuturesSucceeded) {
+            @NonNull final GiniCaptureDocument document, final boolean relatedFuturesSucceeded) {
         final CompletableFuture<NetworkRequestResult<GiniCaptureDocument>>
                 documentDeleteFuture =
                 mDocumentDeleteFutures.get(document.getId());
