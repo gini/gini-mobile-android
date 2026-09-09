@@ -150,7 +150,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     @Override
-    void showScanAnimation(Boolean isSavingInvoicesLocallyEnabled) {
+    void showScanAnimation(boolean isSavingInvoicesLocallyEnabled) {
         mAnalysisMessageTextView.setVisibility(View.VISIBLE);
         isScanAnimationActive = true;
         if (injectedLoadingIndicatorContainer != null)

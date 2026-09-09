@@ -41,7 +41,7 @@ interface AnalysisScreenContract {
             return mPresenter;
         }
 
-        abstract void showScanAnimation(Boolean isSavingInvoicesLocallyEnabled);
+        abstract void showScanAnimation(boolean isSavingInvoicesLocallyEnabled);
 
         abstract void hideScanAnimation();
 
