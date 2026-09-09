@@ -59,16 +59,18 @@ private fun giniColorSchemeBridge(
     giniColorPrimitives: GiniColorPrimitives,
     isLight: Boolean = !isSystemInDarkTheme()
 ) = with(giniColorPrimitives) {
+    val surface = if (isLight) light01 else dark02
+    val onSurface = if (isLight) dark02 else light02
     MaterialTheme.colorScheme.copy(
         primary = accent01,
-        onPrimary = if (isLight) light01 else light01,
+        onPrimary = light01,
         background = if (isLight) light02 else dark01,
         onBackground = if (isLight) dark02 else light01,
-        surface = if (isLight) light01 else dark02,
-        onSurface = if (isLight) dark02 else light02,
-        onSurfaceVariant = if (isLight) dark02 else light02,
-        surfaceVariant = if (isLight) light01 else dark02,
-        inverseOnSurface = if (isLight) dark02 else light02,
+        surface = surface,
+        onSurface = onSurface,
+        onSurfaceVariant = onSurface,
+        surfaceVariant = surface,
+        inverseOnSurface = onSurface,
     )
 }
 
