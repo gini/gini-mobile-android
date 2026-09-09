@@ -68,7 +68,7 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
     private Matrix matrix;
     private Matrix prevMatrix;
 
-    private static enum State {
+    private enum State {
         NONE,
         DRAG,
         ZOOM,
