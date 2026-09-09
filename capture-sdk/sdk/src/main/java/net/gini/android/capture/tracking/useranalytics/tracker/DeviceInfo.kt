@@ -54,7 +54,9 @@ class DeviceInfo(private val context: Context) {
                 packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
                 return packageInfo.versionName
             } catch (e: PackageManager.NameNotFoundException) {
+                // The own package should always be found; report an unknown version otherwise
             } catch (e: Exception) {
+                // Package info is not essential for analytics; report an unknown version
             }
             return null
         }
