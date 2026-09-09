@@ -7,7 +7,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import net.gini.android.capture.BuildConfig
 import net.gini.android.capture.internal.network.AmplitudeEventModel
 import net.gini.android.capture.internal.network.AmplitudeRootModel
 import net.gini.android.capture.internal.network.NetworkRequestsManager
