@@ -1035,9 +1035,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
                 networkRequestsManager.cancel(mMultiPageDocument);
                 networkRequestsManager.delete(mMultiPageDocument)
                         .handle((CompletableFuture.BiFun<NetworkRequestResult<GiniCaptureDocument>, Throwable, Void>) (requestResult, throwable) -> {
-                            for (final Object document : mMultiPageDocument.getDocuments()) {
-                                final GiniCaptureDocument giniCaptureDocument =
-                                        (GiniCaptureDocument) document;
+                            for (final GiniCaptureDocument giniCaptureDocument : mMultiPageDocument.getDocuments()) {
                                 networkRequestsManager.cancel(giniCaptureDocument);
                                 networkRequestsManager.delete(giniCaptureDocument);
                             }
