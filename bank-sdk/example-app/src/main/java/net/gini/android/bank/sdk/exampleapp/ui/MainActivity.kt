@@ -231,15 +231,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startCaptureFlowForOpenWithUris(intent: Intent) {
+        // An Intent without Uris yields an empty list, which the SDK reports as an Error through
+        // the same callback as every other failure
         val uris = ExampleUtil.getOpenWithUris(intent)
-        if (uris.isEmpty()) {
-            Toast.makeText(
-                this,
-                getString(R.string.open_with_uri_based_api_no_uris_toast),
-                Toast.LENGTH_SHORT
-            ).show()
-            return
-        }
         Toast.makeText(
             this,
             getString(R.string.open_with_uri_based_api_toast),
@@ -252,23 +246,32 @@ class MainActivity : AppCompatActivity() {
         ) { result ->
             when (result) {
                 GiniBank.CreateDocumentFromImportedFileResult.Cancelled ->
-                    Toast.makeText(this, "Open with cancelled", Toast.LENGTH_SHORT).show()
+                    abortOpenWith("Open with cancelled")
 
                 is GiniBank.CreateDocumentFromImportedFileResult.Error ->
-                    Toast.makeText(
-                        this,
-                        "Open with failed with error ${result.error}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    abortOpenWith("Open with failed with error ${result.error}")
 
                 is GiniBank.CreateDocumentFromImportedFileResult.Success ->
                     result.document?.let {
                         startCaptureFlowForDocument(it)
                     } ?: run {
-                        Toast.makeText(this, "Open with failed", Toast.LENGTH_SHORT).show()
+                        abortOpenWith("Open with failed")
                     }
             }
         }
+    }
+
+    /**
+     * Terminal exit for an "open with" launch that did not produce a document. Shows the reason,
+     * releases the idling resource incremented in [startGiniBankSdkForOpenWith] (normally released
+     * by the [ExtractionsActivity], which is never reached in this case) and closes the activity
+     * like the Intent based path does in [onCaptureResult].
+     */
+    private fun abortOpenWith(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        // For "open with" (file import) tests
+        (applicationContext as ExampleApp).decrementIdlingResourceForOpenWith()
+        finish()
     }
 
     private fun applyForcedSdkThemeGlobally() {

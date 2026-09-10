@@ -32,11 +32,9 @@ open class SplashActivity : AppCompatActivity() {
     private fun startGiniBankSdk(intent: Intent) {
         configureGiniBank()
         if (configurationViewModel.configurationFlow.value.isOpenWithUriBasedApiEnabled) {
+            // An Intent without Uris yields an empty list, which the SDK reports as an Error
+            // through the same callback as every other failure
             val uris = getOpenWithUris(intent)
-            if (uris.isEmpty()) {
-                showErrorToast(getString(R.string.open_with_uri_based_api_no_uris_toast))
-                return
-            }
             Toast.makeText(
                 this,
                 getString(R.string.open_with_uri_based_api_toast),
@@ -62,22 +60,30 @@ open class SplashActivity : AppCompatActivity() {
         documentCreationResult: GiniBank.CreateDocumentFromImportedFileResult
     ) {
         when (documentCreationResult) {
-            GiniBank.CreateDocumentFromImportedFileResult.Cancelled -> showErrorToast("Open with cancelled")
-            is GiniBank.CreateDocumentFromImportedFileResult.Error -> showErrorToast("Open with failed with error ${documentCreationResult.error}")
+            GiniBank.CreateDocumentFromImportedFileResult.Cancelled -> abortOpenWith("Open with cancelled")
+            is GiniBank.CreateDocumentFromImportedFileResult.Error -> abortOpenWith("Open with failed with error ${documentCreationResult.error}")
             is GiniBank.CreateDocumentFromImportedFileResult.Success -> documentCreationResult.document?.let {
                 startMainActivity(it)
             } ?: run {
-                showErrorToast("Open with failed")
+                abortOpenWith("Open with failed")
             }
         }
     }
 
-    private fun showErrorToast(message: String) {
+    /**
+     * Terminal exit for an "open with" launch that did not produce a document. Shows the reason,
+     * releases the idling resource incremented in [onCreate] (normally released by the
+     * [ExtractionsActivity], which is never reached in this case) and closes the splash screen.
+     */
+    private fun abortOpenWith(message: String) {
         Toast.makeText(
             this,
             message,
             Toast.LENGTH_SHORT
         ).show()
+        // For "open with" (file import) tests
+        (applicationContext as ExampleApp).decrementIdlingResourceForOpenWith()
+        finish()
     }
 
     private fun configureGiniBank() {
