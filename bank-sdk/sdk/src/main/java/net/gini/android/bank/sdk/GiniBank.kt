@@ -328,17 +328,22 @@ object GiniBank {
 
 
     /**
-     * Creates a [CaptureFlowFragment] for pdf or image documents received from another app as
-     * content Uris.
+     * Creates a [CaptureFlowFragment] for PDF, XML or image documents received from another app
+     * as content Uris.
      *
      * Use this instead of [createCaptureFlowFragmentForIntent] when your app has already resolved
      * the share Intent and only the document Uris are available.
+     *
+     * A PDF or XML document is only imported when it is the single Uri in the list. A list with
+     * more than one Uri is always treated as a list of images: PDF and XML Uris in it are ignored
+     * and the import fails with an error when none of the Uris is an image.
      *
      * The fragment is returned asynchronously in the [callback] wrapped in a
      * [CreateCaptureFlowFragmentForIntentResult].
      *
      * @param context Android context
-     * @param uris the content Uris of the documents shared from another app
+     * @param uris the content Uris of the documents shared from another app; either exactly one
+     * PDF or XML Uri, or one or more image Uris
      * @param callback returns the wrapped result of the processing in the form of
      * [CreateCaptureFlowFragmentForIntentResult]
      * @return a [CancellationToken] for cancelling the import process
@@ -549,12 +554,18 @@ object GiniBank {
     }
 
     /**
-     * Creates a document based on a pdf or image(s) received from another app as content Uris.
+     * Creates a document based on a PDF, XML or image(s) received from another app as content
+     * Uris.
      *
      * Use this instead of the [Intent] based overload when your app has already resolved the
      * share Intent and only the document Uris are available.
      *
-     * @param uris the content Uris of the documents shared from another app
+     * A PDF or XML document is only imported when it is the single Uri in the list. A list with
+     * more than one Uri is always treated as a list of images: PDF and XML Uris in it are ignored
+     * and the import fails with an error when none of the Uris is an image.
+     *
+     * @param uris the content Uris of the documents shared from another app; either exactly one
+     * PDF or XML Uri, or one or more image Uris
      * @param context Android context
      * @param callback returns the wrapped result of the file processing in the form of
      * [CreateDocumentFromImportedFileResult]
