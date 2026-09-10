@@ -3,8 +3,8 @@ package net.gini.android.bank.sdk.exampleapp.core
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.core.content.IntentCompat
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
+import net.gini.android.capture.util.IntentHelper
 import net.gini.android.core.api.models.SpecificExtraction
 
 object ExampleUtil {
@@ -13,17 +13,13 @@ object ExampleUtil {
         return Intent.ACTION_VIEW == action || Intent.ACTION_SEND == action || Intent.ACTION_SEND_MULTIPLE == action
     }
 
-    fun getOpenWithUris(intent: Intent): List<Uri> = when (intent.action) {
-        Intent.ACTION_VIEW -> listOfNotNull(intent.data)
-        Intent.ACTION_SEND -> listOfNotNull(
-            IntentCompat.getParcelableExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)
-        )
-        Intent.ACTION_SEND_MULTIPLE ->
-            IntentCompat.getParcelableArrayListExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)
-                ?.filterNotNull()
-                .orEmpty()
-        else -> emptyList()
-    }
+    /**
+     * Resolves the content Uris of an "open with" Intent the same way the SDK's Intent based
+     * entry points do (`EXTRA_STREAM`, then `ClipData`, then `Intent.getData()`), so that the
+     * Uri based and the Intent based open-with paths see exactly the same Uris.
+     */
+    fun getOpenWithUris(intent: Intent): List<Uri> =
+        IntentHelper.getUris(intent)?.filterNotNull().orEmpty()
 
     fun hasNoPay5Extractions(extractionNames: Set<String>): Boolean {
         for (extractionName in extractionNames) {
