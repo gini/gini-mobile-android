@@ -521,6 +521,7 @@ public class AnalysisInteractorTest {
 
         CaptureSDKResult.Success result = AnalysisInteractor.ResultHolder.toCaptureResult(resultHolder);
 
+        assertThat(resultHolder.getReturnReasons()).isEmpty();
         assertThat(result.getSpecificExtractions()).isEqualTo(extractions);
         assertThat(result.getCompoundExtractions()).isEqualTo(compoundExtractions);
         assertThat(result.getReturnReasons()).isEmpty();
