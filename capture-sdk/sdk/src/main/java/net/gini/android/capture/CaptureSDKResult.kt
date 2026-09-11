@@ -23,6 +23,7 @@ sealed class CaptureSDKResult : Parcelable {
     class Success @JvmOverloads constructor(
         val specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
         val compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,
+        @Suppress("kotlin:S1133") // Intentional deprecation, removal is scheduled for the next major version
         @Deprecated(
             "Return reasons are no longer supported. The SDK never populates this list and it " +
                 "will be removed in the next major version."
@@ -43,6 +44,7 @@ sealed class CaptureSDKResult : Parcelable {
     class SchedulePayment @JvmOverloads constructor(
         val specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
         val compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,
+        @Suppress("kotlin:S1133") // Intentional deprecation, removal is scheduled for the next major version
         @Deprecated(
             "Return reasons are no longer supported. The SDK never populates this list and it " +
                 "will be removed in the next major version."
