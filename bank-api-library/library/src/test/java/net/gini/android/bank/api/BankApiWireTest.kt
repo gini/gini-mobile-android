@@ -269,16 +269,15 @@ class BankApiWireTest {
     }
 
     @Test
-    fun `getAllExtractions parses bank specific return reasons`() = runTest {
+    fun `getAllExtractions ignores the return reasons of the response`() = runTest {
         server.enqueue(MockResponse().setResponseCode(200).setBody(EXTRACTIONS_WITH_RETURN_REASONS_JSON))
 
         val resource = repository.getAllExtractions(document())
 
         val container = (resource as Resource.Success).data
         assertThat(container.specificExtractions["amountToPay"]?.value).isEqualTo("335.50:EUR")
-        assertThat(container.returnReasons).hasSize(1)
-        assertThat(container.returnReasons[0].id).isEqualTo("r1")
-        assertThat(container.returnReasons[0].localizedLabels["de"]).isEqualTo("Beschädigt")
+        @Suppress("DEPRECATION")
+        assertThat(container.returnReasons).isEmpty()
     }
 
     private fun document(id: String = "document-id-13") = Document.fromApiResponse(

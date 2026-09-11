@@ -41,4 +41,28 @@ class ConfigurationResponseTest {
         assertThat(configuration.isPaymentDueHintEnabled).isFalse()
         assertThat(configuration.isPaymentScheduleHintEnabled).isTrue()
     }
+
+    @Test
+    fun `configuration response maps to configuration with defaults for missing fields`() {
+        val configuration = ConfigurationResponse(
+            clientID = null,
+            userJourneyAnalyticsEnabled = true,
+            skontoEnabled = null,
+            returnAssistantEnabled = null,
+            amplitudeApiKey = null,
+            transactionDocsEnabled = null,
+            qrCodeEducationEnabled = null,
+            instantPaymentEnabled = null,
+            eInvoiceEnabled = null,
+            alreadyPaidHintEnabled = null,
+            paymentDueHintEnabled = null,
+            savePhotosLocallyEnabled = null,
+            unsupportedQRCodeWarningEnabled = null,
+        ).toConfiguration()
+
+        assertThat(configuration.clientID).isEmpty()
+        assertThat(configuration.isUserJourneyAnalyticsEnabled).isTrue()
+        assertThat(configuration.isSkontoEnabled).isFalse()
+        assertThat(configuration.amplitudeApiKey).isNull()
+    }
 }
