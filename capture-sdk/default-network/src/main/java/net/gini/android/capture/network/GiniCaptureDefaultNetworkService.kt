@@ -25,7 +25,6 @@ import net.gini.android.capture.network.logging.toErrorEvent
 import net.gini.android.capture.network.model.CompoundExtractionsMapper
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
-import net.gini.android.capture.network.model.ReturnReasonsMapper
 import net.gini.android.capture.network.model.SpecificExtractionMapper
 import net.gini.android.capture.network.model.toCaptureDocumentLayout
 import net.gini.android.capture.network.model.toCaptureDocumentPages
@@ -399,16 +398,13 @@ internal constructor(
                     SpecificExtractionMapper.mapToGiniCapture(allExtractions.specificExtractions)
                 val compoundExtractions =
                     CompoundExtractionsMapper.mapToGiniCapture(allExtractions.compoundExtractions)
-                val returnReasons =
-                    ReturnReasonsMapper.mapToGiniCapture(allExtractions.returnReasons)
 
                 LOG.debug(
                     "Document analysis success for documents {}: " +
-                            "extractions = {}; compoundExtractions = {}; returnReasons = {}",
+                            "extractions = {}; compoundExtractions = {}",
                     LogSanitizer.sanitize(giniApiDocumentIdRotationMap),
                     LogSanitizer.sanitize(extractions),
-                    LogSanitizer.sanitize(compoundExtractions),
-                    LogSanitizer.sanitize(returnReasons)
+                    LogSanitizer.sanitize(compoundExtractions)
                 )
 
                 callback.success(
@@ -416,8 +412,7 @@ internal constructor(
                         compositeDocument.id,
                         compositeDocument.filename,
                         extractions,
-                        compoundExtractions,
-                        returnReasons
+                        compoundExtractions
                     )
                 )
             }
