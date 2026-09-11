@@ -42,7 +42,6 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -757,7 +756,6 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                 resultHolder.getResult(),
                 extractions,
                 new HashMap<>(),
-                new ArrayList<>(),
                 resultHolder.getDocumentId(),
                 resultHolder.getDocumentFileName()
         );

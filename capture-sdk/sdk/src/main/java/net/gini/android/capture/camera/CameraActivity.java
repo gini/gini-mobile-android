@@ -51,9 +51,12 @@ public class CameraActivity extends AppCompatActivity implements GiniCaptureFrag
     public static final String EXTRA_OUT_COMPOUND_EXTRACTIONS = "GC_EXTRA_OUT_COMPOUND_EXTRACTIONS";
 
     /**
-     * Returned when return reasons are available. Contains a Parcelable ArrayList extra with
-     * {@link GiniCaptureReturnReason} as values.
+     * Contains an empty Parcelable ArrayList extra of {@link GiniCaptureReturnReason} values.
+     *
+     * @deprecated Return reasons are no longer supported. The extra is always an empty list and
+     * will be removed in the next major version.
      */
+    @Deprecated
     public static final String EXTRA_OUT_RETURN_REASONS = "GC_EXTRA_OUT_RETURN_REASONS";
 
     /**
@@ -138,8 +141,8 @@ public class CameraActivity extends AppCompatActivity implements GiniCaptureFrag
             }
             resultIntent.putExtra(CameraActivity.EXTRA_OUT_COMPOUND_EXTRACTIONS, compoundExtractionsBundle);
 
-            ArrayList<GiniCaptureReturnReason> returnReasonsExtra = new ArrayList<>(successResult.getReturnReasons());
-            resultIntent.putParcelableArrayListExtra(CameraActivity.EXTRA_OUT_RETURN_REASONS, returnReasonsExtra);
+            resultIntent.putParcelableArrayListExtra(CameraActivity.EXTRA_OUT_RETURN_REASONS,
+                    new ArrayList<GiniCaptureReturnReason>());
 
             setResult(RESULT_OK, resultIntent);
             finish();
@@ -147,8 +150,8 @@ public class CameraActivity extends AppCompatActivity implements GiniCaptureFrag
             final Intent resultIntent = new Intent();
             resultIntent.putExtra(CameraActivity.EXTRA_OUT_EXTRACTIONS, new Bundle());
             resultIntent.putExtra(CameraActivity.EXTRA_OUT_COMPOUND_EXTRACTIONS, new Bundle());
-            ArrayList<GiniCaptureReturnReason> returnReasonsExtra = new ArrayList<>();
-            resultIntent.putParcelableArrayListExtra(CameraActivity.EXTRA_OUT_RETURN_REASONS, returnReasonsExtra);
+            resultIntent.putParcelableArrayListExtra(CameraActivity.EXTRA_OUT_RETURN_REASONS,
+                    new ArrayList<GiniCaptureReturnReason>());
             setResult(RESULT_OK, resultIntent);
             finish();
         } else if (result instanceof CaptureSDKResult.Cancel) {

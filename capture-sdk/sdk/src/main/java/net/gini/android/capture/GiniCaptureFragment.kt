@@ -290,6 +290,7 @@ class GiniCaptureFragment(
         giniCaptureFragmentListener?.onFinishedWithResult(CaptureSDKResult.Error(error))
     }
 
+    @Suppress("DEPRECATION")
     override fun onExtractionsAvailable(
         extractions: MutableMap<String, GiniCaptureSpecificExtraction>,
         compoundExtractions: MutableMap<String, GiniCaptureCompoundExtraction>,
@@ -300,12 +301,12 @@ class GiniCaptureFragment(
         giniCaptureFragmentListener?.onFinishedWithResult(
             CaptureSDKResult.Success(
                 extractions,
-                compoundExtractions,
-                returnReasons
+                compoundExtractions
             )
         )
     }
 
+    @Suppress("DEPRECATION")
     override fun onSchedulePayment(
         extractions: MutableMap<String, GiniCaptureSpecificExtraction>,
         compoundExtractions: MutableMap<String, GiniCaptureCompoundExtraction>,
@@ -316,8 +317,7 @@ class GiniCaptureFragment(
         giniCaptureFragmentListener?.onFinishedWithResult(
             CaptureSDKResult.SchedulePayment(
                 extractions,
-                compoundExtractions,
-                returnReasons
+                compoundExtractions
             )
         )
     }
@@ -339,8 +339,7 @@ class GiniCaptureFragment(
         giniCaptureFragmentListener?.onFinishedWithResult(
             CaptureSDKResult.Success(
                 extractions,
-                emptyMap(),
-                emptyList()
+                emptyMap()
             )
         )
     }

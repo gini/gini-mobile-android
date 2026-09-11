@@ -9,6 +9,9 @@
 
     <attr name="gbsSwitchTrack" format="reference|color"/>
     <attr name="gbsTextInputLayout" format="reference|color"/>
+    <!-- Deprecated: return reasons are no longer supported and no layout uses this attribute.
+         It is kept so integrator themes that override it keep compiling and will be removed in
+         the next major version. -->
     <attr name="gbsReturnDialogTitle" format="reference|color"/>
     <attr name="gbsAddonTextColor" format="reference|color"/>
     <attr name="colorOnBackground" format="color" />

@@ -33,7 +33,6 @@ import net.gini.android.bank.sdk.capture.skonto.factory.text.SkontoDiscountLabel
 import net.gini.android.bank.sdk.capture.skonto.factory.text.SkontoSavedAmountTextFactory
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.util.autoCleared
-import net.gini.android.bank.sdk.capture.util.parentFragmentManagerOrNull
 import net.gini.android.bank.sdk.capture.util.safeNavigate
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceBinding
 import net.gini.android.bank.sdk.di.getGiniBankKoin
@@ -48,7 +47,6 @@ import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.ui.IntervalToolbarMenuItemIntervalClickListener
 import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.internal.util.ContextHelper
-import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
@@ -64,9 +62,6 @@ import net.gini.android.capture.view.NavButtonType
  *
  * Copyright (c) 2019 Gini GmbH.
  */
-
-
-private const val TAG_RETURN_REASON_DIALOG = "TAG_RETURN_REASON_DIALOG"
 
 /**
  * Internal use only.
@@ -188,7 +183,6 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
             this,
             args.extractionsResult.specificExtractions,
             args.extractionsResult.compoundExtractions,
-            args.extractionsResult.returnReasons,
             args.skontoData,
             getAmountsAreConsistentExtraction(args.extractionsResult.specificExtractions),
             savedInstanceState,
@@ -598,23 +592,6 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
 
     override fun showSkonto(data: DigitalInvoiceSkontoListItem) {
         lineItemsAdapter.skontoDiscount = listOf(data)
-    }
-
-    /**
-     * Internal use only.
-     *
-     * @suppress
-     */
-    override fun showReturnReasonDialog(
-        reasons: List<GiniCaptureReturnReason>,
-        resultCallback: ReturnReasonDialogResultCallback
-    ) {
-        parentFragmentManagerOrNull()?.let { fragmentManager ->
-            ReturnReasonDialog.createInstance(reasons).run {
-                callback = resultCallback
-                show(fragmentManager, TAG_RETURN_REASON_DIALOG)
-            }
-        }
     }
 
     /**

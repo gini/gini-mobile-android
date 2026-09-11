@@ -18,7 +18,11 @@ import java.util.Map;
 
 /**
  * The ReturnReason class is used to allow users to pick a reason for returning a line item in the Return Assistant.
+ *
+ * @deprecated Return reasons are no longer supported. The Bank API Library does not parse them
+ * any more and this class will be removed in the next major version.
  */
+@Deprecated
 public class ReturnReason implements Parcelable {
     private final String mId;
     private final Map<String, String> mLocalizedLabels;

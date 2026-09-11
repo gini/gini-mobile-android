@@ -1,12 +1,10 @@
 package net.gini.android.bank.api
 
-import net.gini.android.bank.api.mapper.BankExtractionsParser
 import net.gini.android.bank.api.models.AmplitudeRoot
 import net.gini.android.bank.api.models.Configuration
 import net.gini.android.bank.api.models.ExtractionsContainer
 import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.bank.api.models.ResolvedPayment
-import net.gini.android.bank.api.models.ReturnReason
 import net.gini.android.bank.api.requests.ErrorEvent
 import net.gini.android.core.api.DocumentRepository
 import net.gini.android.core.api.Resource
@@ -33,10 +31,7 @@ class BankApiDocumentRepository(
         compoundExtractions: Map<String, CompoundExtraction>,
         responseJSON: JSONObject
     ): ExtractionsContainer {
-        val returnReasons: List<ReturnReason> =
-            BankExtractionsParser.parseReturnReasons(responseJSON.optJSONArray("returnReasons"))
-
-        return ExtractionsContainer(specificExtractions, compoundExtractions, returnReasons)
+        return ExtractionsContainer(specificExtractions, compoundExtractions)
     }
 
     suspend fun resolvePaymentRequest(

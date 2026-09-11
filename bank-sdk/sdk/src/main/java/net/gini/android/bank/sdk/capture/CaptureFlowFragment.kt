@@ -346,7 +346,6 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
                 ExtractionsResultData(
                     specificExtractions = result.specificExtractions,
                     compoundExtractions = result.compoundExtractions,
-                    returnReasons = result.returnReasons
                 ),
                 skontoData = skontoData,
                 skontoInvoiceHighlights = highlightBoxes.toTypedArray(),
@@ -445,8 +444,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         finishWithResult(
             CaptureResult.Success(
                 specificExtractions,
-                compoundExtractions,
-                emptyList()
+                compoundExtractions
             )
         )
     }
@@ -459,8 +457,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         finishWithResult(
             CaptureResult.Success(
                 specificExtractions,
-                compoundExtractions,
-                emptyList()
+                compoundExtractions
             )
         )
     }
