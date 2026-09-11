@@ -39,7 +39,8 @@ class CaptureResultTest {
         val schedulePayment = result as CaptureResult.SchedulePayment
         assertThat(schedulePayment.specificExtractions).isEqualTo(specificExtractions)
         assertThat(schedulePayment.compoundExtractions).isEqualTo(compoundExtractions)
-        assertThat(schedulePayment.returnReasons).isEqualTo(returnReasons)
+        @Suppress("DEPRECATION")
+        assertThat(schedulePayment.returnReasons).isEmpty()
     }
 
     @Test
@@ -53,8 +54,11 @@ class CaptureResultTest {
         val result = sdkResult.toCaptureResult()
 
         assertThat(result).isInstanceOf(CaptureResult.Success::class.java)
-        assertThat((result as CaptureResult.Success).specificExtractions)
-            .isEqualTo(specificExtractions)
+        val success = result as CaptureResult.Success
+        assertThat(success.specificExtractions).isEqualTo(specificExtractions)
+        assertThat(success.compoundExtractions).isEqualTo(compoundExtractions)
+        @Suppress("DEPRECATION")
+        assertThat(success.returnReasons).isEmpty()
     }
 
     @Test

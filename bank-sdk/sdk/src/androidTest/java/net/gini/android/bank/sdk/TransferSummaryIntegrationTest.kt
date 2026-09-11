@@ -227,8 +227,7 @@ class TransferSummaryIntegrationTest {
 
             return CaptureResult.Success(
                 specificExtractions = analysisResult.extractions,
-                compoundExtractions = analysisResult.compoundExtractions,
-                returnReasons = analysisResult.returnReasons
+                compoundExtractions = analysisResult.compoundExtractions
             )
 
         } catch (e: Exception) {

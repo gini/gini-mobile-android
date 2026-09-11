@@ -444,8 +444,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         finishWithResult(
             CaptureResult.Success(
                 specificExtractions,
-                compoundExtractions,
-                emptyList()
+                compoundExtractions
             )
         )
     }
@@ -458,8 +457,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         finishWithResult(
             CaptureResult.Success(
                 specificExtractions,
-                compoundExtractions,
-                emptyList()
+                compoundExtractions
             )
         )
     }
