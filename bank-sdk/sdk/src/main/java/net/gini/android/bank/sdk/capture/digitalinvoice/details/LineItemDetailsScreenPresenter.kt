@@ -9,7 +9,6 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.toPriceString
 import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.ParseException
-import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import java.util.*
 
 /**
@@ -32,7 +31,6 @@ internal const val MAX_QUANTITY = 99_999
 internal class LineItemDetailsScreenPresenter(
     activity: Activity, view: View,
     var selectableLineItem: SelectableLineItem,
-    val returnReasons: List<GiniCaptureReturnReason> = emptyList(),
     private val grossPriceFormat: DecimalFormat = DecimalFormat(GROSS_PRICE_FORMAT_PATTERN).apply {
         isParseBigDecimal = true
     }
@@ -50,7 +48,6 @@ internal class LineItemDetailsScreenPresenter(
             return
         }
         selectableLineItem.selected = true
-        selectableLineItem.reason = null
         view.apply {
             enableInput()
             updateCheckboxAndSaveButton()
@@ -62,7 +59,6 @@ internal class LineItemDetailsScreenPresenter(
             return
         }
         selectableLineItem.selected = false
-        selectableLineItem.reason = null
         view.disableInput()
         updateCheckboxAndSaveButton()
     }

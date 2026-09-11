@@ -346,7 +346,6 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
                 ExtractionsResultData(
                     specificExtractions = result.specificExtractions,
                     compoundExtractions = result.compoundExtractions,
-                    returnReasons = result.returnReasons
                 ),
                 skontoData = skontoData,
                 skontoInvoiceHighlights = highlightBoxes.toTypedArray(),

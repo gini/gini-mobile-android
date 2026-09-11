@@ -183,7 +183,6 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
             this,
             args.extractionsResult.specificExtractions,
             args.extractionsResult.compoundExtractions,
-            args.extractionsResult.returnReasons,
             args.skontoData,
             getAmountsAreConsistentExtraction(args.extractionsResult.specificExtractions),
             savedInstanceState,

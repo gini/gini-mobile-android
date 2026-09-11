@@ -32,7 +32,6 @@ class LineResponseItemDetailsScreenPresenterTest {
 
         val selectableLineItem = SelectableLineItem(
             selected = true,
-            reason = null,
             addedByUser = false,
             lineItem = LineItem(
                 id = "id1",
@@ -80,7 +79,6 @@ class LineResponseItemDetailsScreenPresenterTest {
 
         val selectableLineItem = SelectableLineItem(
             selected = true,
-            reason = null,
             addedByUser = false,
             lineItem = LineItem(
                 id = "id1",
@@ -113,7 +111,6 @@ class LineResponseItemDetailsScreenPresenterTest {
 
         val selectableLineItem = SelectableLineItem(
             selected = true,
-            reason = null,
             addedByUser = false,
             lineItem = LineItem(
                 id = "id1",

@@ -24,7 +24,6 @@ import net.gini.android.capture.Amount
 import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
-import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
@@ -47,7 +46,6 @@ internal class DigitalInvoiceScreenPresenter(
     view: DigitalInvoiceScreenContract.View,
     val extractions: Map<String, GiniCaptureSpecificExtraction> = emptyMap(),
     val compoundExtractions: Map<String, GiniCaptureCompoundExtraction> = emptyMap(),
-    val returnReasons: List<GiniCaptureReturnReason> = emptyList(),
     private var skontoData: SkontoData? = null,
     private val isInaccurateExtraction: Boolean = false,
     savedInstanceBundle: Bundle?,
@@ -157,7 +155,7 @@ internal class DigitalInvoiceScreenPresenter(
     }
 
     override fun deselectLineItem(lineItem: SelectableLineItem) {
-        digitalInvoice.deselectLineItem(lineItem, null)
+        digitalInvoice.deselectLineItem(lineItem)
         updateView()
     }
 

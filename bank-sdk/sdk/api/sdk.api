@@ -784,19 +784,17 @@ public final class net/gini/android/bank/sdk/capture/digitalinvoice/LineItemsVal
 public final class net/gini/android/bank/sdk/capture/digitalinvoice/SelectableLineItem : android/os/Parcelable {
 	public static final field $stable I
 	public static final field CREATOR Landroid/os/Parcelable$Creator;
-	public fun <init> (ZLnet/gini/android/capture/network/model/GiniCaptureReturnReason;ZLnet/gini/android/bank/sdk/capture/digitalinvoice/LineItem;)V
-	public synthetic fun <init> (ZLnet/gini/android/capture/network/model/GiniCaptureReturnReason;ZLnet/gini/android/bank/sdk/capture/digitalinvoice/LineItem;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final synthetic fun copy (ZLnet/gini/android/capture/network/model/GiniCaptureReturnReason;Lnet/gini/android/bank/sdk/capture/digitalinvoice/LineItem;)Lnet/gini/android/bank/sdk/capture/digitalinvoice/SelectableLineItem;
-	public static synthetic fun copy$default (Lnet/gini/android/bank/sdk/capture/digitalinvoice/SelectableLineItem;ZLnet/gini/android/capture/network/model/GiniCaptureReturnReason;Lnet/gini/android/bank/sdk/capture/digitalinvoice/LineItem;ILjava/lang/Object;)Lnet/gini/android/bank/sdk/capture/digitalinvoice/SelectableLineItem;
+	public fun <init> (ZZLnet/gini/android/bank/sdk/capture/digitalinvoice/LineItem;)V
+	public synthetic fun <init> (ZZLnet/gini/android/bank/sdk/capture/digitalinvoice/LineItem;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final synthetic fun copy (ZLnet/gini/android/bank/sdk/capture/digitalinvoice/LineItem;)Lnet/gini/android/bank/sdk/capture/digitalinvoice/SelectableLineItem;
+	public static synthetic fun copy$default (Lnet/gini/android/bank/sdk/capture/digitalinvoice/SelectableLineItem;ZLnet/gini/android/bank/sdk/capture/digitalinvoice/LineItem;ILjava/lang/Object;)Lnet/gini/android/bank/sdk/capture/digitalinvoice/SelectableLineItem;
 	public final fun describeContents ()I
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAddedByUser ()Z
 	public final fun getLineItem ()Lnet/gini/android/bank/sdk/capture/digitalinvoice/LineItem;
-	public final fun getReason ()Lnet/gini/android/capture/network/model/GiniCaptureReturnReason;
 	public final fun getSelected ()Z
 	public fun hashCode ()I
 	public final fun setAddedByUser (Z)V
-	public final fun setReason (Lnet/gini/android/capture/network/model/GiniCaptureReturnReason;)V
 	public final fun setSelected (Z)V
 	public fun toString ()Ljava/lang/String;
 	public final fun writeToParcel (Landroid/os/Parcel;I)V
@@ -840,10 +838,9 @@ public final class net/gini/android/bank/sdk/capture/digitalinvoice/args/Digital
 public final class net/gini/android/bank/sdk/capture/digitalinvoice/args/ExtractionsResultData : android/os/Parcelable {
 	public static final field $stable I
 	public static final field CREATOR Landroid/os/Parcelable$Creator;
-	public fun <init> (Ljava/util/Map;Ljava/util/Map;Ljava/util/List;)V
+	public fun <init> (Ljava/util/Map;Ljava/util/Map;)V
 	public final fun describeContents ()I
 	public final fun getCompoundExtractions ()Ljava/util/Map;
-	public final fun getReturnReasons ()Ljava/util/List;
 	public final fun getSpecificExtractions ()Ljava/util/Map;
 	public final fun writeToParcel (Landroid/os/Parcel;I)V
 }
