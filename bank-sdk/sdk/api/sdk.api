@@ -14,7 +14,9 @@ public final class net/gini/android/bank/sdk/GiniBank {
 	public final fun createCaptureFlowFragment ()Lnet/gini/android/bank/sdk/capture/CaptureFlowFragment;
 	public final fun createCaptureFlowFragmentForDocument (Lnet/gini/android/capture/Document;)Lnet/gini/android/bank/sdk/capture/CaptureFlowFragment;
 	public final fun createCaptureFlowFragmentForIntent (Landroid/content/Context;Landroid/content/Intent;Lkotlin/jvm/functions/Function1;)Lnet/gini/android/capture/util/CancellationToken;
+	public final fun createCaptureFlowFragmentForUris (Landroid/content/Context;Ljava/util/List;Lkotlin/jvm/functions/Function1;)Lnet/gini/android/capture/util/CancellationToken;
 	public final fun createDocumentForImportedFiles (Landroid/content/Intent;Landroid/content/Context;Lkotlin/jvm/functions/Function1;)Lnet/gini/android/capture/util/CancellationToken;
+	public final fun createDocumentForImportedFiles (Ljava/util/List;Landroid/content/Context;Lkotlin/jvm/functions/Function1;)Lnet/gini/android/capture/util/CancellationToken;
 	public final fun createInvoicePreviewFragment (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;)Lnet/gini/android/bank/sdk/invoice/InvoicePreviewFragment;
 	public static synthetic fun createInvoicePreviewFragment$default (Lnet/gini/android/bank/sdk/GiniBank;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lnet/gini/android/bank/sdk/invoice/InvoicePreviewFragment;
 	public final fun createInvoicePreviewFragmentArgs (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;)Lnet/gini/android/bank/sdk/invoice/InvoicePreviewFragmentArgs;

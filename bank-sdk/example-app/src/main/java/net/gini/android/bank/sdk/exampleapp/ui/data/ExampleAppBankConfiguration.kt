@@ -19,6 +19,11 @@ data class ExampleAppBankConfiguration(
     // net.gini.android.capture.GiniCapture.Builder#setFileImportEnabled → on/off switch
     val isFileImportEnabled: Boolean = true,
 
+    // open with via Uri-based API
+    // net.gini.android.bank.sdk.GiniBank#createDocumentForImportedFiles(uris)/
+    //      net.gini.android.bank.sdk.GiniBank#createCaptureFlowFragmentForUris → on/off switch
+    val isOpenWithUriBasedApiEnabled: Boolean = false,
+
     // QR code scanning
     // net.gini.android.capture.GiniCapture.Builder#setOnlyQRCodeScanning → on/off switch
     val isQrCodeEnabled: Boolean = true,

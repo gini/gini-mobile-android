@@ -27,6 +27,15 @@ public class ImportImageFileUrisAsyncTask extends AbstractImportImageUrisAsyncTa
         super(context, intent, giniCapture, source, importMethod, callback);
     }
 
+    public ImportImageFileUrisAsyncTask(@NonNull final Context context,
+                                        @NonNull final GiniCapture giniCapture,
+                                        @NonNull final Document.Source source,
+                                        @NonNull final Document.ImportMethod importMethod,
+                                        @NonNull final AsyncCallback<ImageMultiPageDocument, ImportedFileValidationException>
+                                                callback) {
+        super(context, giniCapture, source, importMethod, callback);
+    }
+
     @Override
     protected void onHaltingError(@NonNull final ImportedFileValidationException exception) {
         mException = exception;
