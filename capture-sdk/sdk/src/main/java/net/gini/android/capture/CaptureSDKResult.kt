@@ -18,16 +18,16 @@ sealed class CaptureSDKResult : Parcelable {
     /**
      * Extractions were found.
      *
-     * [returnReasons] is deprecated: return reasons are no longer supported and the list is
-     * always empty.
+     * [returnReasons] is deprecated: return reasons are no longer supported and the SDK never
+     * populates this list, so results produced by the SDK always carry an empty list.
      */
     @Parcelize
     class Success @JvmOverloads constructor(
         val specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
         val compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,
         @Deprecated(
-            "Return reasons are no longer supported. This list is always empty and will be " +
-                "removed in the next major version."
+            "Return reasons are no longer supported. The SDK never populates this list and it " +
+                "will be removed in the next major version."
         )
         val returnReasons: List<GiniCaptureReturnReason> = emptyList(),
     ) : CaptureSDKResult()
@@ -38,16 +38,16 @@ sealed class CaptureSDKResult : Parcelable {
      * Carries the same extractions as [Success] — the hosting app is expected to open its own
      * scheduled transfer flow with them.
      *
-     * [returnReasons] is deprecated: return reasons are no longer supported and the list is
-     * always empty.
+     * [returnReasons] is deprecated: return reasons are no longer supported and the SDK never
+     * populates this list, so results produced by the SDK always carry an empty list.
      */
     @Parcelize
     class SchedulePayment @JvmOverloads constructor(
         val specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
         val compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,
         @Deprecated(
-            "Return reasons are no longer supported. This list is always empty and will be " +
-                "removed in the next major version."
+            "Return reasons are no longer supported. The SDK never populates this list and it " +
+                "will be removed in the next major version."
         )
         val returnReasons: List<GiniCaptureReturnReason> = emptyList(),
     ) : CaptureSDKResult()

@@ -17,15 +17,15 @@ sealed class CaptureResult : Parcelable {
     /**
      * Extractions were found.
      *
-     * [returnReasons] is deprecated: return reasons are no longer supported and the list is
-     * always empty.
+     * [returnReasons] is deprecated: return reasons are no longer supported and the SDK never
+     * populates this list, so results produced by the SDK always carry an empty list.
      */
     class Success(
         val specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
         val compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,
         @Deprecated(
-            "Return reasons are no longer supported. This list is always empty and will be " +
-                "removed in the next major version."
+            "Return reasons are no longer supported. The SDK never populates this list and it " +
+                "will be removed in the next major version."
         )
         val returnReasons: List<GiniCaptureReturnReason> = emptyList(),
     ) : CaptureResult()
@@ -36,15 +36,15 @@ sealed class CaptureResult : Parcelable {
      * Carries the same extractions as [Success]. Open your scheduled transfer flow with them
      * instead of executing the payment immediately.
      *
-     * [returnReasons] is deprecated: return reasons are no longer supported and the list is
-     * always empty.
+     * [returnReasons] is deprecated: return reasons are no longer supported and the SDK never
+     * populates this list, so results produced by the SDK always carry an empty list.
      */
     class SchedulePayment(
         val specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
         val compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,
         @Deprecated(
-            "Return reasons are no longer supported. This list is always empty and will be " +
-                "removed in the next major version."
+            "Return reasons are no longer supported. The SDK never populates this list and it " +
+                "will be removed in the next major version."
         )
         val returnReasons: List<GiniCaptureReturnReason> = emptyList(),
     ) : CaptureResult()
