@@ -157,19 +157,8 @@ internal class DigitalInvoiceScreenPresenter(
     }
 
     override fun deselectLineItem(lineItem: SelectableLineItem) {
-        if (canShowReturnReasonsDialog()) {
-            view.showReturnReasonDialog(returnReasons) { selectedReason ->
-                if (selectedReason != null) {
-                    digitalInvoice.deselectLineItem(lineItem, selectedReason)
-                } else {
-                    digitalInvoice.selectLineItem(lineItem)
-                }
-                updateView()
-            }
-        } else {
-            digitalInvoice.deselectLineItem(lineItem, null)
-            updateView()
-        }
+        digitalInvoice.deselectLineItem(lineItem, null)
+        updateView()
     }
 
     internal fun deselectLineItem(index: Int) {
@@ -181,9 +170,6 @@ internal class DigitalInvoiceScreenPresenter(
     internal fun deselectAllLineItems() {
         digitalInvoice.selectableLineItems.forEach { deselectLineItem(it) }
     }
-
-    private fun canShowReturnReasonsDialog() =
-        GiniBank.enableReturnReasons && returnReasons.isNotEmpty()
 
     override fun editLineItem(lineItem: SelectableLineItem) {
         view.onEditLineItem(lineItem)

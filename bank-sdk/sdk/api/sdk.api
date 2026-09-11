@@ -715,7 +715,6 @@ public abstract interface class net/gini/android/bank/sdk/capture/digitalinvoice
 	public abstract fun showAddons (Ljava/util/List;)V
 	public abstract fun showLineItems (Ljava/util/List;Z)V
 	public abstract fun showOnboarding ()V
-	public abstract fun showReturnReasonDialog (Ljava/util/List;Lkotlin/jvm/functions/Function1;)V
 	public abstract fun showSkonto (Lnet/gini/android/bank/sdk/capture/digitalinvoice/DigitalInvoiceSkontoListItem;)V
 	public abstract fun showSkontoEditScreen (Lnet/gini/android/bank/sdk/capture/skonto/model/SkontoData;Z)V
 	public abstract fun updateFooterDetails (Lnet/gini/android/bank/sdk/capture/digitalinvoice/DigitalInvoiceScreenContract$FooterDetails;)V
@@ -885,7 +884,6 @@ public abstract interface class net/gini/android/bank/sdk/capture/digitalinvoice
 	public abstract fun showDescription (Ljava/lang/String;)V
 	public abstract fun showGrossPrice (Ljava/lang/String;Ljava/lang/String;)V
 	public abstract fun showQuantity (I)V
-	public abstract fun showReturnReasonDialog (Ljava/util/List;Lkotlin/jvm/functions/Function1;)V
 	public abstract fun showTotalGrossPrice (Ljava/lang/String;Ljava/lang/String;)V
 }
 
@@ -1932,16 +1930,6 @@ public final class net/gini/android/bank/sdk/databinding/GbsFragmentDigitalInvoi
 	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/bank/sdk/databinding/GbsFragmentDigitalInvoiceOnboardingBinding;
 }
 
-public final class net/gini/android/bank/sdk/databinding/GbsFragmentReturnReasonDialogBinding : androidx/viewbinding/ViewBinding {
-	public final field gbsCloseBottomSheet Landroid/widget/ImageView;
-	public final field gbsReturnReasonsList Landroid/widget/ListView;
-	public static fun bind (Landroid/view/View;)Lnet/gini/android/bank/sdk/databinding/GbsFragmentReturnReasonDialogBinding;
-	public synthetic fun getRoot ()Landroid/view/View;
-	public fun getRoot ()Landroid/widget/LinearLayout;
-	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/bank/sdk/databinding/GbsFragmentReturnReasonDialogBinding;
-	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/bank/sdk/databinding/GbsFragmentReturnReasonDialogBinding;
-}
-
 public final class net/gini/android/bank/sdk/databinding/GbsHelpNavigationBarBottomBinding : androidx/viewbinding/ViewBinding {
 	public final field gbsGoBack Landroid/widget/ImageButton;
 	public static fun bind (Landroid/view/View;)Lnet/gini/android/bank/sdk/databinding/GbsHelpNavigationBarBottomBinding;
@@ -2010,15 +1998,6 @@ public final class net/gini/android/bank/sdk/databinding/GbsItemHelpBinding : an
 	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
 	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/bank/sdk/databinding/GbsItemHelpBinding;
 	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/bank/sdk/databinding/GbsItemHelpBinding;
-}
-
-public final class net/gini/android/bank/sdk/databinding/GbsItemReturnReasonBinding : androidx/viewbinding/ViewBinding {
-	public final field text Landroid/widget/TextView;
-	public static fun bind (Landroid/view/View;)Lnet/gini/android/bank/sdk/databinding/GbsItemReturnReasonBinding;
-	public synthetic fun getRoot ()Landroid/view/View;
-	public fun getRoot ()Landroid/widget/TextView;
-	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/bank/sdk/databinding/GbsItemReturnReasonBinding;
-	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/bank/sdk/databinding/GbsItemReturnReasonBinding;
 }
 
 public final class net/gini/android/bank/sdk/di/BankSdkIsolatedKoinContext {

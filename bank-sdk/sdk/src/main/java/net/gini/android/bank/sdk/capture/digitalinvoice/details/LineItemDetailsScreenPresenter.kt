@@ -1,7 +1,6 @@
 package net.gini.android.bank.sdk.capture.digitalinvoice.details
 
 import android.app.Activity
-import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoice
 import net.gini.android.bank.sdk.capture.digitalinvoice.SelectableLineItem
 import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsScreenContract.Presenter
@@ -62,28 +61,11 @@ internal class LineItemDetailsScreenPresenter(
         if (!selectableLineItem.selected) {
             return
         }
-        if (canShowReturnReasonsDialog()) {
-            view.showReturnReasonDialog(returnReasons) { selectedReason ->
-                if (selectedReason != null) {
-                    selectableLineItem.selected = false
-                    selectableLineItem.reason = selectedReason
-                    view.disableInput()
-                } else {
-                    selectableLineItem.selected = true
-                    selectableLineItem.reason = null
-                    view.enableInput()
-                }
-                updateCheckboxAndSaveButton()
-            }
-        } else {
-            selectableLineItem.selected = false
-            selectableLineItem.reason = null
-            view.disableInput()
-            updateCheckboxAndSaveButton()
-        }
+        selectableLineItem.selected = false
+        selectableLineItem.reason = null
+        view.disableInput()
+        updateCheckboxAndSaveButton()
     }
-
-    private fun canShowReturnReasonsDialog() = GiniBank.enableReturnReasons && returnReasons.isNotEmpty()
 
     private fun updateCheckboxAndSaveButton() = selectableLineItem.let {
         view.apply {

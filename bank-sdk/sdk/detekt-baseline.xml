@@ -131,7 +131,6 @@
     <ID>NewLineAtEndOfFile:PaymentRequestIntent.kt$net.gini.android.bank.sdk.pay.PaymentRequestIntent.kt</ID>
     <ID>NewLineAtEndOfFile:PreferencesExtension.kt$net.gini.android.bank.sdk.capture.util.PreferencesExtension.kt</ID>
     <ID>NewLineAtEndOfFile:ResolvePaymentInputExtensions.kt$net.gini.android.bank.sdk.util.ResolvePaymentInputExtensions.kt</ID>
-    <ID>NewLineAtEndOfFile:ReturnReasonsDialog.kt$net.gini.android.bank.sdk.capture.digitalinvoice.ReturnReasonsDialog.kt</ID>
     <ID>NewLineAtEndOfFile:SelectableLineItem.kt$net.gini.android.bank.sdk.capture.digitalinvoice.SelectableLineItem.kt</ID>
     <ID>NewLineAtEndOfFile:SkontoFooterSectionColors.kt$net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoFooterSectionColors.kt</ID>
     <ID>NewLineAtEndOfFile:SkontoFragment.kt$net.gini.android.bank.sdk.capture.skonto.SkontoFragment.kt</ID>
@@ -170,7 +169,6 @@
     <ID>TooManyFunctions:GiniBank.kt$GiniBank</ID>
     <ID>TooManyFunctions:LineItemDetailsScreenContract.kt$LineItemDetailsScreenContract$View : GiniCaptureBaseView</ID>
     <ID>TooManyFunctions:LineItemDetailsScreenPresenter.kt$LineItemDetailsScreenPresenter : Presenter</ID>
-    <ID>TooManyFunctions:ReturnReasonsDialog.kt$ReturnReasonDialog : BottomSheetDialogFragment</ID>
     <ID>TooManyFunctions:SkontoFragment.kt$net.gini.android.bank.sdk.capture.skonto.SkontoFragment.kt</ID>
     <ID>TooManyFunctions:SkontoFragmentViewModel.kt$SkontoFragmentViewModel : ViewModel</ID>
     <ID>TopLevelPropertyNaming:PaymentRequestIntent.kt$internal const val Scheme = "ginipay" // It has to match the scheme in query tag in manifest</ID>
@@ -188,6 +186,5 @@
     <ID>WildcardImport:LineItemsAdapter.kt$import net.gini.android.bank.sdk.capture.digitalinvoice.ViewType.*</ID>
     <ID>WildcardImport:LineItemsValidator.kt$import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceException.*</ID>
     <ID>WildcardImport:SimpleBusEventStore.kt$import kotlinx.coroutines.flow.*</ID>
-    <ID>NestedBlockDepth:ReturnReasonsDialog.kt$ReturnReasonDialog$override fun onStart()</ID>
   </CurrentIssues>
 </SmellBaseline>

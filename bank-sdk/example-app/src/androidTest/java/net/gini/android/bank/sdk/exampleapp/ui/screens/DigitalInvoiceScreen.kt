@@ -3,9 +3,6 @@ package net.gini.android.bank.sdk.exampleapp.ui.screens
 import android.widget.TextView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.hasChildCount
-import androidx.test.espresso.matcher.ViewMatchers.withClassName
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
@@ -13,7 +10,6 @@ import androidx.test.uiautomator.UiCollection
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.`is`
 import net.gini.android.bank.sdk.exampleapp.ui.resources.AppResources
 
 
@@ -121,47 +117,20 @@ class DigitalInvoiceScreen {
         return this
     }
 
-    fun checkForReturnReasonsList(): Boolean {
-        var isReturnReasonDisplayed = false
-        onView(withText(net.gini.android.bank.sdk.R.string.gbs_digital_invoice_return_reason_dialog_title))
-            .check { view, _ ->
-                if (view.isShown()) {
-                    isReturnReasonDisplayed = true
-                }
-            }
-        return isReturnReasonDisplayed
-    }
-
-    fun  returnItemCountOnReturnReasonsList(): Int{
-        val uiCollection =
-            UiCollection(UiSelector().className("android.widget.ListView"))
-        val itemSize = uiCollection.childCount
-        onView(withClassName(`is`("android.widget.ListView"))).check(matches(hasChildCount(itemSize)))
-        return itemSize
-    }
-
-    fun  clickItemOnReturnReasonsList() {
-        val uiCollection =
-            UiCollection(UiSelector().className("android.widget.ListView"))
-        val returnReasonsItems = uiCollection.getChildByInstance(
-            UiSelector().className("android.widget.TextView"), 0)
-        returnReasonsItems.click()
-    }
-
     fun  checkItemIsDisabledFromDigitalScreen(): Boolean {
-        val returnReasonsItems = device.findObject(UiSelector()
+        val lineItem = device.findObject(UiSelector()
             .className("android.view.ViewGroup")
             .resourceId(AppResources.resId("gsb_line_item"))
             .index(0))
-        return !(returnReasonsItems.isEnabled)
+        return !(lineItem.isEnabled)
     }
 
     fun  checkItemIsEnabledFromDigitalScreen(): Boolean {
-        val returnReasonsItems = device.findObject(UiSelector()
+        val lineItem = device.findObject(UiSelector()
             .className("android.view.ViewGroup")
             .resourceId(AppResources.resId("gsb_line_item"))
             .index(0))
-        return returnReasonsItems.isEnabled
+        return lineItem.isEnabled
     }
 
     fun clickHelpButtonOnDigitalInvoiceScreen() {

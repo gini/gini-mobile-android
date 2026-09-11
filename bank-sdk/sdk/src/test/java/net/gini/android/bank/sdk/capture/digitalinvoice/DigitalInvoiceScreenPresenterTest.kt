@@ -11,11 +11,9 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.di.BankSdkIsolatedKoinContext
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureExtraction
-import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import org.junit.Before
 import org.junit.Test
@@ -25,81 +23,10 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class DigitalInvoiceScreenPresenterTest {
 
-    private val returnReasonsFixture = listOf(
-        GiniCaptureReturnReason("1", mapOf("de" to "Foo", "en" to "Foo")),
-        GiniCaptureReturnReason("2", mapOf("de" to "Bar", "en" to "Bar"))
-    )
-
     @Before
     fun setUp() {
         BankSdkIsolatedKoinContext.init(InstrumentationRegistry.getInstrumentation().context)
     }
-
-    @Test
-    fun `shows return reasons dialog when enabled and has a return reasons list`() {
-        // Given
-        GiniBank.enableReturnReasons = true
-
-        val view: DigitalInvoiceScreenContract.View = mockk(relaxed = true)
-
-        val presenter = DigitalInvoiceScreenPresenter(
-            activity = mockk(),
-            view = view,
-            returnReasons = returnReasonsFixture,
-            savedInstanceBundle = null,
-            oncePerInstallEventStore = mockk(),
-            simpleBusEventStore = mockk()
-        )
-
-        // When
-        presenter.deselectLineItem(mockk<SelectableLineItem>())
-
-        // Then
-        excludeRecords { view.setPresenter(any()) }
-        verify { view.showReturnReasonDialog(any(), any()) }
-        confirmVerified(view)
-    }
-
-    @Test
-    fun `skips return reasons dialog - (isReturnReasonsEnabled, listOfReturnReasons)`() {
-
-        skipsReturnReasonDialogValues().forEach { (isReturnReasonsEnabled, listOfReturnReasons) ->
-            // Given
-            GiniBank.enableReturnReasons = isReturnReasonsEnabled
-
-            val view: DigitalInvoiceScreenContract.View = mockk(relaxed = true)
-
-            val presenter = DigitalInvoiceScreenPresenter(
-                activity = mockk(),
-                view = view,
-                returnReasons = listOfReturnReasons,
-                savedInstanceBundle = null,
-                oncePerInstallEventStore = mockk(relaxed = true),
-                simpleBusEventStore = mockk()
-            )
-
-            // When
-            presenter.deselectLineItem(mockk<SelectableLineItem>())
-
-            // Then
-            excludeRecords {
-                view.setPresenter(any())
-                view.showLineItems(any(), any())
-                view.updateFooterDetails(any())
-                view.showAddons(any())
-            }
-            verify(exactly = 0) { view.showReturnReasonDialog(any(), any()) }
-            confirmVerified(view)
-        }
-    }
-
-    private fun skipsReturnReasonDialogValues(): Array<Pair<Boolean, List<GiniCaptureReturnReason>>> =
-        arrayOf(
-            // isReturnReasonsEnabled, listOfReturnReasons
-            true to emptyList(),
-            false to returnReasonsFixture,
-            false to emptyList()
-        )
 
     private val extractionsWithOtherChargesFixture: Map<String, GiniCaptureSpecificExtraction> =
         mapOf(
@@ -229,9 +156,6 @@ class DigitalInvoiceScreenPresenterTest {
     @Test
     fun `enables pay button - (extractions, compoundExtractions, deselectedLineItems)`() {
         enablesPayButtonValues().forEach { (extractions, compoundExtractions, deselectedLineItemIndexes) ->
-
-            GiniBank.enableReturnReasons = false
-
             val view: DigitalInvoiceScreenContract.View = mockk(relaxed = true)
             val footerDetailsSlot = slot<DigitalInvoiceScreenContract.FooterDetails>()
             every { view.updateFooterDetails(capture(footerDetailsSlot)) } just Runs
@@ -298,8 +222,6 @@ class DigitalInvoiceScreenPresenterTest {
     @Test
     fun `disables pay button if total price is zero without selected line items`() {
         // Given
-        GiniBank.enableReturnReasons = false
-
         val view: DigitalInvoiceScreenContract.View = mockk(relaxed = true)
         val footerDetailsSlot = slot<DigitalInvoiceScreenContract.FooterDetails>()
         every { view.updateFooterDetails(capture(footerDetailsSlot)) } just Runs
@@ -335,8 +257,6 @@ class DigitalInvoiceScreenPresenterTest {
     @Test
     fun `disables pay button if total price is zero with selected line items`() {
         // Given
-        GiniBank.enableReturnReasons = false
-
         val view: DigitalInvoiceScreenContract.View = mockk(relaxed = true)
 
         val footerDetailsSlot = slot<DigitalInvoiceScreenContract.FooterDetails>()
