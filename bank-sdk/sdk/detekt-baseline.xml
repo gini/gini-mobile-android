@@ -120,7 +120,6 @@
     <ID>NewLineAtEndOfFile:DigitalOnboardingScreenContract.kt$net.gini.android.bank.sdk.capture.digitalinvoice.onboarding.DigitalOnboardingScreenContract.kt</ID>
     <ID>NewLineAtEndOfFile:DigitalOnboardingScreenPresenter.kt$net.gini.android.bank.sdk.capture.digitalinvoice.onboarding.DigitalOnboardingScreenPresenter.kt</ID>
     <ID>NewLineAtEndOfFile:EditTextExtensions.kt$net.gini.android.bank.sdk.capture.digitalinvoice.details.EditTextExtensions.kt</ID>
-    <ID>NewLineAtEndOfFile:FragmentExtension.kt$net.gini.android.bank.sdk.capture.util.FragmentExtension.kt</ID>
     <ID>NewLineAtEndOfFile:FragmentExtensions.kt$net.gini.android.bank.sdk.util.FragmentExtensions.kt</ID>
     <ID>NewLineAtEndOfFile:GiniBankAPI.kt$net.gini.android.bank.sdk.util.GiniBankAPI.kt</ID>
     <ID>NewLineAtEndOfFile:IsolatedKoinContext.kt$net.gini.android.bank.sdk.di.IsolatedKoinContext.kt</ID>
