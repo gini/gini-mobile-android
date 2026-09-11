@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package net.gini.android.capture
 
 import android.content.Intent
@@ -15,12 +17,19 @@ import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 sealed class CaptureSDKResult : Parcelable {
     /**
      * Extractions were found.
+     *
+     * [returnReasons] is deprecated: return reasons are no longer supported and the list is
+     * always empty.
      */
     @Parcelize
-    class Success(
+    class Success @JvmOverloads constructor(
         val specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
         val compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,
-        val returnReasons: List<GiniCaptureReturnReason>,
+        @Deprecated(
+            "Return reasons are no longer supported. This list is always empty and will be " +
+                "removed in the next major version."
+        )
+        val returnReasons: List<GiniCaptureReturnReason> = emptyList(),
     ) : CaptureSDKResult()
 
     /**
@@ -28,12 +37,19 @@ sealed class CaptureSDKResult : Parcelable {
      *
      * Carries the same extractions as [Success] — the hosting app is expected to open its own
      * scheduled transfer flow with them.
+     *
+     * [returnReasons] is deprecated: return reasons are no longer supported and the list is
+     * always empty.
      */
     @Parcelize
-    class SchedulePayment(
+    class SchedulePayment @JvmOverloads constructor(
         val specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
         val compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,
-        val returnReasons: List<GiniCaptureReturnReason>,
+        @Deprecated(
+            "Return reasons are no longer supported. This list is always empty and will be " +
+                "removed in the next major version."
+        )
+        val returnReasons: List<GiniCaptureReturnReason> = emptyList(),
     ) : CaptureSDKResult()
 
     /**

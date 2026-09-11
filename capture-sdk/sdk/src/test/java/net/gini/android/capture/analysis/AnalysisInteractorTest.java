@@ -16,7 +16,6 @@ import net.gini.android.capture.internal.network.NetworkRequestResult;
 import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.network.AnalysisResult;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
-import net.gini.android.capture.network.model.GiniCaptureReturnReason;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 
 import org.junit.After;
@@ -509,16 +508,13 @@ public class AnalysisInteractorTest {
     public void toCaptureResult_shouldMapFieldsCorrectly() {
         Map<String, GiniCaptureSpecificExtraction> extractions = new HashMap<>();
         Map<String, GiniCaptureCompoundExtraction> compoundExtractions = new HashMap<>();
-        List<GiniCaptureReturnReason> returnReasons = new ArrayList<>();
         extractions.put("amountToPay", mock(GiniCaptureSpecificExtraction.class));
         compoundExtractions.put("iban", mock(GiniCaptureCompoundExtraction.class));
-        returnReasons.add(mock(GiniCaptureReturnReason.class));
 
         AnalysisInteractor.ResultHolder resultHolder = new AnalysisInteractor.ResultHolder(
                 AnalysisInteractor.Result.SUCCESS_WITH_EXTRACTIONS,
                 extractions,
                 compoundExtractions,
-                returnReasons,
                 "docId",
                 "fileName"
         );
@@ -527,7 +523,7 @@ public class AnalysisInteractorTest {
 
         assertThat(result.getSpecificExtractions()).isEqualTo(extractions);
         assertThat(result.getCompoundExtractions()).isEqualTo(compoundExtractions);
-        assertThat(result.getReturnReasons()).isEqualTo(returnReasons);
+        assertThat(result.getReturnReasons()).isEmpty();
     }
 
     @Test
@@ -536,7 +532,6 @@ public class AnalysisInteractorTest {
                 AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS,
                 Collections.emptyMap(),
                 Collections.emptyMap(),
-                Collections.emptyList(),
                 null,
                 null
         );

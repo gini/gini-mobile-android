@@ -86,7 +86,6 @@ public class AnalysisInteractor {
                                         return new ResultHolder(Result.SUCCESS_WITH_EXTRACTIONS,
                                                 extractions,
                                                 compoundExtractions,
-                                                requestResult.getAnalysisResult().getReturnReasons(),
                                                 requestResult.getApiDocumentId(),
                                                 requestResult.getApiDocumentFilename());
                                     }
@@ -175,7 +174,6 @@ public class AnalysisInteractor {
         private final Result mResult;
         private final Map<String, GiniCaptureSpecificExtraction> mExtractions;
         private final Map<String, GiniCaptureCompoundExtraction> mCompoundExtractions;
-        private final List<GiniCaptureReturnReason> mReturnReasons;
         private final String mGiniApiDocumentId;
         private final String mGiniApiDocumentFileName;
 
@@ -184,7 +182,6 @@ public class AnalysisInteractor {
                      final String giniApiDocumentFilename) {
             this(result, Collections.emptyMap(),
                     Collections.emptyMap(),
-                    Collections.emptyList(),
                     giniApiDocumentId,
                     giniApiDocumentFilename);
         }
@@ -193,13 +190,11 @@ public class AnalysisInteractor {
                 @NonNull final Result result,
                 @NonNull final Map<String, GiniCaptureSpecificExtraction> extractions,
                 @NonNull final Map<String, GiniCaptureCompoundExtraction> compoundExtractions,
-                @NonNull final List<GiniCaptureReturnReason> returnReasons,
                 final String giniApiDocumentId,
                 final String giniApiDocumentFilename) {
             mResult = result;
             mExtractions = extractions;
             mCompoundExtractions = compoundExtractions;
-            mReturnReasons = returnReasons;
             mGiniApiDocumentId = giniApiDocumentId;
             mGiniApiDocumentFileName = giniApiDocumentFilename;
         }
@@ -214,8 +209,7 @@ public class AnalysisInteractor {
         public static CaptureSDKResult.Success toCaptureResult(@NonNull final ResultHolder resultHolder) {
             return new CaptureSDKResult.Success(
                     resultHolder.mExtractions,
-                    resultHolder.mCompoundExtractions,
-                    resultHolder.mReturnReasons
+                    resultHolder.mCompoundExtractions
             );
         }
 
@@ -234,9 +228,15 @@ public class AnalysisInteractor {
             return mCompoundExtractions;
         }
 
+        /**
+         * @return an empty list
+         * @deprecated Return reasons are no longer supported. This list is always empty and
+         * will be removed in the next major version.
+         */
+        @Deprecated
         @NonNull
         public List<GiniCaptureReturnReason> getReturnReasons() {
-            return mReturnReasons;
+            return Collections.emptyList();
         }
 
         public String getDocumentId() {
