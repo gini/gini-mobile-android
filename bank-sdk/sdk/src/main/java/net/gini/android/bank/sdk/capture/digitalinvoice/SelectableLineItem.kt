@@ -11,7 +11,11 @@ import kotlinx.parcelize.Parcelize
  */
 
 /**
+ * Internal use only.
+ *
  * The `SelectableLineItem` wrapps a [LineItem] and adds the possibility to select/deselect it.
+ *
+ * @suppress
  */
 @Parcelize
 class SelectableLineItem(
