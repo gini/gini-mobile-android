@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION")
-
 package net.gini.android.capture
 
 import android.content.Intent
