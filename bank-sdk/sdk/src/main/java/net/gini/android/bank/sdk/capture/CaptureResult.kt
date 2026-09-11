@@ -20,7 +20,7 @@ sealed class CaptureResult : Parcelable {
      * [returnReasons] is deprecated: return reasons are no longer supported and the SDK never
      * populates this list, so results produced by the SDK always carry an empty list.
      */
-    class Success(
+    class Success @JvmOverloads constructor(
         val specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
         val compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,
         @Deprecated(
@@ -39,7 +39,7 @@ sealed class CaptureResult : Parcelable {
      * [returnReasons] is deprecated: return reasons are no longer supported and the SDK never
      * populates this list, so results produced by the SDK always carry an empty list.
      */
-    class SchedulePayment(
+    class SchedulePayment @JvmOverloads constructor(
         val specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
         val compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,
         @Deprecated(
