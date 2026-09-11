@@ -4,7 +4,6 @@ import com.google.common.truth.Truth.assertThat
 import io.mockk.mockk
 import net.gini.android.capture.CaptureSDKResult
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
-import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import org.junit.Test
 
@@ -18,7 +17,6 @@ class CaptureResultTest {
         mapOf("paymentDueDate" to mockk<GiniCaptureSpecificExtraction>())
     private val compoundExtractions =
         mapOf("compound" to mockk<GiniCaptureCompoundExtraction>())
-    private val returnReasons = listOf(mockk<GiniCaptureReturnReason>())
 
     /**
      * The scheduled payment hand-off must survive the mapping with its
@@ -29,8 +27,7 @@ class CaptureResultTest {
     fun `SchedulePayment maps to CaptureResult SchedulePayment with extractions intact`() {
         val sdkResult = CaptureSDKResult.SchedulePayment(
             specificExtractions,
-            compoundExtractions,
-            returnReasons
+            compoundExtractions
         )
 
         val result = sdkResult.toCaptureResult()
@@ -47,8 +44,7 @@ class CaptureResultTest {
     fun `Success still maps to CaptureResult Success`() {
         val sdkResult = CaptureSDKResult.Success(
             specificExtractions,
-            compoundExtractions,
-            returnReasons
+            compoundExtractions
         )
 
         val result = sdkResult.toCaptureResult()
