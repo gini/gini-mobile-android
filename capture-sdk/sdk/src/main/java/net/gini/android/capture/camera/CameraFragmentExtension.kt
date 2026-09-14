@@ -106,8 +106,11 @@ internal abstract class CameraFragmentExtension {
      * for: the retrieval overlay is gone as soon as the backend answers, while the education
      * overlay outlives that network call — `QRCodeEducationPopup.hide()` is never called and its
      * ComposeView stays visible past the 4.5 s animation, until navigation tears the screen down.
-     * So the badge comes down with the retrieval popup, but only when the education half is not
-     * the one running. See `CameraFragmentImpl.setPoweredByGiniVisible` for every end point.
+     * So the badge comes down in `CameraFragmentImpl.hideActivityIndicatorAndEnableInteraction()`
+     * — the single moment the dim is removed and the shutter becomes usable again, and therefore
+     * the one place every end of the retrieval half passes through, cancelled requests included —
+     * but only when the education half is not the one running. See
+     * `CameraFragmentImpl.setPoweredByGiniVisible` for every end point.
      */
     fun showQrCodePopup(data: PaymentQRCodeData, onEducationFlowTriggered: () -> Unit) =
         runBlocking {
@@ -152,9 +155,10 @@ internal abstract class CameraFragmentExtension {
      * Whether the currently running half of the QR-code analysis step is the education one.
      *
      * `CameraFragmentImpl` needs this to decide whether the ingredient brand element may come down
-     * when the invoice-retrieval request returns. On the education half that request runs too, but
-     * the education overlay is still on screen when it answers, so hiding there would leave the
-     * education content unbranded — the defect this ownership change fixes. Exposed as a
+     * in `hideActivityIndicatorAndEnableInteraction()`, the moment the live preview becomes usable
+     * again. On the education half the invoice-retrieval request runs too, so that method is
+     * reached there as well, but the education overlay is still on screen when it answers — hiding
+     * unguarded would leave the education content unbranded. Exposed as a
      * `protected` function rather than a property so the Java subclass calls it in the same shape
      * as [isOnlyQRCodeScanningEnabled].
      */
