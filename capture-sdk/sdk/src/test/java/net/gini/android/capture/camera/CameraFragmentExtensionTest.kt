@@ -32,6 +32,7 @@ class CameraFragmentExtensionTest {
         onlyQRCodeScanningEnabled = false
         extension = object : CameraFragmentExtension() {
             override fun hideImageCorners() = Unit
+            override fun setPoweredByGiniVisible(visible: Boolean) = Unit
             override fun isOnlyQRCodeScanningEnabled() = onlyQRCodeScanningEnabled
         }
     }

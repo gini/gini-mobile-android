@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  The Gini ingredient brand element ("Powered by gini"). Shown on the Analysis screen when the
+  client configuration lists that screen in ingredientBrandScreens.
+
+  Mirrors the approved Figma component "Powered by Gini" (35631:1800) from the
+  "Analysis Screen/Android" section: a white pill with an 8dp radius, 6dp/3dp padding, a 10sp
+  label and the brand wordmark 3dp to its right.
+
+  It is announced as a single element: the container carries the content description and both
+  children are excluded from accessibility, so TalkBack reads "Powered by Gini" once instead of
+  the label and the logo separately. layoutDirection is pinned to LTR because the lockup is a
+  brand mark and must not mirror; the announcement is unaffected, since it comes from the
+  container's content description rather than from child order.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/gc_powered_by_gini_background"
+    android:contentDescription="@string/gc_powered_by_gini_content_description"
+    android:focusable="false"
+    android:gravity="center_vertical"
+    android:importantForAccessibility="yes"
+    android:layoutDirection="ltr"
+    android:orientation="horizontal"
+    android:paddingHorizontal="@dimen/gc_powered_by_gini_padding_horizontal"
+    android:paddingVertical="@dimen/gc_powered_by_gini_padding_vertical"
+    android:screenReaderFocusable="true"
+    tools:ignore="UnusedAttribute">
+
+    <TextView
+        android:id="@+id/gc_powered_by_gini_label"
+        style="@style/GiniCaptureTheme.Typography.PoweredByGini"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="no"
+        android:text="@string/gc_powered_by_gini_label" />
+
+    <!--
+      Fixed size rather than the drawable's intrinsic 28x20dp, to match the 23.8x15.3dp lockup
+      in the Figma component. Not tinted: ic_gini_logo carries the Gini brand blue, which stays
+      the same in light and dark mode. Tinting it with the theme accent would change the brand
+      colour.
+    -->
+    <ImageView
+        android:id="@+id/gc_powered_by_gini_logo"
+        android:layout_width="@dimen/gc_powered_by_gini_logo_width"
+        android:layout_height="@dimen/gc_powered_by_gini_logo_height"
+        android:layout_marginStart="@dimen/gc_powered_by_gini_logo_spacing"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_gini_logo" />
+
+</LinearLayout>

@@ -238,5 +238,9 @@
     </string>
     <string name="gc_schedule_payment">Terminüberweisung</string>
     <!--   endregion -->
+    <!--   region Ingredient brand -->
+    <string name="gc_powered_by_gini_label">Powered by</string>
+    <string name="gc_powered_by_gini_content_description">Powered by Gini</string>
+    <!--   endregion -->
 
 </resources>

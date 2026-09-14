@@ -15,6 +15,14 @@
     <color name="gc_dark_05">#626262</color>
     <color name="gc_dark_06">#7A7A7A</color>
     <color name="gc_light_01">#FFFFFF</color>
+
+    <!--
+      Gini ingredient brand element. The badge is a white pill in light and dark mode alike
+      (Figma component "Powered by Gini" 35631:1800), so its label colour cannot follow the
+      theme either. It maps the Figma token color/text/secondary. Deliberately not overridden
+      in values-night.
+    -->
+    <color name="gc_powered_by_gini_label">#3A3A3C</color>
     <color name="gc_light_02">#F2F2F2</color>
     <color name="gc_light_03">#E5E5E5</color>
     <color name="gc_light_04">#D9D9D9</color>

@@ -228,6 +228,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
 
     private ConstraintLayout mLayoutRoot;
+    private View mPoweredByGiniView;
     private ViewGroup mCameraPreviewContainer;
     private View mCameraPreview;
     private ImageView mCameraFocusIndicator;
@@ -592,7 +593,11 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                             }
                             handlePaymentQRCodeData(paymentQRCodeData);
                             return null;
-                        });
+                        },
+                        null, // onHide
+                        null, // onScanAnotherQRCode
+                        null, // onCaptureDocument
+                        () -> false); // isNewWarningEnabled — unsupported QR codes only
 
         mUnsupportedQRCodePopup =
                 new QRCodePopup<>(mFragment, mCameraFrameWrapper, mActivityIndicatorBackground, null,
@@ -610,7 +615,42 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                         // be loaded yet at view creation, so the warning type is resolved (and
                         // pinned for the session) when the popup is first shown.
                         this::isUnsupportedQRCodeWarningEnabled);
-        qrCodeEducationPopup = new QRCodeEducationPopup<>(view.findViewById(R.id.gc_qr_code_education_compose_view));
+        // Neither popup is handed the ingredient brand element. It is a single view shared by the
+        // two mutually exclusive halves of the QR-code analysis step, so this fragment owns it
+        // alone — see setPoweredByGiniVisible.
+        qrCodeEducationPopup = new QRCodeEducationPopup<>(
+                view.findViewById(R.id.gc_qr_code_education_compose_view));
+    }
+
+    /**
+     * The single writer of {@link #mPoweredByGiniView}, the Gini ingredient brand element.
+     *
+     * <p>The badge is one view shared by both halves of the QR-code analysis step — invoice
+     * retrieval ({@code QRCodePopup}) and QR-code education ({@code QRCodeEducationPopup}) — which
+     * are mutually exclusive. While each popup wrote the view itself, whichever half reached its
+     * own end first took the badge down while the other half was still on screen: the education
+     * animation always ends after a fixed 4.5s, the retrieval popup is hidden when the backend
+     * answers, and neither event marks the end of the step.
+     *
+     * <p>The badge tracks whichever surface is covering the live preview, because R13 forbids it
+     * while the preview is up and the shutter usable. It is switched on in exactly two places:
+     * {@code CameraFragmentExtension.showQrCodePopup}'s education branch, next to the full-screen
+     * overlay that goes up in the same frame, and in {@link #analyzeQRCode} right after
+     * {@code showActivityIndicatorAndDisableInteraction()}, which is the instant the retrieval half
+     * dims the preview and disables interaction.
+     *
+     * <p>It is switched off where the covering surface goes away: next to
+     * {@code mPaymentQRCodePopup.hide()} in {@link #analyzeQRCode}, but only when the education
+     * half is not running (that overlay outlives the network call and is taken down by navigation
+     * alone); unconditionally on the no-results branch and in {@link #handleAnalysisError}, which
+     * both navigate away and therefore end both halves; and in {@link #onStop()}, the outermost
+     * end. Nothing else may touch the view.
+     */
+    @Override
+    protected void setPoweredByGiniVisible(final boolean visible) {
+        if (mPoweredByGiniView != null) {
+            mPoweredByGiniView.setVisibility(visible ? View.VISIBLE : View.GONE);
+        }
     }
 
     /**
@@ -889,6 +929,15 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         if (mUnsupportedQRCodePopup != null) {
             mUnsupportedQRCodePopup.hide();
         }
+        // The QR-code analysis step cannot outlive the screen, so stopping is its outermost end.
+        // It is the end that matters for the education half: its overlay is never hidden, so on
+        // the success path that half's badge is deliberately left up until the navigation
+        // triggered by onQrCodeRecognized stops this fragment. The retrieval half no longer
+        // relies on this — it hides the badge the moment its popup goes away, because there the
+        // live preview and the shutter come back immediately (R13). When the user returns to the
+        // camera from a no-results or error destination the view is re-created with the badge
+        // GONE, so the live preview never carries it either way.
+        setPoweredByGiniVisible(false);
     }
 
     void onDestroy() {
@@ -931,6 +980,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 view.findViewById(R.id.gc_activity_indicator_background);
         mPhotoThumbnail = view.findViewById(R.id.gc_photo_thumbnail);
         topAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
+        mPoweredByGiniView = view.findViewById(R.id.gc_powered_by_gini);
         mBottomInjectedContainer = view.findViewById(R.id.gc_injected_navigation_bar_container_bottom);
         mImageFrame = view.findViewById(R.id.gc_camera_frame);
         mCameraFrameWrapper = view.findViewById(R.id.gc_camera_frame_wrapper);
@@ -1229,6 +1279,13 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 });
     }
 
+    // Only the formats that go through analyzeQRCode raise the Gini ingredient brand element,
+    // because that is where the preview is dimmed and interaction is disabled. EPS_PAYMENT and the
+    // unknown-format default deliberately do not: EPS has no analysis step at all (it builds the
+    // extraction locally and goes straight to onQrCodeRecognized), so per R12 there is no analysis
+    // state to brand, and an unknown format is only logged. Before the badge had a single owner it
+    // flashed for one frame on the EPS path via QRCodePopup.progressViews(); that was incidental,
+    // not the requirement — please do not "restore" it.
     private void handlePaymentQRCodeData(@NonNull final PaymentQRCodeData paymentQRCodeData) {
         switch (paymentQRCodeData.getFormat()) {
             case EPC069_12:
@@ -1319,6 +1376,18 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                     GiniCapture.getInstance().internal().getNetworkRequestsManager();
             if (networkRequestsManager != null) {
                 showActivityIndicatorAndDisableInteraction();
+                // This is the moment the invoice-retrieval half actually covers the preview: the
+                // dim is up AND the shutter is disabled. Showing the brand element any earlier
+                // (e.g. when the QR-code popup is shown) puts a screenReaderFocusable badge over a
+                // still-usable shutter for the popup's ~1s delay, which violates R13 — on phone
+                // portrait the badge overlaps the trigger's lower edge and wins explore-by-touch.
+                // This is exactly where QRCodePopup.progressViews() used to raise it.
+                // On the education half this runs too (the education flow calls back into
+                // handlePaymentQRCodeData), where it is a harmless idempotent re-show: that half
+                // already raised the badge together with its own full-screen overlay.
+                if (isIngredientBrandVisible()) {
+                    setPoweredByGiniVisible(true);
+                }
                 networkRequestsManager
                         .upload(activity, qrCodeDocument)
                         .handle((requestResult, throwable) -> {
@@ -1348,11 +1417,35 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                                 handleAnalysisError(throwable, qrCodeDocument);
                             } else if (requestResult != null) {
                                 mPaymentQRCodePopup.hide();
+                                // hideActivityIndicatorAndEnableInteraction() above has already
+                                // removed the dim and re-enabled the shutter, and hide() restores
+                                // the live preview — so on the retrieval half the surface the badge
+                                // belongs to is gone and it must go with it (R13). Navigation is
+                                // asynchronous (onQrCodeRecognized hops to another dispatcher and
+                                // waits on the education mutex), so "onStop will get it" is not
+                                // soon enough.
+                                // Not on the education half: there the education overlay is still
+                                // covering the preview at this point — it is only ever taken down
+                                // by navigation — so hiding here would strip the branding off the
+                                // education content, which is the defect this ownership fix closes.
+                                if (!isQrEducationStepRunning()) {
+                                    setPoweredByGiniVisible(false);
+                                }
                                 if (requestResult.getAnalysisResult().getExtractions().isEmpty()) {
                                     //mListener.noExtractionsFromQRCode(qrCodeDocument);
+                                    // The whole QR-code analysis step ends here without a result
+                                    // and we navigate away, so the brand element comes down for
+                                    // *both* halves — unconditionally, unlike the guarded hide
+                                    // above. A no-op for the retrieval half, which already hid it.
+                                    setPoweredByGiniVisible(false);
                                     NoResultsFragment.navigateToNoResultsFragment(mFragment.findNavController(), CameraFragmentDirections.toNoResultsFragment(qrCodeDocument));
                                     return null;
                                 }
+                                // Nothing else touches the badge here: the retrieval half already
+                                // hid it above, and on the education half it must stay up until
+                                // the navigation triggered below stops this fragment (onStop).
+                                // onQrCodeRecognized runs on Dispatchers.IO and must not touch
+                                // views at all.
                                 onQrCodeRecognized(requestResult.getAnalysisResult().getExtractions());
                             }
                             return null;
@@ -1365,6 +1458,10 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
         if (mFragment.getActivity() == null)
             return;
+
+        // A failed analysis ends the QR-code analysis step, so the brand element comes down before
+        // we navigate away — otherwise it would still be visible when the user returns here.
+        setPoweredByGiniVisible(false);
 
         final FailureException failureException = FailureException.tryCastFromCompletableFutureThrowable(throwable);
         trackAnalysisScreenEvent(AnalysisScreenEvent.ERROR);

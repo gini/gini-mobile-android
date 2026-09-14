@@ -31,6 +31,34 @@ class ConfigurationResponseTest {
     }
 
     @Test
+    fun `ingredientBrandScreens is parsed and mapped`() {
+        val response = adapter.fromJson(
+            """{"clientID":"client","ingredientBrandScreens":["Analysis"]}"""
+        )!!
+
+        assertThat(response.ingredientBrandScreens).containsExactly("Analysis")
+        assertThat(response.toConfiguration().ingredientBrandScreens)
+            .containsExactly("Analysis")
+    }
+
+    @Test
+    fun `ingredientBrandScreens maps an empty array to an empty list`() {
+        val response = adapter.fromJson(
+            """{"clientID":"client","ingredientBrandScreens":[]}"""
+        )!!
+
+        assertThat(response.toConfiguration().ingredientBrandScreens).isEmpty()
+    }
+
+    @Test
+    fun `ingredientBrandScreens defaults to an empty list when absent`() {
+        val response = adapter.fromJson("""{"clientID":"client"}""")!!
+
+        assertThat(response.ingredientBrandScreens).isNull()
+        assertThat(response.toConfiguration().ingredientBrandScreens).isEmpty()
+    }
+
+    @Test
     fun `paymentScheduleHintEnabled is independent of paymentDueHintEnabled`() {
         val response = adapter.fromJson(
             """{"clientID":"client","paymentDueHintEnabled":false,"paymentScheduleHintEnabled":true}"""

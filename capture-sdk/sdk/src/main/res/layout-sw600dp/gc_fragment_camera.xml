@@ -392,6 +392,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+
     <ViewStub
         android:id="@+id/gc_stub_camera_no_permission"
         android:layout_width="0dp"
@@ -412,5 +413,35 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar" />
+
+    <!--
+      The Gini ingredient brand element. On this screen it belongs to the QR-code analysis step
+      only — not to the live camera. Both halves of that step reveal it and take it down again:
+      QRCodePopup for the invoice-retrieval state, QRCodeEducationPopup for the QR-code education
+      message. It is therefore never on screen while the shutter is usable, which is why it can
+      sit centred at the very bottom as the approved design shows.
+
+      Declared LAST on purpose: the education overlay (gc_qr_code_education_compose_view) spans
+      the screen, so the badge has to come after it to draw on top of it. It still constrains to
+      gc_injected_navigation_bar_container_bottom, which is declared earlier — with no injected
+      bottom bar that container has zero height at the parent bottom, putting the badge 16dp above
+      the screen bottom; with one, the badge sits above the bar instead of behind it.
+
+      Traversal is pinned to the shutter as well, because the bottom-bar container contributes no
+      accessibility node unless a client injects a bar — anchoring to it alone would silently
+      no-op in the default configuration.
+    -->
+    <include
+        android:id="@+id/gc_powered_by_gini"
+        layout="@layout/gc_powered_by_gini"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:accessibilityTraversalAfter="@id/gc_button_camera_trigger"
+        android:accessibilityTraversalBefore="@id/gc_injected_navigation_bar_container_bottom"
+        android:layout_marginBottom="@dimen/gc_large"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/gc_injected_navigation_bar_container_bottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
