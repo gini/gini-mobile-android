@@ -10,7 +10,6 @@ package net.gini.android.bank.sdk.capture.skonto
 
 import android.icu.util.Calendar
 import android.view.KeyEvent
-import android.widget.FrameLayout
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -66,7 +65,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.key.onPreviewKeyEvent
@@ -82,7 +80,6 @@ import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
@@ -120,7 +117,6 @@ import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.ui.theme.modifier.tabletMaxWidth
 import net.gini.android.capture.ui.theme.typography.bold
 import net.gini.android.capture.util.compose.keyboardPadding
-import net.gini.android.capture.view.InjectedViewAdapterInstance
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import java.math.BigDecimal
@@ -136,7 +132,6 @@ private val INFO_DIALOG_CORNER_RADIUS = 28.dp
 internal fun SkontoScreenContent(
     viewModel: SkontoFragmentViewModel,
     amountFormatter: AmountFormatter,
-    customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
     displayConfig: SkontoDisplayConfig,
     navigationHandlers: SkontoNavigationHandlers,
     modifier: Modifier = Modifier,
@@ -183,7 +178,6 @@ internal fun SkontoScreenContent(
         state = state,
         screenColorScheme = screenColorScheme,
         callbacks = callbacks,
-        customBottomNavBarAdapter = customBottomNavBarAdapter,
         amountFormatter = amountFormatter,
         displayConfig = displayConfig,
     )
@@ -194,7 +188,6 @@ private fun ScreenStateContent(
     state: SkontoScreenState,
     amountFormatter: AmountFormatter,
     callbacks: SkontoScreenCallbacks,
-    customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
     displayConfig: SkontoDisplayConfig,
     modifier: Modifier = Modifier,
     screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors(),
@@ -206,7 +199,6 @@ private fun ScreenStateContent(
             state = state,
             screenColorScheme = screenColorScheme,
             callbacks = callbacks,
-            customBottomNavBarAdapter = customBottomNavBarAdapter,
             displayConfig = displayConfig,
         )
     }
@@ -217,7 +209,6 @@ private fun ScreenReadyState(
     state: SkontoScreenState.Ready,
     amountFormatter: AmountFormatter,
     callbacks: SkontoScreenCallbacks,
-    customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
     displayConfig: SkontoDisplayConfig,
     modifier: Modifier = Modifier,
     screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors(),
@@ -268,7 +259,6 @@ private fun ScreenReadyState(
         containerColor = screenColorScheme.backgroundColor,
         topBar = {
             TopAppBar(
-                isBottomNavigationBarEnabled = displayConfig.isBottomNavigationBarEnabled,
                 colors = screenColorScheme.topAppBarColors,
                 onBackClicked = callbacks.onBackClicked,
                 onHelpClicked = callbacks.onHelpClicked,
@@ -278,7 +268,6 @@ private fun ScreenReadyState(
             HandleBottomBarForScreenReadyState(
                 state = state,
                 callbacks = callbacks,
-                customBottomNavBarAdapter = customBottomNavBarAdapter,
                 displayConfig = displayConfig,
                 screenColorScheme = screenColorScheme,
             )
@@ -324,12 +313,11 @@ private fun ScreenReadyState(
                     modifier = Modifier.tabletMaxWidth(),
                 )
 
-                if (displayConfig.isLandScape && customBottomNavBarAdapter == null) {
+                if (displayConfig.isLandScape) {
                     FooterSection(
                         footerState = footerDisplayState,
                         callbacks = callbacks,
                         colors = screenColorScheme.footerSectionColors,
-                        customBottomNavBarAdapter = null,
                         displayConfig = displayConfig,
                     )
                 }
@@ -376,7 +364,6 @@ private fun TopAppBar(
     onBackClicked: () -> Unit,
     onHelpClicked: () -> Unit,
     colors: GiniTopBarColors,
-    isBottomNavigationBarEnabled: Boolean,
     modifier: Modifier = Modifier,
 ) {
     GiniTopBar(
@@ -384,20 +371,16 @@ private fun TopAppBar(
         colors = colors,
         title = stringResource(id = R.string.gbs_skonto_screen_title),
         navigationIcon = {
-            AnimatedVisibility(visible = !isBottomNavigationBarEnabled) {
-                NavigationActionBack(
-                    modifier = Modifier.padding(start = 16.dp, end = 32.dp),
-                    onClick = onBackClicked
-                )
-            }
+            NavigationActionBack(
+                modifier = Modifier.padding(start = 16.dp, end = 32.dp),
+                onClick = onBackClicked
+            )
         },
         actions = {
-            AnimatedVisibility(visible = !isBottomNavigationBarEnabled) {
-                NavigationActionHelp(
-                    modifier = Modifier.padding(start = 20.dp, end = 12.dp),
-                    onClick = onHelpClicked
-                )
-            }
+            NavigationActionHelp(
+                modifier = Modifier.padding(start = 20.dp, end = 12.dp),
+                onClick = onHelpClicked
+            )
         })
 }
 
@@ -405,11 +388,10 @@ private fun TopAppBar(
 private fun HandleBottomBarForScreenReadyState(
     state: SkontoScreenState.Ready,
     callbacks: SkontoScreenCallbacks,
-    customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
     displayConfig: SkontoDisplayConfig,
     screenColorScheme: SkontoScreenColors,
 ) {
-    if (!displayConfig.isLandScape || (customBottomNavBarAdapter != null)) {
+    if (!displayConfig.isLandScape) {
         val footerDisplayState = SkontoFooterDisplayState(
             totalAmount = state.totalAmount,
             savedAmount = state.savedAmount,
@@ -420,33 +402,8 @@ private fun HandleBottomBarForScreenReadyState(
             footerState = footerDisplayState,
             callbacks = callbacks,
             colors = screenColorScheme.footerSectionColors,
-            customBottomNavBarAdapter = customBottomNavBarAdapter,
             displayConfig = displayConfig,
         )
-    } else if (displayConfig.isBottomNavigationBarEnabled) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = Color(screenColorScheme.footerSectionColors.cardBackgroundColor.value))
-        ) {
-            AnimatedVisibility(visible = true) {
-                NavigationActionBack(
-                    modifier = Modifier.padding(16.dp),
-                    onClick = callbacks.onBackClicked,
-                )
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            AnimatedVisibility(visible = true) {
-                NavigationActionHelp(
-                    onClick = callbacks.onHelpClicked,
-                    modifier = Modifier.padding(end = 16.dp),
-                )
-            }
-        }
     }
 }
 
@@ -1132,7 +1089,6 @@ private fun FooterSection(
     footerState: SkontoFooterDisplayState,
     callbacks: SkontoScreenCallbacks,
     colors: SkontoFooterSectionColors,
-    customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
     displayConfig: SkontoDisplayConfig,
     modifier: Modifier = Modifier,
 ) {
@@ -1169,32 +1125,14 @@ private fun FooterSection(
         savedAmountText = savedAmountText,
     )
 
-    if (customBottomNavBarAdapter != null) {
-        val ctx = LocalContext.current
-        AndroidView(factory = {
-            customBottomNavBarAdapter.viewAdapter.onCreateView(FrameLayout(ctx))
-        }, update = {
-            with(customBottomNavBarAdapter.viewAdapter) {
-                setOnProceedClickListener(callbacks.onProceedClicked)
-                setOnBackClickListener(callbacks.onBackClicked)
-                setOnHelpClickListener(callbacks.onHelpClicked)
-                onTotalAmountUpdated(totalPriceText)
-                onSkontoPercentageBadgeUpdated(discountLabelText)
-                onSkontoPercentageBadgeVisibilityUpdate(footerState.isSkontoSectionActive)
-                onSkontoSavingsAmountUpdated(savedAmountText)
-                onSkontoSavingsAmountVisibilityUpdated(footerState.isSkontoSectionActive)
-            }
-        })
-    } else {
-        FooterSectionWithoutCustomBottomBar(
-            footerTexts = footerTexts,
-            isSkontoSectionActive = footerState.isSkontoSectionActive,
-            callbacks = callbacks,
-            colors = colors,
-            displayConfig = displayConfig,
-            modifier = modifier,
-        )
-    }
+    FooterSectionWithoutCustomBottomBar(
+        footerTexts = footerTexts,
+        isSkontoSectionActive = footerState.isSkontoSectionActive,
+        callbacks = callbacks,
+        colors = colors,
+        displayConfig = displayConfig,
+        modifier = modifier,
+    )
 }
 
 @Composable
@@ -1318,7 +1256,7 @@ private fun FooterSectionWithoutCustomBottomBarLandScape(
                 }
             }
 
-            val buttonPadding = if (displayConfig.isBottomNavigationBarEnabled) 16.dp else 20.dp
+            val buttonPadding = 20.dp
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -1436,20 +1374,12 @@ private fun FooterSectionWithoutCustomBottomBarPortrait(
                 }
             }
 
-            val buttonPadding = if (displayConfig.isBottomNavigationBarEnabled)
-                16.dp else 20.dp
+            val buttonPadding = 20.dp
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                AnimatedVisibility(visible = displayConfig.isBottomNavigationBarEnabled) {
-                    NavigationActionBack(
-                        modifier = Modifier.padding(start = 16.dp),
-                        onClick = callbacks.onBackClicked,
-                    )
-                }
-
                 GiniButton(
                     modifier = Modifier
                         .weight(0.1f)
@@ -1459,13 +1389,6 @@ private fun FooterSectionWithoutCustomBottomBarPortrait(
                     giniButtonColors = colors.continueButtonColors,
                     composableProviderConfig = displayConfig.composableProviderConfig,
                 )
-
-                AnimatedVisibility(visible = displayConfig.isBottomNavigationBarEnabled) {
-                    NavigationActionHelp(
-                        modifier = Modifier.padding(end = 20.dp),
-                        onClick = callbacks.onHelpClicked,
-                    )
-                }
             }
         }
     }
@@ -1496,11 +1419,9 @@ private fun ScreenReadyStatePreview(isLandScape: Boolean = false) {
                 onConfirmAttachTransactionDocClicked = {},
                 onCancelAttachTransactionDocClicked = {},
             ),
-            customBottomNavBarAdapter = null,
             amountFormatter = AmountFormatter(currencyFormatterWithoutSymbol()),
             displayConfig = SkontoDisplayConfig(
                 isLandScape = isLandScape,
-                isBottomNavigationBarEnabled = true,
                 composableProviderConfig = GiniComposableStyleProviderConfig(),
             ),
         )

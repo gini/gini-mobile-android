@@ -4,8 +4,6 @@ import android.app.Activity;
 
 import net.gini.android.capture.GiniCaptureBasePresenter;
 import net.gini.android.capture.GiniCaptureBaseView;
-import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
-import net.gini.android.capture.view.InjectedViewAdapterInstance;
 
 import java.util.List;
 
@@ -30,14 +28,8 @@ interface OnboardingScreenContract {
         void activatePageIndicatorForPage(final int pageIndex);
 
         void showGetStartedButton();
-        void showGetStartedButtonInNavigationBarBottom();
 
         void showSkipAndNextButtons();
-        void showSkipAndNextButtonsInNavigationBarBottom();
-
-        void setNavigationBarBottomAdapterInstance(@NonNull final InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> adapterInstance);
-
-        void hideButtons();
 
         void close();
     }
