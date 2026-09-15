@@ -99,7 +99,6 @@
         layout="@layout/gc_powered_by_gini"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:accessibilityTraversalAfter="@id/gc_analysis_hint_container"
         android:layout_marginBottom="@dimen/gc_large"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"

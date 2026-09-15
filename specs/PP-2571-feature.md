@@ -323,7 +323,6 @@ because the announcement comes from the container's description rather than chil
       layout="@layout/gc_powered_by_gini"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:accessibilityTraversalAfter="@id/gc_analysis_hint_container"
       android:layout_marginBottom="@dimen/gc_large"
       android:visibility="gone"
       app:layout_constraintBottom_toBottomOf="parent"
@@ -332,9 +331,13 @@ because the announcement comes from the container's description rather than chil
   ```
 
   The `<include>` is declared **before** `gc_analysis_hint_container` in the file, because that
-  container constrains itself to this id. That ordering is what makes
-  `accessibilityTraversalAfter` necessary: TalkBack traverses a `ConstraintLayout` in child
-  index order, so without it the badge would be announced before the tips card it sits below.
+  container constrains itself to this id. That child order does not decide the announcement
+  order and no `accessibilityTraversal*` attribute is used: `ViewGroup.addChildrenForAccessibility()`
+  sorts children by their on-screen bounds rather than by child index, so the badge is already
+  announced after the tips card it sits below. Note that such an attribute would have no effect
+  on an `<include>` tag in any case — `LayoutInflater.parseInclude()` reads only `id` and
+  `visibility` from it and discards every other `android:` attribute. If the order ever has to be
+  pinned explicitly, it must be done in code, after the view is bound.
 - For R11, each layout's `gc_analysis_hint_container` changes
   `app:layout_constraintBottom_toBottomOf="parent"` to
   `app:layout_constraintBottom_toTopOf="@id/gc_powered_by_gini"`. Its
@@ -360,28 +363,35 @@ because the announcement comes from the container's description rather than chil
 
 ### 7. QR-code analysis step on the camera screen (R12, R13)
 
-The badge belongs to the QR-code analysis step, not to the camera screen as a whole, so its
-owners are the two popups that drive that step rather than the fragment's lifecycle.
-`CameraFragmentExtension.showQrCodePopup` picks exactly one of them — education if
-`GetQrEducationTypeUseCase` returns a type and the feature is on, retrieval otherwise — so both
-have to reveal the badge or it goes missing on one path:
+The badge belongs to the QR-code analysis step, not to the camera screen as a whole.
+`CameraFragmentExtension.showQrCodePopup` picks exactly one of that step's two halves — education
+if `GetQrEducationTypeUseCase` returns a type and the feature is on, retrieval otherwise — and the
+badge appears in both.
 
-- `internal/camera/view/QRCodePopup.kt` already switches the screen into the retrieval state in
-  `progressViews()` (loading indicator + `gc_retrieving_invoice`) and back out in `hideViews()`.
-  It gains two constructor parameters, **appended after the existing ones** so the positional
-  Java call sites keep binding to the same parameters: `poweredByGiniView: View?` and
-  `isIngredientBrandVisible: () -> Boolean`. `progressViews()` shows the badge when the supplier
-  says so; `hideViews()` always hides it. A supplier rather than a captured `Boolean`, for the
-  same reason `isNewWarningEnabled` is one — the configuration is fetched asynchronously and may
-  not be known when the popup is created.
-- Only the **supported**-QR-code popup (`mPaymentQRCodePopup`) is given them; the
-  unsupported-QR popup never enters the retrieval state, so it keeps the `null`/`{ false }`
-  defaults.
-- `internal/camera/view/education/qrcode/QRCodeEducationPopup.kt` gains the same two
-  parameters. `showViews()` reveals the badge; `hideViews()` hides it. Because `hide()` is
-  never called on this popup — the education content signals the end of the flow through its
-  `onComplete` — the badge is also taken down in a wrapper around that callback, before the
-  original `onComplete` runs.
+An earlier revision gave each popup the badge view and let it write the visibility. That was
+abandoned during development: the two halves *end* at different times — the education animation
+always after a fixed 4.5s, the retrieval popup when the backend answers — so whichever half
+finished first took the badge down while the other was still on screen. **`CameraFragmentImpl` is
+the single writer of the view**, and neither popup holds a reference to it:
+
+- `internal/camera/view/QRCodePopup.kt` is **unchanged**. It still drives the retrieval state in
+  `progressViews()` (loading indicator + `gc_retrieving_invoice`) and back out in `hideViews()`,
+  but it does not touch the badge.
+- `internal/camera/view/education/qrcode/QRCodeEducationPopup.kt` gains only an `isShowing()`
+  accessor over its ComposeView's visibility. `CameraFragmentImpl.onStart` reads it to decide
+  whether the badge belongs back on screen after the app was backgrounded mid-education: that
+  overlay survives a stop/start cycle, but `onStop` has taken the badge down.
+- The **retrieval** half raises the badge in `CameraFragmentImpl.analyzeQRCode`, right after
+  `showActivityIndicatorAndDisableInteraction()` — not when the popup is shown, because
+  `QRCodePopup.show()` leaves the shutter usable for the popup's full delay, and a
+  `screenReaderFocusable` badge over a usable shutter is exactly what R13 forbids. The
+  **education** half raises it in `showQrCodePopup`, in the same frame as its full-screen overlay.
+- It comes down in `hideActivityIndicatorAndEnableInteraction()`, the single moment the dim is
+  removed and the shutter becomes usable again — which is why a *cancelled* request no longer
+  strands it over a live preview. That hide is skipped while the education half is running,
+  because its overlay outlives the network call.
+- `qrEducationStepRunning` records which half is running. It is set at the top of
+  `showQrCodePopup`, which is the single entry point of the step.
 - The `<include>` is the **last child** of the camera layout root, so it draws on top of
   `gc_qr_code_education_compose_view`, which spans the screen. Constraining to
   `gc_injected_navigation_bar_container_bottom` still works because that container is declared
@@ -390,10 +400,10 @@ have to reveal the badge or it goes missing on one path:
   which already injects `GiniBankConfigurationProvider` and exposes
   `isUnsupportedQRCodeWarningEnabled()` — gains `isIngredientBrandVisible()` with the same
   shape, delegating to the same use case with `IngredientBrandScreen.ANALYSIS`.
-- `CameraFragmentImpl.java` binds the badge in `bindViews` and passes it to `createPopups`,
-  which already runs after `bindViews`. It deliberately does **not** set the visibility itself
-  and is **not** part of `showInterfaceAnimated()` / `hideInterfaceAnimated()`: the popup is the
-  single owner, and the badge is `GONE` in the layout, so the live camera never shows it (R13).
+- `CameraFragmentImpl.java` binds the badge in `bindViews` and is its only writer — see the
+  Javadoc on `setPoweredByGiniVisible` for every end point. It is **not** part of
+  `showInterfaceAnimated()` / `hideInterfaceAnimated()`, and the badge is `GONE` in the layout, so
+  the live camera never shows it (R13).
 - All four `gc_fragment_camera.xml` variants (`layout/`, `layout-land/`, `layout-sw600dp/`,
   `layout-sw600dp-land/`) get the same `<include>`, centred on the screen and anchored
   `app:layout_constraintBottom_toTopOf="@id/gc_injected_navigation_bar_container_bottom"`
@@ -401,26 +411,16 @@ have to reveal the badge or it goes missing on one path:
   integrator injects a bottom bar, so with none it collapses to zero height at the parent bottom
   and the badge lands 16dp above the screen bottom exactly as the approved frames show — while
   an injected bar pushes the badge above it rather than behind it. The `<include>` is declared
-  **after** that container (its id must already exist), and carries both
-  `accessibilityTraversalAfter="@id/gc_button_camera_trigger"` and
-  `accessibilityTraversalBefore="@id/gc_injected_navigation_bar_container_bottom"` — the
-  bottom-bar container contributes no accessibility node unless a client injects a bar, so
-  anchoring to it alone would silently no-op in the default configuration.
+  **after** that container (its id must already exist).
 - **No camera control moves, and no layout is otherwise touched.** Because the badge is on
   screen only during the QR-code loading state — where the preview is dimmed, interaction is
   disabled and the shutter is not usable — it cannot collide with the shutter or with
   `gc_detection_error_layout`. An earlier revision anchored `gc_pane_wrapper` and the detection
   error popup around the badge to avoid exactly those collisions; that surgery was reverted once
   the badge stopped appearing on the live camera.
-- `CameraFragmentImpl.java` binds the badge in `bindViews` and calls a new private
-  `setPoweredByGiniVisibility()` from `onCreateView`, right after `bindViews`. The badge is
-  also part of the screen's interface hide/show cycle: `hideInterfaceAnimated()` sets it `GONE`
-  and `showInterfaceAnimated()` re-applies the flag, so it does not stay in the accessibility
-  tree behind the opaque camera-permission view.
-- Traversal is pinned with **both** `accessibilityTraversalAfter="@id/gc_button_camera_trigger"`
-  and `accessibilityTraversalBefore="@id/gc_injected_navigation_bar_container_bottom"`. The
-  bottom-bar container contributes no accessibility node unless a client injects a bar, so
-  anchoring to it alone silently no-ops in the default configuration.
+- `CameraFragmentImpl.java` binds the badge in `bindViews`. It is not wired into the screen's
+  interface hide/show cycle: `hideInterfaceAnimated()` and `showInterfaceAnimated()` do not touch
+  it, because it is only ever on screen while a full-screen overlay already covers the preview.
 
 **Placement differs per variant, because the camera screen's controls do.** `layout/` is the
 only variant with a bottom control pane; `layout-land/`, `layout-sw600dp/` and
@@ -482,7 +482,7 @@ dependency is needed — the badge is a `View`, so the existing Robolectric setu
   children `importantForAccessibility="no"`) rather than the produced
   `AccessibilityNodeInfo`, because Robolectric returns an unpopulated node for a detached view
   even after `onInitializeAccessibilityNodeInfo`. Verifying the real node, and the
-  `accessibilityTraversalAfter` ordering against the tips card, needs an instrumented/TalkBack
+  bounds-derived announcement order against the tips card, needs an instrumented/TalkBack
   pass.
 - **Text scaling.** No automated check that the badge and the tips card survive a 200% font
   scale. Reviewed by hand: the badge grows to ~34dp and does not clip, but
@@ -571,8 +571,7 @@ dependency is needed — the badge is a `View`, so the existing Robolectric setu
       `layout/gc_powered_by_gini.xml`; new `PoweredByGiniLayoutTest.kt`. (R2, R10)
 - [x] 6. `capture-sdk:sdk` — include the badge in `layout/`, `layout-sw600dp/` and
       `layout-sw600dp-land/` `gc_fragment_analysis.xml`, re-anchor
-      `gc_analysis_hint_container` to the badge's top, and set
-      `accessibilityTraversalAfter`. (R2, R3, R9, R10, R11)
+      `gc_analysis_hint_container` to the badge's top. (R2, R3, R9, R10, R11)
 - [x] 7. `capture-sdk:sdk` — `AnalysisScreenContract.View.setPoweredByGiniVisible`,
       binding + implementation in `AnalysisFragmentImpl.java`, use-case injection in
       `AnalysisScreenPresenterExtension.kt`, call in `AnalysisScreenPresenter.start()`;

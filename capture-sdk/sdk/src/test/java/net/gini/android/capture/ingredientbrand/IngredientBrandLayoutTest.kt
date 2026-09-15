@@ -21,8 +21,8 @@ import org.robolectric.annotation.Config
  * are used to pick each variant, so adding a new one without the badge fails here.
  *
  * It starting out `GONE` is part of the contract, not an incidental default: on the camera
- * screen the badge belongs to the QR-code retrieval state, and `QRCodePopup` is the only thing
- * that may reveal it — the live camera must never show it.
+ * screen the badge belongs to the QR-code analysis step, and `CameraFragmentImpl` is the single
+ * writer that may reveal it — the live camera must never show it.
  */
 @RunWith(RobolectricTestRunner::class)
 class IngredientBrandLayoutTest {

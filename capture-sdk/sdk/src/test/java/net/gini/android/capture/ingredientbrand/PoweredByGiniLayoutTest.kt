@@ -57,6 +57,29 @@ class PoweredByGiniLayoutTest {
         assertThat(inflateBadge().background).isNotNull()
     }
 
+    /**
+     * The padding is the pill: without it the white background hugs the label and the 8dp radius
+     * clips the text. It must therefore be declared with the per-edge attributes, which exist on
+     * every supported API level — paddingHorizontal/paddingVertical were added in API 26 and are
+     * silently dropped on API 23-25, which this module still supports.
+     *
+     * Robolectric runs this at the compile SDK, so it pins the values rather than the old-API
+     * behaviour; the API 23-25 rendering itself needs a device.
+     */
+    @Test
+    fun `pads the pill on every edge`() {
+        val badge = inflateBadge()
+        val horizontal = badge.resources
+            .getDimensionPixelSize(R.dimen.gc_powered_by_gini_padding_horizontal)
+        val vertical = badge.resources
+            .getDimensionPixelSize(R.dimen.gc_powered_by_gini_padding_vertical)
+
+        assertThat(badge.paddingStart).isEqualTo(horizontal)
+        assertThat(badge.paddingEnd).isEqualTo(horizontal)
+        assertThat(badge.paddingTop).isEqualTo(vertical)
+        assertThat(badge.paddingBottom).isEqualTo(vertical)
+    }
+
     @Test
     fun `renders the gini logo at the size of the brand lockup`() {
         val badge = inflateBadge()

@@ -11,6 +11,15 @@
   the label and the logo separately. layoutDirection is pinned to LTR because the lockup is a
   brand mark and must not mirror; the announcement is unaffected, since it comes from the
   container's content description rather than from child order.
+
+  Padding is declared per edge rather than with paddingHorizontal/paddingVertical: those two were
+  added in API 26 and this module's minSdk is 23, so on API 23-25 they are dropped and the pill
+  would render with no padding at all, clipping the label against the 8dp radius. The padding is
+  the component here, so it has to work on every supported API level.
+
+  tools:ignore="UnusedAttribute" covers screenReaderFocusable only (API 28). Below that the
+  fallback is harmless: a ViewGroup with a non-empty content description is already treated as a
+  single accessibility node.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -23,8 +32,10 @@
     android:importantForAccessibility="yes"
     android:layoutDirection="ltr"
     android:orientation="horizontal"
-    android:paddingHorizontal="@dimen/gc_powered_by_gini_padding_horizontal"
-    android:paddingVertical="@dimen/gc_powered_by_gini_padding_vertical"
+    android:paddingStart="@dimen/gc_powered_by_gini_padding_horizontal"
+    android:paddingTop="@dimen/gc_powered_by_gini_padding_vertical"
+    android:paddingEnd="@dimen/gc_powered_by_gini_padding_horizontal"
+    android:paddingBottom="@dimen/gc_powered_by_gini_padding_vertical"
     android:screenReaderFocusable="true"
     tools:ignore="UnusedAttribute">
 

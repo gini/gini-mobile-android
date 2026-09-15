@@ -44,6 +44,17 @@ internal class QRCodeEducationPopup<T> @JvmOverloads constructor(
         hideViews()
     }
 
+    /**
+     * Whether the education overlay is currently on screen.
+     *
+     * Derived from the view rather than from [isShown], because the overlay's visibility is the
+     * only thing that survives a stop/start cycle correctly: the view is not recreated when the
+     * app is merely backgrounded, but it *is* recreated — back to its `GONE` default — when the
+     * user navigates away and returns. `CameraFragmentImpl.onStart` uses this to decide whether
+     * the ingredient brand element belongs back on screen.
+     */
+    fun isShowing(): Boolean = popupView.isVisible
+
     private fun showViews() {
         popupView.isVisible = true
     }

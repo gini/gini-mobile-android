@@ -651,12 +651,38 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
      * <p>The education half is therefore ended by the three unconditional hides, all of which mean
      * "the step is over for both halves": the no-results branch of {@link #analyzeQRCode} and
      * {@link #handleAnalysisError}, which both navigate away, and {@link #onStop()}, the outermost
-     * end. Nothing else may touch the view.
+     * end. Stopping is not always leaving, though, so
+     * {@link #restorePoweredByGiniForEducationStep()} puts the badge back when the education
+     * overlay is still up as the screen restarts. Nothing else may touch the view.
      */
     @Override
     protected void setPoweredByGiniVisible(final boolean visible) {
         if (mPoweredByGiniView != null) {
             mPoweredByGiniView.setVisibility(visible ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    /**
+     * Puts the ingredient brand element back when the screen restarts while the QR-code education
+     * overlay is still covering the preview.
+     *
+     * <p>{@link #onStop()} takes the badge down unconditionally, but the education overlay is not
+     * taken down with it: {@code QRCodeEducationPopup.hide()} is never called, and a stop/start
+     * cycle does not recreate the view. So backgrounding the app during the education half — Home,
+     * the notification shade, an incoming call — and returning before navigation completes would
+     * otherwise leave the education content on screen with no brand element, which is exactly the
+     * state the ingredient brand contract forbids.
+     *
+     * <p>The condition is the overlay's own visibility rather than
+     * {@code isQrEducationStepRunning()}, because only the view distinguishes the two ways this
+     * method is reached. Coming back from the background, the overlay is still visible and the
+     * badge belongs back on screen. Coming back from a no-results or error destination, the view
+     * has been recreated, the overlay is at its {@code GONE} default and the live preview is up —
+     * and this correctly does nothing, so R13 still holds.
+     */
+    private void restorePoweredByGiniForEducationStep() {
+        if (qrCodeEducationPopup.isShowing() && isIngredientBrandVisible()) {
+            setPoweredByGiniVisible(true);
         }
     }
 
@@ -673,6 +699,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             return;
         }
         initViews();
+        restorePoweredByGiniForEducationStep();
         initCameraController(activity);
         addCameraPreviewView();
         initQRCodeReader();
@@ -936,14 +963,17 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         if (mUnsupportedQRCodePopup != null) {
             mUnsupportedQRCodePopup.hide();
         }
-        // The QR-code analysis step cannot outlive the screen, so stopping is its outermost end.
-        // It is the end that matters for the education half: its overlay is never hidden, so on
-        // the success path that half's badge is deliberately left up until the navigation
-        // triggered by onQrCodeRecognized stops this fragment. The retrieval half no longer
-        // relies on this — it hides the badge the moment its popup goes away, because there the
-        // live preview and the shutter come back immediately (R13). When the user returns to the
-        // camera from a no-results or error destination the view is re-created with the badge
-        // GONE, so the live preview never carries it either way.
+        // Stopping takes the badge down but does not end the step. On the education half the
+        // overlay is never hidden, so the badge is deliberately left up until the navigation
+        // triggered by onQrCodeRecognized stops this fragment. The retrieval half no longer relies
+        // on this — it hides the badge the moment its popup goes away, because there the live
+        // preview and the shutter come back immediately (R13).
+        //
+        // Stopping is not always leaving, though: backgrounding the app stops the fragment without
+        // recreating its view, and the education overlay stays on screen. onStart therefore calls
+        // restorePoweredByGiniForEducationStep() to put the badge back when that overlay is still
+        // up. When the user instead returns from a no-results or error destination the view *is*
+        // re-created with the badge GONE, so the live preview never carries it either way.
         setPoweredByGiniVisible(false);
     }
 
