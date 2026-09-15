@@ -18,8 +18,31 @@ Builds the `example-app` and Espresso test suite APKs, uploads them to BrowserSt
 |---|---|---|
 | `BS_USER` | `<your_browserstack_user_name>` | BrowserStack username |
 | `BS_KEY` | `<your_browserstack_access_key>` | BrowserStack access key |
-| `BS_PROJECT` | `GiniBankSDK-Android-4.5.0` | BrowserStack App Automate project — the **release container** in the dashboard. One project per release; every build the script triggers lands under it. The default is a constant in the script's Configuration section, set to the version *being released* — it is **not** read from `bank-sdk/sdk/gradle.properties`, because the suite runs against the release branch before the version bump lands there. Bump that line when a new release cycle starts, or override per run for an RC (`GiniBankSDK-Android-4.5.0-RC1`). Mirrors the iOS convention (`BS_PROJECT` in the iOS repo's `bs_shared.sh`). |
+| `BS_PROJECT` | `gini-mobile-android` | BrowserStack App Automate project the build lands in. The default is the everyday project — this script and every `bs_run_group_*.sh` wrapper go there, so day-to-day runs stay in one place. The exception is `bs_run_release.sh`, which sets this to a per-release project (`GiniBankSDK-Android-<version>`) for release sign-off; see [Release sign-off](#release-sign-off). Override it per run to name a project yourself. Mirrors the iOS convention (`BS_PROJECT` in the iOS repo's `bs_shared.sh`). |
 | `BUILD_NAME` | `local-<timestamp>` | Build name inside the project. The `bs_run_group_*.sh` wrappers set this to `group-<feature>-<timestamp>`. |
+
+### Release sign-off
+
+Two projects, two jobs:
+
+| Script | Project | When |
+|---|---|---|
+| `bs_build_and_upload.sh`, `bs_run_group_*.sh`, `bs_run_all_groups.sh` | `gini-mobile-android` | Every day. The default — nothing to set. |
+| `bs_run_release.sh` | `GiniBankSDK-Android-<next version>` | Near a release. One project per release, named after the version being prepared, so that sign-off stays together in the dashboard and is still findable months after it ships. |
+
+`bs_run_release.sh` runs only the shards in the release's scope, and takes the version from a `RELEASE_VERSION` constant near the top of the file. That version is the **next** release — the one being prepared, the one the sign-off clears for shipping — not the one already out. Both the version and the scope are edited **by hand** each release cycle: the scope is a decision, and the version comes from the release plan, not from the repo. `bank-sdk/sdk/gradle.properties` can't supply it, because the suite runs against the release branch before the version bump lands there, and the branch name (`release/bank-sdk-4.5`) carries only the minor line.
+
+`RELEASE_VERSION` ships as the placeholder `4.x.x`, and the script **refuses to run** while it is still that, rather than filing the sign-off under a project nobody will look in. So the first step of a release cycle is to set it to the planned version — the release/RC ticket says what that is:
+
+```bash
+RELEASE_VERSION="4.6.0"   # full version, including the patch — not 4.6
+```
+
+Builds then land in `GiniBankSDK-Android-4.6.0`, waiting there before 4.6.0 actually ships. Commit that edit together with the scope edit, so the next person on the release branch runs the right thing. For a one-off run under another name — an RC, or a re-run you want kept apart — pass the project instead of editing the file; it wins over `RELEASE_VERSION`:
+
+```bash
+BS_USER="myuser" BS_KEY="mykey" BS_PROJECT="GiniBankSDK-Android-4.6.0-RC1" ./bs_run_release.sh
+```
 
 ### Fixed (not parameterised)
 
@@ -184,7 +207,7 @@ curl -u "$BS_USER:$BS_KEY" \
   -X POST "https://api-cloud.browserstack.com/app-automate/espresso/v2/build" \
   -H "Content-Type: application/json" \
   -d '{
-    "project": "GiniBankSDK-Android-4.5.0",
+    "project": "gini-mobile-android",
     "devices": ["Google Pixel 9-16.0", "Google Pixel 10 Pro-16.0"],
     "app": "APP_URL",
     "testSuite": "TEST_SUITE_URL",
@@ -199,7 +222,7 @@ curl -u "$BS_USER:$BS_KEY" \
   -X POST "https://api-cloud.browserstack.com/app-automate/espresso/v2/build" \
   -H "Content-Type: application/json" \
   -d '{
-    "project": "GiniBankSDK-Android-4.5.0",
+    "project": "gini-mobile-android",
     "devices": ["Google Pixel 9-16.0", "Google Pixel 10 Pro-16.0"],
     "app": "APP_URL",
     "testSuite": "TEST_SUITE_URL",

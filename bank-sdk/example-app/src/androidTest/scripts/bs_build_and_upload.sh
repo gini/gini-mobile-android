@@ -24,10 +24,12 @@ set -e
 #   export BS_USER="your_username"
 #   export BS_KEY="your_access_key"
 #
-# Every build this script triggers lands under the BrowserStack project set in the
-# Configuration section below (currently "GiniBankSDK-Android-4.5.0"), so one release's
-# runs stay together in the App Automate dashboard. Override it per run:
-#   BS_PROJECT="GiniBankSDK-Android-4.5.0-RC1" ./bs_run_group_creditnote.sh
+# Every build this script triggers lands in the BrowserStack project named by BS_PROJECT.
+# The default, "gini-mobile-android", is the everyday project: all day-to-day runs — this
+# script and every bs_run_group_*.sh wrapper — go there. Release sign-off is the exception:
+# bs_run_release.sh sets BS_PROJECT to a per-release project (GiniBankSDK-Android-<version>)
+# so that release's builds sit together in the dashboard. Override it per run if needed:
+#   BS_PROJECT="GiniBankSDK-Android-4.5.0-RC1" ./bs_run_group_duedate.sh
 #
 # Advanced env vars (used by bs_run_all_groups.sh to avoid rebuilding/re-uploading):
 #   APP_URL, TEST_URL, IMAGE_URL, PDF_URL, SAMPLE_PDF_URL
@@ -48,17 +50,17 @@ BS_KEY="${BS_KEY:-<your_browserstack_access_key>}"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../../../.." && pwd)"
 
-# BrowserStack project — one per release. This is the release container in the App
-# Automate dashboard, matching the iOS convention (BS_PROJECT in the iOS repo's
-# bs_shared.sh, e.g. "GiniBankSDK-LiquidGlass-4.3.0").
+# BrowserStack App Automate project — the container a build shows up in.
 #
-# Set to the version BEING released, and deliberately NOT read from
-# bank-sdk/sdk/gradle.properties: the suite runs against the release branch
-# (release/bank-sdk-4.5) while the version bump has not landed there yet, so
-# gradle.properties still holds the previous version.
+# The default is the repo's standing project, unchanged from before: everyday runs stay
+# in one place instead of scattering a new project per branch.
 #
-# Bump this line when a new release cycle starts.
-BS_PROJECT="${BS_PROJECT:-GiniBankSDK-Android-4.5.0}"
+# Release sign-off overrides it. bs_run_release.sh exports a per-release project
+# (GiniBankSDK-Android-<version>, from the RELEASE_VERSION constant that script carries)
+# before calling this script, mirroring the iOS convention (BS_PROJECT in the iOS repo's
+# bs_shared.sh, e.g. "GiniBankSDK-LiquidGlass-4.3.0"). Nothing here needs bumping for a
+# release — the version lives in bs_run_release.sh, in one place.
+BS_PROJECT="${BS_PROJECT:-gini-mobile-android}"
 
 FLAVOR="devExampleApp"
 BUILD_TYPE="debug"
