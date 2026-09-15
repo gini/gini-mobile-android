@@ -54,44 +54,6 @@ class ImageUploader {
         throw Exception("First photo not found in photo picker")
     }
 
-    /**
-     * Confirms a multi-picture selection, returning whether the picker actually closed.
-     *
-     * Separate from [clickAddButton], which is left alone because the single-picture tests
-     * depend on it. Two differences matter here:
-     *
-     * - the label is matched by **prefix**, because a multi-select picker puts the count in
-     *   it ("Add (11)"), and `clickAddButton`'s exact match then finds nothing;
-     * - it *reports* failure. `clickAddButton` returns silently when it matches nothing,
-     *   which left the picker in the foreground and the caller's next Espresso call throwing
-     *   `NoActivityResumedException` — an error about a missing activity rather than about a
-     *   missing button.
-     */
-    fun confirmMultiSelection(): Boolean {
-        val labels = listOf("Add", "Hinzufügen", "Done", "Fertig")
-        val selectors = labels.flatMap { label ->
-            listOf(
-                UiSelector().textStartsWith(label),
-                UiSelector().descriptionStartsWith(label)
-            )
-        } + UiSelector().resourceId(
-            "com.google.android.providers.media.module:id/button_add"
-        )
-        val deadline = SystemClock.uptimeMillis() + CONFIRM_TIMEOUT
-        while (SystemClock.uptimeMillis() < deadline) {
-            selectors.forEach { selector ->
-                val button = device.findObject(selector)
-                if (button.exists()) {
-                    button.click()
-                    device.waitForIdle()
-                    return true
-                }
-            }
-            SystemClock.sleep(POLL_INTERVAL)
-        }
-        return false
-    }
-
     fun clickAddButton() {
         // Legacy media-module picker (BrowserStack Pixels).
         val addButton = device.findObject(
@@ -220,9 +182,13 @@ class ImageUploader {
         val tapped = mutableSetOf<Pair<Int, Int>>()
         var limitMessageShown = false
         repeat(count) {
-            // Re-found before every tap: selecting a photo reflows the grid, so coordinates
-            // captured up front go stale and a later tap can land on one already chosen —
-            // which would deselect it.
+            // Re-found before every tap rather than listed once up front: the picker loads
+            // tiles lazily, so the set available on the first pass is not necessarily the
+            // set available on the last. Selecting a tile does not move it — the picker
+            // leaves it in place and draws a checkmark on it — which is what makes keying
+            // `tapped` by centre coordinates safe: a tile's centre is stable for the life of
+            // the picker, so a tile already chosen is never tapped a second time (a second
+            // tap would deselect it).
             val next = photoTileBounds().firstOrNull { it !in tapped } ?: return@repeat
             device.click(next.first, next.second)
             tapped += next

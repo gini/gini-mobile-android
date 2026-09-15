@@ -145,8 +145,6 @@ class SkontoScreen {
         return previous
     }
 
-    fun readFinalAmount(): BigDecimal = AmountText.parse(requireTagged(FINAL_AMOUNT_FIELD).text)
-
     /**
      * Types [value] into the final-amount field and dismisses the keyboard.
      *
@@ -281,6 +279,13 @@ class SkontoScreen {
      * Whether the inline validation error for [resId] is showing under the amount field.
      * The message carries a `%1$s` placeholder in some cases, so only the literal prefix
      * before the first placeholder is matched.
+     *
+     * **Deliberately uncalled.** `SkontoScreenTests` test5 asserts that an amount above the
+     * invoice total is *rejected*, not that the error is announced, because
+     * `..._skonto_amount_more_than_full_amount` reaches the accessibility tree on neither
+     * device — reproduced across two builds with two input widths. This helper is the
+     * assertion that test should make once that is fixed; it stays so the fix is a one-line
+     * change rather than a rewrite.
      */
     fun isAmountValidationErrorDisplayed(resId: Int): Boolean {
         val message = sdkString(resId).substringBefore("%1\$s").trim()

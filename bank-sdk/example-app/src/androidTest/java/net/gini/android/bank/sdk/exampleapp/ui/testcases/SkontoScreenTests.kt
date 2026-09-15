@@ -251,8 +251,5 @@ class SkontoScreenTests : SmokeJourneyTestBase() {
          * question — this test is about the validation rule, and 9999.99 exercises it.
          */
         const val ABOVE_FULL_AMOUNT = "9999.99"
-
-        /** Keeps `currentDay + 1` inside every month, February included. */
-        const val LAST_SAFE_DAY_OF_MONTH = 28
     }
 }

@@ -23,8 +23,6 @@ import net.gini.android.bank.sdk.exampleapp.ui.screens.OnboardingScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.ReviewScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.SkontoScreen
 import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockBackend
-import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockClientConfiguration
-import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockScenario
 import org.junit.After
 import org.junit.Assume
 import org.junit.Before
@@ -43,9 +41,14 @@ import java.util.Properties
  * These are real-backend tests, like every other end-to-end journey in this suite: they
  * need `clientId`/`clientSecret` in `bank-sdk/example-app/local.properties` and a working
  * Gini API. The extraction assertions are therefore written against what the fixture
- * really returns — "the IBAN field is non-empty", "the total went up" — never against a
- * currency figure typed into the test, which would break on any backend change and would
+ * really returns — "the IBAN field is non-empty", "the total went up" — rather than against
+ * an expected value invented by the test, which would break on any backend change and would
  * pass just as well against a hardcoded response.
+ *
+ * An exact figure is asserted only where it is the document's **own** value and no weaker
+ * assertion identifies that document: [SmokeJourneyTests] `test3` checks the e-invoice's
+ * total because its embedded XML carries no IBAN at all, which leaves the amount as the one
+ * extraction that ties the result to that fixture.
  *
  * Deliberately separate from [WarningBottomSheetTestBase] rather than extracted from it:
  * that base and its three suites pass today and cannot be re-run here without a device and
@@ -112,32 +115,6 @@ abstract class SmokeJourneyTestBase {
         // Process-wide, so it must be cleared even by suites that never arm it — a leaked
         // scenario would silently feed canned data to the next test.
         UiTestMockBackend.disarm()
-    }
-
-    /**
-     * Replaces the Gini API with canned responses for the rest of this test.
-     *
-     * The flags passed here are the **server-side** client-configuration gates the mock
-     * serves from `getConfiguration`. They are separate from the SDK-side flags set by
-     * [configureReturnAssistantAndSkonto], and a feature generally needs both to be on.
-     *
-     * Must be called before the photo-payment button is clicked — `configureGiniBank()` runs
-     * on that click, which is when the mock's network service is picked up.
-     */
-    protected fun armMockBackend(
-        scenario: UiTestMockScenario,
-        returnAssistantEnabled: Boolean = true,
-        skontoEnabled: Boolean = true,
-        creditNoteHintEnabled: Boolean = true
-    ) {
-        UiTestMockBackend.arm(
-            scenario = scenario,
-            clientConfiguration = UiTestMockClientConfiguration(
-                creditNoteHintEnabled = creditNoteHintEnabled,
-                returnAssistantEnabled = returnAssistantEnabled,
-                skontoEnabled = skontoEnabled
-            )
-        )
     }
 
     /**
