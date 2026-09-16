@@ -46,7 +46,7 @@
         app:barrierDirection="top"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="gbs_bottom_wrapper,gbs_bottom_bar_navigation"/>
+        app:constraint_referenced_ids="gbs_bottom_wrapper"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/gbs_bottom_wrapper"
@@ -172,13 +172,6 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <net.gini.android.capture.view.InjectedViewContainer
-        android:id="@+id/gbs_bottom_bar_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.compose.ui.platform.ComposeView
         android:id="@+id/gbs_compose_view"

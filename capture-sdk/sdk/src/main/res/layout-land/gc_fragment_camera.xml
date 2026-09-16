@@ -58,7 +58,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/gc_injected_navigation_bar_container_bottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/gc_guideline_image_start"
         app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar">
@@ -267,7 +266,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/gc_injected_navigation_bar_container_bottom"
         app:layout_constraintEnd_toStartOf="@+id/gc_pane_wrapper"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar">
@@ -420,13 +418,6 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-    <net.gini.android.capture.view.InjectedViewContainer
-        android:id="@+id/gc_injected_navigation_bar_container_bottom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
 
     <ViewStub
@@ -435,7 +426,7 @@
         android:layout_height="0dp"
         android:layout="@layout/gc_layout_camera_no_permission"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/gc_injected_navigation_bar_container_bottom"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar" />
@@ -458,10 +449,11 @@
       the approved design shows.
 
       Declared LAST on purpose: the education overlay (gc_qr_code_education_compose_view) spans
-      the screen, so the badge has to come after it to draw on top of it. It still constrains to
-      gc_injected_navigation_bar_container_bottom, which is declared earlier — with no injected
-      bottom bar that container has zero height at the parent bottom, putting the badge 16dp above
-      the screen bottom; with one, the badge sits above the bar instead of behind it.
+      the screen, so the badge has to come after it to draw on top of it. It constrains to the
+      parent bottom, which puts it 16dp above the screen bottom — the same position it held when
+      it was anchored to gc_injected_navigation_bar_container_bottom, because that container was
+      empty and zero-height at the parent bottom whenever no bottom bar was injected. PP-3229
+      removed that container, so the anchor moved to the parent directly.
     -->
     <include
         android:id="@+id/gc_powered_by_gini"
@@ -470,7 +462,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/gc_large"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/gc_injected_navigation_bar_container_bottom"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

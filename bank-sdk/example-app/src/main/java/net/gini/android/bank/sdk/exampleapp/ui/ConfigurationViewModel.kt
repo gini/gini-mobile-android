@@ -19,6 +19,7 @@ import net.gini.android.bank.sdk.capture.CaptureConfiguration
 import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockBackend
 import net.gini.android.bank.sdk.exampleapp.core.DefaultNetworkServicesProvider
+import net.gini.android.bank.sdk.exampleapp.core.OpenWithUriApiPreference
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomLottiLoadingIndicatorAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomNavigationBarTopAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnButtonLoadingIndicatorAdapter
@@ -43,13 +44,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ConfigurationViewModel @Inject constructor(
-    internal val defaultNetworkServicesProvider: DefaultNetworkServicesProvider
+    internal val defaultNetworkServicesProvider: DefaultNetworkServicesProvider,
+    private val openWithUriApiPreference: OpenWithUriApiPreference
 ) : ViewModel() {
 
     private val _disableCameraPermissionFlow = MutableStateFlow(false)
     val disableCameraPermissionFlow: StateFlow<Boolean> = _disableCameraPermissionFlow
 
-    private val _configurationFlow = MutableStateFlow(ExampleAppBankConfiguration())
+    private val _configurationFlow = MutableStateFlow(
+        ExampleAppBankConfiguration(isOpenWithUriBasedApiEnabled = openWithUriApiPreference.isEnabled())
+    )
 
     fun getAlwaysAttachSetting(context: Context): Boolean {
         configureGiniBank(context) // Gini Bank should be configured before using transactionDocs
@@ -75,6 +79,11 @@ class ConfigurationViewModel @Inject constructor(
 
     fun setConfiguration(configuration: ExampleAppBankConfiguration) {
         _configurationFlow.value = configuration
+    }
+
+    fun setOpenWithUriBasedApiEnabled(isEnabled: Boolean) {
+        _configurationFlow.value = _configurationFlow.value.copy(isOpenWithUriBasedApiEnabled = isEnabled)
+        openWithUriApiPreference.setEnabled(isEnabled)
     }
 
     fun setupSDKWithDefaultConfigurations() {

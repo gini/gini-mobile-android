@@ -16,13 +16,16 @@ import net.gini.android.bank.sdk.capture.CaptureFlowFragment
 import net.gini.android.bank.sdk.capture.CaptureFlowFragmentListener
 import net.gini.android.bank.sdk.capture.CaptureResult
 import net.gini.android.bank.sdk.capture.ResultError
+import net.gini.android.bank.sdk.exampleapp.ExampleApp
 import net.gini.android.bank.sdk.exampleapp.R
+import net.gini.android.bank.sdk.exampleapp.core.ExampleUtil
 import net.gini.android.bank.sdk.exampleapp.core.PermissionHandler
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.ProductTag
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 import net.gini.android.core.api.DocumentMetadata
+import org.slf4j.LoggerFactory
 
 class ClientBankSDKFragment :
     Fragment(R.layout.fragment_client),
@@ -117,29 +120,65 @@ class ClientBankSDKFragment :
             .commit()
     }
 
-    fun startBankSdkForIntent(openWithIntent: Intent) {
+    fun startBankSdkForIntent(openWithIntent: Intent, useUriBasedApi: Boolean) {
         // Bank SDK is configured in the MainActivity, but you can
         // call [overrideBankSDKConfiguration] here if you want to override the configuration
-        GiniBank.createCaptureFlowFragmentForIntent(requireContext(), openWithIntent) { result ->
-            when (result) {
-                GiniBank.CreateCaptureFlowFragmentForIntentResult.Cancelled -> requireActivity().finish()
-                is GiniBank.CreateCaptureFlowFragmentForIntentResult.Error -> Toast.makeText(
+        if (useUriBasedApi) {
+            // An Intent without Uris yields an empty list, which the SDK reports as an Error
+            // through the same callback as every other failure
+            val uris = ExampleUtil.getOpenWithUris(openWithIntent)
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.open_with_uri_based_api_toast),
+                Toast.LENGTH_SHORT
+            ).show()
+            LOG.info("Open with: using Uri-based API (createCaptureFlowFragmentForUris)")
+            GiniBank.createCaptureFlowFragmentForUris(requireContext(), uris) { result ->
+                handleCaptureFlowFragmentResult(result)
+            }
+        } else {
+            LOG.info("Open with: using Intent-based API")
+            GiniBank.createCaptureFlowFragmentForIntent(requireContext(), openWithIntent) { result ->
+                handleCaptureFlowFragmentResult(result)
+            }
+        }
+    }
+
+    private fun handleCaptureFlowFragmentResult(result: GiniBank.CreateCaptureFlowFragmentForIntentResult) {
+        when (result) {
+            GiniBank.CreateCaptureFlowFragmentForIntentResult.Cancelled -> {
+                releaseOpenWithIdlingResource()
+                requireActivity().finish()
+            }
+
+            is GiniBank.CreateCaptureFlowFragmentForIntentResult.Error -> {
+                Toast.makeText(
                     requireContext(),
                     "Open with failed with error ${result.exception.message}",
                     Toast.LENGTH_SHORT
                 ).show()
+                releaseOpenWithIdlingResource()
+            }
 
-                is GiniBank.CreateCaptureFlowFragmentForIntentResult.Success -> {
-                    result.fragment.setListener(this)
+            is GiniBank.CreateCaptureFlowFragmentForIntentResult.Success -> {
+                result.fragment.setListener(this)
 
-                    requireActivity().supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_host, result.fragment, "fragment_host")
-                        .addToBackStack(null)
-                        .commit()
-                }
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_host, result.fragment, "fragment_host")
+                    .addToBackStack(null)
+                    .commit()
             }
         }
+    }
 
+    /**
+     * Releases the "open with" idling resource incremented by the [CaptureFlowHostActivity] when
+     * the import did not produce a fragment. It is normally released by the [ExtractionsActivity],
+     * which is never reached in this case.
+     */
+    private fun releaseOpenWithIdlingResource() {
+        // For "open with" (file import) tests
+        (requireActivity().applicationContext as ExampleApp).decrementIdlingResourceForOpenWith()
     }
 
     override fun onFinishedWithResult(result: CaptureResult) {
@@ -215,6 +254,9 @@ class ClientBankSDKFragment :
         }
     }
 
+    companion object {
+        private val LOG = LoggerFactory.getLogger(ClientBankSDKFragment::class.java)
+    }
 
 }
 

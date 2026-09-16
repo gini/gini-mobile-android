@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.Document;
@@ -50,6 +51,7 @@ public abstract class AbstractImportImageUrisAsyncTask extends
 
     @SuppressLint("StaticFieldLeak")
     private final Context mContext;
+    @Nullable
     private final Intent mIntent;
     private final AsyncCallback<ImageMultiPageDocument, ImportedFileValidationException> mCallback;
     private final GiniCapture mGiniCapture;
@@ -65,6 +67,20 @@ public abstract class AbstractImportImageUrisAsyncTask extends
                     callback) {
         mContext = context;
         mIntent = intent;
+        mGiniCapture = giniCapture;
+        mSource = source;
+        mImportMethod = importMethod;
+        mCallback = callback;
+    }
+
+    protected AbstractImportImageUrisAsyncTask(@NonNull final Context context,
+            @NonNull final GiniCapture giniCapture,
+            @NonNull final Document.Source source,
+            @NonNull final Document.ImportMethod importMethod,
+            @NonNull final AsyncCallback<ImageMultiPageDocument, ImportedFileValidationException>
+                    callback) {
+        mContext = context;
+        mIntent = null;
         mGiniCapture = giniCapture;
         mSource = source;
         mImportMethod = importMethod;
@@ -203,8 +219,12 @@ public abstract class AbstractImportImageUrisAsyncTask extends
         final String deviceOrientation = DeviceHelper.getDeviceOrientation(
                 mContext);
         final String deviceType = DeviceHelper.getDeviceType(mContext);
-        return DocumentFactory.newImageDocumentFromUri(uri,
-                mIntent, mContext, deviceOrientation,
+        if (mIntent != null) {
+            return DocumentFactory.newImageDocumentFromUri(uri,
+                    mIntent, mContext, deviceOrientation,
+                    deviceType, mImportMethod);
+        }
+        return DocumentFactory.newImageDocumentFromUri(uri, mContext, deviceOrientation,
                 deviceType, mImportMethod);
     }
 

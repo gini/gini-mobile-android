@@ -30,6 +30,17 @@ class XmlDocument : GiniCaptureDocument {
             return XmlDocument(intent, uri, Document.Source.newExternalSource(), importMethod)
         }
 
+        /**
+         * Internal use only.
+         *
+         * Creates an instance using the resource pointed to by the Uri.
+         *
+         * @suppress
+         */
+        @JvmStatic
+        fun fromUri(uri: Uri, importMethod: Document.ImportMethod): XmlDocument =
+            XmlDocument(null, uri, Document.Source.newExternalSource(), importMethod)
+
         @JvmField
         val CREATOR: Parcelable.Creator<XmlDocument> = object : Parcelable.Creator<XmlDocument> {
             override fun createFromParcel(parcel: Parcel): XmlDocument {
@@ -44,7 +55,7 @@ class XmlDocument : GiniCaptureDocument {
 
     @VisibleForTesting
     constructor(
-        intent: Intent,
+        intent: Intent?,
         uri: Uri,
         source: Document.Source,
         importMethod: Document.ImportMethod

@@ -2,6 +2,7 @@ package net.gini.android.bank.sdk
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.activity.result.ActivityResultLauncher
 import net.gini.android.bank.api.GiniBankAPI
 import net.gini.android.bank.api.models.ResolvePaymentInput
@@ -11,15 +12,6 @@ import net.gini.android.bank.sdk.capture.CaptureFlowFragment
 import net.gini.android.bank.sdk.capture.CaptureImportInput
 import net.gini.android.bank.sdk.capture.applyConfiguration
 import net.gini.android.bank.sdk.capture.di.skonto.captureSdkDiBridge
-import net.gini.android.bank.sdk.capture.digitalinvoice.help.view.DefaultDigitalInvoiceHelpNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.capture.digitalinvoice.help.view.DigitalInvoiceHelpNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.DigitalInvoiceSkontoNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.capture.digitalinvoice.view.DefaultDigitalInvoiceNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.capture.digitalinvoice.view.DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceOnboardingNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.capture.skonto.SkontoNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.capture.skonto.help.SkontoHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.di.BankSdkIsolatedKoinContext
 import net.gini.android.bank.sdk.error.AmountParsingException
 import net.gini.android.bank.sdk.invoice.InvoicePreviewFragment
@@ -64,6 +56,8 @@ object GiniBank {
 
     private const val CAPTURE_NOT_CONFIGURED_MSG =
         "Capture feature is not configured. Call setCaptureConfiguration before starting the flow."
+    private const val CAPTURE_NOT_CONFIGURED_FRAGMENT_MSG =
+        "Capture feature is not configured. Call setCaptureConfiguration before creating the CaptureFlowFragment."
 
     private var giniCapture: GiniCapture? = null
     private var captureConfiguration: CaptureConfiguration? = null
@@ -96,35 +90,6 @@ object GiniBank {
             digitalInvoiceOnboardingIllustrationAdapterInstance = InjectedViewAdapterInstance(value)
         }
         get() = digitalInvoiceOnboardingIllustrationAdapterInstance.viewAdapter
-
-    /**
-     * Below listed internal bottom bar instances are only kept here because they are used in many
-     * places, Once the code clean up happens, these must be removed as we drop support for custom
-     * bottom bars.
-     * - [digitalInvoiceNavigationBarBottomAdapterInstance]
-     * - [digitalInvocieSkontoNavigationBarBottomAdapterInstance]
-     * - [digitalInvoiceHelpNavigationBarBottomAdapterInstance]
-     * - [digitalInvoiceOnboardingNavigationBarBottomAdapterInstance]
-     * - [skontoHelpNavigationBarBottomAdapterInstance]
-     * - [skontoNavigationBarBottomAdapterInstance]
-     * */
-    internal var digitalInvoiceOnboardingNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceOnboardingNavigationBarBottomAdapter> =
-        InjectedViewAdapterInstance(DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter())
-
-    internal var digitalInvoiceHelpNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceHelpNavigationBarBottomAdapter> =
-        InjectedViewAdapterInstance(DefaultDigitalInvoiceHelpNavigationBarBottomAdapter())
-
-    internal var digitalInvoiceNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceNavigationBarBottomAdapter> =
-        InjectedViewAdapterInstance(DefaultDigitalInvoiceNavigationBarBottomAdapter())
-
-    internal var skontoNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>? =
-        null
-
-    internal var digitalInvocieSkontoNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>? =
-        null
-
-    internal var skontoHelpNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<SkontoHelpNavigationBarBottomAdapter>? =
-        null
 
     internal fun getCaptureConfiguration() = captureConfiguration
 
@@ -289,7 +254,7 @@ object GiniBank {
     }
 
     fun createCaptureFlowFragment(): CaptureFlowFragment {
-        check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before creating the CaptureFlowFragment." }
+        check(giniCapture != null) { CAPTURE_NOT_CONFIGURED_FRAGMENT_MSG }
         return CaptureFlowFragment.createInstance()
     }
 
@@ -298,7 +263,7 @@ object GiniBank {
         intent: Intent,
         callback: (CreateCaptureFlowFragmentForIntentResult) -> Unit
     ): CancellationToken {
-        check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before creating the CaptureFlowFragment." }
+        check(giniCapture != null) { CAPTURE_NOT_CONFIGURED_FRAGMENT_MSG }
         BankSdkIsolatedKoinContext.init(context)
         return giniCapture!!.createDocumentForImportedFiles(
             intent,
@@ -323,6 +288,58 @@ object GiniBank {
             })
     }
 
+
+    /**
+     * Creates a [CaptureFlowFragment] for PDF, XML or image documents received from another app
+     * as content Uris.
+     *
+     * Use this instead of [createCaptureFlowFragmentForIntent] when your app has already resolved
+     * the share Intent and only the document Uris are available.
+     *
+     * A PDF or XML document is only imported when it is the single Uri in the list. A list with
+     * more than one Uri is always treated as a list of images: PDF and XML Uris in it are ignored
+     * and the import fails with an error when none of the Uris is an image.
+     *
+     * The fragment is returned asynchronously in the [callback] wrapped in a
+     * [CreateCaptureFlowFragmentForIntentResult].
+     *
+     * @param context Android context
+     * @param uris the content Uris of the documents shared from another app; either exactly one
+     * PDF or XML Uri, or one or more image Uris
+     * @param callback returns the wrapped result of the processing in the form of
+     * [CreateCaptureFlowFragmentForIntentResult]
+     * @return a [CancellationToken] for cancelling the import process
+     * @throws IllegalStateException if the capture feature was not configured.
+     */
+    fun createCaptureFlowFragmentForUris(
+        context: Context,
+        uris: List<Uri>,
+        callback: (CreateCaptureFlowFragmentForIntentResult) -> Unit
+    ): CancellationToken {
+        check(giniCapture != null) { CAPTURE_NOT_CONFIGURED_FRAGMENT_MSG }
+        BankSdkIsolatedKoinContext.init(context)
+        return giniCapture!!.internal().createDocumentForImportedUris(
+            uris,
+            context,
+            object : AsyncCallback<Document, ImportedFileValidationException> {
+                override fun onSuccess(document: Document) {
+                    callback(
+                        CreateCaptureFlowFragmentForIntentResult.Success(
+                            createCaptureFlowFragmentForDocument(document)
+                        )
+                    )
+                }
+
+                override fun onError(exception: ImportedFileValidationException) {
+                    callback(CreateCaptureFlowFragmentForIntentResult.Error(exception))
+                }
+
+                override fun onCancelled() {
+                    callback(CreateCaptureFlowFragmentForIntentResult.Cancelled)
+                }
+
+            })
+    }
 
     sealed class CreateCaptureFlowFragmentForIntentResult {
         data class Success(val fragment: CaptureFlowFragment) :
@@ -496,6 +513,51 @@ object GiniBank {
                 }
             }
         )
+    }
+
+    /**
+     * Creates a document based on a PDF, XML or image(s) received from another app as content
+     * Uris.
+     *
+     * Use this instead of the [Intent] based overload when your app has already resolved the
+     * share Intent and only the document Uris are available.
+     *
+     * A PDF or XML document is only imported when it is the single Uri in the list. A list with
+     * more than one Uri is always treated as a list of images: PDF and XML Uris in it are ignored
+     * and the import fails with an error when none of the Uris is an image.
+     *
+     * @param uris the content Uris of the documents shared from another app; either exactly one
+     * PDF or XML Uri, or one or more image Uris
+     * @param context Android context
+     * @param callback returns the wrapped result of the file processing in the form of
+     * [CreateDocumentFromImportedFileResult]
+     * @return a [CancellationToken] for cancelling the import process or null if the capture
+     * feature was not configured
+     */
+    fun createDocumentForImportedFiles(
+        uris: List<Uri>,
+        context: Context,
+        callback: (CreateDocumentFromImportedFileResult) -> Unit
+    ): CancellationToken? {
+        return giniCapture?.let { capture ->
+            capture.internal().createDocumentForImportedUris(
+                uris,
+                context,
+                object : AsyncCallback<Document, ImportedFileValidationException> {
+                    override fun onSuccess(result: Document?) {
+                        callback(CreateDocumentFromImportedFileResult.Success(result))
+                    }
+
+                    override fun onError(exception: ImportedFileValidationException?) {
+                        callback(CreateDocumentFromImportedFileResult.Error(exception))
+                    }
+
+                    override fun onCancelled() {
+                        callback(CreateDocumentFromImportedFileResult.Cancelled)
+                    }
+                }
+            )
+        }
     }
 
     /**

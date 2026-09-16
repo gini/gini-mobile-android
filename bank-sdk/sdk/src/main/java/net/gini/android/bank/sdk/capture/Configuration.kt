@@ -2,7 +2,6 @@ package net.gini.android.bank.sdk.capture
 
 import net.gini.android.bank.sdk.BuildConfig
 import net.gini.android.bank.sdk.GiniBank
-import net.gini.android.bank.sdk.capture.skonto.SkontoNavigationBarBottomAdapter
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.GiniCapture
@@ -187,11 +186,6 @@ data class CaptureConfiguration(
      * Set an adapter implementation to show a custom loading animation during analyse and scan.
      */
     val onButtonLoadingIndicatorAdapter: OnButtonLoadingIndicatorAdapter? = null,
-
-    /**
-     * Set an adapter implementation to show a custom bottom navigation bar on the Skonto screen.
-     */
-    val skontoNavigationBarBottomAdapter: SkontoNavigationBarBottomAdapter? = null,
 
 
     /**

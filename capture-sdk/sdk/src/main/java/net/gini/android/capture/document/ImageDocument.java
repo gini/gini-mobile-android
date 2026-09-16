@@ -131,6 +131,25 @@ public class ImageDocument extends GiniCaptureDocument {
                 deviceType, source, importMethod);
     }
 
+    @NonNull
+    static ImageDocument fromUri(@NonNull final Uri uri,
+            @NonNull final Context context,
+            @NonNull final String deviceOrientation,
+            @NonNull final String deviceType,
+            @NonNull final ImportMethod importMethod) {
+        if (!GiniCapture.hasInstance()) {
+            throw new IllegalStateException(
+                    "Cannot create ImageDocument from Uri. GiniCapture instance not available. Create it with GiniCapture.newInstance().");
+        }
+        final String mimeType = UriHelper.getMimeType(uri, context);
+        if (mimeType == null || !hasMimeTypeWithPrefix(uri, context,
+                MimeType.IMAGE_PREFIX.asString())) {
+            throw new IllegalArgumentException("Uri must have a mime type of image/*");
+        }
+        return new ImageDocument(uri, ImageFormat.fromMimeType(mimeType), deviceOrientation,
+                deviceType, Source.newExternalSource(), importMethod);
+    }
+
     private static Source getDocumentSource(@NonNull final Intent data,
             @NonNull final Context context) {
         final String appName = getSourceAppName(data, context);

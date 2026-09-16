@@ -45,12 +45,28 @@ public class PdfDocument extends GiniCaptureDocument {
     }
 
     /**
+     * Internal use only.
+     *
+     * <p> Creates an instance using the resource pointed to by the Uri.
+     *
+     * @param uri a pdf {@link Uri}
+     * @param importMethod the method used to import the pdf
+     * @return new instance with the contents of the Uri
+     * @suppress
+     */
+    @NonNull
+    public static PdfDocument fromUri(@NonNull final Uri uri,
+            @NonNull final ImportMethod importMethod) {
+        return new PdfDocument(null, uri, Source.newExternalSource(), importMethod);
+    }
+
+    /**
      * Creates an instance from the provided Intent.
      * @param intent an Intent that must point to a PDF
      * @throws IllegalArgumentException if the Intent's data is null
      */
     @VisibleForTesting
-    PdfDocument(@NonNull final Intent intent, @NonNull final Uri uri,
+    PdfDocument(@Nullable final Intent intent, @NonNull final Uri uri,
             @NonNull final Source source, @NonNull final ImportMethod importMethod) {
         super(Type.PDF, source, importMethod, MimeType.APPLICATION_PDF.asString(), null, intent,
                 uri, false);

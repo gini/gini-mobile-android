@@ -314,15 +314,12 @@ public class net/gini/android/capture/GiniCapture {
 	public fun createGiniCaptureFragmentForIntent (Landroid/content/Context;Landroid/content/Intent;Lnet/gini/android/capture/GiniCapture$CreateGiniCaptureFragmentForIntentCallback;)Lnet/gini/android/capture/util/CancellationToken;
 	public fun createIntentForImportedFiles (Landroid/content/Intent;Landroid/content/Context;Lnet/gini/android/capture/AsyncCallback;)Lnet/gini/android/capture/util/CancellationToken;
 	public fun getAllowScreenshots ()Z
-	public fun getCameraNavigationBarBottomAdapter ()Lnet/gini/android/capture/camera/view/CameraNavigationBarBottomAdapter;
 	public fun getCustomHelpItems ()Ljava/util/List;
 	public fun getCustomOnboardingPages ()Ljava/util/ArrayList;
 	public fun getCustomUploadMetadata ()Ljava/util/Map;
 	public fun getDocumentImportEnabledFileTypes ()Lnet/gini/android/capture/DocumentImportEnabledFileTypes;
 	public fun getEntryPoint ()Lnet/gini/android/capture/EntryPoint;
-	public fun getErrorNavigationBarBottomAdapter ()Lnet/gini/android/capture/error/view/ErrorNavigationBarBottomAdapter;
 	public fun getGiniComposableStyleProvider ()Lnet/gini/android/capture/ui/components/GiniComposableStyleProvider;
-	public fun getHelpNavigationBarBottomAdapter ()Lnet/gini/android/capture/help/view/HelpNavigationBarBottomAdapter;
 	public fun getImportedFileSizeBytesLimit ()I
 	public static fun getInstance ()Lnet/gini/android/capture/GiniCapture;
 	public fun getLoadingIndicatorAdapter ()Lnet/gini/android/capture/view/CustomLoadingIndicatorAdapter;
@@ -331,16 +328,13 @@ public class net/gini/android/capture/GiniCapture {
 	public fun getOnboardingAlignCornersIllustrationAdapter ()Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;
 	public fun getOnboardingLightingIllustrationAdapter ()Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;
 	public fun getOnboardingMultiPageIllustrationAdapter ()Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;
-	public fun getOnboardingNavigationBarBottomAdapter ()Lnet/gini/android/capture/onboarding/view/OnboardingNavigationBarBottomAdapter;
 	public fun getOnboardingQRCodeIllustrationAdapter ()Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;
 	public fun getPaymentDueHintThresholdDays ()I
 	public fun getProductTag ()Lnet/gini/android/capture/ProductTag;
-	public fun getReviewNavigationBarBottomAdapter ()Lnet/gini/android/capture/review/multipage/view/ReviewNavigationBarBottomAdapter;
 	public fun getSaveInvoicesEnabled ()Z
 	public static fun hasInstance ()Z
 	public fun internal ()Lnet/gini/android/capture/GiniCapture$Internal;
 	public fun isAlreadyPaidHintEnabled ()Z
-	public fun isBottomNavigationBarEnabled ()Z
 	public fun isCreditNoteHintEnabled ()Z
 	public fun isFileImportEnabled ()Z
 	public fun isFlashButtonEnabled ()Z
@@ -425,24 +419,20 @@ public class net/gini/android/capture/GiniCapture$CreateGiniCaptureFragmentForIn
 public class net/gini/android/capture/GiniCapture$Internal {
 	public static final field DEFAULT_ENTRY_POINT Lnet/gini/android/capture/EntryPoint;
 	public fun <init> (Lnet/gini/android/capture/GiniCapture;)V
+	public fun createDocumentForImportedUris (Ljava/util/List;Landroid/content/Context;Lnet/gini/android/capture/AsyncCallback;)Lnet/gini/android/capture/util/CancellationToken;
 	public static fun createGiniCaptureFragmentForOpenWithDocument (Lnet/gini/android/capture/Document;)Lnet/gini/android/capture/GiniCaptureFragment;
-	public fun getCameraNavigationBarBottomAdapterInstance ()Lnet/gini/android/capture/view/InjectedViewAdapterInstance;
 	public fun getCompoundExtractions ()Ljava/util/Map;
 	public fun getDocumentDataMemoryCache ()Lnet/gini/android/capture/internal/cache/DocumentDataMemoryCache;
 	public fun getErrorLogger ()Lnet/gini/android/capture/logging/ErrorLogger;
-	public fun getErrorNavigationBarBottomAdapterInstance ()Lnet/gini/android/capture/view/InjectedViewAdapterInstance;
 	public fun getEventTracker ()Lnet/gini/android/capture/tracking/EventTracker;
 	public fun getGiniCaptureNetworkService ()Lnet/gini/android/capture/network/GiniCaptureNetworkService;
-	public fun getHelpNavigationBarBottomAdapterInstance ()Lnet/gini/android/capture/view/InjectedViewAdapterInstance;
 	public fun getImageDiskStore ()Lnet/gini/android/capture/internal/storage/ImageDiskStore;
 	public fun getImageMultiPageDocumentMemoryStore ()Lnet/gini/android/capture/internal/document/ImageMultiPageDocumentMemoryStore;
 	public fun getLoadingIndicatorAdapterInstance ()Lnet/gini/android/capture/view/InjectedViewAdapterInstance;
 	public fun getNavigationBarTopAdapterInstance ()Lnet/gini/android/capture/view/InjectedViewAdapterInstance;
 	public fun getNetworkRequestsManager ()Lnet/gini/android/capture/internal/network/NetworkRequestsManager;
 	public fun getOnButtonLoadingIndicatorAdapterInstance ()Lnet/gini/android/capture/view/InjectedViewAdapterInstance;
-	public fun getOnboardingNavigationBarBottomAdapterInstance ()Lnet/gini/android/capture/view/InjectedViewAdapterInstance;
 	public fun getPhotoMemoryCache ()Lnet/gini/android/capture/internal/cache/PhotoMemoryCache;
-	public fun getReviewNavigationBarBottomAdapterInstance ()Lnet/gini/android/capture/view/InjectedViewAdapterInstance;
 	public fun getReviewScreenAnalysisError ()Ljava/lang/Throwable;
 	public fun setReviewScreenAnalysisError (Ljava/lang/Throwable;)V
 	public fun setUpdatedCompoundExtractions (Ljava/util/Map;)V
@@ -538,6 +528,7 @@ public final class net/gini/android/capture/GiniCaptureFragmentListener$DefaultI
 
 public class net/gini/android/capture/ImportImageFileUrisAsyncTask : net/gini/android/capture/internal/fileimport/AbstractImportImageUrisAsyncTask {
 	public fun <init> (Landroid/content/Context;Landroid/content/Intent;Lnet/gini/android/capture/GiniCapture;Lnet/gini/android/capture/Document$Source;Lnet/gini/android/capture/Document$ImportMethod;Lnet/gini/android/capture/AsyncCallback;)V
+	public fun <init> (Landroid/content/Context;Lnet/gini/android/capture/GiniCapture;Lnet/gini/android/capture/Document$Source;Lnet/gini/android/capture/Document$ImportMethod;Lnet/gini/android/capture/AsyncCallback;)V
 	protected fun onError (Lnet/gini/android/capture/document/ImageMultiPageDocument;Lnet/gini/android/capture/ImportedFileValidationException;)V
 	protected fun onHaltingError (Lnet/gini/android/capture/ImportedFileValidationException;)V
 	protected synthetic fun onPostExecute (Ljava/lang/Object;)V
@@ -958,24 +949,6 @@ public class net/gini/android/capture/camera/PhotoThumbnail : androidx/constrain
 	public fun setOnClickListener (Landroid/view/View$OnClickListener;)V
 }
 
-public abstract interface class net/gini/android/capture/camera/view/CameraNavigationBarBottomAdapter : net/gini/android/capture/view/InjectedViewAdapter {
-	public abstract fun setBackButtonVisibility (I)V
-	public abstract fun setOnBackButtonClickListener (Landroid/view/View$OnClickListener;)V
-	public abstract fun setOnHelpButtonClickListener (Landroid/view/View$OnClickListener;)V
-}
-
-public final class net/gini/android/capture/camera/view/DefaultCameraNavigationBarBottomAdapter : net/gini/android/capture/camera/view/CameraNavigationBarBottomAdapter {
-	public static final field $stable I
-	public fun <init> ()V
-	public final fun getViewBinding ()Lnet/gini/android/capture/databinding/GcCameraBottomBarBinding;
-	public fun onCreateView (Landroid/view/ViewGroup;)Landroid/view/View;
-	public fun onDestroy ()V
-	public fun setBackButtonVisibility (I)V
-	public fun setOnBackButtonClickListener (Landroid/view/View$OnClickListener;)V
-	public fun setOnHelpButtonClickListener (Landroid/view/View$OnClickListener;)V
-	public final fun setViewBinding (Lnet/gini/android/capture/databinding/GcCameraBottomBarBinding;)V
-}
-
 public final class net/gini/android/capture/databinding/GcActivityAnalysisBinding : androidx/viewbinding/ViewBinding {
 	public final field gcFragmentAnalyzeDocument Landroid/widget/FrameLayout;
 	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcActivityAnalysisBinding;
@@ -1017,24 +990,12 @@ public final class net/gini/android/capture/databinding/GcActivityMultiPageRevie
 
 public final class net/gini/android/capture/databinding/GcActivityNoresultsBinding : androidx/viewbinding/ViewBinding {
 	public final field gcFragmentNoresults Landroid/widget/FrameLayout;
-	public final field gcInjectedNavigationBarContainerBottom Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcRoot Landroidx/constraintlayout/widget/ConstraintLayout;
 	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcActivityNoresultsBinding;
 	public synthetic fun getRoot ()Landroid/view/View;
 	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
 	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/capture/databinding/GcActivityNoresultsBinding;
 	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/capture/databinding/GcActivityNoresultsBinding;
-}
-
-public final class net/gini/android/capture/databinding/GcCameraBottomBarBinding : androidx/viewbinding/ViewBinding {
-	public final field gcCameraTitle Landroid/widget/TextView;
-	public final field gcGoBack Landroid/widget/ImageButton;
-	public final field gcHelp Landroid/widget/ImageButton;
-	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcCameraBottomBarBinding;
-	public synthetic fun getRoot ()Landroid/view/View;
-	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
-	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/capture/databinding/GcCameraBottomBarBinding;
-	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/capture/databinding/GcCameraBottomBarBinding;
 }
 
 public final class net/gini/android/capture/databinding/GcDetectionErrorLayoutBinding : androidx/viewbinding/ViewBinding {
@@ -1057,15 +1018,6 @@ public final class net/gini/android/capture/databinding/GcDialogUnsupportedQrCod
 	public fun getRoot ()Landroid/widget/ScrollView;
 	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/capture/databinding/GcDialogUnsupportedQrCodeBinding;
 	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/capture/databinding/GcDialogUnsupportedQrCodeBinding;
-}
-
-public final class net/gini/android/capture/databinding/GcErrorNavigationBarBottomBinding : androidx/viewbinding/ViewBinding {
-	public final field gcGoBack Landroid/widget/ImageButton;
-	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcErrorNavigationBarBottomBinding;
-	public synthetic fun getRoot ()Landroid/view/View;
-	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
-	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/capture/databinding/GcErrorNavigationBarBottomBinding;
-	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/capture/databinding/GcErrorNavigationBarBottomBinding;
 }
 
 public final class net/gini/android/capture/databinding/GcFragmentAnalysisBinding : androidx/viewbinding/ViewBinding {
@@ -1114,7 +1066,6 @@ public final class net/gini/android/capture/databinding/GcFragmentCameraBinding 
 	public final field gcGuidelineImageStart Landroidx/constraintlayout/widget/Guideline;
 	public final field gcIbanDetected Landroid/widget/TextView;
 	public final field gcInjectedLoadingIndicator Lnet/gini/android/capture/view/InjectedViewContainer;
-	public final field gcInjectedNavigationBarContainerBottom Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcNavigationTopBar Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcPaneWrapper Landroidx/constraintlayout/widget/ConstraintLayout;
 	public final field gcPhotoThumbnail Lnet/gini/android/capture/camera/PhotoThumbnail;
@@ -1147,7 +1098,6 @@ public final class net/gini/android/capture/databinding/GcFragmentErrorBinding :
 	public final field gcGuidelineEndErrorHeader Landroidx/constraintlayout/widget/Guideline;
 	public final field gcGuidelineStartError Landroidx/constraintlayout/widget/Guideline;
 	public final field gcGuidelineStartErrorHeader Landroidx/constraintlayout/widget/Guideline;
-	public final field gcInjectedNavigationBarContainerBottom Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcInjectedNavigationBarContainerTop Lnet/gini/android/capture/view/InjectedViewContainer;
 	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcFragmentErrorBinding;
 	public synthetic fun getRoot ()Landroid/view/View;
@@ -1172,7 +1122,6 @@ public final class net/gini/android/capture/databinding/GcFragmentFileImportHelp
 	public final field customFontTextView6 Landroid/widget/TextView;
 	public final field customFontTextView7 Landroid/widget/TextView;
 	public final field gcFileImportConstraintLayout Landroidx/constraintlayout/widget/ConstraintLayout;
-	public final field gcInjectedNavigationBarContainerBottom Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcInjectedNavigationBarContainerTop Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcSection1Illustration Landroid/widget/ImageView;
 	public final field gcSection2Illustration Landroid/widget/ImageView;
@@ -1196,7 +1145,6 @@ public final class net/gini/android/capture/databinding/GcFragmentGiniCaptureBin
 
 public final class net/gini/android/capture/databinding/GcFragmentHelpBinding : androidx/viewbinding/ViewBinding {
 	public final field gcHelpItems Landroidx/recyclerview/widget/RecyclerView;
-	public final field gcInjectedNavigationBarContainerBottom Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcInjectedNavigationBarContainerTop Lnet/gini/android/capture/view/InjectedViewContainer;
 	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcFragmentHelpBinding;
 	public synthetic fun getRoot ()Landroid/view/View;
@@ -1213,7 +1161,6 @@ public final class net/gini/android/capture/databinding/GcFragmentMultiPageRevie
 	public final field gcFragmentContainer Landroidx/fragment/app/FragmentContainerView;
 	public final field gcGuidelineViewpagerEnd Landroidx/constraintlayout/widget/Guideline;
 	public final field gcInjectedLoadingIndicatorContainer Lnet/gini/android/capture/view/InjectedViewContainer;
-	public final field gcInjectedNavigationBarContainerBottom Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcMainViewsWrapper Landroidx/constraintlayout/widget/ConstraintLayout;
 	public final field gcNavigationTopBar Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcPagerRecyclerView Landroidx/recyclerview/widget/RecyclerView;
@@ -1238,7 +1185,6 @@ public final class net/gini/android/capture/databinding/GcFragmentNoresultsBindi
 	public final field gcButtonNoResultsEnterManually Landroid/widget/Button;
 	public final field gcButtonNoResultsRetakeImages Landroid/widget/Button;
 	public final field gcErrorHeaderIcon Landroid/widget/ImageView;
-	public final field gcInjectedNavigationBarContainerBottom Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcInjectedNavigationBarContainerTop Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcNoResultsButtonContainer Landroid/view/View;
 	public final field gcNoResultsHeader Landroid/widget/TextView;
@@ -1259,7 +1205,6 @@ public final class net/gini/android/capture/databinding/GcFragmentOnboardingBind
 	public final field gcBottomContainer Landroidx/constraintlayout/widget/ConstraintLayout;
 	public final field gcGetStarted Landroid/widget/Button;
 	public final field gcGuidelineImageStart Landroidx/constraintlayout/widget/Guideline;
-	public final field gcInjectedNavigationBarContainerBottom Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcLayoutPageIndicators Landroid/widget/LinearLayout;
 	public final field gcNext Landroid/widget/Button;
 	public final field gcNextSkipGroup Landroidx/constraintlayout/widget/Group;
@@ -1286,7 +1231,6 @@ public final class net/gini/android/capture/databinding/GcFragmentOnboardingPage
 }
 
 public final class net/gini/android/capture/databinding/GcFragmentPhotoTipsHelpBinding : androidx/viewbinding/ViewBinding {
-	public final field gcInjectedNavigationBarContainerBottom Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcInjectedNavigationBarContainerTop Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcTipsRecycleview Landroidx/recyclerview/widget/RecyclerView;
 	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcFragmentPhotoTipsHelpBinding;
@@ -1298,7 +1242,6 @@ public final class net/gini/android/capture/databinding/GcFragmentPhotoTipsHelpB
 
 public final class net/gini/android/capture/databinding/GcFragmentSupportedFormatsHelpBinding : androidx/viewbinding/ViewBinding {
 	public final field gcFormatsList Landroidx/recyclerview/widget/RecyclerView;
-	public final field gcInjectedNavigationBarContainerBottom Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcInjectedNavigationBarContainerTop Lnet/gini/android/capture/view/InjectedViewContainer;
 	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcFragmentSupportedFormatsHelpBinding;
 	public synthetic fun getRoot ()Landroid/view/View;
@@ -1315,15 +1258,6 @@ public final class net/gini/android/capture/databinding/GcFragmentZoomInPreviewB
 	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
 	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/capture/databinding/GcFragmentZoomInPreviewBinding;
 	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/capture/databinding/GcFragmentZoomInPreviewBinding;
-}
-
-public final class net/gini/android/capture/databinding/GcHelpNavigationBarBottomBinding : androidx/viewbinding/ViewBinding {
-	public final field gcGoBack Landroid/widget/ImageButton;
-	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcHelpNavigationBarBottomBinding;
-	public synthetic fun getRoot ()Landroid/view/View;
-	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
-	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/capture/databinding/GcHelpNavigationBarBottomBinding;
-	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/capture/databinding/GcHelpNavigationBarBottomBinding;
 }
 
 public final class net/gini/android/capture/databinding/GcItemFileProviderAppBinding : androidx/viewbinding/ViewBinding {
@@ -1433,26 +1367,6 @@ public final class net/gini/android/capture/databinding/GcNavigationBarTopBindin
 	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/capture/databinding/GcNavigationBarTopBinding;
 }
 
-public final class net/gini/android/capture/databinding/GcNoResultsNavigationBarBottomBinding : androidx/viewbinding/ViewBinding {
-	public final field gcGoBack Landroid/widget/ImageButton;
-	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcNoResultsNavigationBarBottomBinding;
-	public synthetic fun getRoot ()Landroid/view/View;
-	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
-	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/capture/databinding/GcNoResultsNavigationBarBottomBinding;
-	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/capture/databinding/GcNoResultsNavigationBarBottomBinding;
-}
-
-public final class net/gini/android/capture/databinding/GcOnboardingNavigationBarBottomBinding : androidx/viewbinding/ViewBinding {
-	public final field gcGetStarted Landroid/widget/Button;
-	public final field gcNext Landroid/widget/Button;
-	public final field gcSkip Landroid/widget/Button;
-	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcOnboardingNavigationBarBottomBinding;
-	public synthetic fun getRoot ()Landroid/view/View;
-	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
-	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/capture/databinding/GcOnboardingNavigationBarBottomBinding;
-	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/capture/databinding/GcOnboardingNavigationBarBottomBinding;
-}
-
 public final class net/gini/android/capture/databinding/GcPhotoThumbnailBinding : androidx/viewbinding/ViewBinding {
 	public final field gcBadge Landroid/widget/TextView;
 	public final field gcThumbnail Landroid/widget/ImageView;
@@ -1480,21 +1394,6 @@ public final class net/gini/android/capture/databinding/GcPoweredByGiniBinding :
 	public fun getRoot ()Landroid/widget/LinearLayout;
 	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/capture/databinding/GcPoweredByGiniBinding;
 	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/capture/databinding/GcPoweredByGiniBinding;
-}
-
-public final class net/gini/android/capture/databinding/GcReviewNavigationBarBottomBinding : androidx/viewbinding/ViewBinding {
-	public final field gcAddPage Landroid/widget/ImageView;
-	public final field gcAddPageButton Landroid/widget/Button;
-	public final field gcAddPagesWrapper Landroid/widget/LinearLayout;
-	public final field gcContinue Landroid/widget/Button;
-	public final field gcInjectedLoadingIndicatorContainer Lnet/gini/android/capture/view/InjectedViewContainer;
-	public final field gcPagesTxt Landroid/widget/TextView;
-	public final field gcProcessDocumentsWrapper Landroidx/constraintlayout/widget/ConstraintLayout;
-	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcReviewNavigationBarBottomBinding;
-	public synthetic fun getRoot ()Landroid/view/View;
-	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
-	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/capture/databinding/GcReviewNavigationBarBottomBinding;
-	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/capture/databinding/GcReviewNavigationBarBottomBinding;
 }
 
 public final class net/gini/android/capture/databinding/GcWarningBottomSheetBinding : androidx/viewbinding/ViewBinding {
@@ -1536,6 +1435,7 @@ public final class net/gini/android/capture/document/DocumentFactory {
 	public static fun newImageDocumentFromPhoto (Lnet/gini/android/capture/internal/camera/photo/Photo;)Lnet/gini/android/capture/document/ImageDocument;
 	public static fun newImageDocumentFromPhoto (Lnet/gini/android/capture/internal/camera/photo/Photo;Landroid/net/Uri;)Lnet/gini/android/capture/document/ImageDocument;
 	public static fun newImageDocumentFromPhotoAndDocument (Lnet/gini/android/capture/internal/camera/photo/Photo;Lnet/gini/android/capture/document/GiniCaptureDocument;)Lnet/gini/android/capture/document/ImageDocument;
+	public static fun newImageDocumentFromUri (Landroid/net/Uri;Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/capture/Document$ImportMethod;)Lnet/gini/android/capture/document/ImageDocument;
 	public static fun newImageDocumentFromUri (Landroid/net/Uri;Landroid/content/Intent;Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/capture/Document$ImportMethod;)Lnet/gini/android/capture/document/ImageDocument;
 	public static fun newMultiPageDocument (Lnet/gini/android/capture/document/GiniCaptureDocument;)Lnet/gini/android/capture/document/GiniCaptureMultiPageDocument;
 }
@@ -1635,6 +1535,7 @@ public class net/gini/android/capture/document/ImageMultiPageDocument : net/gini
 public class net/gini/android/capture/document/PdfDocument : net/gini/android/capture/document/GiniCaptureDocument {
 	public static final field CREATOR Landroid/os/Parcelable$Creator;
 	public fun describeContents ()I
+	public static fun fromUri (Landroid/net/Uri;Lnet/gini/android/capture/Document$ImportMethod;)Lnet/gini/android/capture/document/PdfDocument;
 	public fun getFilename ()Ljava/lang/String;
 	public fun loadFilename (Landroid/content/Context;)V
 	public fun writeToParcel (Landroid/os/Parcel;I)V
@@ -1673,6 +1574,7 @@ public final class net/gini/android/capture/document/XmlDocument : net/gini/andr
 	public synthetic fun <init> (Landroid/os/Parcel;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun describeContents ()I
 	public static final fun fromIntent (Landroid/content/Intent;Lnet/gini/android/capture/Document$ImportMethod;)Lnet/gini/android/capture/document/XmlDocument;
+	public static final fun fromUri (Landroid/net/Uri;Lnet/gini/android/capture/Document$ImportMethod;)Lnet/gini/android/capture/document/XmlDocument;
 	public final fun getFilename ()Ljava/lang/String;
 	public final fun loadFilename (Landroid/content/Context;)V
 	public fun writeToParcel (Landroid/os/Parcel;I)V
@@ -1680,6 +1582,7 @@ public final class net/gini/android/capture/document/XmlDocument : net/gini/andr
 
 public final class net/gini/android/capture/document/XmlDocument$Companion {
 	public final fun fromIntent (Landroid/content/Intent;Lnet/gini/android/capture/Document$ImportMethod;)Lnet/gini/android/capture/document/XmlDocument;
+	public final fun fromUri (Landroid/net/Uri;Lnet/gini/android/capture/Document$ImportMethod;)Lnet/gini/android/capture/document/XmlDocument;
 }
 
 public final class net/gini/android/capture/document/XmlMultiPageDocument : net/gini/android/capture/document/GiniCaptureMultiPageDocument {
@@ -1768,10 +1671,6 @@ public final class net/gini/android/capture/error/ErrorType$Companion {
 	public final fun typeFromDocumentErrorCode (Lnet/gini/android/capture/document/GiniCaptureDocumentError$ErrorCode;)Lnet/gini/android/capture/error/ErrorType;
 	public final fun typeFromError (Lnet/gini/android/capture/network/Error;Z)Lnet/gini/android/capture/error/ErrorType;
 	public static synthetic fun typeFromError$default (Lnet/gini/android/capture/error/ErrorType$Companion;Lnet/gini/android/capture/network/Error;ZILjava/lang/Object;)Lnet/gini/android/capture/error/ErrorType;
-}
-
-public abstract interface class net/gini/android/capture/error/view/ErrorNavigationBarBottomAdapter : net/gini/android/capture/view/InjectedViewAdapter {
-	public abstract fun setOnBackClickListener (Landroid/view/View$OnClickListener;)V
 }
 
 public final class net/gini/android/capture/help/FileImportHelpFragment : androidx/fragment/app/Fragment {
@@ -1906,10 +1805,6 @@ public final class net/gini/android/capture/help/SupportedFormatsHelpFragment : 
 
 public final class net/gini/android/capture/help/SupportedFormatsHelpFragment$Companion {
 	public final fun newInstance ()Lnet/gini/android/capture/help/SupportedFormatsHelpFragment;
-}
-
-public abstract interface class net/gini/android/capture/help/view/HelpNavigationBarBottomAdapter : net/gini/android/capture/view/InjectedViewAdapter {
-	public abstract fun setOnBackClickListener (Landroid/view/View$OnClickListener;)V
 }
 
 public class net/gini/android/capture/internal/cache/DocumentDataMemoryCache : net/gini/android/capture/internal/cache/MemoryCache {
@@ -2161,6 +2056,7 @@ public class net/gini/android/capture/internal/document/ImageMultiPageDocumentMe
 
 public abstract class net/gini/android/capture/internal/fileimport/AbstractImportImageUrisAsyncTask : android/os/AsyncTask {
 	protected fun <init> (Landroid/content/Context;Landroid/content/Intent;Lnet/gini/android/capture/GiniCapture;Lnet/gini/android/capture/Document$Source;Lnet/gini/android/capture/Document$ImportMethod;Lnet/gini/android/capture/AsyncCallback;)V
+	protected fun <init> (Landroid/content/Context;Lnet/gini/android/capture/GiniCapture;Lnet/gini/android/capture/Document$Source;Lnet/gini/android/capture/Document$ImportMethod;Lnet/gini/android/capture/AsyncCallback;)V
 	protected fun doInBackground ([Landroid/net/Uri;)Lnet/gini/android/capture/document/ImageMultiPageDocument;
 	protected synthetic fun doInBackground ([Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getCallback ()Lnet/gini/android/capture/AsyncCallback;
@@ -3256,19 +3152,15 @@ public class net/gini/android/capture/onboarding/OnboardingFragment : androidx/f
 	public fun activatePageIndicatorForPage (I)V
 	public fun close ()V
 	protected fun createPresenter (Landroid/app/Activity;)V
-	public fun hideButtons ()V
 	public fun onCreate (Landroid/os/Bundle;)V
 	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
 	public fun onGetLayoutInflater (Landroid/os/Bundle;)Landroid/view/LayoutInflater;
 	public fun scrollToPage (I)V
-	public fun setNavigationBarBottomAdapterInstance (Lnet/gini/android/capture/view/InjectedViewAdapterInstance;)V
 	public synthetic fun setPresenter (Lnet/gini/android/capture/GiniCaptureBasePresenter;)V
 	public fun setPresenter (Lnet/gini/android/capture/onboarding/OnboardingScreenContract$Presenter;)V
 	public fun showGetStartedButton ()V
-	public fun showGetStartedButtonInNavigationBarBottom ()V
 	public fun showPages (Ljava/util/List;)V
 	public fun showSkipAndNextButtons ()V
-	public fun showSkipAndNextButtonsInNavigationBarBottom ()V
 }
 
 public class net/gini/android/capture/onboarding/OnboardingPage : android/os/Parcelable {
@@ -3320,22 +3212,6 @@ public final class net/gini/android/capture/onboarding/view/ImageOnboardingIllus
 public abstract interface class net/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter : android/os/Parcelable, net/gini/android/capture/view/InjectedViewAdapter {
 	public abstract fun onHidden ()V
 	public abstract fun onVisible ()V
-}
-
-public abstract interface class net/gini/android/capture/onboarding/view/OnboardingNavigationBarBottomAdapter : net/gini/android/capture/view/InjectedViewAdapter {
-	public abstract fun setOnGetStartedButtonClickListener (Landroid/view/View$OnClickListener;)V
-	public abstract fun setOnNextButtonClickListener (Landroid/view/View$OnClickListener;)V
-	public abstract fun setOnSkipButtonClickListener (Landroid/view/View$OnClickListener;)V
-	public abstract fun showButtons ([Lnet/gini/android/capture/onboarding/view/OnboardingNavigationBarBottomButton;)V
-}
-
-public final class net/gini/android/capture/onboarding/view/OnboardingNavigationBarBottomButton : java/lang/Enum {
-	public static final field GET_STARTED Lnet/gini/android/capture/onboarding/view/OnboardingNavigationBarBottomButton;
-	public static final field NEXT Lnet/gini/android/capture/onboarding/view/OnboardingNavigationBarBottomButton;
-	public static final field SKIP Lnet/gini/android/capture/onboarding/view/OnboardingNavigationBarBottomButton;
-	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public static fun valueOf (Ljava/lang/String;)Lnet/gini/android/capture/onboarding/view/OnboardingNavigationBarBottomButton;
-	public static fun values ()[Lnet/gini/android/capture/onboarding/view/OnboardingNavigationBarBottomButton;
 }
 
 public final class net/gini/android/capture/paymentHints/GetAlreadyPaidHintEnabledUseCase {
@@ -3493,28 +3369,6 @@ public final class net/gini/android/capture/review/multipage/previews/PreviewPag
 	public fun <init> (Lnet/gini/android/capture/review/multipage/previews/PreviewPagesAdapter;Landroid/view/View;)V
 	public final fun getMImageViewContainer ()Lnet/gini/android/capture/review/RotatableImageViewContainer;
 	public final fun getView ()Landroid/view/View;
-}
-
-public final class net/gini/android/capture/review/multipage/view/DefaultReviewNavigationBarBottomAdapter : net/gini/android/capture/review/multipage/view/ReviewNavigationBarBottomAdapter {
-	public static final field $stable I
-	public fun <init> ()V
-	public fun hideLoadingIndicator ()V
-	public fun onCreateView (Landroid/view/ViewGroup;)Landroid/view/View;
-	public fun onDestroy ()V
-	public fun setAddPageButtonVisibility (I)V
-	public fun setContinueButtonEnabled (Z)V
-	public fun setOnAddPageButtonClickListener (Landroid/view/View$OnClickListener;)V
-	public fun setOnContinueButtonClickListener (Landroid/view/View$OnClickListener;)V
-	public fun showLoadingIndicator ()V
-}
-
-public abstract interface class net/gini/android/capture/review/multipage/view/ReviewNavigationBarBottomAdapter : net/gini/android/capture/view/InjectedViewAdapter {
-	public abstract fun hideLoadingIndicator ()V
-	public abstract fun setAddPageButtonVisibility (I)V
-	public abstract fun setContinueButtonEnabled (Z)V
-	public abstract fun setOnAddPageButtonClickListener (Landroid/view/View$OnClickListener;)V
-	public abstract fun setOnContinueButtonClickListener (Landroid/view/View$OnClickListener;)V
-	public abstract fun showLoadingIndicator ()V
 }
 
 public class net/gini/android/capture/review/zoom/ZoomInPreviewFragment : androidx/fragment/app/Fragment {

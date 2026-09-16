@@ -123,6 +123,9 @@ class ConfigurationActivity : AppCompatActivity() {
             configuration.isDefaultSDKConfigurationsEnabled
         // file import
         binding.layoutFeatureToggle.switchOpenWith.isChecked = configuration.isFileImportEnabled
+        // open with via Uri-based API
+        binding.layoutFeatureToggle.switchOpenWithUriBasedApi.isChecked =
+            configuration.isOpenWithUriBasedApiEnabled
         // Capture SDK
         binding.layoutFeatureToggle.switchCaptureSdk.isChecked = configuration.isCaptureSDK
         // Saving Invoices Locally
@@ -287,6 +290,10 @@ class ConfigurationActivity : AppCompatActivity() {
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(isFileImportEnabled = isChecked)
             )
+        }
+        // open with via Uri-based API
+        binding.layoutFeatureToggle.switchOpenWithUriBasedApi.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setOpenWithUriBasedApiEnabled(isChecked)
         }
         // Capture SDK testing
         binding.layoutFeatureToggle.switchCaptureSdk.setOnCheckedChangeListener { _, isChecked ->
