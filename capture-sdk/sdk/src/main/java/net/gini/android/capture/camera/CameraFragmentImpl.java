@@ -673,12 +673,16 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
      * otherwise leave the education content on screen with no brand element, which is exactly the
      * state the ingredient brand contract forbids.
      *
-     * <p>The condition is the overlay's own visibility rather than
-     * {@code isQrEducationStepRunning()}, because only the view distinguishes the two ways this
-     * method is reached. Coming back from the background, the overlay is still visible and the
-     * badge belongs back on screen. Coming back from a no-results or error destination, the view
-     * has been recreated, the overlay is at its {@code GONE} default and the live preview is up —
-     * and this correctly does nothing, so R13 still holds.
+     * <p>The condition is the popup's own shown state rather than
+     * {@code isQrEducationStepRunning()}, because only it distinguishes the two ways this method is
+     * reached. Coming back from the background the fragment keeps its view and its popups, so the
+     * popup still reports shown and the badge belongs back on screen. Coming back from a
+     * no-results or error destination the view is recreated, {@link #createPopups(View)} builds a
+     * fresh popup that reports not shown, and this correctly does nothing — so R13 still holds.
+     *
+     * <p>Note this must not be decided from the ComposeView's visibility: that view carries no
+     * {@code android:visibility} in any camera layout, so it is {@code VISIBLE} from inflation and
+     * merely empty, and reading it would raise the badge over a live preview on every start.
      */
     private void restorePoweredByGiniForEducationStep() {
         if (qrCodeEducationPopup.isShowing() && isIngredientBrandVisible()) {
