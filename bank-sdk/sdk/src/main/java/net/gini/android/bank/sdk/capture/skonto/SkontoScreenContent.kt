@@ -71,6 +71,7 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -621,7 +622,9 @@ private fun SkontoSwitchRow(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                modifier = Modifier.weight(0.1f, fill = false),
+                modifier = Modifier
+                    .weight(0.1f, fill = false)
+                    .testTag(SkontoTestTags.DISCOUNT_TITLE),
                 text = stringResource(id = R.string.gbs_skonto_section_discount_title),
                 style = GiniTheme.typography.subtitle1,
                 color = colors.titleTextColor,
@@ -640,7 +643,9 @@ private fun SkontoSwitchRow(
             }
         }
         GiniSwitch(
-            modifier = Modifier.padding(start = 8.dp),
+            modifier = Modifier
+                .padding(start = 8.dp)
+                .testTag(SkontoTestTags.DISCOUNT_SWITCH),
             checked = isActive,
             onCheckedChange = onCheckedChange
         )
@@ -707,6 +712,7 @@ private fun SkontoAmountInputSection(
             .fillMaxWidth()
             .onPreviewKeyEvent { keyEvent -> handleTabKeyEvent(keyEvent, focusManager) }
             .padding(top = 16.dp)
+            .testTag(SkontoTestTags.FINAL_AMOUNT_FIELD)
             .onFocusChanged { if (it.isFocused) inputConfig.onSkontoAmountFieldFocused() },
         enabled = isActive,
         colors = colors.amountFieldColors,
@@ -772,7 +778,7 @@ private fun SkontoDueDateInputSection(
     }
     val calendarIconContentDescription = stringResource(id = R.string.gbs_skonto_calendar_icon_content_description)
     GiniTextInput(
-        modifier = textInputModifier,
+        modifier = textInputModifier.testTag(SkontoTestTags.EXPIRY_DATE_FIELD),
         enabled = !isPhoneInLandscape && isActive,
         interactionSource = activeInteractionSource,
         readOnly = true,
@@ -1209,6 +1215,7 @@ private fun FooterSectionWithoutCustomBottomBarLandScape(
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Text(
+                            modifier = Modifier.testTag(SkontoTestTags.FOOTER_TOTAL),
                             text = footerTexts.totalPriceText,
                             style = GiniTheme.typography.headline5.bold(),
                             color = colors.amountTextColor,
@@ -1266,7 +1273,8 @@ private fun FooterSectionWithoutCustomBottomBarLandScape(
                 GiniButton(
                     modifier = Modifier
                         .weight(0.1f)
-                        .padding(start = buttonPadding, end = buttonPadding),
+                        .padding(start = buttonPadding, end = buttonPadding)
+                        .testTag(SkontoTestTags.PROCEED_BUTTON),
                     text = stringResource(id = R.string.gbs_skonto_section_footer_continue_button_text),
                     onClick = onProceedClicked,
                     giniButtonColors = colors.continueButtonColors,
@@ -1357,6 +1365,7 @@ private fun FooterSectionWithoutCustomBottomBarPortrait(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
+                        modifier = Modifier.testTag(SkontoTestTags.FOOTER_TOTAL),
                         text = footerTexts.totalPriceText,
                         style = GiniTheme.typography.headline5.bold(),
                         color = colors.amountTextColor,
@@ -1383,7 +1392,8 @@ private fun FooterSectionWithoutCustomBottomBarPortrait(
                 GiniButton(
                     modifier = Modifier
                         .weight(0.1f)
-                        .padding(start = buttonPadding, end = buttonPadding),
+                        .padding(start = buttonPadding, end = buttonPadding)
+                        .testTag(SkontoTestTags.PROCEED_BUTTON),
                     text = stringResource(id = R.string.gbs_skonto_section_footer_continue_button_text),
                     onClick = callbacks.onProceedClicked,
                     giniButtonColors = colors.continueButtonColors,
