@@ -58,6 +58,24 @@ class ClientConfigurationStorageTest {
     }
 
     @Test
+    fun getConfiguration_returnsSavedIngredientBrandScreens() = runTest {
+        storage.saveConfiguration(buildConfiguration(ingredientBrandScreens = setOf("Analysis")))
+
+        val result = storage.getConfiguration().first()
+
+        assertThat(result!!.ingredientBrandScreens).containsExactly("Analysis")
+    }
+
+    @Test
+    fun getConfiguration_returnsEmptyIngredientBrandScreens_whenNoneWereSaved() = runTest {
+        storage.saveConfiguration(buildConfiguration())
+
+        val result = storage.getConfiguration().first()
+
+        assertThat(result!!.ingredientBrandScreens).isEmpty()
+    }
+
+    @Test
     fun getConfiguration_returnsLatestSavedConfiguration() = runTest {
         storage.saveConfiguration(buildConfiguration(isSkontoEnabled = true))
         storage.saveConfiguration(buildConfiguration(isSkontoEnabled = false))
@@ -72,6 +90,7 @@ class ClientConfigurationStorageTest {
         isUnsupportedQRCodeWarningEnabled: Boolean = false,
         isEInvoiceEnabled: Boolean = false,
         isPaymentScheduleHintEnabled: Boolean = false,
+        ingredientBrandScreens: Set<String> = emptySet(),
     ) = Configuration(
         id = UUID.randomUUID(),
         clientID = "test-client-id",
@@ -89,5 +108,6 @@ class ClientConfigurationStorageTest {
         isUnsupportedQRCodeWarningEnabled = isUnsupportedQRCodeWarningEnabled,
         isPaymentScheduleHintEnabled = isPaymentScheduleHintEnabled,
         isCreditNoteHintEnabled = false,
+        ingredientBrandScreens = ingredientBrandScreens,
     )
 }

@@ -21,6 +21,7 @@ import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.document.GiniCaptureDocument
 import net.gini.android.capture.document.GiniCaptureDocumentError
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument
+import net.gini.android.capture.ingredientbrand.GetIngredientBrandVisibleUseCase
 import net.gini.android.capture.internal.qreducation.GetInvoiceEducationTypeUseCase
 import net.gini.android.capture.internal.qreducation.IncrementInvoiceRecognizedCounterUseCase
 import net.gini.android.capture.internal.qreducation.model.InvoiceEducationType
@@ -56,6 +57,9 @@ internal class AnalysisScreenPresenterExtension(
 
     val paymentScheduleHintEnabledUseCase:
             GetPaymentScheduleHintEnabledUseCase by getGiniCaptureKoin().inject()
+
+    val ingredientBrandVisibleUseCase:
+            GetIngredientBrandVisibleUseCase by getGiniCaptureKoin().inject()
 
     val lastAnalyzedDocumentProvider: LastAnalyzedDocumentProvider
             by getGiniCaptureKoin().inject()

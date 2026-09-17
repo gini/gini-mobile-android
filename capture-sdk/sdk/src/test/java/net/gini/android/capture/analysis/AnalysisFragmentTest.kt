@@ -22,14 +22,20 @@ import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
 import net.gini.android.capture.analysis.warning.WarningBottomSheet
 import net.gini.android.capture.analysis.warning.WarningType
+import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.document.ImageDocument
+import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
 import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.Event
 import net.gini.android.capture.tracking.EventTracker
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.core.module.Module
+import org.koin.dsl.module
 import org.robolectric.Shadows
 
 /**
@@ -40,6 +46,31 @@ import org.robolectric.Shadows
 
 @RunWith(AndroidJUnit4::class)
 class AnalysisFragmentTest {
+
+    private lateinit var koinTestModule: Module
+
+    @Before
+    fun setUp() {
+        // GiniBankConfigurationProvider is registered in the SDK's isolated Koin context by the
+        // Bank SDK's DI bridge, so a capture-sdk unit test has to provide its own definition.
+        // The Analysis presenter resolves it on start() to decide whether the Gini ingredient
+        // brand element is shown.
+        koinTestModule = module {
+            single { GiniBankConfigurationProvider() }
+        }
+        getGiniCaptureKoin().loadModules(listOf(koinTestModule))
+    }
+
+    @After
+    fun tearDown() {
+        // Koin's unloadModules drops the overriding definition instead of restoring the previous
+        // one, and getGiniCaptureKoin() is a process-wide isolated context — so the definition is
+        // re-loaded for later test classes running in the same JVM.
+        getGiniCaptureKoin().unloadModules(listOf(koinTestModule))
+        getGiniCaptureKoin().loadModules(
+            listOf(module { single { GiniBankConfigurationProvider() } })
+        )
+    }
 
     @Test
     fun `triggers Cancel event when back was pressed`() {

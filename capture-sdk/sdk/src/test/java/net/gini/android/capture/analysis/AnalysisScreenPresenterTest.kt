@@ -1522,6 +1522,41 @@ class AnalysisScreenPresenterTest {
     }
 
     @Test
+    fun `should show the ingredient brand when the configuration lists the Analysis screen`() {
+        // Given
+        configurationProvider.update { it.copy(ingredientBrandScreens = setOf("Analysis")) }
+
+        // When
+        startPresenterForDueHint(emptyMap())
+
+        // Then
+        verify(mView).setPoweredByGiniVisible(true)
+    }
+
+    @Test
+    fun `should hide the ingredient brand when the configuration lists no screens`() {
+        // Given the provider default (ingredientBrandScreens = emptySet())
+
+        // When
+        startPresenterForDueHint(emptyMap())
+
+        // Then
+        verify(mView).setPoweredByGiniVisible(false)
+    }
+
+    @Test
+    fun `should hide the ingredient brand when the configuration lists another screen only`() {
+        // Given
+        configurationProvider.update { it.copy(ingredientBrandScreens = setOf("Camera")) }
+
+        // When
+        startPresenterForDueHint(emptyMap())
+
+        // Then
+        verify(mView).setPoweredByGiniVisible(false)
+    }
+
+    @Test
     fun `should not show credit note warning when SDK flag is off`() {
         // Given
         configurationProvider.update { it.copy(isCreditNoteHintEnabled = true) }
