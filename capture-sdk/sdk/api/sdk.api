@@ -1387,11 +1387,9 @@ public final class net/gini/android/capture/databinding/GcPhotoTipsHeaderBinding
 }
 
 public final class net/gini/android/capture/databinding/GcPoweredByGiniBinding : androidx/viewbinding/ViewBinding {
-	public final field gcPoweredByGiniLabel Landroid/widget/TextView;
-	public final field gcPoweredByGiniLogo Landroid/widget/ImageView;
 	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcPoweredByGiniBinding;
 	public synthetic fun getRoot ()Landroid/view/View;
-	public fun getRoot ()Landroid/widget/LinearLayout;
+	public fun getRoot ()Landroid/widget/ImageView;
 	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/capture/databinding/GcPoweredByGiniBinding;
 	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/capture/databinding/GcPoweredByGiniBinding;
 }

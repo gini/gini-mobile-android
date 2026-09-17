@@ -1,9 +1,11 @@
 package net.gini.android.capture.ingredientbrand
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
@@ -11,120 +13,98 @@ import net.gini.android.capture.R
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.GraphicsMode
 
 /**
- * Verifies the Gini ingredient brand element — the "Powered by gini" badge shown on the
- * Analysis screen — against the approved Figma component "Powered by Gini" (35631:1800).
+ * Verifies the Gini ingredient brand element — the "Powered by gini" badge — against the approved
+ * Figma component "Powered by Gini" (35631:1800).
+ *
+ * The badge is one vector drawable rather than a composed layout, so what matters is that the
+ * drawable is the one attached, that it renders at the component's size, and that it paints the
+ * component's colours. The values are asserted as literals: they live in path data precisely so
+ * that no colour, dimension, style or string resource stands between an integrator and the badge.
  */
 @RunWith(RobolectricTestRunner::class)
+// NATIVE so the vector is really rasterised: in the default legacy mode Canvas draws are no-ops
+// and every pixel would read back transparent, making the paint assertions below meaningless.
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
 class PoweredByGiniLayoutTest {
 
-    private fun inflateBadge(): View {
+    private fun inflateBadge(): ImageView {
         val themedContext = ContextThemeWrapper(
             ApplicationProvider.getApplicationContext(),
             R.style.GiniCaptureTheme
         )
         return LayoutInflater.from(themedContext)
-            .inflate(R.layout.gc_powered_by_gini, null)
+            .inflate(R.layout.gc_powered_by_gini, null) as ImageView
+    }
+
+    /** Draws the badge at its intrinsic size so the painted result can be sampled. */
+    private fun renderBadge(): Bitmap {
+        val drawable = inflateBadge().drawable
+        val bitmap = Bitmap.createBitmap(
+            drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888
+        )
+        drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
+        drawable.draw(Canvas(bitmap))
+        return bitmap
     }
 
     @Test
-    fun `renders the powered by label`() {
-        val label = inflateBadge().findViewById<TextView>(R.id.gc_powered_by_gini_label)
+    fun `badge is the generated brand vector`() {
+        val badge = inflateBadge()
 
-        assertThat(label.text.toString())
-            .isEqualTo(label.context.getString(R.string.gc_powered_by_gini_label))
+        assertThat(badge.drawable).isNotNull()
+        assertThat(org.robolectric.Shadows.shadowOf(badge.drawable).createdFromResId)
+            .isEqualTo(R.drawable.gc_powered_by_gini_badge)
     }
 
     /**
-     * The label sits on a pill that is white in both themes, so its colour must not follow
-     * ?attr/colorOnBackground — it is pinned to the Figma token color/text/secondary.
+     * 90x24dp is the Figma component's frame. The badge is sized by the drawable rather than by
+     * layout dimens, so the intrinsic size is the contract.
      */
     @Test
-    fun `label uses the fixed brand label colour and size`() {
+    fun `renders at the size of the brand lockup`() {
         val badge = inflateBadge()
-        val label = badge.findViewById<TextView>(R.id.gc_powered_by_gini_label)
+        val density = badge.resources.displayMetrics.density
 
-        assertThat(label.currentTextColor)
-            .isEqualTo(badge.context.getColor(R.color.gc_powered_by_gini_label))
-        assertThat(label.textSize)
-            .isEqualTo(badge.resources.displayMetrics.scaledDensity * 10f)
-        assertThat(label.letterSpacing).isEqualTo(-0.05f)
-    }
-
-    @Test
-    fun `has the pill background`() {
-        assertThat(inflateBadge().background).isNotNull()
+        assertThat(badge.drawable.intrinsicWidth).isEqualTo((90 * density).toInt())
+        assertThat(badge.drawable.intrinsicHeight).isEqualTo((24 * density).toInt())
     }
 
     /**
-     * The padding is the pill: without it the white background hugs the label and the 8dp radius
-     * clips the text. It must therefore be declared with the per-edge attributes, which exist on
-     * every supported API level — paddingHorizontal/paddingVertical were added in API 26 and are
-     * silently dropped on API 23-25, which this module still supports.
-     *
-     * Robolectric runs this at the compile SDK, so it pins the values rather than the old-API
-     * behaviour; the API 23-25 rendering itself needs a device.
+     * The pill has to be opaque white: the badge sits on light analysis screens and over the dark
+     * camera preview, and it is what keeps the dark label readable on both.
      */
     @Test
-    fun `pads the pill on every edge`() {
-        val badge = inflateBadge()
-        val horizontal = badge.resources
-            .getDimensionPixelSize(R.dimen.gc_powered_by_gini_padding_horizontal)
-        val vertical = badge.resources
-            .getDimensionPixelSize(R.dimen.gc_powered_by_gini_padding_vertical)
+    fun `paints a white pill`() {
+        val bitmap = renderBadge()
 
-        assertThat(badge.paddingStart).isEqualTo(horizontal)
-        assertThat(badge.paddingEnd).isEqualTo(horizontal)
-        assertThat(badge.paddingTop).isEqualTo(vertical)
-        assertThat(badge.paddingBottom).isEqualTo(vertical)
+        // Well inside the pill, clear of the wordmark and the logo.
+        val pixel = bitmap.getPixel(bitmap.width / 2, 2)
+        assertThat(Color.alpha(pixel)).isEqualTo(255)
+        assertThat(pixel).isEqualTo(Color.WHITE)
     }
 
+    /** The corners are rounded, so the very corner pixel falls outside the pill. */
     @Test
-    fun `renders the gini logo at the size of the brand lockup`() {
-        val badge = inflateBadge()
-        val logo = badge.findViewById<ImageView>(R.id.gc_powered_by_gini_logo)
+    fun `pill corners are rounded`() {
+        val bitmap = renderBadge()
 
-        assertThat(logo.drawable).isNotNull()
-        assertThat(logo.layoutParams.width)
-            .isEqualTo(badge.resources.getDimensionPixelSize(R.dimen.gc_powered_by_gini_logo_width))
-        assertThat(logo.layoutParams.height)
-            .isEqualTo(badge.resources.getDimensionPixelSize(R.dimen.gc_powered_by_gini_logo_height))
+        assertThat(Color.alpha(bitmap.getPixel(0, 0))).isEqualTo(0)
     }
 
     /**
-     * The logo carries the Gini brand colour itself, so it must not be re-tinted by the theme.
-     */
-    @Test
-    fun `does not tint the gini logo`() {
-        val logo = inflateBadge().findViewById<ImageView>(R.id.gc_powered_by_gini_logo)
-
-        assertThat(logo.imageTintList).isNull()
-    }
-
-    /**
-     * The badge must reach TalkBack as one node: the container carries the description and is
-     * screen-reader focusable, while neither child contributes anything of its own.
-     *
-     * This asserts the view-level contract rather than the produced
-     * [android.view.accessibility.AccessibilityNodeInfo], because Robolectric returns an
-     * unpopulated node for a detached view — `getContentDescription()` on it is null even after
-     * `onInitializeAccessibilityNodeInfo`. Verifying the merged node itself needs an
-     * instrumented test; see the spec's "Not tested" section.
+     * The badge must reach TalkBack as one node announced "Powered by Gini". It is a single
+     * ImageView, so there are no children to exclude.
      */
     @Test
     fun `is announced as a single element`() {
         val badge = inflateBadge()
 
-        assertThat(badge.contentDescription.toString())
-            .isEqualTo(badge.context.getString(R.string.gc_powered_by_gini_content_description))
+        assertThat(badge.contentDescription.toString()).isEqualTo("Powered by Gini")
         assertThat(badge.importantForAccessibility)
             .isEqualTo(View.IMPORTANT_FOR_ACCESSIBILITY_YES)
-        assertThat(badge.isScreenReaderFocusable).isTrue()
         assertThat(badge.isFocusable).isFalse()
-        listOf(R.id.gc_powered_by_gini_label, R.id.gc_powered_by_gini_logo).forEach { id ->
-            assertThat(badge.findViewById<View>(id).importantForAccessibility)
-                .isEqualTo(View.IMPORTANT_FOR_ACCESSIBILITY_NO)
-        }
     }
 }

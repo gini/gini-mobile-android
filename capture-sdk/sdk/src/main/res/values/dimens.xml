@@ -49,12 +49,4 @@
     <dimen name="gc_snackbar_text_height">60dp</dimen>
     <dimen name="gc_save_invoices_locally_view_tablet_minimum_width">340dp</dimen>
 
-    <!-- Gini ingredient brand element, from the Figma component "Powered by Gini" 35631:1800 -->
-    <dimen name="gc_powered_by_gini_corner_radius">8dp</dimen>
-    <dimen name="gc_powered_by_gini_padding_horizontal">6dp</dimen>
-    <dimen name="gc_powered_by_gini_padding_vertical">3dp</dimen>
-    <dimen name="gc_powered_by_gini_logo_spacing">3dp</dimen>
-    <dimen name="gc_powered_by_gini_logo_width">24dp</dimen>
-    <dimen name="gc_powered_by_gini_logo_height">17dp</dimen>
-
 </resources>

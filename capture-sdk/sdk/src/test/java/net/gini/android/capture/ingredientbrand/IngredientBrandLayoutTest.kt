@@ -40,14 +40,10 @@ class IngredientBrandLayoutTest {
 
         // The accessibility contract has to survive being included into another layout: an
         // <include> can override attributes of the included root, so it is asserted per variant.
-        assertThat(badge.contentDescription.toString())
-            .isEqualTo(themedContext.getString(R.string.gc_powered_by_gini_content_description))
-        assertThat(badge.isScreenReaderFocusable).isTrue()
+        assertThat(badge.contentDescription.toString()).isEqualTo("Powered by Gini")
+        assertThat(badge.importantForAccessibility)
+            .isEqualTo(View.IMPORTANT_FOR_ACCESSIBILITY_YES)
         assertThat(badge.isFocusable).isFalse()
-        listOf(R.id.gc_powered_by_gini_label, R.id.gc_powered_by_gini_logo).forEach { id ->
-            assertThat(badge.findViewById<View>(id).importantForAccessibility)
-                .isEqualTo(View.IMPORTANT_FOR_ACCESSIBILITY_NO)
-        }
     }
 
     @Test

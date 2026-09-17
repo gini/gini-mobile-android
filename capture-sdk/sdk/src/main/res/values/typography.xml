@@ -61,17 +61,6 @@
         <item name="android:textColor">?attr/colorOnBackground</item>
     </style>
 
-    <!--
-      Gini ingredient brand element. 10sp with -0.5px tracking at 10px (= -0.05em) and a fixed
-      label colour, per the Figma component "Powered by Gini" 35631:1800. It is the brand
-      lockup rather than app content, so it does not follow ?attr/colorOnBackground.
-    -->
-    <style name="Root.GiniCaptureTheme.Typography.PoweredByGini" parent="TextAppearance.MaterialComponents.Caption">
-        <item name="android:textSize">10sp</item>
-        <item name="android:letterSpacing">-0.05</item>
-        <item name="android:textColor">@color/gc_powered_by_gini_label</item>
-    </style>
-
     <style name="Root.GiniCaptureTheme.Typography.Overline" parent="TextAppearance.MaterialComponents.Overline">
         <item name="android:textSize">10sp</item>
         <item name="android:textColor">@color/gc_dark_05</item>
@@ -89,7 +78,6 @@
     <style name="GiniCaptureTheme.Typography.Subtitle2" parent="Root.GiniCaptureTheme.Typography.Subtitle2"/>
     <style name="GiniCaptureTheme.Typography.Button" parent="Root.GiniCaptureTheme.Typography.Button"/>
     <style name="GiniCaptureTheme.Typography.Caption1" parent="Root.GiniCaptureTheme.Typography.Caption1"/>
-    <style name="GiniCaptureTheme.Typography.PoweredByGini" parent="Root.GiniCaptureTheme.Typography.PoweredByGini"/>
     <style name="GiniCaptureTheme.Typography.Overline" parent="Root.GiniCaptureTheme.Typography.Overline"/>
 
 
