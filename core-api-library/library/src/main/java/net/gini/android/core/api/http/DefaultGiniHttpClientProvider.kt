@@ -35,7 +35,8 @@ import javax.net.ssl.TrustManager
  *
  * ```kotlin
  * val provider = DefaultGiniHttpClientProvider.builder(context)
- *     .setConnectionTimeoutInMs(30000)
+ *     .setConnectionTimeoutInMs(10_000)
+ *     .setReadWriteTimeoutInMs(90_000)
  *     .setCache(cache)
  *     .setDebuggingEnabled(BuildConfig.DEBUG)
  *     .build()
