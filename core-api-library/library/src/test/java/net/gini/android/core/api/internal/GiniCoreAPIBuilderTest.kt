@@ -160,6 +160,57 @@ class GiniCoreAPIBuilderTest {
     }
 
     @Test
+    fun `the default api client bounds the connect timeout separately from the read and write timeouts`() {
+        // No timeout configured: the builder must not override the default provider's split
+        // defaults (short connect, long read/write) with a single value
+        val client = builder().apiOkHttpClient()
+
+        assertThat(client.connectTimeoutMillis).isEqualTo(15_000)
+        assertThat(client.readTimeoutMillis).isEqualTo(60_000)
+        assertThat(client.writeTimeoutMillis).isEqualTo(60_000)
+    }
+
+    @Test
+    fun `an explicitly configured connection timeout is applied to connect only of the default api client`() {
+        val client = builder().apply { setConnectionTimeoutInMs(10_000) }.apiOkHttpClient()
+
+        assertThat(client.connectTimeoutMillis).isEqualTo(10_000)
+        assertThat(client.readTimeoutMillis).isEqualTo(60_000)
+        assertThat(client.writeTimeoutMillis).isEqualTo(60_000)
+    }
+
+    @Test
+    fun `an explicitly configured read write timeout is applied to the default api client without touching connect`() {
+        val client = builder().apply { setReadWriteTimeoutInMs(90_000) }.apiOkHttpClient()
+
+        assertThat(client.connectTimeoutMillis).isEqualTo(15_000)
+        assertThat(client.readTimeoutMillis).isEqualTo(90_000)
+        assertThat(client.writeTimeoutMillis).isEqualTo(90_000)
+    }
+
+    @Test
+    fun `connection and read write timeouts configured together both reach the default api client`() {
+        val client = builder().apply {
+            setConnectionTimeoutInMs(10_000)
+            setReadWriteTimeoutInMs(90_000)
+        }.apiOkHttpClient()
+
+        assertThat(client.connectTimeoutMillis).isEqualTo(10_000)
+        assertThat(client.readTimeoutMillis).isEqualTo(90_000)
+        assertThat(client.writeTimeoutMillis).isEqualTo(90_000)
+    }
+
+    @Test
+    fun `negative timeouts are rejected by both timeout setters`() {
+        val builder = builder()
+
+        assertThat(runCatching { builder.setConnectionTimeoutInMs(-1) }.exceptionOrNull())
+            .isInstanceOf(IllegalArgumentException::class.java)
+        assertThat(runCatching { builder.setReadWriteTimeoutInMs(-1) }.exceptionOrNull())
+            .isInstanceOf(IllegalArgumentException::class.java)
+    }
+
+    @Test
     fun `the session interceptor and user agent are added on top of the consumer's http client`() {
         server.enqueue(MockResponse().setResponseCode(200))
         var consumerInterceptorRan = false
