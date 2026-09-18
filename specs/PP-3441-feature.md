@@ -37,9 +37,9 @@ expected: 15000
 but was : 60000
 ```
 
-The two other tests in the file (explicit timeout applies to all three;
-negative timeout rejected) pass before and after — they pin the existing
-contract of `setConnectionTimeoutInMs`.
+`an explicitly configured connection timeout applies to connect only` also
+fails before the change, because `setConnectionTimeoutInMs` used to set all
+three timeouts. Only the negative-timeout test pins pre-existing behaviour.
 
 The real-network manifestation (60 s stall on a black-holed IPv6 route) follows
 mechanically from that configuration plus OkHttp 4's sequential route attempts
@@ -108,9 +108,13 @@ Minimal, behind existing public API, in `core-api-library:library` only:
 
 3. `GiniCaptureDefaultNetworkService.Builder.setConnectionTimeout` (capture-sdk:
    default-network) forwards to `setConnectionTimeoutInMs` and therefore becomes
-   connect-only as well. Code unchanged; its KDoc (which still described a read
-   timeout with a backoff multiplier) is corrected. It gets no read/write
-   setter in this ticket — see Out of scope.
+   connect-only as well. Its KDoc (which still described a read timeout with a
+   backoff multiplier) is corrected. New `setReadWriteTimeout` /
+   `setReadWriteTimeoutUnit` mirror the connect timeout pair and forward to
+   `setReadWriteTimeoutInMs`, so capture-sdk and bank-sdk integrators keep a
+   timeout knob for slow uploads without a custom `GiniHttpClientProvider`
+   (added after review on 2026-09-18; `capture-sdk:default-network` API dump
+   updated).
 
 Why 15 s and not 10 s: OkHttp's connect timeout covers the TCP handshake only
 (TLS runs under the read timeout), so 10 s would be enough on healthy networks;
@@ -119,8 +123,9 @@ into a ~15 s blip before the IPv4 retry. Either value satisfies the ticket
 ("~10–15 s"); see Open questions.
 
 Public API impact: binary compatible — `setReadWriteTimeoutInMs` is added on
-`DefaultGiniHttpClientProvider.Builder` and `GiniCoreAPIBuilder`; no signature
-removed or changed. Two **behavioural changes**, both needing a release-notes
+`DefaultGiniHttpClientProvider.Builder` and `GiniCoreAPIBuilder`, and
+`setReadWriteTimeout` / `setReadWriteTimeoutUnit` on
+`GiniCaptureDefaultNetworkService.Builder`; no signature removed or changed. Two **behavioural changes**, both needing a release-notes
 entry for every SDK that ships the bumped `core-api-library`:
 
 - Integrators who never set a timeout: connect attempts now fail after 15 s
@@ -165,11 +170,7 @@ bank-sdk, health-sdk, internal-payment-sdk compile against it).
   fallback (~250 ms instead of a connect timeout). Tracked in PP-3504.
 - An IPv4-preferring `okhttp3.Dns` in the default provider — penalises healthy
   IPv6-first networks; superseded by PP-3504.
-- A read/write timeout setter on `GiniCaptureDefaultNetworkService.Builder`
-  (capture-sdk:default-network) mirroring `setReadWriteTimeoutInMs` — its
-  `setConnectionTimeout` is now connect-only and capture-sdk integrators have
-  no way to raise read/write except a custom `GiniHttpClientProvider`.
-  Follow-up if requested; the iOS counterpart of the new setter is also open.
+- The iOS counterpart of the new read/write setters.
 - Removing the AAAA record — backend/ops decision, not Android.
 - The shared integration tests call `setConnectionTimeoutInMs(60000)` explicitly;
   they now get connect 60 s / read & write 60 s (the default), i.e. the same
