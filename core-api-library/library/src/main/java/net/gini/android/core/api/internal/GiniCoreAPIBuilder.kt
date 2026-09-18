@@ -60,7 +60,10 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     private var mNetworkSecurityConfigResId = 0
     private var mMoshi: Moshi? = null
     private var mCredentialsStore: CredentialsStore? = null
-    private var mTimeoutInMs = 60_000
+    // Null until the consumer sets a timeout: the default http client provider then keeps its own
+    // defaults (short connect timeout, long read/write timeout)
+    private var mConnectTimeoutInMs: Int? = null
+    private var mReadWriteTimeoutInMs: Int? = null
     private var mCache: Cache? = null
     private var mTrustManager: TrustManager? = null
     private var mUserApiRetrofit: Retrofit? = null
@@ -137,15 +140,39 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     abstract fun getGiniApiType(): GiniApiType
 
     /**
-     * Sets the (initial) timeout for each request. A timeout error will occur if nothing is received from the underlying socket in the given time span.
-     * The initial timeout will be altered depending on the #backoffMultiplier and failed retries.
+     * Sets the connection (connect) timeout for each request: a timeout error will occur if the TCP connection to
+     * the server is not established in the given time span. The TLS handshake runs under the read/write timeout.
      *
-     * @param connectionTimeoutInMs initial timeout
+     * The timeout applies per resolved address of the server. On a network with a broken IPv6 route the first
+     * connection attempt fails only after this timeout and the next (IPv4) address of the host is tried afterwards,
+     * so keep it short to let that fallback happen quickly.
+     *
+     * If not set, the connect timeout defaults to 15 seconds.
+     *
+     * Note: this timeout no longer covers reading and writing; configure those with [setReadWriteTimeoutInMs].
+     *
+     * @param connectionTimeoutInMs timeout in milliseconds
      * @return The builder instance to enable chaining.
      */
     open fun setConnectionTimeoutInMs(connectionTimeoutInMs: Int): GiniCoreAPIBuilder<DM, G, DR, E> {
         require(connectionTimeoutInMs >= 0) { "connectionTimeoutInMs can't be less than 0" }
-        mTimeoutInMs = connectionTimeoutInMs
+        mConnectTimeoutInMs = connectionTimeoutInMs
+        return this
+    }
+
+    /**
+     * Sets the read and write timeout for each request: a timeout error will occur if nothing is sent to or
+     * received from the underlying socket in the given time span. Choose it generously enough for multi-page
+     * document uploads on slow connections.
+     *
+     * If not set, the read and write timeouts default to 60 seconds.
+     *
+     * @param readWriteTimeoutInMs timeout in milliseconds
+     * @return The builder instance to enable chaining.
+     */
+    open fun setReadWriteTimeoutInMs(readWriteTimeoutInMs: Int): GiniCoreAPIBuilder<DM, G, DR, E> {
+        require(readWriteTimeoutInMs >= 0) { "readWriteTimeoutInMs can't be less than 0" }
+        mReadWriteTimeoutInMs = readWriteTimeoutInMs
         return this
     }
 
@@ -226,7 +253,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
      *
      * If a provider is set, it will be used instead of the SDK's default client creation.
      * The provider's client will override any HTTP-related settings configured via other
-     * builder methods (e.g., [setCache], [setTrustManager], [setConnectionTimeoutInMs]).
+     * builder methods (e.g., [setCache], [setTrustManager], [setConnectionTimeoutInMs], [setReadWriteTimeoutInMs]).
      *
      * @param provider A [GiniHttpClientProvider] implementation
      * @return The builder instance to enable chaining.
@@ -513,7 +540,8 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
                 }
                 mCache?.let { setCache(it) }
                 mTrustManager?.let { setTrustManager(it) }
-                setConnectionTimeoutInMs(mTimeoutInMs)
+                mConnectTimeoutInMs?.let { setConnectionTimeoutInMs(it) }
+                mReadWriteTimeoutInMs?.let { setReadWriteTimeoutInMs(it) }
                 setDebuggingEnabled(isDebuggingEnabled)
             }
             .build()

@@ -650,6 +650,8 @@ internal constructor(
         private var networkSecurityConfigResId = 0
         private var connectionTimeout: Long = 0
         private var connectionTimeoutUnit: TimeUnit? = null
+        private var readWriteTimeout: Long = 0
+        private var readWriteTimeoutUnit: TimeUnit? = null
         private var documentMetadata: DocumentMetadata? = null
         private var trustManager: TrustManager? = null
         private var httpClientProvider: GiniHttpClientProvider? = null
@@ -682,6 +684,14 @@ internal constructor(
                 giniApiBuilder.setConnectionTimeoutInMs(
                     TimeUnit.MILLISECONDS.convert(
                         connectionTimeout,
+                        timeoutUnit
+                    ).toInt()
+                )
+            }
+            readWriteTimeoutUnit?.let { timeoutUnit ->
+                giniApiBuilder.setReadWriteTimeoutInMs(
+                    TimeUnit.MILLISECONDS.convert(
+                        readWriteTimeout,
                         timeoutUnit
                     ).toInt()
                 )
@@ -810,11 +820,15 @@ internal constructor(
         }
 
         /**
-         * Set the (initial) timeout for each request. A timeout error will occur if nothing is
-         * received from the underlying socket in the given time span. The initial timeout will be
-         * altered depending on the backoff multiplier and failed retries.
+         * Set the connection (connect) timeout for each request. A timeout error will occur if the
+         * connection to the server is not established in the given time span. The unit is set with
+         * [setConnectionTimeoutUnit]; the timeout is only applied when a unit is set.
          *
-         * @param connectionTimeout initial timeout
+         * If not set, the connect timeout defaults to 15 seconds. It no longer covers reading from
+         * and writing to the socket; configure those with [setReadWriteTimeout] and
+         * [setReadWriteTimeoutUnit].
+         *
+         * @param connectionTimeout connect timeout in the unit set via [setConnectionTimeoutUnit]
          *
          * @return the [Builder] instance
          */
@@ -832,6 +846,35 @@ internal constructor(
          */
         fun setConnectionTimeoutUnit(connectionTimeoutUnit: TimeUnit): Builder {
             this.connectionTimeoutUnit = connectionTimeoutUnit
+            return this
+        }
+
+        /**
+         * Set the read and write timeout for each request. A timeout error will occur if nothing is
+         * sent to or received from the underlying socket in the given time span. Choose it generously
+         * enough for multi-page document uploads on slow connections. The unit is set with
+         * [setReadWriteTimeoutUnit]; the timeout is only applied when a unit is set.
+         *
+         * If not set, the read and write timeouts default to 60 seconds.
+         *
+         * @param readWriteTimeout read and write timeout in the unit set via [setReadWriteTimeoutUnit]
+         *
+         * @return the [Builder] instance
+         */
+        fun setReadWriteTimeout(readWriteTimeout: Long): Builder {
+            this.readWriteTimeout = readWriteTimeout
+            return this
+        }
+
+        /**
+         * Set the read and write timeout's time unit.
+         *
+         * @param readWriteTimeoutUnit the time unit
+         *
+         * @return the [Builder] instance
+         */
+        fun setReadWriteTimeoutUnit(readWriteTimeoutUnit: TimeUnit): Builder {
+            this.readWriteTimeoutUnit = readWriteTimeoutUnit
             return this
         }
 
@@ -875,6 +918,7 @@ internal constructor(
          * - [setCache]
          * - [setTrustManager]
          * - [setConnectionTimeout] and [setConnectionTimeoutUnit]
+         * - [setReadWriteTimeout] and [setReadWriteTimeoutUnit]
          * - [setNetworkSecurityConfigResId]
          * - [setDebuggingEnabled]
          *

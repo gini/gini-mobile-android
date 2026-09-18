@@ -418,7 +418,7 @@ public class net/gini/android/core/api/authorization/crypto/GiniCryptoException 
 
 public final class net/gini/android/core/api/http/DefaultGiniHttpClientProvider : net/gini/android/core/api/http/GiniHttpClientProvider {
 	public static final field Companion Lnet/gini/android/core/api/http/DefaultGiniHttpClientProvider$Companion;
-	public synthetic fun <init> (Landroid/content/Context;Ljava/util/List;ILokhttp3/Cache;Ljavax/net/ssl/TrustManager;IZLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Landroid/content/Context;Ljava/util/List;ILokhttp3/Cache;Ljavax/net/ssl/TrustManager;IIZLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public static final fun builder (Landroid/content/Context;)Lnet/gini/android/core/api/http/DefaultGiniHttpClientProvider$Builder;
 	public fun provideOkHttpClient ()Lokhttp3/OkHttpClient;
 }
@@ -431,6 +431,7 @@ public final class net/gini/android/core/api/http/DefaultGiniHttpClientProvider$
 	public final fun setDebuggingEnabled (Z)Lnet/gini/android/core/api/http/DefaultGiniHttpClientProvider$Builder;
 	public final fun setHostnames (Ljava/util/List;)Lnet/gini/android/core/api/http/DefaultGiniHttpClientProvider$Builder;
 	public final fun setNetworkSecurityConfigResId (I)Lnet/gini/android/core/api/http/DefaultGiniHttpClientProvider$Builder;
+	public final fun setReadWriteTimeoutInMs (I)Lnet/gini/android/core/api/http/DefaultGiniHttpClientProvider$Builder;
 	public final fun setTrustManager (Ljavax/net/ssl/TrustManager;)Lnet/gini/android/core/api/http/DefaultGiniHttpClientProvider$Builder;
 }
 
@@ -480,6 +481,7 @@ public abstract class net/gini/android/core/api/internal/GiniCoreAPIBuilder {
 	public final fun setDebuggingEnabled (Z)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
 	public fun setHttpClientProvider (Lnet/gini/android/core/api/http/GiniHttpClientProvider;)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
 	public fun setNetworkSecurityConfigResId (I)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
+	public fun setReadWriteTimeoutInMs (I)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
 	public fun setSelfManagedAuthentication (Z)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
 	public fun setTrustManager (Ljavax/net/ssl/TrustManager;)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
 	public fun setUserCenterApiBaseUrl (Ljava/lang/String;)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;

@@ -23,7 +23,9 @@ import javax.net.ssl.TrustManager
  * This provider encapsulates the SDK's default HTTP client configuration including:
  * - User-Agent header injection
  * - TLS/SSL configuration with optional certificate pinning
- * - Connection timeouts
+ * - Connection timeouts (by default 15 seconds to connect and 60 seconds to read/write, so that a
+ *   connect attempt to an unreachable address - e.g. a broken IPv6 route - fails fast and OkHttp
+ *   can retry the next address, while large document uploads keep a long read/write timeout)
  * - Optional caching
  * - Optional debug logging
  *
@@ -33,7 +35,8 @@ import javax.net.ssl.TrustManager
  *
  * ```kotlin
  * val provider = DefaultGiniHttpClientProvider.builder(context)
- *     .setConnectionTimeoutInMs(30000)
+ *     .setConnectionTimeoutInMs(10_000)
+ *     .setReadWriteTimeoutInMs(90_000)
  *     .setCache(cache)
  *     .setDebuggingEnabled(BuildConfig.DEBUG)
  *     .build()
@@ -44,7 +47,8 @@ import javax.net.ssl.TrustManager
  * @param networkSecurityConfigResId Resource ID for network security config (optional)
  * @param cache OkHttp cache instance (optional)
  * @param trustManager Custom trust manager (optional)
- * @param connectionTimeoutInMs Connection timeout in milliseconds
+ * @param connectTimeoutInMs Connect timeout in milliseconds
+ * @param readWriteTimeoutInMs Read and write timeout in milliseconds
  * @param isDebuggingEnabled Whether to enable HTTP request/response logging
  */
 class DefaultGiniHttpClientProvider private constructor(
@@ -53,7 +57,8 @@ class DefaultGiniHttpClientProvider private constructor(
     @XmlRes private val networkSecurityConfigResId: Int,
     private val cache: Cache?,
     private val trustManager: TrustManager?,
-    private val connectionTimeoutInMs: Int,
+    private val connectTimeoutInMs: Int,
+    private val readWriteTimeoutInMs: Int,
     private val isDebuggingEnabled: Boolean
 ) : GiniHttpClientProvider {
 
@@ -102,9 +107,9 @@ class DefaultGiniHttpClientProvider private constructor(
                 addInterceptor(httpLoggingInterceptor)
             }
         }
-        .connectTimeout(connectionTimeoutInMs.toLong(), TimeUnit.MILLISECONDS)
-        .readTimeout(connectionTimeoutInMs.toLong(), TimeUnit.MILLISECONDS)
-        .writeTimeout(connectionTimeoutInMs.toLong(), TimeUnit.MILLISECONDS)
+        .connectTimeout(connectTimeoutInMs.toLong(), TimeUnit.MILLISECONDS)
+        .readTimeout(readWriteTimeoutInMs.toLong(), TimeUnit.MILLISECONDS)
+        .writeTimeout(readWriteTimeoutInMs.toLong(), TimeUnit.MILLISECONDS)
         .build()
 
     private fun createSSLSocketFactory(trustManagers: Array<TrustManager>?): SSLSocketFactory? {
@@ -161,7 +166,8 @@ class DefaultGiniHttpClientProvider private constructor(
         private var networkSecurityConfigResId: Int = 0
         private var cache: Cache? = null
         private var trustManager: TrustManager? = null
-        private var connectionTimeoutInMs: Int = DEFAULT_TIMEOUT_MS
+        private var connectTimeoutInMs: Int = DEFAULT_CONNECT_TIMEOUT_MS
+        private var readWriteTimeoutInMs: Int = DEFAULT_READ_WRITE_TIMEOUT_MS
         private var isDebuggingEnabled = false
 
         /**
@@ -215,8 +221,17 @@ class DefaultGiniHttpClientProvider private constructor(
         }
 
         /**
-         * Set the connection timeout in milliseconds.
-         * This timeout applies to connect, read, and write operations.
+         * Set the connection (connect) timeout in milliseconds.
+         *
+         * It bounds the TCP connect to a single resolved address of the server; the TLS handshake runs under
+         * the read/write timeout. OkHttp tries the resolved addresses of a host one after the other, so on a
+         * network with a broken IPv6 route the first attempt fails only after this timeout and the next
+         * (IPv4) address is tried afterwards. Keep it short so that this fallback happens quickly.
+         *
+         * Defaults to 15 seconds.
+         *
+         * Note: this timeout no longer covers reading and writing; configure those with
+         * [setReadWriteTimeoutInMs].
          *
          * @param timeoutInMs Timeout in milliseconds (must be >= 0)
          * @return This builder instance for chaining
@@ -224,7 +239,26 @@ class DefaultGiniHttpClientProvider private constructor(
          */
         fun setConnectionTimeoutInMs(timeoutInMs: Int): Builder {
             require(timeoutInMs >= 0) { "connectionTimeoutInMs can't be less than 0" }
-            this.connectionTimeoutInMs = timeoutInMs
+            this.connectTimeoutInMs = timeoutInMs
+            return this
+        }
+
+        /**
+         * Set the read and write timeout in milliseconds.
+         *
+         * It bounds the time the established connection may stay idle while sending the request (e.g. a
+         * document upload) or while waiting for response data. Choose it generously enough for multi-page
+         * document uploads on slow connections.
+         *
+         * Defaults to 60 seconds.
+         *
+         * @param timeoutInMs Timeout in milliseconds (must be >= 0)
+         * @return This builder instance for chaining
+         * @throws IllegalArgumentException if timeout is negative
+         */
+        fun setReadWriteTimeoutInMs(timeoutInMs: Int): Builder {
+            require(timeoutInMs >= 0) { "readWriteTimeoutInMs can't be less than 0" }
+            this.readWriteTimeoutInMs = timeoutInMs
             return this
         }
 
@@ -260,7 +294,8 @@ class DefaultGiniHttpClientProvider private constructor(
                 networkSecurityConfigResId = networkSecurityConfigResId,
                 cache = cache,
                 trustManager = trustManager,
-                connectionTimeoutInMs = connectionTimeoutInMs,
+                connectTimeoutInMs = connectTimeoutInMs,
+                readWriteTimeoutInMs = readWriteTimeoutInMs,
                 isDebuggingEnabled = isDebuggingEnabled
             )
         }
@@ -268,7 +303,14 @@ class DefaultGiniHttpClientProvider private constructor(
 
     companion object {
         private const val LOG_TAG = "DefaultGiniHttpClientProvider"
-        private const val DEFAULT_TIMEOUT_MS = 60_000
+
+        // OkHttp 4 tries the resolved addresses of a host one after the other and each attempt gets
+        // the full connect timeout. Keep it short so that a black-holed address (typically a broken
+        // IPv6 route on a dual-stack network) fails fast and the next address is tried.
+        private const val DEFAULT_CONNECT_TIMEOUT_MS = 15_000
+
+        // Long enough for multi-page document uploads on slow connections
+        private const val DEFAULT_READ_WRITE_TIMEOUT_MS = 60_000
         private val FALLBACK_USER_AGENT =
             "okhttp/${okhttp3.OkHttp.VERSION} (Android ${Build.VERSION.RELEASE}; ${Build.MODEL} Build/${Build.ID})"
 
