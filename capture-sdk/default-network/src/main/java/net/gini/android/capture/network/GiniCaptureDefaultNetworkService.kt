@@ -810,11 +810,14 @@ internal constructor(
         }
 
         /**
-         * Set the (initial) timeout for each request. A timeout error will occur if nothing is
-         * received from the underlying socket in the given time span. The initial timeout will be
-         * altered depending on the backoff multiplier and failed retries.
+         * Set the connection (connect) timeout for each request. A timeout error will occur if the
+         * connection to the server is not established in the given time span. The unit is set with
+         * [setConnectionTimeoutUnit]; the timeout is only applied when a unit is set.
          *
-         * @param connectionTimeout initial timeout
+         * If not set, the connect timeout defaults to 15 seconds. It no longer covers reading from
+         * and writing to the socket, which default to 60 seconds.
+         *
+         * @param connectionTimeout connect timeout in the unit set via [setConnectionTimeoutUnit]
          *
          * @return the [Builder] instance
          */
