@@ -222,10 +222,10 @@ class DefaultGiniHttpClientProvider private constructor(
         /**
          * Set the connection (connect) timeout in milliseconds.
          *
-         * It bounds establishing the connection to a single resolved address of the server. OkHttp tries the
-         * resolved addresses of a host one after the other, so on a network with a broken IPv6 route the
-         * first attempt fails only after this timeout and the next (IPv4) address is tried afterwards. Keep
-         * it short so that this fallback happens quickly.
+         * It bounds the TCP connect to a single resolved address of the server; the TLS handshake runs under
+         * the read/write timeout. OkHttp tries the resolved addresses of a host one after the other, so on a
+         * network with a broken IPv6 route the first attempt fails only after this timeout and the next
+         * (IPv4) address is tried afterwards. Keep it short so that this fallback happens quickly.
          *
          * Defaults to 15 seconds.
          *

@@ -140,8 +140,8 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     abstract fun getGiniApiType(): GiniApiType
 
     /**
-     * Sets the connection (connect) timeout for each request: a timeout error will occur if the connection to the
-     * server is not established in the given time span.
+     * Sets the connection (connect) timeout for each request: a timeout error will occur if the TCP connection to
+     * the server is not established in the given time span. The TLS handshake runs under the read/write timeout.
      *
      * The timeout applies per resolved address of the server. On a network with a broken IPv6 route the first
      * connection attempt fails only after this timeout and the next (IPv4) address of the host is tried afterwards,
