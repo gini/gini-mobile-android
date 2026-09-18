@@ -93,6 +93,8 @@ class GiniCaptureDefaultNetworkServiceBuilderTest {
             .setCredentialsStore(InMemoryCredentialsStore())
             .setConnectionTimeout(30)
             .setConnectionTimeoutUnit(TimeUnit.SECONDS)
+            .setReadWriteTimeout(90)
+            .setReadWriteTimeoutUnit(TimeUnit.SECONDS)
             .setDebuggingEnabled(true)
             .build()
 
