@@ -696,6 +696,7 @@ public final class net/gini/android/capture/analysis/AnalysisFragmentExtension {
 	public static final field $stable I
 	public fun <init> ()V
 	public final fun bindViews (Landroid/view/View;)V
+	public final fun giniLoadingIndicatorAdapterInstance ()Lnet/gini/android/capture/view/InjectedViewAdapterInstance;
 	public final fun hideEducation ()V
 	public final fun showEducation (Lkotlin/jvm/functions/Function0;)V
 }

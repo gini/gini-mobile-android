@@ -49,6 +49,7 @@ import net.gini.android.capture.util.SAFHelper;
 import net.gini.android.capture.util.SharedPreferenceHelper;
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
+import net.gini.android.capture.view.InjectedViewAdapterInstance;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
@@ -466,8 +467,21 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     private void setLoadingIndicatorViewContainer() {
         if (GiniCapture.hasInstance()) {
+            // While the client configuration lists the Analysis screen in ingredientBrandScreens,
+            // the animated Gini mark replaces the loading indicator and an adapter injected with
+            // GiniCapture.Builder.setLoadingIndicatorAdapter() is deliberately not consulted here
+            // — the ingredient brand must not be replaceable by the integrator (PP-3512).
+            // Chosen at view creation, before the presenter starts in onResume(), so the indicator
+            // never swaps a frame after the screen is already showing.
+            InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter> adapterInstance =
+                    fragmentExtension.giniLoadingIndicatorAdapterInstance();
+            if (adapterInstance == null) {
+                adapterInstance = GiniCapture.getInstance().internal()
+                        .getLoadingIndicatorAdapterInstance();
+            }
+
             injectedLoadingIndicatorContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(
-                    GiniCapture.getInstance().internal().getLoadingIndicatorAdapterInstance(),
+                    adapterInstance,
                     injectedViewAdapter -> {
                         if (isScanAnimationActive) {
                             injectedViewAdapter.onVisible();

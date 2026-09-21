@@ -6,6 +6,10 @@ import io.mockk.every
 import io.mockk.mockk
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.education.GetEducationFeatureEnabledUseCase
+import android.view.View
+import android.view.ViewGroup
+import net.gini.android.capture.ingredientbrand.CameraLoadingIndicatorAdapter
+import net.gini.android.capture.view.CustomLoadingIndicatorAdapter
 import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
 import net.gini.android.capture.internal.provider.UnsupportedQrWarningSessionPin
 import net.gini.android.capture.internal.qrcode.PaymentQRCodeData
@@ -237,5 +241,37 @@ class CameraFragmentExtensionTest {
 
         // Then: the next session pins the new warning again
         assertThat(extension.isUnsupportedQRCodeWarningEnabled()).isTrue()
+    }
+
+    private class NoopIndicatorAdapter : CustomLoadingIndicatorAdapter {
+        override fun onCreateView(container: ViewGroup): View = View(container.context)
+        override fun onVisible() = Unit
+        override fun onHidden() = Unit
+        override fun onDestroy() = Unit
+    }
+
+    /**
+     * The camera always binds its own adapter, which chooses between the Gini mark and the
+     * integrator's indicator when the indicator is shown. It cannot choose here: this is the first
+     * screen the SDK opens and ingredientBrandScreens has not arrived yet.
+     */
+    @Test
+    fun `always provides the camera loading indicator adapter`() {
+        val instance = extension.loadingIndicatorAdapterInstance(NoopIndicatorAdapter())
+
+        assertThat(instance.viewAdapter)
+            .isInstanceOf(CameraLoadingIndicatorAdapter::class.java)
+    }
+
+    /**
+     * InjectedViewContainer tracks adapter ownership per instance, so the camera must hand back the
+     * same one across view recreations rather than a fresh instance each time.
+     */
+    @Test
+    fun `reuses the same loading indicator instance across view recreations`() {
+        val first = extension.loadingIndicatorAdapterInstance(NoopIndicatorAdapter())
+        val second = extension.loadingIndicatorAdapterInstance(NoopIndicatorAdapter())
+
+        assertThat(second).isSameInstanceAs(first)
     }
 }
