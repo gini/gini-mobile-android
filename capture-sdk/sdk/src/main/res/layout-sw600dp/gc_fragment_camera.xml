@@ -383,6 +383,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+
     <ViewStub
         android:id="@+id/gc_stub_camera_no_permission"
         android:layout_width="0dp"
@@ -403,5 +404,30 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar" />
+
+    <!--
+      The Gini ingredient brand element. On this screen it belongs to the QR-code analysis step
+      only — not to the live camera. CameraFragmentImpl is the single writer of this view: it
+      raises it for both halves of that step and takes it down again, so the badge is never on
+      screen while the shutter is usable, which is why it can sit centred at the very bottom as
+      the approved design shows.
+
+      Declared LAST on purpose: the education overlay (gc_qr_code_education_compose_view) spans
+      the screen, so the badge has to come after it to draw on top of it. It constrains to the
+      parent bottom, which puts it 16dp above the screen bottom — the same position it held when
+      it was anchored to gc_injected_navigation_bar_container_bottom, because that container was
+      empty and zero-height at the parent bottom whenever no bottom bar was injected. PP-3229
+      removed that container, so the anchor moved to the parent directly.
+    -->
+    <include
+        android:id="@+id/gc_powered_by_gini"
+        layout="@layout/gc_powered_by_gini"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/gc_large"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

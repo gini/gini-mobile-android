@@ -22,6 +22,7 @@ import net.gini.android.capture.document.GiniCaptureDocumentError;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 import net.gini.android.capture.document.PdfDocument;
 import net.gini.android.capture.error.ErrorType;
+import net.gini.android.capture.ingredientbrand.IngredientBrandScreen;
 import net.gini.android.capture.internal.camera.photo.ParcelableMemoryCache;
 import net.gini.android.capture.internal.document.DocumentRenderer;
 import net.gini.android.capture.internal.document.DocumentRendererFactory;
@@ -205,6 +206,8 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
             createDocumentRenderer();
         }
         clearParcelableMemoryCache();
+        getView().setPoweredByGiniVisible(
+                extension.getIngredientBrandVisibleUseCase().invoke(IngredientBrandScreen.ANALYSIS));
         getView().showScanAnimation(mIsInvoiceSavingEnabled);
         loadDocumentData();
         showHintsForImage();

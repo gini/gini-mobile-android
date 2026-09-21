@@ -133,7 +133,8 @@ class GiniCaptureDefaultNetworkServiceTest {
             isAlreadyPaidHintEnabled = true,
             isPaymentDueHintEnabled = true,
             isPaymentScheduleHintEnabled = true,
-            isCreditNoteHintEnabled = true
+            isCreditNoteHintEnabled = true,
+            ingredientBrandScreens = listOf("Analysis")
         )
 
         // Add more stubs if mapBankConfigurationToConfiguration uses other properties
@@ -142,25 +143,38 @@ class GiniCaptureDefaultNetworkServiceTest {
         every { bankApi.documentManager } returns documentManager
 
         val service = GiniCaptureDefaultNetworkService(bankApi, null, mockk())
-        var called = false
+
+        // The callback is invoked from inside launchCancellable's coroutine, which swallows
+        // anything thrown in it — an assertion that fails there is reported to the uncaught
+        // handler and the test still passes. So the callback only records what it was given and
+        // every assertion runs on this thread once the coroutine has completed.
+        var captured: Configuration? = null
+        var failed: Error? = null
+        var wasCancelled = false
 
         service.getConfiguration(object : GiniCaptureNetworkCallback<Configuration, Error> {
             override fun success(result: Configuration) {
-                called = true
-                assertThat(result).isNotNull()
-                assertThat(result.isPaymentScheduleHintEnabled).isTrue()
+                captured = result
             }
 
             override fun failure(error: Error) {
-                error("Should not fail")
+                failed = error
             }
 
             override fun cancelled() {
-                error("Should not cancel")
+                wasCancelled = true
             }
         })
         shadowOf(Looper.getMainLooper()).idle()
-        assertThat(called).isTrue()
+
+        assertThat(failed).isNull()
+        assertThat(wasCancelled).isFalse()
+        assertThat(captured).isNotNull()
+        assertThat(captured!!.isPaymentScheduleHintEnabled).isTrue()
+        // Guards the ingredientBrandScreens mapping: drop that line from
+        // mapBankConfigurationToConfiguration and this assertion fails, instead of the default
+        // network silently discarding the backend flag.
+        assertThat(captured!!.ingredientBrandScreens).containsExactly("Analysis")
     }
 
     @Test
