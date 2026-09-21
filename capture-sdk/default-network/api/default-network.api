@@ -37,6 +37,8 @@ public final class net/gini/android/capture/network/GiniCaptureDefaultNetworkSer
 	public final fun setDocumentMetadata (Lnet/gini/android/core/api/DocumentMetadata;)Lnet/gini/android/capture/network/GiniCaptureDefaultNetworkService$Builder;
 	public final fun setHttpClientProvider (Lnet/gini/android/core/api/http/GiniHttpClientProvider;)Lnet/gini/android/capture/network/GiniCaptureDefaultNetworkService$Builder;
 	public final fun setNetworkSecurityConfigResId (I)Lnet/gini/android/capture/network/GiniCaptureDefaultNetworkService$Builder;
+	public final fun setReadWriteTimeout (J)Lnet/gini/android/capture/network/GiniCaptureDefaultNetworkService$Builder;
+	public final fun setReadWriteTimeoutUnit (Ljava/util/concurrent/TimeUnit;)Lnet/gini/android/capture/network/GiniCaptureDefaultNetworkService$Builder;
 	public final fun setSelfManagedAuthentication (Z)Lnet/gini/android/capture/network/GiniCaptureDefaultNetworkService$Builder;
 	public final fun setSessionManager (Lnet/gini/android/core/api/authorization/SessionManager;)Lnet/gini/android/capture/network/GiniCaptureDefaultNetworkService$Builder;
 	public final fun setTrustManager (Ljavax/net/ssl/TrustManager;)Lnet/gini/android/capture/network/GiniCaptureDefaultNetworkService$Builder;
