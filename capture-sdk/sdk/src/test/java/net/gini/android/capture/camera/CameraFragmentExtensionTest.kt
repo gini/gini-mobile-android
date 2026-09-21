@@ -31,7 +31,13 @@ class CameraFragmentExtensionTest {
 
         val poweredByGiniCalls = mutableListOf<Boolean>()
 
+        var interactionBlockedCount = 0
+
         override fun hideImageCorners() = Unit
+        override fun blockInteractionForQrCodeStep() {
+            interactionBlockedCount++
+        }
+
         override fun setPoweredByGiniVisible(visible: Boolean) {
             poweredByGiniCalls += visible
         }
@@ -110,18 +116,30 @@ class CameraFragmentExtensionTest {
     }
 
     /**
-     * R13: the retrieval half must not raise the badge, because `QRCodePopup.show` leaves the
-     * shutter enabled and tappable for the popup's full delay. That half raises it about a second
-     * later, in `CameraFragmentImpl.showActivityIndicatorAndDisableInteraction()`, which is outside
-     * this class.
+     * The approved design shows the brand element from the QR-detected state on, not only once
+     * the invoice starts loading, so the retrieval half raises it when its popup appears.
+     *
+     * R13 still holds because the controls are put out of reach first — asserted here rather
+     * than left implicit, since raising the badge over a live shutter is the exact thing that
+     * rule forbids.
      */
     @Test
-    fun `retrieval half never raises the brand element, even when the configuration enables it`() {
+    fun `retrieval half raises the brand element once the controls are out of reach`() {
         configurationProvider.update { it.copy(ingredientBrandScreens = setOf("Analysis")) }
 
         runRetrievalHalf()
 
-        assertThat(extension.poweredByGiniCalls).doesNotContain(true)
+        assertThat(extension.poweredByGiniCalls).containsExactly(true)
+        assertThat(extension.interactionBlockedCount).isEqualTo(1)
+    }
+
+    @Test
+    fun `retrieval half leaves the brand element alone when the configuration does not list the screen`() {
+        runRetrievalHalf()
+
+        assertThat(extension.poweredByGiniCalls).isEmpty()
+        // Still blocked: the step covers the preview whether or not the badge is enabled.
+        assertThat(extension.interactionBlockedCount).isEqualTo(1)
     }
 
     /**

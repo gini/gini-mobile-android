@@ -134,6 +134,17 @@ internal abstract class CameraFragmentExtension {
                 educationMutex.lock()
                 onEducationFlowTriggered()
             } else {
+                // The approved design shows the brand element from the QR-detected state on
+                // (frames 2.3.2 and 2.3.3 android-ph-QrDetected, 35002:11735/11756), not only
+                // once the invoice starts loading. QRCodePopup makes the dim visible but nothing
+                // there blocks input, so the controls are taken out of reach first: R13 forbids a
+                // screenReaderFocusable badge over a shutter the user can still hit. Undone in
+                // CameraFragmentImpl.hideActivityIndicatorAndEnableInteraction, whatever the
+                // outcome of the step.
+                blockInteractionForQrCodeStep()
+                if (isIngredientBrandVisible()) {
+                    setPoweredByGiniVisible(true)
+                }
                 mPaymentQRCodePopup.show(data)
             }
         }
@@ -172,6 +183,17 @@ internal abstract class CameraFragmentExtension {
      * QR-code analysis step is starting.
      */
     protected abstract fun setPoweredByGiniVisible(visible: Boolean)
+
+    /**
+     * Puts the camera controls out of reach for the duration of the QR-code analysis step.
+     *
+     * Implemented by `CameraFragmentImpl`, which disables the controls, makes the dim swallow
+     * touches and drops the control pane out of the accessibility tree. Needed because
+     * `QRCodePopup.show` only makes the dim *visible* — a plain View that is not clickable does
+     * not consume touches, so without this the shutter stays reachable underneath while the
+     * brand element sits over it.
+     */
+    protected abstract fun blockInteractionForQrCodeStep()
 
     protected abstract fun isOnlyQRCodeScanningEnabled(): Boolean
 }
