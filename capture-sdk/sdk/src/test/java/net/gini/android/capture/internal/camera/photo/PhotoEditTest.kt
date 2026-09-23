@@ -64,6 +64,25 @@ class PhotoEditTest {
 
     @Test
     @Throws(Exception::class)
+    fun `compressing reports the photo as JPEG whatever it was before`() {
+        // Given
+        // A photo that claims to be HEIC. Its bytes are a real JPEG so that it
+        // can be decoded here without a HEIF decoder - what is under test is
+        // that the format label follows the re-encoded data, not the decoding.
+        val photo = PhotoFactory.newPhotoFromJpeg(
+            Helpers.getTestJpeg(), 0, "portrait", "phone", Document.Source.newCameraSource()
+        )
+        photo.setImageFormat(ImageDocument.ImageFormat.HEIC)
+
+        // When
+        photo.edit().compressByDefault().apply()
+
+        // Then
+        Truth.assertThat(photo.imageFormat).isEqualTo(ImageDocument.ImageFormat.JPEG)
+    }
+
+    @Test
+    @Throws(Exception::class)
     fun `allows only one compression modifier`() {
         // Given
         val photo = photo

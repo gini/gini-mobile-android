@@ -4,10 +4,12 @@ package net.gini.android.capture.internal.util;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+import androidx.annotation.VisibleForTesting;
 
 import net.gini.android.capture.R;
 import net.gini.android.capture.internal.pdf.Pdf;
@@ -153,7 +155,30 @@ public class FileImportValidator {
                 return true;
             }
         }
+        if (isHeic(mimeTypes)) {
+            // Android cannot decode HEIF before Android 9, so there is no way
+            // to convert the image to the JPEG the Gini API expects. The file
+            // is reported as unsupported rather than failing silently later.
+            return isHeicDecodingSupported();
+        }
         return false;
+    }
+
+    private boolean isHeic(final List<String> mimeTypes) {
+        for (final String mimeType : mimeTypes) {
+            if (MimeType.IMAGE_HEIC.equals(mimeType)
+                    || MimeType.IMAGE_HEIF.equals(mimeType)
+                    || MimeType.IMAGE_HEIC_SEQUENCE.equals(mimeType)
+                    || MimeType.IMAGE_HEIF_SEQUENCE.equals(mimeType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @VisibleForTesting
+    boolean isHeicDecodingSupported() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.P;
     }
 
     private boolean matchesPdfPageCountCriteria(final Pdf pdf) {

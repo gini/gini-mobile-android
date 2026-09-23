@@ -1517,6 +1517,7 @@ public class net/gini/android/capture/document/ImageDocument : net/gini/android/
 
 public final class net/gini/android/capture/document/ImageDocument$ImageFormat : java/lang/Enum {
 	public static final field GIF Lnet/gini/android/capture/document/ImageDocument$ImageFormat;
+	public static final field HEIC Lnet/gini/android/capture/document/ImageDocument$ImageFormat;
 	public static final field JPEG Lnet/gini/android/capture/document/ImageDocument$ImageFormat;
 	public static final field PNG Lnet/gini/android/capture/document/ImageDocument$ImageFormat;
 	public static fun valueOf (Ljava/lang/String;)Lnet/gini/android/capture/document/ImageDocument$ImageFormat;
@@ -1935,6 +1936,7 @@ public abstract interface class net/gini/android/capture/internal/camera/photo/P
 	public abstract fun isImported ()Z
 	public abstract fun saveToFile (Ljava/io/File;)V
 	public abstract fun setData ([B)V
+	public abstract fun setImageFormat (Lnet/gini/android/capture/document/ImageDocument$ImageFormat;)V
 	public abstract fun setParcelableMemoryCacheTag (Ljava/lang/String;)V
 	public abstract fun setRotationForDisplay (I)V
 	public abstract fun updateBitmapPreview ()V
@@ -2860,6 +2862,13 @@ public final class net/gini/android/capture/internal/util/DeviceHelper {
 	public static fun getDeviceType (Landroid/content/Context;)Ljava/lang/String;
 }
 
+public final class net/gini/android/capture/internal/util/ExifOrientationReader {
+	public static final field $stable I
+	public static final field INSTANCE Lnet/gini/android/capture/internal/util/ExifOrientationReader;
+	public static final fun readRotationForDisplay (Landroid/net/Uri;Landroid/content/Context;)I
+	public static final fun toRotationForDisplay (I)I
+}
+
 public final class net/gini/android/capture/internal/util/FeatureConfiguration {
 	public static fun getDocumentImportEnabledFileTypes ()Lnet/gini/android/capture/DocumentImportEnabledFileTypes;
 	public static fun isFileImportEnabled ()Z
@@ -2899,6 +2908,14 @@ public final class net/gini/android/capture/internal/util/FileImportValidator$Er
 	public static fun values ()[Lnet/gini/android/capture/internal/util/FileImportValidator$Error;
 }
 
+public final class net/gini/android/capture/internal/util/HeicHeader {
+	public static final field $stable I
+	public static final field HEADER_LENGTH I
+	public static final field INSTANCE Lnet/gini/android/capture/internal/util/HeicHeader;
+	public static final fun isHeic (Landroid/net/Uri;Landroid/content/Context;)Z
+	public static final fun isHeic ([B)Z
+}
+
 public final class net/gini/android/capture/internal/util/LogSanitizer {
 	public static final field $stable I
 	public static final field INSTANCE Lnet/gini/android/capture/internal/util/LogSanitizer;
@@ -2907,9 +2924,14 @@ public final class net/gini/android/capture/internal/util/LogSanitizer {
 
 public final class net/gini/android/capture/internal/util/MimeType : java/lang/Enum {
 	public static final field APPLICATION_JSON Lnet/gini/android/capture/internal/util/MimeType;
+	public static final field APPLICATION_OCTET_STREAM Lnet/gini/android/capture/internal/util/MimeType;
 	public static final field APPLICATION_PDF Lnet/gini/android/capture/internal/util/MimeType;
 	public static final field APPLICATION_XML Lnet/gini/android/capture/internal/util/MimeType;
 	public static final field IMAGE_GIF Lnet/gini/android/capture/internal/util/MimeType;
+	public static final field IMAGE_HEIC Lnet/gini/android/capture/internal/util/MimeType;
+	public static final field IMAGE_HEIC_SEQUENCE Lnet/gini/android/capture/internal/util/MimeType;
+	public static final field IMAGE_HEIF Lnet/gini/android/capture/internal/util/MimeType;
+	public static final field IMAGE_HEIF_SEQUENCE Lnet/gini/android/capture/internal/util/MimeType;
 	public static final field IMAGE_JPEG Lnet/gini/android/capture/internal/util/MimeType;
 	public static final field IMAGE_PNG Lnet/gini/android/capture/internal/util/MimeType;
 	public static final field IMAGE_PREFIX Lnet/gini/android/capture/internal/util/MimeType;
