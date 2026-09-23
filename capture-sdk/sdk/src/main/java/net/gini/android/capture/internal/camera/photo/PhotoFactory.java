@@ -22,7 +22,11 @@ public final class PhotoFactory {
     }
 
     public static Photo newPhotoFromDocument(final ImageDocument document) {
-        if (document.getFormat() == ImageDocument.ImageFormat.JPEG) {
+        // HEIC joins JPEG here so that it gets a real PhotoEdit: the
+        // compression step re-encodes it to the JPEG the Gini API expects.
+        // PNG and GIF keep the no-op edit and are uploaded as they are.
+        if (document.getFormat() == ImageDocument.ImageFormat.JPEG
+                || document.getFormat() == ImageDocument.ImageFormat.HEIC) {
             return new MutablePhoto(document);
         }
         return new ImmutablePhoto(document);

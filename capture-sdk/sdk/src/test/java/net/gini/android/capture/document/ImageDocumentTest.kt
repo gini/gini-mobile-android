@@ -88,6 +88,56 @@ class ImageDocumentTest {
         ImageDocument.fromUri(uri, context, "portrait", "phone", Document.ImportMethod.OPEN_WITH)
     }
 
+    @Test
+    fun `ImageFormat maps every HEIC and HEIF mime type to HEIC`() {
+        listOf("image/heic", "image/heif", "image/heic-sequence", "image/heif-sequence")
+            .forEach { mimeType ->
+                assertThat(ImageDocument.ImageFormat.fromMimeType(mimeType))
+                    .isEqualTo(ImageDocument.ImageFormat.HEIC)
+            }
+    }
+
+    @Test
+    fun `ImageFormat still maps the previously supported mime types`() {
+        assertThat(ImageDocument.ImageFormat.fromMimeType("image/jpeg"))
+            .isEqualTo(ImageDocument.ImageFormat.JPEG)
+        assertThat(ImageDocument.ImageFormat.fromMimeType("image/png"))
+            .isEqualTo(ImageDocument.ImageFormat.PNG)
+        assertThat(ImageDocument.ImageFormat.fromMimeType("image/gif"))
+            .isEqualTo(ImageDocument.ImageFormat.GIF)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `ImageFormat throws for an image mime type that stays unsupported`() {
+        ImageDocument.ImageFormat.fromMimeType("image/webp")
+    }
+
+    @Test
+    fun `fromUri creates a HEIC ImageDocument for a heic Uri`() {
+        // Given
+        GiniCapture.newInstance(context).build()
+        shadowOf(MimeTypeMap.getSingleton()).addExtensionMimeTypeMapping("heic", "image/heic")
+        val uri = createUri(heicHeaderBytes(), ".heic")
+
+        // When
+        val document = ImageDocument.fromUri(
+            uri, context, "portrait", "phone", Document.ImportMethod.OPEN_WITH
+        )
+
+        // Then
+        assertThat(document.format).isEqualTo(ImageDocument.ImageFormat.HEIC)
+        assertThat(document.mimeType).isEqualTo("image/heic")
+    }
+
+    /**
+     * Minimal ISO-BMFF header: box size, the `ftyp` marker and the `heic` brand.
+     */
+    private fun heicHeaderBytes(): ByteArray =
+        byteArrayOf(0x00, 0x00, 0x00, 0x20) +
+            "ftyp".toByteArray(Charsets.US_ASCII) +
+            "heic".toByteArray(Charsets.US_ASCII) +
+            ByteArray(4)
+
     private fun createUri(bytes: ByteArray, extension: String): Uri {
         val file = File.createTempFile("gini-image-document-test", extension, context.cacheDir)
         file.writeBytes(bytes)
