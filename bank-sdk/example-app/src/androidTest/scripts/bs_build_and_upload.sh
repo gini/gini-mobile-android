@@ -18,10 +18,18 @@ set -e
 #   bs_run_group_duedate.sh        – Due Date Hint / Schedule Payment bottom sheet
 #   bs_run_group_creditnote.sh     – Credit Note warning bottom sheet
 #   bs_run_all_groups.sh           – builds+uploads ONCE, then triggers all six shards
+#   bs_run_release.sh              – the shards in this release's scope (see its header)
 #
 # BrowserStack credentials must be set via environment variables:
 #   export BS_USER="your_username"
 #   export BS_KEY="your_access_key"
+#
+# Every build this script triggers lands in the BrowserStack project named by BS_PROJECT.
+# The default, "gini-mobile-android", is the everyday project: all day-to-day runs — this
+# script and every bs_run_group_*.sh wrapper — go there. Release sign-off is the exception:
+# bs_run_release.sh sets BS_PROJECT to a per-release project (GiniBankSDK-Android-<version>)
+# so that release's builds sit together in the dashboard. Override it per run if needed:
+#   BS_PROJECT="GiniBankSDK-Android-4.5.0-RC1" ./bs_run_group_duedate.sh
 #
 # Advanced env vars (used by bs_run_all_groups.sh to avoid rebuilding/re-uploading):
 #   APP_URL, TEST_URL, IMAGE_URL, PDF_URL, SAMPLE_PDF_URL
@@ -41,6 +49,18 @@ BS_KEY="${BS_KEY:-<your_browserstack_access_key>}"
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../../../.." && pwd)"
+
+# BrowserStack App Automate project — the container a build shows up in.
+#
+# The default is the repo's standing project, unchanged from before: everyday runs stay
+# in one place instead of scattering a new project per branch.
+#
+# Release sign-off overrides it. bs_run_release.sh exports a per-release project
+# (GiniBankSDK-Android-<version>, from the RELEASE_VERSION constant that script carries)
+# before calling this script, mirroring the iOS convention (BS_PROJECT in the iOS repo's
+# bs_shared.sh, e.g. "GiniBankSDK-LiquidGlass-4.3.0"). Nothing here needs bumping for a
+# release — the version lives in bs_run_release.sh, in one place.
+BS_PROJECT="${BS_PROJECT:-gini-mobile-android}"
 
 FLAVOR="devExampleApp"
 BUILD_TYPE="debug"
@@ -216,11 +236,14 @@ fi
 
 BUILD_NAME="${BUILD_NAME:-local-$(date +%Y%m%d-%H%M%S)}"
 
+echo "BrowserStack project: $BS_PROJECT"
+echo "Build name:           $BUILD_NAME"
+
 BUILD_RESPONSE=$(curl -s -u "$BS_USER:$BS_KEY" \
   -X POST "https://api-cloud.browserstack.com/app-automate/espresso/v2/build" \
   -H "Content-Type: application/json" \
   -d "{
-    \"project\": \"gini-mobile-android\",
+    \"project\": \"$BS_PROJECT\",
     \"name\": \"$BUILD_NAME\",
     \"devices\": [\"$DEVICE_1\", \"$DEVICE_2\"],
     \"app\": \"$APP_URL\",
@@ -234,4 +257,4 @@ BUILD_RESPONSE=$(curl -s -u "$BS_USER:$BS_KEY" \
   }")
 echo "Build response: $BUILD_RESPONSE"
 echo ""
-echo "Done! Check BrowserStack App Automate dashboard for results."
+echo "Done! Check the \"$BS_PROJECT\" project in the BrowserStack App Automate dashboard."
