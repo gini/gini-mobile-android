@@ -47,6 +47,7 @@ class OpenWithTest {
         // throw IdlingResourceTimeoutException. Give the idle wait more headroom.
         IdlingPolicies.setMasterPolicyTimeout(90, TimeUnit.SECONDS)
         IdlingPolicies.setIdlingResourceTimeout(90, TimeUnit.SECONDS)
+        resetIdlingResourceForOpenWith()
         idlingResourceForOpenWith = ApplicationProvider.getApplicationContext<ExampleApp>().idlingResourceForOpenWith
         IdlingRegistry.getInstance().register(idlingResourceForOpenWith)
     }
@@ -101,6 +102,24 @@ class OpenWithTest {
         launchActivityForOpenWith<CaptureFlowHostActivity>(listOf("test_image.jpeg", "test_image_2.jpeg"), "image/jpeg")
     }
 
+    /**
+     * Drains the "OpenWith" counting idling resource so this attempt starts from an idle state.
+     *
+     * The resource lives on the [ExampleApp] instance, so its count outlives a single attempt: the
+     * entry activity increments it on every launch, while `ExtractionsActivity` decrements it only
+     * once — when the extractions screen finally appears. An attempt that times out therefore
+     * leaves the count at 1, and because [RetryRule] re-launches the activity (incrementing again)
+     * without the count ever returning to zero, every retry would be guaranteed to time out too.
+     * Draining here is what lets a retry recover from a transient timeout.
+     */
+    private fun resetIdlingResourceForOpenWith() {
+        val app = ApplicationProvider.getApplicationContext<ExampleApp>()
+        var remainingDecrements = MAX_IDLING_DRAIN_DECREMENTS
+        while (!app.idlingResourceForOpenWith.isIdleNow && remainingDecrements-- > 0) {
+            app.decrementIdlingResourceForOpenWith()
+        }
+    }
+
     private inline fun <reified T: Activity> launchActivityForOpenWith(assetFilePaths: List<String>, assetFileMimeType: String) {
         // Given
         val storageUris = assetFilePaths.map { getAssetFileStorageUri(it) }
@@ -126,4 +145,11 @@ class OpenWithTest {
         onView(withId(R.id.recyclerview_extractions)).check(matches(isDisplayed()))
         }
 
+    private companion object {
+        /**
+         * A leaked attempt can only add one count per activity launch, so a small bound is ample.
+         * It exists purely so a broken increment/decrement pairing can never spin here forever.
+         */
+        const val MAX_IDLING_DRAIN_DECREMENTS = 10
+    }
 }

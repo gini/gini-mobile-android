@@ -3,7 +3,6 @@ package net.gini.android.bank.sdk.exampleapp.ui.testcases
 import android.Manifest
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
-import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
@@ -11,18 +10,26 @@ import androidx.test.rule.GrantPermissionRule
 import androidx.test.uiautomator.UiDevice
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity
 import net.gini.android.bank.sdk.exampleapp.ui.resources.AppResources
+import net.gini.android.bank.sdk.exampleapp.ui.resources.CreditNoteHintConfigurator
 import net.gini.android.bank.sdk.exampleapp.ui.resources.DueDateFixtures
 import net.gini.android.bank.sdk.exampleapp.ui.resources.ImageUploader
 import net.gini.android.bank.sdk.exampleapp.ui.resources.PaymentHintConfigurator
+import net.gini.android.bank.sdk.exampleapp.ui.resources.PdfUploader
+import net.gini.android.bank.sdk.exampleapp.ui.resources.ReturnAssistantSkontoConfigurator
+import net.gini.android.bank.sdk.exampleapp.ui.resources.TransactionDocsConfigurator
 import net.gini.android.bank.sdk.exampleapp.ui.resources.RetryRule
 import net.gini.android.bank.sdk.exampleapp.ui.resources.SimpleIdlingResource
 import net.gini.android.bank.sdk.exampleapp.ui.screens.CaptureScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.ConfigurationScreen
+import net.gini.android.bank.sdk.exampleapp.ui.screens.DigitalInvoiceScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.ExtractionScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.MainScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.OnboardingScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.ReviewScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.WarningBottomSheetScreen
+import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockBackend
+import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockClientConfiguration
+import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockScenario
 import net.gini.android.capture.GiniCapture
 import org.junit.After
 import org.junit.Assume
@@ -59,10 +66,12 @@ abstract class WarningBottomSheetTestBase {
     protected val onboardingScreen = OnboardingScreen()
     protected val captureScreen = CaptureScreen()
     protected val imageUploader = ImageUploader()
+    protected val pdfUploader = PdfUploader()
     protected val reviewScreen = ReviewScreen()
     protected val configurationScreen = ConfigurationScreen()
     protected val extractionScreen = ExtractionScreen()
     protected val warningBottomSheet = WarningBottomSheetScreen()
+    protected val digitalInvoiceScreen = DigitalInvoiceScreen()
     protected lateinit var idlingResource: SimpleIdlingResource
 
     private val testProperties = Properties().apply {
@@ -78,14 +87,19 @@ abstract class WarningBottomSheetTestBase {
         grantStoragePermission()
         idlingResource = SimpleIdlingResource(2000)
         IdlingRegistry.getInstance().register(idlingResource)
-        mainScreen.clickSettingButton()
-        configurationScreen.clickTransactionDocsSwitch()
-        pressBack()
+        // Set directly rather than through the Settings screen: the old three-tap version ran
+        // before every test and could fail on layout alone — see TransactionDocsConfigurator.
+        TransactionDocsConfigurator.applyTransactionDocsConfiguration(
+            activityRule.scenario,
+            transactionDocsEnabled = false
+        )
     }
 
     @After
     fun tearDown() {
         IdlingRegistry.getInstance().unregister(idlingResource)
+        // Process-wide, so it must be cleared even for the suites that never arm it.
+        UiTestMockBackend.disarm()
     }
 
     protected fun configureHints(
@@ -98,6 +112,62 @@ abstract class WarningBottomSheetTestBase {
             paymentDueHintEnabled = paymentDueHintEnabled,
             paymentScheduleHintEnabled = paymentScheduleHintEnabled,
             paymentDueHintThresholdDays = thresholdDays
+        )
+    }
+
+    /**
+     * Sets the client-side Credit Note Hint flag without touching the Settings screen. See
+     * [CreditNoteHintConfigurator] for why the switch is not tapped. Must run before the photo
+     * payment button is clicked, like [configureHints].
+     */
+    protected fun configureCreditNoteHint(enabled: Boolean) {
+        CreditNoteHintConfigurator.applyCreditNoteHintConfiguration(
+            activityRule.scenario,
+            creditNoteHintEnabled = enabled
+        )
+    }
+
+    /**
+     * Pins the Return Assistant and Skonto flags. Both default to on, so a test that cares which
+     * screen the flow routes to must say so explicitly — see [ReturnAssistantSkontoConfigurator].
+     * Must run before the photo payment button is clicked, like [configureHints].
+     */
+    protected fun configureReturnAssistantAndSkonto(
+        returnAssistantEnabled: Boolean,
+        skontoEnabled: Boolean
+    ) {
+        ReturnAssistantSkontoConfigurator.applyFeatureConfiguration(
+            activityRule.scenario,
+            returnAssistantEnabled = returnAssistantEnabled,
+            skontoEnabled = skontoEnabled
+        )
+    }
+
+    /**
+     * Replaces the Gini API with canned responses for the rest of this test. See
+     * [UiTestMockBackend] for what that buys us: the backend client-configuration flags and
+     * extraction shapes we have no document for become ordinary assertions.
+     *
+     * The three flags are the SERVER-side gates the mock serves from `getConfiguration`. The
+     * SDK-side ones are separate — [configureCreditNoteHint] and
+     * [configureReturnAssistantAndSkonto] — and a feature needs both to be on.
+     *
+     * Must be called before the photo payment button is clicked, like [configureHints]. Cleared
+     * in [tearDown].
+     */
+    protected fun armMockBackend(
+        scenario: UiTestMockScenario,
+        creditNoteHintEnabled: Boolean = true,
+        returnAssistantEnabled: Boolean = true,
+        skontoEnabled: Boolean = true
+    ) {
+        UiTestMockBackend.arm(
+            scenario = scenario,
+            clientConfiguration = UiTestMockClientConfiguration(
+                creditNoteHintEnabled = creditNoteHintEnabled,
+                returnAssistantEnabled = returnAssistantEnabled,
+                skontoEnabled = skontoEnabled
+            )
         )
     }
 
@@ -119,6 +189,27 @@ abstract class WarningBottomSheetTestBase {
      * recomputes it minutes later — a date rollover in between flips the expected
      * outcome. Skip instead of flaking on night runs.
      */
+    /**
+     * The PDF counterpart of [uploadFixtureInvoiceAndProcess]: import a document through the SDK's
+     * file picker instead of the photo picker. There is no review screen on this path, so the flow
+     * goes straight from the picker to analysis.
+     *
+     * BrowserStack pre-loads the suite's PDFs as uploaded media (`bs_build_and_upload.sh`); on a
+     * local device the file has to be copied into Downloads so the picker can find it. The copy is
+     * wrapped because on BrowserStack a shell-owned file of the same name already exists and
+     * MediaStore may refuse the delete/insert — the picker then just uses the pre-loaded one. Same
+     * reasoning as `DueDateHintBottomSheetTests.test10_noSheetForReturnAssistantInvoice`.
+     */
+    protected fun uploadFixturePdfAndProcess(fileName: String) {
+        runCatching { pdfUploader.copyPdfToDownloads(getApplicationContext(), fileName) }
+        mainScreen.clickPhotoPaymentButton()
+        onboardingScreen.clickSkipButtonIfPresent()
+        captureScreen.clickFilesButton()
+        captureScreen.clickFiles()
+        pdfUploader.uploadPdfFromFiles(fileName)
+        idlingResource.waitForIdle()
+    }
+
     protected fun assumeNotCloseToMidnight() {
         val now = LocalTime.now()
         Assume.assumeTrue(

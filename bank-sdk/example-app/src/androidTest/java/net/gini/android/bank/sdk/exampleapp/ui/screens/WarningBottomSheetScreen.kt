@@ -12,11 +12,12 @@ import net.gini.android.bank.sdk.exampleapp.ui.resources.AppResources
 import net.gini.android.capture.R as CaptureR
 
 /**
- * Page object for the capture SDK's warning bottom sheet (Due Date Hint /
- * Schedule Payment states) shown on the Analysis screen.
+ * Page object for the capture SDK's warning bottom sheet (Due Date Hint, Schedule Payment
+ * and Credit Note states) shown on the Analysis screen.
  *
- * The two states share the same title (gc_due_date_hint_title), so state assertions
- * always check the description and both CTA labels as well — never the title alone.
+ * The two due date states share the same title (gc_due_date_hint_title), and the Credit Note
+ * state shares its CTA labels with them in the opposite order, so state assertions always
+ * check the description and both CTA labels as well — never the title alone.
  * All texts are resolved from the SDK's string resources at runtime, which keeps the
  * assertions locale-independent.
  */
@@ -58,6 +59,28 @@ class WarningBottomSheetScreen {
             ),
             description = targetContext.getString(CaptureR.string.gc_schedule_payment_hint_desc),
             primaryButton = targetContext.getString(CaptureR.string.gc_schedule_payment),
+            secondaryButton = targetContext.getString(CaptureR.string.gc_proceed_anyway)
+        )
+        return this
+    }
+
+    /**
+     * Asserts the Credit Note warning state: the title, the description and both CTAs.
+     *
+     * The CTA order is the reverse of the due date states — DOCUMENT_MARKED_AS_CREDIT_NOTE
+     * declares "Cancel transfer" as the primary (filled) button and "Proceed anyway" as the
+     * secondary, which is what the Xray steps describe as blue and white respectively. Getting
+     * this backwards would still match a title-only assertion, so both labels are checked.
+     */
+    fun assertCreditNoteState(): WarningBottomSheetScreen {
+        assertSheetTexts(
+            title = targetContext.getString(
+                CaptureR.string.gc_document_marked_credit_note_title
+            ),
+            description = targetContext.getString(
+                CaptureR.string.gc_document_marked_credit_note_desc
+            ),
+            primaryButton = targetContext.getString(CaptureR.string.gc_cancel_transfer),
             secondaryButton = targetContext.getString(CaptureR.string.gc_proceed_anyway)
         )
         return this
@@ -111,5 +134,6 @@ class WarningBottomSheetScreen {
     companion object {
         private const val SHEET_TIMEOUT = 30_000L
         private const val MIN_OUTSIDE_TAP_Y = 200
+
     }
 }

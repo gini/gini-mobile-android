@@ -1,14 +1,26 @@
-# Reading the Jira ticket and its links
+<!--
+  SHARED FILE — platform-neutral by design. Meant to stay byte-identical to
+  .claude/skills/gini-review/references/ticket-context.md in gini-mobile-android.
+  Change it in one repo and open a paired PR in the other.
+  Anything naming a language, linter, framework or module belongs in
+  ../platform.md, never here.
+  Mirror enforcement status and the current path divergence between the two
+  repos: general-rules.md §"How the two copies are kept in sync".
+-->
 
-**Reference for the review engine** — read at **§2**, and again at §3 for the logic method.
+# Reading the ticket and its links
+
+**Reference for `/gini-review`** — read at **§2**, and again at §3 for the logic method.
 Used on every review.
 
-**Purpose:** get the ticket, and turn it into concrete checks against the diff.
+**Purpose:** get the ticket — from Jira, or from the user when Jira is not reachable — and turn it
+into concrete checks against the diff.
 
 **Supports:**
 
-- **Fetching the issue** — Jira site, cloudId, which fields to request, the fallback when the cloudId
-  is rejected
+- **Fetching the issue** — Jira site, resolving the cloudId, which fields to request, the scope quirk
+- **Working without Jira** — the paste-in fallback for a missing connector, a failed fetch, or a
+  reviewer who has no Jira access
 - **Extracting the key** — first `[A-Z]{2,5}-[0-9]+` anywhere in the branch name, and treating a
   ticketless branch as normal
 - **Field triage** — which of `issuetype`, `labels`, `parent`, `components`, `fixVersions`, `status`,
@@ -20,37 +32,68 @@ Used on every review.
 - **Comment triage** — when a comment overrides the description
 - **Logic checks** — the 8-step method, including the opposite-direction check
 
-**Does not cover:** repo coding rules and published API surface → the repo's platform layer
-(`../SKILL.md` §0) · comment wording → `comment-style.md`
+**Does not cover:** repo coding rules and published API surface → `../platform.md` · comment wording →
+`comment-style.md`
 
 The ticket is the specification. Reviewing a diff without it verifies only that the code is
-*well-formed*, not that it is *correct*. This file covers how to fetch it, what to extract, and how
-to turn it into logic checks.
+*well-formed*, not that it is *correct*. **So the ticket is never optional — but Jira is.** This file
+covers three ways to get it, what to extract, and how to turn it into logic checks.
 
-## Fetching
+## Fetching from Jira
 
 Site is **`ginis.atlassian.net`** (note the trailing `s` — `gini.atlassian.net` returns
 403 "app is not installed on this instance"). Use the Atlassian MCP tool `getJiraIssue`:
 
-- `cloudId`: `7740065a-6c74-4abe-89b4-eed057e702d4`
+- `cloudId`: **resolve it at run time — do not hard-code it.** Call
+  `getAccessibleAtlassianResources` and take the id of the `ginis.atlassian.net` entry. It is a
+  workspace identifier, not a credential: it is inert without an authorised OAuth session, and every
+  Atlassian client discovers it the same way. Looking it up also keeps this file correct if the site is
+  ever migrated.
 - `issueIdOrKey`: the key from the branch name — the **first match of `[A-Z]{2,5}-[0-9]+` anywhere in
-  the name**, not anchored at the start. Branches are usually `<TICKET>-<kebab-description>`, but the
-  key can sit under a segment (`backup/PP-1234-…`, `feature/FEAT-001-…`), and an anchored pattern
-  silently misses those. The PR title and commit trailer carry the same key if the branch does not.
+  the name**, not anchored at the start. Many branches are just `<TICKET>-<kebab-description>`, but the
+  key can also sit under a path segment (`<segment>/<TICKET>-…`), and an anchored pattern silently
+  misses those. **Which segments are in use differs per repo, so do not match against a list of them** —
+  match on start-or-slash and let any segment through. The PR title and commit trailer carry the same
+  key if the branch does not.
 - `responseContentFormat`: `markdown`
 - `fields`: `["summary","description","status","issuetype","priority","labels","components","comment","issuelinks","parent","fixVersions","attachment"]`
 
-If the cloudId is rejected, call `getAccessibleAtlassianResources` and use the entry whose scopes
-include `read:jira-work` — the same site is listed twice, once with Confluence scopes and once with
-Jira scopes, and only the latter works for issues.
+**The scope quirk:** `getAccessibleAtlassianResources` lists the same site **twice** with the same id —
+once with Confluence scopes, once with Jira scopes (`read:jira-work`). Only the Jira-scoped grant works
+for issues. If a call is rejected, re-read that list and use the Jira entry; if the connector was
+authorised for Confluence only, every issue call fails until Jira scopes are granted.
 
 **A branch with no ticket key is normal, not an error.** Plenty of branches here carry none — skill,
 CI, release, docs and refactor work. Do not hunt for a ticket that does not exist, and do not guess
 one from the diff. Note it under **Not checked** and review on the PR description alone.
 
-If the fetch fails, say so in the report and continue with a `Not checked: acceptance criteria`
-note. Never invent ticket content, and never infer requirements from the diff and then "verify" the
-diff against them — that is circular and produces confident nonsense.
+## When Jira is not available — ask, don't skip
+
+A missing Atlassian MCP connector, an expired session, a rejected cloudId or a reviewer without Jira
+access are all common, and none of them is a reason to review blind. **A ticket key exists and the
+fetch did not work → ask the user for the content before giving up.** Use `AskUserQuestion` or a plain
+request:
+
+> I couldn't reach Jira for `<KEY>`. Paste the ticket in and I'll review against it — description plus
+> Steps to Reproduce / Actual / Expected is enough. Or say "skip" and I'll review without acceptance
+> criteria and mark it under Not checked.
+
+What to do with what they give you:
+
+- **Pasted text** — treat it exactly as a fetched description: parse the same template sections, run
+  the same logic checks. Note in the report that the ticket was **pasted, not fetched**, so the
+  reviewer knows the field metadata (labels, epic, status, links) was not available.
+- **A partial paste** — a summary line and Expected Result is still worth far more than nothing. Work
+  with it and say which parts were missing.
+- **A URL only** — that is not content. `WebFetch` on a Jira issue URL returns the login page, not the
+  issue. Ask for the text.
+- **"Skip"** — proceed, and record `Not checked: acceptance criteria` in the report. That is an honest
+  outcome; silently reviewing as if you had the ticket is not.
+
+The same offer applies to attachments (see below) and to a linked Confluence page you cannot reach.
+
+Never invent ticket content, and never infer requirements from the diff and then "verify" the diff
+against them — that is circular and produces confident nonsense.
 
 ## Fields that change how you review
 
@@ -60,7 +103,7 @@ diff against them — that is circular and produces confident nonsense.
 | `labels` | Platform labels (`Android`, `iOS`, `mobile`, `backend`). A ticket labelled for a different platform than the repo under review is worth asking about. |
 | `parent` | The epic. Often carries design intent the ticket itself omits. Fetch it when the ticket's own description assumes context. |
 | `components` | Which SDK the ticket concerns. Compare against which modules the PR actually touches. |
-| `fixVersions` | Ties to release planning; a per-platform "Unknown Fix Version" placeholder means unscheduled. |
+| `fixVersions` | Ties to release planning. Version names are per platform, so check the one that matches the repo under review; a placeholder version rather than a real one means unscheduled. |
 | `status` | A ticket still in **In Progress** with a PR up is normal; **Done** with an open PR is worth questioning. |
 | `attachment` | Screenshots and screen recordings for UI bugs. Often the only statement of correct appearance. |
 
@@ -112,15 +155,16 @@ Triage them, because what is attached tells you a lot even unread:
   appearance. If the review turns on visual behaviour, **stop and ask the user to paste the image
   into the conversation**, naming the specific file. Do not quietly file it under "not checked" when
   it is the crux of the ticket.
-- **Config or resource files** (theme and colour resources, logs, `.har`) — frequently the actual
-  evidence. A light-mode and a dark-mode resource file attached to a "section turns to black" bug point
-  straight at a colour definition, and that reshapes where you look in the diff. Ask for these too;
-  they are small and quotable.
+- **Config or resource files** (whatever this platform declares themes, colours and strings in, plus
+  logs and `.har` captures) — frequently the actual evidence. A light-mode and a dark-mode resource file
+  attached to a "section turns to black" bug point straight at a colour definition, and that reshapes
+  where you look in the diff. Ask for these too; they are small and quotable.
 - **Author and date matter.** An attachment added *after* the PR opened is usually a reviewer or QA
   responding to the current implementation — higher signal than the original report.
 
 If the user supplies a local path to a downloaded attachment, read it with the `Read` tool — it
-renders PNG and JPG visually and reads XML as text.
+renders PNG and JPG visually and reads text-based formats as text, whatever the platform's resource
+files happen to be (XML, plists, `.strings`, JSON, logs).
 
 Optional setup that removes the friction permanently: a Jira API token
 (`id.atlassian.com` → API tokens) makes attachments fetchable directly —
@@ -151,7 +195,8 @@ in the report, because the reviewer may not have read it.
 
 ## Turning the ticket into logic checks
 
-This is the point of all the above. Do it in this order:
+This is the point of all the above, and it works the same whether the ticket was fetched or pasted.
+Do it in this order:
 
 1. **State the expected behaviour as concrete propositions** before looking at the diff. For a bug,
    from Expected Result. For a story, from acceptance criteria. Write them down — vague expectations
@@ -169,8 +214,9 @@ This is the point of all the above. Do it in this order:
    branch, and the ticket only describes one. This check catches real regressions and is the single
    highest-yield item in this file.
 6. **Check state and lifecycle explicitly** when the repro involves closing and reopening, rotating,
-   or backgrounding. Persisted or cached state surviving when it should reset is
-   the actual defect in that class of bug.
+   backgrounding, or any teardown the platform can trigger on its own (a configuration change, a scene
+   or activity being recreated). Persisted or cached state surviving when it should reset is the actual
+   defect in that class of bug.
 7. **Does a test encode the ticket's steps?** A regression test that mirrors Steps to Reproduce is
    what stops the bug returning. Its absence is a legitimate blocking finding for a bug fix.
 8. **Scope:** anything in the diff that no proposition from step 1 required. Flag it — either the
