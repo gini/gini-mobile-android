@@ -7,7 +7,7 @@ import androidx.compose.ui.res.stringResource
 import net.gini.android.capture.R
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.ingredientbrand.GetIngredientBrandVisibleUseCase
-import net.gini.android.capture.ingredientbrand.GiniLoadingIndicatorAdapter
+import net.gini.android.capture.ingredientbrand.IngredientBrandLoadingIndicatorAdapter
 import net.gini.android.capture.ingredientbrand.IngredientBrandScreen
 import net.gini.android.capture.internal.camera.view.education.AnimatedEducationMessageWithIntro
 import net.gini.android.capture.ui.theme.GiniTheme
@@ -35,27 +35,33 @@ class AnalysisFragmentExtension {
     }
 
     /**
-     * The Gini ingredient brand loading indicator for the Analysis screen, or `null` when the
-     * screen should keep using the integrator's (or the default) loading indicator.
+     * The Analysis screen's loading indicator.
      *
-     * Returns `null` when the client configuration does not list the Analysis screen in
-     * `ingredientBrandScreens`.
+     * Always an [IngredientBrandLoadingIndicatorAdapter], which chooses between the Gini brand
+     * mark and [integratorAdapter] at the moment the indicator is shown rather than when the
+     * screen is built. The choice cannot be made at view-creation time on the "open with" path:
+     * `GiniCaptureFragment` navigates straight to Analysis for an open-with document, so on a cold
+     * first launch `ingredientBrandScreens` has not arrived yet and the screen would keep the
+     * integrator's indicator for good.
+     *
+     * The integrator's adapter is consulted only while ingredient branding is off — it must not be
+     * able to replace or suppress the Gini mark when it is on (PP-3512).
      *
      * Internal use only. It is `public` solely because [AnalysisFragmentImpl] is Java and Kotlin
      * `internal` members are name-mangled in the bytecode, so Java cannot call them cleanly.
-     * Integrators must not call this — the ingredient brand is driven by the client configuration
-     * and is deliberately not customisable.
      */
-    fun giniLoadingIndicatorAdapterInstance():
-            InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter>? {
-        if (!ingredientBrandVisibleUseCase(IngredientBrandScreen.ANALYSIS)) {
-            return null
-        }
-        return giniLoadingIndicatorInstance
+    fun loadingIndicatorAdapterInstance(
+        integratorAdapter: CustomLoadingIndicatorAdapter,
+    ): InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter> =
+        giniLoadingIndicatorInstance
             ?: InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter>(
-                GiniLoadingIndicatorAdapter()
+                IngredientBrandLoadingIndicatorAdapter(
+                    isGiniMarkEnabled = {
+                        ingredientBrandVisibleUseCase(IngredientBrandScreen.ANALYSIS)
+                    },
+                    integratorAdapter = { integratorAdapter },
+                )
             ).also { giniLoadingIndicatorInstance = it }
-    }
 
     fun showEducation(onComplete: () -> Unit) {
         educationView.visibility = View.VISIBLE

@@ -73,12 +73,34 @@ class AnalysisFragmentTest {
         configurationProvider.update { it.copy(ingredientBrandScreens = setOf("Analysis")) }
     }
 
-    private fun loadingIndicatorChild(fragment: AnalysisFragment): View? {
-        val container = fragment.requireView()
+    private fun loadingIndicatorContainer(fragment: AnalysisFragment) =
+        fragment.requireView()
             .findViewById<InjectedViewContainer<CustomLoadingIndicatorAdapter>>(
                 R.id.gc_injected_loading_indicator_container
             )
-        return if (container.childCount > 0) container.getChildAt(0) else null
+
+    /**
+     * The indicator actually on screen.
+     *
+     * The screen always binds an [net.gini.android.capture.ingredientbrand.IngredientBrandLoadingIndicatorAdapter],
+     * which hosts both the Gini mark and the integrator's indicator and shows whichever the client
+     * configuration currently calls for — so the interesting view is the visible grandchild, not
+     * the container's direct child.
+     */
+    private fun loadingIndicatorChild(fragment: AnalysisFragment): View? {
+        val container = loadingIndicatorContainer(fragment)
+        val host = (if (container.childCount > 0) container.getChildAt(0) else null) as? ViewGroup
+            ?: return null
+        return (0 until host.childCount).map { host.getChildAt(it) }
+            .firstOrNull { it.visibility == View.VISIBLE }
+    }
+
+    /** Hides and re-shows the indicator, which is when the branding choice is re-made. */
+    private fun showLoadingIndicatorAgain(fragment: AnalysisFragment) {
+        val adapter = loadingIndicatorContainer(fragment)
+            .injectedViewAdapterHolder?.viewAdapterInstance?.viewAdapter ?: return
+        adapter.onHidden()
+        adapter.onVisible()
     }
 
     private open class RecordingLoadingIndicatorAdapter : CustomLoadingIndicatorAdapter {
@@ -111,6 +133,32 @@ class AnalysisFragmentTest {
             scenario.onFragment { fragment ->
                 assertThat(loadingIndicatorChild(fragment))
                     .isNotInstanceOf(ImageView::class.java)
+            }
+        }
+    }
+
+    /**
+     * Regression for the review finding on PR #993.
+     *
+     * On the "open with" path `GiniCaptureFragment` navigates straight to Analysis, so on a cold
+     * first launch this screen is built before `/configurations` has answered and
+     * `ingredientBrandScreens` is still empty. The screen used to decide once at view creation and
+     * keep the integrator's indicator for good; it now re-reads the configuration every time the
+     * indicator is shown, so branding that arrives late is still honoured.
+     */
+    @Test
+    fun `picks up ingredient branding that arrives after the screen was created`() {
+        launchFragment(mock()).use { scenario ->
+            scenario.onFragment { fragment ->
+                // Configuration has not arrived yet.
+                assertThat(loadingIndicatorChild(fragment))
+                    .isNotInstanceOf(ImageView::class.java)
+
+                enableIngredientBrandOnAnalysis()
+                showLoadingIndicatorAgain(fragment)
+
+                assertThat(loadingIndicatorChild(fragment))
+                    .isInstanceOf(ImageView::class.java)
             }
         }
     }

@@ -8,7 +8,7 @@ import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.education.GetEducationFeatureEnabledUseCase
 import android.view.View
 import android.view.ViewGroup
-import net.gini.android.capture.ingredientbrand.CameraLoadingIndicatorAdapter
+import net.gini.android.capture.ingredientbrand.IngredientBrandLoadingIndicatorAdapter
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter
 import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
 import net.gini.android.capture.internal.provider.UnsupportedQrWarningSessionPin
@@ -260,7 +260,7 @@ class CameraFragmentExtensionTest {
         val instance = extension.loadingIndicatorAdapterInstance(NoopIndicatorAdapter())
 
         assertThat(instance.viewAdapter)
-            .isInstanceOf(CameraLoadingIndicatorAdapter::class.java)
+            .isInstanceOf(IngredientBrandLoadingIndicatorAdapter::class.java)
     }
 
     /**

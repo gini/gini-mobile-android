@@ -469,16 +469,15 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         if (GiniCapture.hasInstance()) {
             // While the client configuration lists the Analysis screen in ingredientBrandScreens,
             // the animated Gini mark replaces the loading indicator and an adapter injected with
-            // GiniCapture.Builder.setLoadingIndicatorAdapter() is deliberately not consulted here
-            // — the ingredient brand must not be replaceable by the integrator (PP-3512).
-            // Chosen at view creation, before the presenter starts in onResume(), so the indicator
-            // never swaps a frame after the screen is already showing.
+            // GiniCapture.Builder.setLoadingIndicatorAdapter() is deliberately not consulted —
+            // the ingredient brand must not be replaceable by the integrator (PP-3512).
+            // The choice is made whenever the indicator is shown, not here: on the "open with"
+            // path this screen opens before the client configuration has arrived, so deciding at
+            // view creation would keep the integrator's indicator for the whole screen.
             InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter> adapterInstance =
-                    fragmentExtension.giniLoadingIndicatorAdapterInstance();
-            if (adapterInstance == null) {
-                adapterInstance = GiniCapture.getInstance().internal()
-                        .getLoadingIndicatorAdapterInstance();
-            }
+                    fragmentExtension.loadingIndicatorAdapterInstance(
+                            GiniCapture.getInstance().internal()
+                                    .getLoadingIndicatorAdapterInstance().getViewAdapter());
 
             injectedLoadingIndicatorContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(
                     adapterInstance,

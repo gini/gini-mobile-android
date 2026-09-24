@@ -298,26 +298,8 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                 showAlertCallback);
     }
 
-    // ===================== TEMPORARY — REMOVE BEFORE COMMITTING =====================
-    // Holds the Analysis screen open so the whole loading animation can be watched. The animation
-    // runs for 5200ms, so this shows it about four times before analysis proceeds as normal.
-    // Revert with:
-    //   git checkout -- capture-sdk/sdk/src/main/java/net/gini/android/capture/analysis/AnalysisScreenPresenter.java
-    private static final long TEMP_ANALYSIS_DELAY_MS = 21_000L;
-    private boolean tempDelayElapsed = false;
-    // ===============================================================================
-
     @VisibleForTesting
     void doAnalyzeDocument() {
-        // TEMPORARY — see TEMP_ANALYSIS_DELAY_MS above.
-        if (!tempDelayElapsed) {
-            tempDelayElapsed = true;
-            startScanAnimation();
-            new android.os.Handler(android.os.Looper.getMainLooper())
-                    .postDelayed(this::doAnalyzeDocument, TEMP_ANALYSIS_DELAY_MS);
-            return;
-        }
-
         startScanAnimation();
         extension.showLoadingIndicator(() -> {
             stopScanAnimation();

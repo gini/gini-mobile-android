@@ -1377,14 +1377,6 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         mButtonCameraFlashTrigger.setContentDescription(activity.getString(flashButtonContentDescription));
     }
 
-    // ===================== TEMPORARY — REMOVE BEFORE COMMITTING =====================
-    // Holds the camera's QR invoice-retrieval indicator up so the whole loading animation can be
-    // watched on this screen too. Revert with:
-    //   git checkout -- capture-sdk/sdk/src/main/java/net/gini/android/capture/camera/CameraFragmentImpl.java
-    private static final long TEMP_QR_DELAY_MS = 21_000L;
-    private boolean tempQrDelayElapsed = false;
-    // ===============================================================================
-
     @VisibleForTesting
     void analyzeQRCode(final QRCodeDocument qrCodeDocument) {
         final Activity activity = mFragment.getActivity();
@@ -1394,14 +1386,6 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         // Only this busy state carries the ingredient brand; the camera's other three keep the
         // integrator's indicator.
         setQrInvoiceRetrievalRunning(true);
-        // TEMPORARY — see TEMP_QR_DELAY_MS above.
-        if (!tempQrDelayElapsed) {
-            tempQrDelayElapsed = true;
-            showActivityIndicatorAndDisableInteraction();
-            new android.os.Handler(android.os.Looper.getMainLooper())
-                    .postDelayed(() -> analyzeQRCode(qrCodeDocument), TEMP_QR_DELAY_MS);
-            return;
-        }
         if (GiniCapture.hasInstance()) {
             final NetworkRequestsManager networkRequestsManager =
                     GiniCapture.getInstance().internal().getNetworkRequestsManager();

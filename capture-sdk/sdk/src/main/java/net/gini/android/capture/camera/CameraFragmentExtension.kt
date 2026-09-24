@@ -19,7 +19,7 @@ import net.gini.android.capture.internal.qreducation.model.FlowType
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.education.GetEducationFeatureEnabledUseCase
 import net.gini.android.capture.ingredientbrand.GetIngredientBrandVisibleUseCase
-import net.gini.android.capture.ingredientbrand.CameraLoadingIndicatorAdapter
+import net.gini.android.capture.ingredientbrand.IngredientBrandLoadingIndicatorAdapter
 import net.gini.android.capture.ingredientbrand.IngredientBrandScreen
 import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
 import net.gini.android.capture.internal.provider.UnsupportedQrWarningSessionPin
@@ -76,10 +76,12 @@ internal abstract class CameraFragmentExtension {
     /**
      * The Camera screen's loading indicator.
      *
-     * Always a [CameraLoadingIndicatorAdapter], which decides between the Gini brand mark and the
-     * integrator's indicator at the moment it is shown. The Camera screen cannot decide at
-     * view-creation time: `ingredientBrandScreens` arrives asynchronously and this is the first
-     * screen the SDK opens, so the flag is still empty here on launch.
+     * Always an [IngredientBrandLoadingIndicatorAdapter], which decides between the Gini brand
+     * mark and the integrator's indicator every time it is shown. The Camera screen cannot decide
+     * at view-creation time: `ingredientBrandScreens` arrives asynchronously and this is the first
+     * screen the SDK opens, so the flag is still empty here on launch. It also cannot decide once
+     * per view, because the indicator serves four busy states and only the QR retrieval is
+     * branded.
      *
      * The Gini mark appears only while an invoice is retrieved for a scanned QR code — the
      * analysis step of the QR flow, before the Analysis screen opens. That is the one camera busy
@@ -92,7 +94,7 @@ internal abstract class CameraFragmentExtension {
     ): InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter> =
         cameraLoadingIndicatorInstance
             ?: InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter>(
-                CameraLoadingIndicatorAdapter(
+                IngredientBrandLoadingIndicatorAdapter(
                     isGiniMarkEnabled = {
                         qrInvoiceRetrievalRunning &&
                                 getIngredientBrandVisibleUseCase(IngredientBrandScreen.ANALYSIS)
