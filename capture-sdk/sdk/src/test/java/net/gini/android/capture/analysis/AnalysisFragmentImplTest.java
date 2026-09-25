@@ -24,9 +24,11 @@ import net.gini.android.capture.internal.util.CancelListener;
 import net.gini.android.capture.internal.util.Size;
 import net.gini.android.capture.network.GiniCaptureNetworkService;
 import net.gini.android.capture.test.FragmentImplFactory;
+import net.gini.android.capture.test.IngredientBrandTestKoin;
 import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.annotation.Config;
@@ -66,8 +68,16 @@ import static org.mockito.Mockito.verify;
 })
 public class AnalysisFragmentImplTest {
 
+    @Before
+    public void setUp() {
+        // The Analysis screen resolves the ingredient brand use case while creating its view, so
+        // its dependencies have to exist in the SDK's isolated Koin context.
+        IngredientBrandTestKoin.load();
+    }
+
     @After
     public void tearDown() throws Exception {
+        IngredientBrandTestKoin.unload();
         AnalysisFragmentCompatFake.sFragmentImplFactory = null;
         DialogShadow.cleanup();
         AnalysisHintsAnimatorShadow.cleanup();

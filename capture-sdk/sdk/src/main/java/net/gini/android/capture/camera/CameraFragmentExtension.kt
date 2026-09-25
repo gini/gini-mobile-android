@@ -19,9 +19,12 @@ import net.gini.android.capture.internal.qreducation.model.FlowType
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.education.GetEducationFeatureEnabledUseCase
 import net.gini.android.capture.ingredientbrand.GetIngredientBrandVisibleUseCase
+import net.gini.android.capture.ingredientbrand.IngredientBrandLoadingIndicatorAdapter
 import net.gini.android.capture.ingredientbrand.IngredientBrandScreen
 import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
 import net.gini.android.capture.internal.provider.UnsupportedQrWarningSessionPin
+import net.gini.android.capture.view.CustomLoadingIndicatorAdapter
+import net.gini.android.capture.view.InjectedViewAdapterInstance
 
 internal abstract class CameraFragmentExtension {
 
@@ -46,6 +49,59 @@ internal abstract class CameraFragmentExtension {
     private val getIngredientBrandVisibleUseCase:
             GetIngredientBrandVisibleUseCase by getGiniCaptureKoin().inject()
     private val educationMutex = Mutex()
+
+    /**
+     * Held for the lifetime of the fragment rather than rebuilt per view creation.
+     * [net.gini.android.capture.view.InjectedViewContainer] tracks adapter ownership through
+     * [InjectedViewAdapterInstance.viewContainer]; handing it a fresh instance on every
+     * `onCreateView` would break that bookkeeping across configuration changes.
+     */
+    private var cameraLoadingIndicatorInstance:
+            InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter>? = null
+
+    /**
+     * Whether the busy state currently on screen is the QR-code invoice retrieval.
+     *
+     * The camera raises one loading indicator for four different busy states — QR retrieval, the
+     * client document check, a multi-file import and a freshly taken photo — but only the first is
+     * the analysis step of the QR flow, and only that one carries the ingredient brand. Set by
+     * `CameraFragmentImpl` immediately before it raises the indicator.
+     */
+    private var qrInvoiceRetrievalRunning = false
+
+    fun setQrInvoiceRetrievalRunning(running: Boolean) {
+        qrInvoiceRetrievalRunning = running
+    }
+
+    /**
+     * The Camera screen's loading indicator.
+     *
+     * Always an [IngredientBrandLoadingIndicatorAdapter], which decides between the Gini brand
+     * mark and the integrator's indicator every time it is shown. The Camera screen cannot decide
+     * at view-creation time: `ingredientBrandScreens` arrives asynchronously and this is the first
+     * screen the SDK opens, so the flag is still empty here on launch. It also cannot decide once
+     * per view, because the indicator serves four busy states and only the QR retrieval is
+     * branded.
+     *
+     * The Gini mark appears only while an invoice is retrieved for a scanned QR code — the
+     * analysis step of the QR flow, before the Analysis screen opens. That is the one camera busy
+     * state the ingredient brand covers, so it follows the same [IngredientBrandScreen.ANALYSIS]
+     * flag rather than a separate one. The camera's other busy states (client document check,
+     * multi-file import, freshly taken photo) keep the integrator's indicator.
+     */
+    fun loadingIndicatorAdapterInstance(
+        integratorAdapter: CustomLoadingIndicatorAdapter,
+    ): InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter> =
+        cameraLoadingIndicatorInstance
+            ?: InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter>(
+                IngredientBrandLoadingIndicatorAdapter(
+                    isGiniMarkEnabled = {
+                        qrInvoiceRetrievalRunning &&
+                                getIngredientBrandVisibleUseCase(IngredientBrandScreen.ANALYSIS)
+                    },
+                    integratorAdapter = { integratorAdapter },
+                )
+            ).also { cameraLoadingIndicatorInstance = it }
 
     /**
      * Which of the two halves of the QR-code analysis step is currently running: `true` while the
