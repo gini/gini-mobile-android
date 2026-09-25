@@ -204,6 +204,7 @@
     <string name="gc_qr_education_upload_picture_message">Laden Sie direkt ein PDF, Bild oder GIF hoch</string>
     <string name="gc_invoice_education_message">Laden Sie direkt ein PDF, Bild oder GIF hoch</string>
     <string name="gc_invoice_education_content_description">analyse der Rechnung läuft</string>
+    <string name="gc_gini_loading_indicator_content_description">Wird geladen</string>
 
     <!--   region Warning -->
     <string name="gc_cancel_transfer">Überweisung abbrechen</string>

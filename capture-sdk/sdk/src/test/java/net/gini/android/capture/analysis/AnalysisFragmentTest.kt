@@ -20,6 +20,7 @@ import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.spy
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
+import java.time.Duration
 import java.util.concurrent.atomic.AtomicBoolean
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCapture
@@ -191,6 +192,90 @@ class AnalysisFragmentTest {
         launchFragment(mock(), customAdapter).use { scenario ->
             scenario.onFragment { _ ->
                 verify(customAdapter).onCreateView(any())
+            }
+        }
+    }
+
+    private fun poweredByGini(fragment: AnalysisFragment): View =
+        fragment.requireView().findViewById(R.id.gc_powered_by_gini)
+
+    private fun hintContainer(fragment: AnalysisFragment): View =
+        fragment.requireView().findViewById(R.id.gc_analysis_hint_container)
+
+    /** Runs the capture suggestion timer until the first tip has slid into view. */
+    private fun showFirstCaptureSuggestion() {
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(10))
+    }
+
+    /** The badge is visible from the start, before any capture suggestion is shown. */
+    @Test
+    fun `shows the Powered by Gini badge before the first capture suggestion`() {
+        enableIngredientBrandOnAnalysis()
+
+        launchFragment(mock()).use { scenario ->
+            scenario.onFragment { fragment ->
+                assertThat(hintContainer(fragment).visibility).isNotEqualTo(View.VISIBLE)
+                assertThat(poweredByGini(fragment).visibility).isEqualTo(View.VISIBLE)
+            }
+        }
+    }
+
+    /**
+     * Matches iOS: the first capture suggestion takes the badge's place at the bottom of the
+     * screen, and the badge does not come back while the tips keep cycling.
+     */
+    @Test
+    fun `hides the Powered by Gini badge when the first capture suggestion is shown`() {
+        enableIngredientBrandOnAnalysis()
+
+        launchFragment(mock()).use { scenario ->
+            scenario.onFragment { fragment ->
+                showFirstCaptureSuggestion()
+
+                assertThat(hintContainer(fragment).visibility).isEqualTo(View.VISIBLE)
+                assertThat(poweredByGini(fragment).visibility).isEqualTo(View.GONE)
+            }
+        }
+    }
+
+    /** `onResume` re-applies the badge visibility; it must not bring the badge back over a tip. */
+    @Test
+    fun `keeps the Powered by Gini badge hidden after the screen is resumed`() {
+        enableIngredientBrandOnAnalysis()
+
+        launchFragment(mock()).use { scenario ->
+            scenario.onFragment { showFirstCaptureSuggestion() }
+
+            scenario.moveToState(Lifecycle.State.STARTED)
+            scenario.moveToState(Lifecycle.State.RESUMED)
+
+            scenario.onFragment { fragment ->
+                assertThat(poweredByGini(fragment).visibility).isEqualTo(View.GONE)
+            }
+        }
+    }
+
+    /**
+     * A payment hint hides the capture suggestions again. The badge must still stay hidden behind
+     * the bottom sheet when the screen is resumed, for example after the app was in the background.
+     */
+    @Test
+    fun `keeps the Powered by Gini badge hidden behind a payment hint after the screen is resumed`() {
+        enableIngredientBrandOnAnalysis()
+
+        launchFragment(mock()).use { scenario ->
+            scenario.onFragment { fragment ->
+                showFirstCaptureSuggestion()
+                fragment.fragmentImpl.showWarning(WarningType.PAYMENT_DUE_DATE, "01.01.2027", {}, null)
+                Shadows.shadowOf(Looper.getMainLooper()).idle()
+                assertThat(hintContainer(fragment).visibility).isEqualTo(View.GONE)
+            }
+
+            scenario.moveToState(Lifecycle.State.STARTED)
+            scenario.moveToState(Lifecycle.State.RESUMED)
+
+            scenario.onFragment { fragment ->
+                assertThat(poweredByGini(fragment).visibility).isEqualTo(View.GONE)
             }
         }
     }

@@ -84,6 +84,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private AnalysisHintsAnimator mHintsAnimator;
     private View mHintsContainer;
     private View mPoweredByGiniView;
+    private boolean mHintShown;
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
     private InjectedViewContainer<CustomLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
     private boolean isScanAnimationActive;
@@ -434,9 +435,20 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         mPoweredByGiniView = view.findViewById(R.id.gc_powered_by_gini);
     }
 
+    // Once a capture suggestion has been shown the badge stays hidden for the rest of this view,
+    // matching iOS and the design: the tip takes the badge's place at the bottom of the screen.
+    // Tracked in its own flag because the hint container is hidden again when a warning bottom
+    // sheet opens, and the badge must not come back behind the sheet on the next onResume.
     @Override
     void setPoweredByGiniVisible(final boolean visible) {
-        mPoweredByGiniView.setVisibility(visible ? View.VISIBLE : View.GONE);
+        mPoweredByGiniView.setVisibility(visible && !mHintShown ? View.VISIBLE : View.GONE);
+    }
+
+    private void hidePoweredByGini() {
+        mHintShown = true;
+        if (mPoweredByGiniView != null) {
+            mPoweredByGiniView.setVisibility(View.GONE);
+        }
     }
 
     private void createHintsAnimator(@NonNull final View view) {
@@ -445,8 +457,10 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         final View hintContainer = view.findViewById(R.id.gc_analysis_hint_container);
         final TextView hintHeadlineTextView = view.findViewById(R.id.gc_analysis_hint_headline);
         mHintsContainer = hintContainer;
+        mHintShown = false;
         mHintsAnimator = new AnalysisHintsAnimator(mFragment.getActivity().getApplication(),
                 hintContainer, hintImageView, hintTextView, hintHeadlineTextView);
+        mHintsAnimator.setOnHintShownListener(this::hidePoweredByGini);
     }
 
     private void setTopBarInjectedViewContainer() {

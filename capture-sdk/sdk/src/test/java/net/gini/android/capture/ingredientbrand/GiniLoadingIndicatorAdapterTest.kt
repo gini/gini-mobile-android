@@ -10,6 +10,7 @@ import android.widget.ImageView
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
+import net.gini.android.capture.R
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter
 import org.junit.Test
 import org.robolectric.Shadows
@@ -74,15 +75,17 @@ class GiniLoadingIndicatorAdapterTest {
     }
 
     @Test
-    fun `the animation view is excluded from accessibility`() {
+    fun `the animation view is announced by TalkBack`() {
         val adapter = GiniLoadingIndicatorAdapter()
 
         val view = adapter.onCreateView(container)
 
-        // The analysis message already announces the state; the mark must not add a second
-        // TalkBack focus stop that says nothing.
+        // Matches iOS, where VoiceOver announces the Gini loading indicator.
         assertThat(view.importantForAccessibility)
-            .isEqualTo(View.IMPORTANT_FOR_ACCESSIBILITY_NO)
+            .isEqualTo(View.IMPORTANT_FOR_ACCESSIBILITY_YES)
+        assertThat(view.contentDescription.toString()).isEqualTo(
+            context.getString(R.string.gc_gini_loading_indicator_content_description)
+        )
     }
 
 
