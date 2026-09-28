@@ -132,17 +132,33 @@ entry for every SDK that ships the bumped `core-api-library`:
   instead of 60 s.
 - Integrators who call `setConnectionTimeoutInMs` (or the capture-sdk
   `setConnectionTimeout`): it now bounds only the connect phase. Read and write
-  stay at the 60 s default unless `setReadWriteTimeoutInMs` is called. Only
-  integrators who had raised the value above 60 s for slow uploads are
-  affected; they must now call `setReadWriteTimeoutInMs` with that value.
+  stay at the 60 s default unless `setReadWriteTimeoutInMs` (capture-sdk:
+  `setReadWriteTimeout`) is called. Because the setter used to apply the same
+  value to connect, read and write, **any explicit value other than 60 s
+  changes the read/write behaviour**, not only values above it:
+  - above 60 s (e.g. 90 000 for slow uploads): read/write drop from 90 s to
+    60 s, so long uploads can time out sooner;
+  - below 60 s (e.g. 10 000): read/write rise from 10 s to 60 s, so a stalled
+    response takes six times longer to surface;
+  - `0` (OkHttp: no timeout): read/write go from unlimited to 60 s, so an
+    upload that used to run unbounded now aborts after 60 s of silence,
+    silently and without any code change on the integrator's side.
+
+  To keep the previous behaviour, integrators pass their previous value to
+  `setReadWriteTimeoutInMs` / `setReadWriteTimeout` as well. Only the value
+  60 000 is unaffected, because it equals the read/write default.
 
 Release-note bullet (draft, for each affected package):
 
 > `setConnectionTimeoutInMs` now sets only the connect timeout (default 15 s, was
 > 60 s) so that a failed IPv6 connect falls back to IPv4 quickly. Read and write
 > timeouts are configured separately with the new `setReadWriteTimeoutInMs`
-> (default 60 s, unchanged). If you raised the connection timeout above 60 s for
-> large uploads, set `setReadWriteTimeoutInMs` to that value as well.
+> (default 60 s, unchanged). Previously `setConnectionTimeoutInMs` applied its
+> value to connect, read and write, so any explicit connection timeout other
+> than 60 s changes your read/write behaviour: values above 60 s now give
+> shorter read/write timeouts, values below 60 s longer ones, and `0` (no
+> timeout) now gives 60 s read/write timeouts instead of unlimited. To keep your
+> previous behaviour, call `setReadWriteTimeoutInMs` with the same value.
 
 ## Test plan
 
