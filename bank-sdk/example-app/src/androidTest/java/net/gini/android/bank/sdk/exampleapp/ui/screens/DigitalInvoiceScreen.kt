@@ -16,8 +16,6 @@ import androidx.test.uiautomator.Until
 import net.gini.android.bank.sdk.exampleapp.ui.resources.AmountText
 import net.gini.android.bank.sdk.exampleapp.ui.resources.AppResources
 import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.`is`
-import net.gini.android.bank.sdk.exampleapp.ui.resources.AppResources
 
 
 class DigitalInvoiceScreen {
