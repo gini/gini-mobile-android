@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -36,6 +37,7 @@ internal class ClientConfigurationStorage(private val context: Context) {
     private val keyIsPaymentScheduleHintEnabled =
         booleanPreferencesKey("is_payment_schedule_hint_enabled")
     private val keyIsCreditNoteHintEnabled = booleanPreferencesKey("is_credit_note_hint_enabled")
+    private val keyIngredientBrandScreens = stringSetPreferencesKey("ingredient_brand_screens")
 
     fun getConfiguration(): Flow<Configuration?> = context.dataStore.data.map { prefs ->
         if (prefs[keyIsCached] != true) return@map null
@@ -55,6 +57,7 @@ internal class ClientConfigurationStorage(private val context: Context) {
             isUnsupportedQRCodeWarningEnabled = prefs.flag(keyIsUnsupportedQRCodeWarningEnabled),
             isPaymentScheduleHintEnabled = prefs.flag(keyIsPaymentScheduleHintEnabled),
             isCreditNoteHintEnabled = prefs.flag(keyIsCreditNoteHintEnabled),
+            ingredientBrandScreens = prefs[keyIngredientBrandScreens] ?: emptySet(),
         )
     }
 
@@ -81,6 +84,7 @@ internal class ClientConfigurationStorage(private val context: Context) {
             prefs[keyIsPaymentScheduleHintEnabled] = configuration.isPaymentScheduleHintEnabled
             prefs[keyIsCreditNoteHintEnabled] =
                 configuration.isCreditNoteHintEnabled
+            prefs[keyIngredientBrandScreens] = configuration.ingredientBrandScreens
             prefs[keyIsCached] = true
         }
     }

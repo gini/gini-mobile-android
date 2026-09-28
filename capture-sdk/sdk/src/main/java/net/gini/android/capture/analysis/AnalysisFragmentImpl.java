@@ -82,6 +82,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private LinearLayout mAnalysisOverlay;
     private AnalysisHintsAnimator mHintsAnimator;
     private View mHintsContainer;
+    private View mPoweredByGiniView;
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
     private InjectedViewContainer<CustomLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
     private boolean isScanAnimationActive;
@@ -429,6 +430,12 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         mAnalysisOverlay = view.findViewById(R.id.gc_analysis_overlay);
         topAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
         injectedLoadingIndicatorContainer = view.findViewById(R.id.gc_injected_loading_indicator_container);
+        mPoweredByGiniView = view.findViewById(R.id.gc_powered_by_gini);
+    }
+
+    @Override
+    void setPoweredByGiniVisible(final boolean visible) {
+        mPoweredByGiniView.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
     private void createHintsAnimator(@NonNull final View view) {

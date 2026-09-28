@@ -6,9 +6,11 @@ import android.os.Environment
 import android.os.SystemClock
 import android.provider.MediaStore
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
+import java.util.regex.Pattern
 
 
 class ImageUploader {
@@ -115,6 +117,181 @@ class ImageUploader {
         }
     }
 
+    /**
+     * Puts [count] copies of the [filename] asset into the device's photo gallery.
+     *
+     * Separate from [copyImageToDownloads] because that one **deletes** every existing copy
+     * of the file before inserting, so calling it in a loop would leave exactly one photo
+     * behind. Here the delete happens once, up front.
+     *
+     * Each copy gets a unique display name — timestamp *plus index*, because eleven inserts
+     * can land inside the same millisecond and MediaStore then refuses the duplicate with
+     * "Failed to build unique file".
+     */
+    fun copyImagesToGallery(context: Context, filename: String, count: Int) {
+        runCatching {
+            context.contentResolver.delete(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                "${MediaStore.Images.Media.DISPLAY_NAME} LIKE ?",
+                arrayOf("%$filename")
+            )
+        }
+        val mimeType = when (filename.substringAfterLast('.').lowercase()) {
+            "jpg", "jpeg" -> "image/jpeg"
+            else -> "image/png"
+        }
+        val stamp = System.currentTimeMillis()
+        repeat(count) { index ->
+            val values = ContentValues().apply {
+                put(MediaStore.Images.Media.DISPLAY_NAME, "${stamp}_${index}_$filename")
+                put(MediaStore.Images.Media.MIME_TYPE, mimeType)
+                put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+            }
+            val uri = context.contentResolver.insert(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                values
+            ) ?: return@repeat
+            context.contentResolver.openOutputStream(uri)?.use { output ->
+                context.assets.open(filename).use { input -> input.copyTo(output) }
+            }
+        }
+    }
+
+    /**
+     * What the picker did when asked for more photos than it allows.
+     *
+     * @param accepted how many it ended up with, read from its own confirm label.
+     * @param limitMessageShown whether it told the user about the limit.
+     */
+    data class PickerSelection(val accepted: Int, val limitMessageShown: Boolean)
+
+    /**
+     * Taps up to [count] photos in the open system picker and reports what happened.
+     *
+     * The SDK opens the picker through `PickMultipleVisualMedia(maxItems = 10)`
+     * (`FileChooserFragment.kt:164`), so an eleventh selection is refused and Android shows a
+     * snackbar — "Select up to 10 items" — instead. Both facts were confirmed by hand on a
+     * real phone.
+     *
+     * The snackbar is checked **inside** the loop, right after each tap. It is transient, so
+     * a check made after the loop finished would usually miss it and report the case as
+     * failing for the wrong reason.
+     */
+    fun selectPhotosFromPicker(count: Int): PickerSelection {
+        device.waitForIdle()
+        val tapped = mutableSetOf<Pair<Int, Int>>()
+        var limitMessageShown = false
+        repeat(count) {
+            // Re-found before every tap rather than listed once up front: the picker loads
+            // tiles lazily, so the set available on the first pass is not necessarily the
+            // set available on the last. Selecting a tile does not move it — the picker
+            // leaves it in place and draws a checkmark on it — which is what makes keying
+            // `tapped` by centre coordinates safe: a tile's centre is stable for the life of
+            // the picker, so a tile already chosen is never tapped a second time (a second
+            // tap would deselect it).
+            val next = photoTileBounds().firstOrNull { it !in tapped } ?: return@repeat
+            device.click(next.first, next.second)
+            tapped += next
+            device.waitForIdle()
+            if (!limitMessageShown && isSelectionLimitMessageShown()) {
+                limitMessageShown = true
+            }
+        }
+        return PickerSelection(
+            accepted = selectedCountFromConfirmLabel() ?: tapped.size,
+            limitMessageShown = limitMessageShown
+        )
+    }
+
+    /**
+     * Whether the picker is showing its "you have hit the limit" snackbar.
+     *
+     * The text belongs to Android's photo picker, not to the Gini SDK, so it cannot be
+     * resolved from a string resource the way the SDK's own copy is. Known wordings are
+     * listed, with a loose pattern behind them for locales and picker versions not covered —
+     * the same layered approach [uploadImageFromPhotos] uses for tile descriptions.
+     */
+    private fun isSelectionLimitMessageShown(): Boolean {
+        val known = listOf(
+            "Select up to 10 items", // English, confirmed on a real device
+            "Wähle bis zu 10 Elemente aus" // German equivalent
+        )
+        if (known.any { device.findObject(UiSelector().textContains(it)).exists() }) return true
+        // Any short message that mentions the limit — covers rewordings without matching the
+        // confirm button, whose label is just "Add (10)".
+        return device.findObject(
+            UiSelector().textMatches("(?i).*(up to|only|maximum|max\\.?|bis zu).*10.*")
+        ).exists()
+    }
+
+    /**
+     * Closes the system picker if it is still open.
+     *
+     * The picker is a separate activity, so a test that leaves it in front hands the next
+     * test a foreground that is not the app — which is how this suite produced a
+     * `NoActivityResumedException` from an Espresso call that looked unrelated. Every test
+     * that opens the picker without confirming a selection has to close it again.
+     *
+     * A no-op when no picker is showing, and capped at two back presses so it can never walk
+     * out of the app itself.
+     */
+    fun dismissPicker() {
+        repeat(MAX_DISMISS_PRESSES) {
+            if (photoTileBounds().isEmpty()) return
+            device.pressBack()
+            device.waitForIdle()
+        }
+    }
+
+    /** The number in the confirm button's label ("Add (10)" -> 10), or null if unreadable. */
+    fun selectedCountFromConfirmLabel(): Int? =
+        pickerConfirmLabel()?.let { label ->
+            Regex("\\d+").find(label)?.value?.toIntOrNull()
+        }
+
+    /**
+     * The confirm button's label, or null when it is not on screen.
+     *
+     * A multi-select picker puts the count in it ("Add (11)"), so this is the only reliable
+     * read of how many pictures the picker thinks are selected — worth having in a failure
+     * message when the app then does not complain about the count.
+     */
+    fun pickerConfirmLabel(): String? {
+        val labels = listOf("Add", "Hinzufügen", "Done", "Fertig")
+        labels.forEach { label ->
+            val button = device.findObject(UiSelector().textStartsWith(label))
+            if (button.exists()) return runCatching { button.text }.getOrNull() ?: label
+        }
+        return null
+    }
+
+    /**
+     * Centre points of the photo tiles on screen, in grid order.
+     *
+     * Tries the same selectors [uploadImageFromPhotos] uses, in the same order: the legacy
+     * media-module picker exposes a resource id, the newer Mainline picker exposes only a
+     * localized content description, and the year fallback covers any language.
+     */
+    private fun photoTileBounds(): List<Pair<Int, Int>> {
+        val selectors = listOf(
+            By.res("com.google.android.providers.media.module:id/icon_thumbnail"),
+            By.desc(Pattern.compile("Photo taken on.*")),
+            By.desc(Pattern.compile("Foto wurde am.*")),
+            By.desc(Pattern.compile(".*\\b20\\d\\d\\b.*"))
+        )
+        val deadline = SystemClock.uptimeMillis() + TILE_TIMEOUT
+        while (SystemClock.uptimeMillis() < deadline) {
+            selectors.forEach { selector ->
+                val found = device.findObjects(selector)
+                if (found.isNotEmpty()) {
+                    return found.map { it.visibleBounds.centerX() to it.visibleBounds.centerY() }
+                }
+            }
+            SystemClock.sleep(POLL_INTERVAL)
+        }
+        return emptyList()
+    }
+
     fun uploadImageFromFiles(filename: String) {
         device.waitForIdle()
         val fileList = UiScrollable(UiSelector().scrollable(true))
@@ -150,5 +327,8 @@ class ImageUploader {
         private const val TILE_TIMEOUT = 5_000L
         private const val CONFIRM_TIMEOUT = 3_000L
         private const val POLL_INTERVAL = 250L
+
+        /** Back presses allowed when closing the picker — never enough to leave the app. */
+        private const val MAX_DISMISS_PRESSES = 2
     }
 }

@@ -91,6 +91,14 @@ interface AnalysisScreenContract {
          *                            Access Framework and the screen can be recreated meanwhile.
          */
         abstract void processInvoiceSaving(@NonNull String pendingSavingAction);
+
+        /**
+         * Shows or hides the Gini ingredient brand element ("Powered by Gini").
+         *
+         * @param visible whether the client configuration lists the Analysis screen in
+         *                {@code ingredientBrandScreens}
+         */
+        abstract void setPoweredByGiniVisible(boolean visible);
     }
 
     abstract class Presenter extends GiniCaptureBasePresenter<View> implements
