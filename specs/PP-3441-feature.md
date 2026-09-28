@@ -81,7 +81,12 @@ health-sdk "unexpected error"), but the defect is the timeout configuration in
 
 ## Solution
 
-Minimal, behind existing public API, in `core-api-library:library` only:
+Minimal change in two modules: the timeout split itself in
+`core-api-library:library`, plus two new public setters in
+`capture-sdk:default-network` so capture-sdk and bank-sdk integrators can reach
+the read/write timeout (item 3). Both modules gain public API and both API dumps
+change; every other SDK picks the new defaults up transitively without code
+changes:
 
 1. `DefaultGiniHttpClientProvider`
    - Hold two values instead of one: `connectTimeoutInMs` (new default
