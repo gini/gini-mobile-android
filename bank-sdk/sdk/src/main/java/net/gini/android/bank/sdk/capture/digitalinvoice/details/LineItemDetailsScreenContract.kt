@@ -3,8 +3,6 @@ package net.gini.android.bank.sdk.capture.digitalinvoice.details
 import android.app.Activity
 import net.gini.android.capture.GiniCaptureBasePresenter
 import net.gini.android.capture.GiniCaptureBaseView
-import net.gini.android.capture.network.model.GiniCaptureReturnReason
-import net.gini.android.bank.sdk.capture.digitalinvoice.ReturnReasonDialogResultCallback
 import net.gini.android.bank.sdk.capture.digitalinvoice.SelectableLineItem
 
 /**
@@ -35,9 +33,6 @@ interface LineItemDetailsScreenContract {
         fun disableSaveButton()
         fun enableInput()
         fun disableInput()
-        fun showReturnReasonDialog(reasons: List<GiniCaptureReturnReason>,
-                                   resultCallback: ReturnReasonDialogResultCallback
-        )
         fun dismiss()
         fun onSave(selectableLineItem: SelectableLineItem)
     }

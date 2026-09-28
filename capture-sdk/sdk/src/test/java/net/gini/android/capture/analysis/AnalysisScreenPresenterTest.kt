@@ -56,7 +56,6 @@ import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
 import net.gini.android.capture.internal.util.FileImportHelper.ShowAlertCallback
 import net.gini.android.capture.internal.util.Size
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
-import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.Event
@@ -537,16 +536,12 @@ class AnalysisScreenPresenterTest {
         val compoundExtraction = Collections.singletonMap(
             "compoundExtraction", mock<GiniCaptureCompoundExtraction>()
         )
-        val returnReasons = listOf(
-            mock<GiniCaptureReturnReason>()
-        )
         val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()
         analysisFuture.complete(
             AnalysisInteractor.ResultHolder(
                 AnalysisInteractor.Result.SUCCESS_WITH_EXTRACTIONS,
                 extractions,
                 compoundExtraction,
-                returnReasons,
                 "dummy_doc_id",
                 "dummy_doc_filename",
             )
@@ -563,7 +558,7 @@ class AnalysisScreenPresenterTest {
         // Then
         TestScope().launch {
             verify(listener)
-                .onExtractionsAvailable(extractions, compoundExtraction, returnReasons)
+                .onExtractionsAvailable(extractions, compoundExtraction, emptyList())
         }
 
     }
@@ -908,7 +903,6 @@ class AnalysisScreenPresenterTest {
             AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS,
             emptyMap(),
             emptyMap(),
-            emptyList(),
             "dummy",
             "dummy"
         )
@@ -940,7 +934,6 @@ class AnalysisScreenPresenterTest {
             AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS,
             emptyMap(),
             emptyMap(),
-            emptyList(),
             "dummy",
             "dummy"
         )
@@ -965,7 +958,6 @@ class AnalysisScreenPresenterTest {
             AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS,
             emptyMap(),
             emptyMap(),
-            emptyList(),
             "dummy",
             "dummy"
         )
@@ -1008,12 +1000,10 @@ class AnalysisScreenPresenterTest {
 
         val extractions = mapOf("key1" to mock<GiniCaptureSpecificExtraction>())
         val compoundExtractions = mapOf("key2" to mock<GiniCaptureCompoundExtraction>())
-        val returnReasons = listOf(mock<GiniCaptureReturnReason>())
 
         val resultHolder = mock<AnalysisInteractor.ResultHolder> {
             on { this.extractions } doReturn extractions
             on { this.compoundExtractions } doReturn compoundExtractions
-            on { this.returnReasons } doReturn returnReasons
         }
 
         // Act
@@ -1023,7 +1013,7 @@ class AnalysisScreenPresenterTest {
         verify(listener).onExtractionsAvailable(
             extractions,
             compoundExtractions,
-            returnReasons
+            emptyList()
         )
     }
 
@@ -1042,7 +1032,6 @@ class AnalysisScreenPresenterTest {
                 AnalysisInteractor.Result.SUCCESS_WITH_EXTRACTIONS,
                 emptyMap(),
                 emptyMap(),
-                emptyList(),
                 "dummy_doc_id",
                 "dummy_doc_filename",
             )
@@ -1076,7 +1065,6 @@ class AnalysisScreenPresenterTest {
                 AnalysisInteractor.Result.SUCCESS_WITH_EXTRACTIONS,
                 emptyMap(),
                 mapOf(CROSS_BORDER_PAYMENT_KEY to emptyCbp),
-                emptyList(),
                 "dummy_doc_id",
                 "dummy_doc_filename",
             )
@@ -1111,7 +1099,6 @@ class AnalysisScreenPresenterTest {
                 AnalysisInteractor.Result.SUCCESS_WITH_EXTRACTIONS,
                 emptyMap(),
                 mapOf(CROSS_BORDER_PAYMENT_KEY to cbp),
-                emptyList(),
                 "dummy_doc_id",
                 "dummy_doc_filename",
             )
@@ -1147,7 +1134,6 @@ class AnalysisScreenPresenterTest {
                 AnalysisInteractor.Result.SUCCESS_WITH_EXTRACTIONS,
                 emptyMap(),
                 emptyMap(),
-                emptyList(),
                 "dummy_doc_id",
                 "dummy_doc_filename",
             )
@@ -1433,7 +1419,6 @@ class AnalysisScreenPresenterTest {
                 AnalysisInteractor.Result.SUCCESS_WITH_EXTRACTIONS,
                 extractions,
                 compoundExtractions,
-                emptyList(),
                 "dummy_doc_id",
                 "dummy_doc_filename",
             )

@@ -4,7 +4,6 @@ import com.google.common.truth.Truth.assertThat
 import io.mockk.mockk
 import net.gini.android.capture.CaptureSDKResult
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
-import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import org.junit.Test
 
@@ -18,7 +17,6 @@ class CaptureResultTest {
         mapOf("paymentDueDate" to mockk<GiniCaptureSpecificExtraction>())
     private val compoundExtractions =
         mapOf("compound" to mockk<GiniCaptureCompoundExtraction>())
-    private val returnReasons = listOf(mockk<GiniCaptureReturnReason>())
 
     /**
      * The scheduled payment hand-off must survive the mapping with its
@@ -29,8 +27,7 @@ class CaptureResultTest {
     fun `SchedulePayment maps to CaptureResult SchedulePayment with extractions intact`() {
         val sdkResult = CaptureSDKResult.SchedulePayment(
             specificExtractions,
-            compoundExtractions,
-            returnReasons
+            compoundExtractions
         )
 
         val result = sdkResult.toCaptureResult()
@@ -39,22 +36,25 @@ class CaptureResultTest {
         val schedulePayment = result as CaptureResult.SchedulePayment
         assertThat(schedulePayment.specificExtractions).isEqualTo(specificExtractions)
         assertThat(schedulePayment.compoundExtractions).isEqualTo(compoundExtractions)
-        assertThat(schedulePayment.returnReasons).isEqualTo(returnReasons)
+        @Suppress("DEPRECATION")
+        assertThat(schedulePayment.returnReasons).isEmpty()
     }
 
     @Test
     fun `Success still maps to CaptureResult Success`() {
         val sdkResult = CaptureSDKResult.Success(
             specificExtractions,
-            compoundExtractions,
-            returnReasons
+            compoundExtractions
         )
 
         val result = sdkResult.toCaptureResult()
 
         assertThat(result).isInstanceOf(CaptureResult.Success::class.java)
-        assertThat((result as CaptureResult.Success).specificExtractions)
-            .isEqualTo(specificExtractions)
+        val success = result as CaptureResult.Success
+        assertThat(success.specificExtractions).isEqualTo(specificExtractions)
+        assertThat(success.compoundExtractions).isEqualTo(compoundExtractions)
+        @Suppress("DEPRECATION")
+        assertThat(success.returnReasons).isEmpty()
     }
 
     @Test

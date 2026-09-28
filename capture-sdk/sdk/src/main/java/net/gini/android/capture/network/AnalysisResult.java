@@ -23,7 +23,6 @@ public class AnalysisResult extends Result {
 
     private final Map<String, GiniCaptureSpecificExtraction> extractions;
     private final Map<String, GiniCaptureCompoundExtraction> compoundExtractions;
-    private final List<GiniCaptureReturnReason> returnReasons;
 
     /**
      * Create a new analysis result for a Gini API document id.
@@ -37,7 +36,6 @@ public class AnalysisResult extends Result {
         super(giniApiDocumentId, "");
         this.extractions = extractions;
         this.compoundExtractions = Collections.emptyMap();
-        this.returnReasons = Collections.emptyList();
     }
 
     /**
@@ -53,7 +51,6 @@ public class AnalysisResult extends Result {
         super(giniApiDocumentId, giniApiDocumentFilename);
         this.extractions = extractions;
         this.compoundExtractions = Collections.emptyMap();
-        this.returnReasons = Collections.emptyList();
     }
 
     /**
@@ -70,7 +67,6 @@ public class AnalysisResult extends Result {
         super(giniApiDocumentId, giniApiDocumentFilename);
         this.extractions = extractions;
         this.compoundExtractions = compoundExtractions;
-        this.returnReasons = Collections.emptyList();
     }
 
     /**
@@ -79,16 +75,18 @@ public class AnalysisResult extends Result {
      * @param giniApiDocumentId   the id of a document in the Gini API
      * @param extractions         the extractions from the Gini API
      * @param compoundExtractions the compound extractions from the Gini API
+     * @param returnReasons       ignored
+     * @deprecated Return reasons are no longer supported and are ignored. Use
+     * {@link #AnalysisResult(String, String, Map, Map)} instead. This constructor will be removed
+     * in the next major version.
      */
+    @Deprecated
     public AnalysisResult(@NonNull final String giniApiDocumentId,
                           @NonNull final String giniApiDocumentFilename,
                           @NonNull final Map<String, GiniCaptureSpecificExtraction> extractions,
                           @NonNull final Map<String, GiniCaptureCompoundExtraction> compoundExtractions,
                           @NonNull final List<GiniCaptureReturnReason> returnReasons) {
-        super(giniApiDocumentId, giniApiDocumentFilename);
-        this.extractions = extractions;
-        this.compoundExtractions = compoundExtractions;
-        this.returnReasons = returnReasons;
+        this(giniApiDocumentId, giniApiDocumentFilename, extractions, compoundExtractions);
     }
 
     /**
@@ -108,9 +106,13 @@ public class AnalysisResult extends Result {
     }
 
     /**
-     * @return list of return reasons
+     * @return an empty list
+     * @deprecated Return reasons are no longer supported. This list is always empty and will be
+     * removed in the next major version.
      */
+    @Deprecated
+    @NonNull
     public List<GiniCaptureReturnReason> getReturnReasons() {
-        return returnReasons;
+        return Collections.emptyList();
     }
 }

@@ -199,7 +199,9 @@ public final class net/gini/android/capture/CaptureSDKResult$Error$Creator : and
 public final class net/gini/android/capture/CaptureSDKResult$SchedulePayment : net/gini/android/capture/CaptureSDKResult {
 	public static final field $stable I
 	public static final field CREATOR Landroid/os/Parcelable$Creator;
+	public fun <init> (Ljava/util/Map;Ljava/util/Map;)V
 	public fun <init> (Ljava/util/Map;Ljava/util/Map;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/Map;Ljava/util/Map;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun describeContents ()I
 	public final fun getCompoundExtractions ()Ljava/util/Map;
 	public final fun getReturnReasons ()Ljava/util/List;
@@ -218,7 +220,9 @@ public final class net/gini/android/capture/CaptureSDKResult$SchedulePayment$Cre
 public final class net/gini/android/capture/CaptureSDKResult$Success : net/gini/android/capture/CaptureSDKResult {
 	public static final field $stable I
 	public static final field CREATOR Landroid/os/Parcelable$Creator;
+	public fun <init> (Ljava/util/Map;Ljava/util/Map;)V
 	public fun <init> (Ljava/util/Map;Ljava/util/Map;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/Map;Ljava/util/Map;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun describeContents ()I
 	public final fun getCompoundExtractions ()Ljava/util/Map;
 	public final fun getReturnReasons ()Ljava/util/List;
