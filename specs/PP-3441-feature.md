@@ -148,7 +148,17 @@ entry for every SDK that ships the bumped `core-api-library`:
   `setReadWriteTimeoutInMs` / `setReadWriteTimeout` as well. Only the value
   60 000 is unaffected, because it equals the read/write default.
 
-Release-note bullet (draft, for each affected package):
+Release-note bullets (draft). The API-library packages and the SDKs built
+directly on `GiniCoreAPIBuilder` (`core-api-library`, `bank-api-library`,
+`health-api-library`, `health-sdk`, `internal-payment-sdk`) expose the
+`...InMs` setters; `capture-sdk`, `capture-sdk:default-network` and `bank-sdk`
+integrators configure the network through
+`GiniCaptureDefaultNetworkService.Builder`, which exposes `setConnectionTimeout`
+/ `setReadWriteTimeout` plus the `...Unit` setters instead. Use the matching
+variant per package:
+
+For `core-api-library`, `bank-api-library`, `health-api-library`, `health-sdk`,
+`internal-payment-sdk`:
 
 > `setConnectionTimeoutInMs` now sets only the connect timeout (default 15 s, was
 > 60 s) so that a failed IPv6 connect falls back to IPv4 quickly. Read and write
@@ -159,6 +169,20 @@ Release-note bullet (draft, for each affected package):
 > shorter read/write timeouts, values below 60 s longer ones, and `0` (no
 > timeout) now gives 60 s read/write timeouts instead of unlimited. To keep your
 > previous behaviour, call `setReadWriteTimeoutInMs` with the same value.
+
+For `capture-sdk`, `capture-sdk:default-network`, `bank-sdk`:
+
+> `GiniCaptureDefaultNetworkService.Builder.setConnectionTimeout` (with
+> `setConnectionTimeoutUnit`) now sets only the connect timeout (default 15 s,
+> was 60 s) so that a failed IPv6 connect falls back to IPv4 quickly. Read and
+> write timeouts are configured separately with the new `setReadWriteTimeout` /
+> `setReadWriteTimeoutUnit` (default 60 s, unchanged). Previously
+> `setConnectionTimeout` applied its value to connect, read and write, so any
+> explicit connection timeout other than 60 s changes your read/write behaviour:
+> values above 60 s now give shorter read/write timeouts, values below 60 s
+> longer ones, and `0` (no timeout) now gives 60 s read/write timeouts instead
+> of unlimited. To keep your previous behaviour, call `setReadWriteTimeout` and
+> `setReadWriteTimeoutUnit` with the same value and unit.
 
 ## Test plan
 
