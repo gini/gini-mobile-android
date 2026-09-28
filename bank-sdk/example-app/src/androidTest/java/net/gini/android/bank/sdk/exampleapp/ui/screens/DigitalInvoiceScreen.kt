@@ -117,14 +117,6 @@ class DigitalInvoiceScreen {
         return this
     }
 
-    fun  checkItemIsDisabledFromDigitalScreen(): Boolean {
-        val lineItem = device.findObject(UiSelector()
-            .className("android.view.ViewGroup")
-            .resourceId(AppResources.resId("gsb_line_item"))
-            .index(0))
-        return !(lineItem.isEnabled)
-    }
-
     fun  checkItemIsEnabledFromDigitalScreen(): Boolean {
         val lineItem = device.findObject(UiSelector()
             .className("android.view.ViewGroup")
