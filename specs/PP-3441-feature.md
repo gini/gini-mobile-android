@@ -130,8 +130,14 @@ into a ~15 s blip before the IPv4 retry. Either value satisfies the ticket
 Public API impact: binary compatible — `setReadWriteTimeoutInMs` is added on
 `DefaultGiniHttpClientProvider.Builder` and `GiniCoreAPIBuilder`, and
 `setReadWriteTimeout` / `setReadWriteTimeoutUnit` on
-`GiniCaptureDefaultNetworkService.Builder`; no signature removed or changed. Two **behavioural changes**, both needing a release-notes
-entry for every SDK that ships the bumped `core-api-library`:
+`GiniCaptureDefaultNetworkService.Builder`. No public constructor or method
+signature changed or was removed. The one changed line in the
+`core-api-library:library` API dump is the synthetic bridge of
+`DefaultGiniHttpClientProvider`'s `private constructor`, which gained an `I`
+for the new read/write field; it is generated for the default-argument
+constructor and only reachable from the `Builder`, so no signature an
+integrator can call moved. Two **behavioural changes**, both needing a
+release-notes entry for every SDK that ships the bumped `core-api-library`:
 
 - Integrators who never set a timeout: connect attempts now fail after 15 s
   instead of 60 s.
