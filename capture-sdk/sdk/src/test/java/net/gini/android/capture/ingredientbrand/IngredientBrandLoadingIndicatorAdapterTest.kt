@@ -223,4 +223,34 @@ class IngredientBrandLoadingIndicatorAdapterTest {
         assertThat(hostChild(view)).isInstanceOf(ImageView::class.java)
         assertThat(integrator.created).isFalse()
     }
+
+    /**
+     * The flag that allows the Gini mark is set when a bank-transfer QR starts its analysis step
+     * and cleared when that step ends. Two QR codes are scanned without the camera view ever being
+     * recreated, so the decision has to be re-read on every show — a cached or stale `true` would
+     * brand the second one, including the EPS codes that must never carry the mark.
+     */
+    @Test
+    fun `re-reads the flag on every show, without the view being recreated`() {
+        var qrRetrievalRunning = true
+        val integrator = RecordingIntegratorAdapter()
+        val sut = adapter({ qrRetrievalRunning }, integrator)
+
+        // The view is created once, as the camera does.
+        val view = sut.onCreateView(container)
+
+        // First QR: the analysis step is running -> the Gini mark.
+        sut.onVisible()
+        assertThat(hostChild(view)).isInstanceOf(ImageView::class.java)
+        sut.onHidden()
+
+        // The step ends; the camera clears the flag. No onCreateView in between.
+        qrRetrievalRunning = false
+
+        // Second QR (e.g. EPS) raises the indicator again -> must NOT be branded.
+        sut.onVisible()
+
+        assertThat(integrator.created).isTrue()
+        assertThat(hostChild(view)).isNotInstanceOf(ImageView::class.java)
+    }
 }

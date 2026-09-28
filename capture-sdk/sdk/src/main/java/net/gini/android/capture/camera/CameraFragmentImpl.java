@@ -1314,10 +1314,14 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 analyzeQRCode(mQRCodeDocument);
                 break;
             case EPS_PAYMENT:
+                // No analysis step at all, so no ingredient brand — stated explicitly rather than
+                // relying on the flag already being false.
+                setQrInvoiceRetrievalRunning(false);
                 sendQRCodeScannedEventToUserAnalytics(true);
                 handleEPSPaymentQRCode(paymentQRCodeData);
                 break;
             default:
+                setQrInvoiceRetrievalRunning(false);
                 sendQRCodeScannedEventToUserAnalytics(false);
                 LOG.error("Unknown payment QR Code format: {}", LogSanitizer.sanitize(paymentQRCodeData));
                 break;
@@ -1778,6 +1782,12 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
      * yet {@link #analyzeQRCode} raises the badge regardless, so it must still come down here.
      */
     public void hideActivityIndicatorAndEnableInteraction() {
+        // The QR-code analysis step is over, so the next busy state starts unbranded. Without this
+        // the flag stayed true for the rest of the fragment's life and QRCodePopup.progressViews(),
+        // which raises the indicator without going through any of the call sites that set it,
+        // would show the Gini mark for every later QR code — including the EPS ones that must
+        // never carry it (see handlePaymentQRCodeData).
+        setQrInvoiceRetrievalRunning(false);
         if (!isQrEducationStepRunning()) {
             setPoweredByGiniVisible(false);
         }
