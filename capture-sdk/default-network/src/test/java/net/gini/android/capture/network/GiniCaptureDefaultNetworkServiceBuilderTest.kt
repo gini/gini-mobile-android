@@ -102,6 +102,35 @@ class GiniCaptureDefaultNetworkServiceBuilderTest {
     }
 
     @Test
+    fun `resolves the connect and the read write timeout to milliseconds independently`() {
+        // Different units on purpose: a helper that reused the connect fields or skipped the
+        // unit conversion would fail one of the two assertions.
+        val builder = GiniCaptureDefaultNetworkService.builder(context)
+            .setConnectionTimeout(30)
+            .setConnectionTimeoutUnit(TimeUnit.SECONDS)
+            .setReadWriteTimeout(2)
+            .setReadWriteTimeoutUnit(TimeUnit.MINUTES)
+
+        assertThat(builder.connectionTimeoutInMs()).isEqualTo(30_000)
+        assertThat(builder.readWriteTimeoutInMs()).isEqualTo(120_000)
+    }
+
+    @Test
+    fun `leaves a timeout unset until its unit is configured`() {
+        val builder = GiniCaptureDefaultNetworkService.builder(context)
+
+        assertThat(builder.connectionTimeoutInMs()).isNull()
+        assertThat(builder.readWriteTimeoutInMs()).isNull()
+
+        builder
+            .setReadWriteTimeout(90)
+            .setReadWriteTimeoutUnit(TimeUnit.SECONDS)
+
+        assertThat(builder.connectionTimeoutInMs()).isNull()
+        assertThat(builder.readWriteTimeoutInMs()).isEqualTo(90_000)
+    }
+
+    @Test
     fun `building with self-managed authentication fails without a custom http client provider`() {
         val builder = GiniCaptureDefaultNetworkService.builder(context)
             .setSelfManagedAuthentication(true)

@@ -680,28 +680,30 @@ internal constructor(
             if (networkSecurityConfigResId != 0) {
                 giniApiBuilder.setNetworkSecurityConfigResId(networkSecurityConfigResId)
             }
-            connectionTimeoutUnit?.let { timeoutUnit ->
-                giniApiBuilder.setConnectionTimeoutInMs(
-                    TimeUnit.MILLISECONDS.convert(
-                        connectionTimeout,
-                        timeoutUnit
-                    ).toInt()
-                )
-            }
-            readWriteTimeoutUnit?.let { timeoutUnit ->
-                giniApiBuilder.setReadWriteTimeoutInMs(
-                    TimeUnit.MILLISECONDS.convert(
-                        readWriteTimeout,
-                        timeoutUnit
-                    ).toInt()
-                )
-            }
+            connectionTimeoutInMs()?.let { giniApiBuilder.setConnectionTimeoutInMs(it) }
+            readWriteTimeoutInMs()?.let { giniApiBuilder.setReadWriteTimeoutInMs(it) }
             trustManager?.let { giniApiBuilder.setTrustManager(it) }
             httpClientProvider?.let { giniApiBuilder.setHttpClientProvider(it) }
             giniApiBuilder.setDebuggingEnabled(isDebuggingEnabled)
             val giniBankApi = giniApiBuilder.build()
             return GiniCaptureDefaultNetworkService(giniBankApi, documentMetadata, mContext)
         }
+
+        /**
+         * The connect timeout that [build] forwards to the API builder, in milliseconds, or
+         * `null` when [setConnectionTimeoutUnit] was not called and the API builder's default
+         * applies.
+         */
+        internal fun connectionTimeoutInMs(): Int? =
+            connectionTimeoutUnit?.let { toMillis(connectionTimeout, it) }
+
+        /**
+         * The read and write timeout that [build] forwards to the API builder, in milliseconds,
+         * or `null` when [setReadWriteTimeoutUnit] was not called and the API builder's default
+         * applies.
+         */
+        internal fun readWriteTimeoutInMs(): Int? =
+            readWriteTimeoutUnit?.let { toMillis(readWriteTimeout, it) }
 
         /**
          * Set your Gini API client ID and secret. The email domain is used when generating
@@ -973,3 +975,6 @@ internal constructor(
         fun builder(context: Context) = Builder(context)
     }
 }
+
+private fun toMillis(timeout: Long, unit: TimeUnit): Int =
+    TimeUnit.MILLISECONDS.convert(timeout, unit).toInt()
