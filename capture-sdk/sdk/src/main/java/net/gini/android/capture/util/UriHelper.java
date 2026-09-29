@@ -165,6 +165,12 @@ public final class UriHelper {
      * no type at all, which would otherwise make a perfectly valid HEIC photo
      * look unsupported.
      *
+     * <p> {@code application/octet-stream} counts as "not named" wherever it
+     * comes from. It is what a provider falls back to when it cannot identify a
+     * file, and it is also what {@link MimeTypeMap} returns for a {@code .bin}
+     * extension, so accepting it from either source would skip the header check
+     * for exactly the files that need it.
+     *
      * @param uri     a {@link Uri} pointing to a file
      * @param context Android context
      * @return the mime type, or null if it could not be determined
@@ -172,17 +178,27 @@ public final class UriHelper {
     @Nullable
     public static String getMimeType(@NonNull final Uri uri, @NonNull final Context context) {
         final String type = context.getContentResolver().getType(uri);
-        if (type != null && !MimeType.APPLICATION_OCTET_STREAM.equals(type)) {
+        if (namesTheType(type)) {
             return type;
         }
         final String typeFromUrl = getMimeTypeFromUrl(uri.getPath());
-        if (typeFromUrl != null) {
+        if (namesTheType(typeFromUrl)) {
             return typeFromUrl;
         }
         if (HeicHeader.isHeic(uri, context)) {
             return MimeType.IMAGE_HEIC.asString();
         }
-        return type;
+        // Nothing identified the file. Hand back whatever was on offer, so the
+        // caller still sees "application/octet-stream" rather than null.
+        return typeFromUrl != null ? typeFromUrl : type;
+    }
+
+    /**
+     * Whether {@code mimeType} actually identifies the file, as opposed to being
+     * absent or the generic "some bytes" type.
+     */
+    private static boolean namesTheType(@Nullable final String mimeType) {
+        return mimeType != null && !MimeType.APPLICATION_OCTET_STREAM.equals(mimeType);
     }
 
     @Nullable

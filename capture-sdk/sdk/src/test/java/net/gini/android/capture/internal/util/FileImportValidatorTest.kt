@@ -36,6 +36,10 @@ class FileImportValidatorTest {
             addExtensionMimeTypeMapping("heic", "image/heic")
             addExtensionMimeTypeMapping("jpg", "image/jpeg")
             addExtensionMimeTypeMapping("webp", "image/webp")
+            // Android's real MimeTypeMap maps "bin" to application/octet-stream — verified on a
+            // device (Android 16). Without this mapping the shadow returns null for ".bin" and
+            // the generic-extension case below would pass without ever being exercised.
+            addExtensionMimeTypeMapping("bin", "application/octet-stream")
         }
     }
 
@@ -66,11 +70,23 @@ class FileImportValidatorTest {
     @Test
     @Config(sdk = [28])
     fun `accepts a heic file whose mime type cannot be resolved`() {
-        // A file manager sharing a file:// Uri with an unhelpful extension:
-        // only the header identifies it as a HEIC.
+        // A file manager sharing a file:// Uri with an unhelpful extension: neither the content
+        // resolver nor the extension names a usable type, so only the header identifies it as a
+        // HEIC. ".bin" resolves to application/octet-stream, which says "unknown" just as much as
+        // a null does and must not short-circuit the header check.
         val uri = createUri(heicBytes(), ".bin")
 
         assertThat(validator().matchesCriteria(uri)).isTrue()
+    }
+
+    @Test
+    @Config(sdk = [28])
+    fun `a non-heic file with a generic extension is still rejected`() {
+        val uri = createUri("not an image at all".toByteArray(), ".bin")
+        val validator = validator()
+
+        assertThat(validator.matchesCriteria(uri)).isFalse()
+        assertThat(validator.error).isEqualTo(FileImportValidator.Error.TYPE_NOT_SUPPORTED)
     }
 
     @Test
