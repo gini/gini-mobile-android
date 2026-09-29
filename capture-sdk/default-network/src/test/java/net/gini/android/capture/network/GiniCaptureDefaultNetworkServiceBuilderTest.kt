@@ -125,6 +125,26 @@ class GiniCaptureDefaultNetworkServiceBuilderTest {
     }
 
     @Test
+    fun `a zero timeout is kept as zero which OkHttp treats as no timeout`() {
+        val builder = GiniCaptureDefaultNetworkService.builder(context)
+            .setConnectTimeout(0, TimeUnit.SECONDS)
+            .setReadWriteTimeout(0, TimeUnit.SECONDS)
+
+        assertThat(builder.connectTimeoutInMs()).isEqualTo(0)
+        assertThat(builder.readWriteTimeoutInMs()).isEqualTo(0)
+    }
+
+    @Test
+    fun `a timeout beyond the int millisecond range saturates instead of turning negative`() {
+        val builder = GiniCaptureDefaultNetworkService.builder(context)
+            .setConnectTimeout(Long.MAX_VALUE, TimeUnit.SECONDS)
+            .setReadWriteTimeout(30, TimeUnit.DAYS)
+
+        assertThat(builder.connectTimeoutInMs()).isEqualTo(Int.MAX_VALUE)
+        assertThat(builder.readWriteTimeoutInMs()).isEqualTo(Int.MAX_VALUE)
+    }
+
+    @Test
     fun `negative timeouts are rejected by both timeout setters`() {
         val builder = GiniCaptureDefaultNetworkService.builder(context)
 

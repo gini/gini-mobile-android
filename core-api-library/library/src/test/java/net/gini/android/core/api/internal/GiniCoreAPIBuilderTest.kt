@@ -239,6 +239,18 @@ class GiniCoreAPIBuilderTest {
     }
 
     @Test
+    fun `a zero timeout reaches the default api client as zero which OkHttp treats as no timeout`() {
+        val client = builder().apply {
+            setConnectTimeoutInMs(0)
+            setReadWriteTimeoutInMs(0)
+        }.apiOkHttpClient()
+
+        assertThat(client.connectTimeoutMillis).isEqualTo(0)
+        assertThat(client.readTimeoutMillis).isEqualTo(0)
+        assertThat(client.writeTimeoutMillis).isEqualTo(0)
+    }
+
+    @Test
     @Suppress("DEPRECATION")
     fun `negative timeouts are rejected by all three timeout setters`() {
         val builder = builder()

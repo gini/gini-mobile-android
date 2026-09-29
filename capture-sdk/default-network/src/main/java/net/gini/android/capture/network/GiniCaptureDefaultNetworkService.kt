@@ -1002,5 +1002,7 @@ internal constructor(
     }
 }
 
+// Saturates instead of wrapping: a value beyond Int.MAX_VALUE ms (~24.9 days) would otherwise
+// turn negative and make the API builder reject it later, far from the call that set it.
 private fun toMillis(timeout: Long, unit: TimeUnit?): Int? =
-    unit?.let { TimeUnit.MILLISECONDS.convert(timeout, it).toInt() }
+    unit?.let { TimeUnit.MILLISECONDS.convert(timeout, it).coerceAtMost(Int.MAX_VALUE.toLong()).toInt() }
