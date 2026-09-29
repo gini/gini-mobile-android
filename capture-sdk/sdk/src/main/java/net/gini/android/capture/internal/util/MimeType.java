@@ -22,10 +22,15 @@ public enum MimeType {
     IMAGE_JPEG("image/jpeg"),
     IMAGE_PNG("image/png"),
     IMAGE_GIF("image/gif"),
+    IMAGE_HEIC("image/heic"),
+    IMAGE_HEIF("image/heif"),
+    IMAGE_HEIC_SEQUENCE("image/heic-sequence"),
+    IMAGE_HEIF_SEQUENCE("image/heif-sequence"),
     APPLICATION_PDF("application/pdf"),
     APPLICATION_XML("application/xhtml+xml"),
     TEXT_XML("text/xml"),
     APPLICATION_JSON("application/json"),
+    APPLICATION_OCTET_STREAM("application/octet-stream"),
     UNKNOWN("");
 
     private static final Map<String, MimeType> sLookup = new HashMap<>();

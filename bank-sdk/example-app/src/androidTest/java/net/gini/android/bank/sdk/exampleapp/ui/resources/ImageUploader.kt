@@ -99,10 +99,7 @@ class ImageUploader {
         // "Failed to build unique file" when MediaStore is left with an orphaned file
         // (seen locally under the Orchestrator's clearPackageData). Every caller selects
         // the newest photo in the picker, never by name, so uniqueness is safe.
-        val mimeType = when (filename.substringAfterLast('.').lowercase()) {
-            "jpg", "jpeg" -> "image/jpeg"
-            else -> "image/png"
-        }
+        val mimeType = mimeTypeOf(filename)
         val contentValues = ContentValues().apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, "${System.currentTimeMillis()}_$filename")
             put(MediaStore.Images.Media.MIME_TYPE, mimeType)
@@ -136,10 +133,7 @@ class ImageUploader {
                 arrayOf("%$filename")
             )
         }
-        val mimeType = when (filename.substringAfterLast('.').lowercase()) {
-            "jpg", "jpeg" -> "image/jpeg"
-            else -> "image/png"
-        }
+        val mimeType = mimeTypeOf(filename)
         val stamp = System.currentTimeMillis()
         repeat(count) { index ->
             val values = ContentValues().apply {
@@ -322,6 +316,21 @@ class ImageUploader {
             }
         }
     }
+
+    /**
+     * Mime type MediaStore should record for a test asset.
+     *
+     * It has to be the real one: the SDK reads the type back off the content Uri to decide
+     * whether it can import the file, so storing a HEIC as `image/png` would make a HEIC
+     * test pass for the wrong reason.
+     */
+    private fun mimeTypeOf(filename: String): String =
+        when (filename.substringAfterLast('.').lowercase()) {
+            "jpg", "jpeg" -> "image/jpeg"
+            "heic" -> "image/heic"
+            "heif" -> "image/heif"
+            else -> "image/png"
+        }
 
     companion object {
         private const val TILE_TIMEOUT = 5_000L

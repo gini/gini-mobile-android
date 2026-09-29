@@ -33,8 +33,17 @@ public class ImageDocument extends GiniCaptureDocument {
     public enum ImageFormat {
         JPEG,
         PNG,
-        GIF;
+        GIF,
+        /**
+         * HEIC and HEIF, including the multi-image sequence containers.
+         *
+         * <p> Imported HEIC images are re-encoded to JPEG before they are
+         * uploaded, so a document only carries this format between the import
+         * and the compression step.
+         */
+        HEIC;
 
+        @VisibleForTesting
         static ImageFormat fromMimeType(@NonNull final String mimeType) {
             switch (MimeType.fromString(mimeType)) {
                 case IMAGE_JPEG:
@@ -43,6 +52,11 @@ public class ImageDocument extends GiniCaptureDocument {
                     return PNG;
                 case IMAGE_GIF:
                     return GIF;
+                case IMAGE_HEIC:
+                case IMAGE_HEIF:
+                case IMAGE_HEIC_SEQUENCE:
+                case IMAGE_HEIF_SEQUENCE:
+                    return HEIC;
                 default:
                     throw new IllegalArgumentException("Unknown mime type: " + mimeType);
             }
@@ -228,6 +242,8 @@ public class ImageDocument extends GiniCaptureDocument {
                 return MimeType.IMAGE_PNG.asString();
             case GIF:
                 return MimeType.IMAGE_GIF.asString();
+            case HEIC:
+                return MimeType.IMAGE_HEIC.asString();
             default:
                 throw new IllegalArgumentException("Unknown image format " + format);
         }

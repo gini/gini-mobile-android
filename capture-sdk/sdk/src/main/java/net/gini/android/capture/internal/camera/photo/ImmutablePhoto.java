@@ -34,7 +34,7 @@ class ImmutablePhoto implements Photo {
     Bitmap mBitmapPreview;
     byte[] mData;
     int mRotationForDisplay;
-    private final ImageDocument.ImageFormat mImageFormat;
+    private ImageDocument.ImageFormat mImageFormat;
     private final boolean mIsImported;
     private Document.ImportMethod mImportMethod = null;
     private String mParcelableMemoryCacheTag;
@@ -84,6 +84,11 @@ class ImmutablePhoto implements Photo {
     @Override
     public ImageDocument.ImageFormat getImageFormat() {
         return mImageFormat;
+    }
+
+    @Override
+    public synchronized void setImageFormat(final ImageDocument.ImageFormat imageFormat) {
+        mImageFormat = imageFormat;
     }
 
     @Override
