@@ -152,6 +152,10 @@ abstract class WarningBottomSheetTestBase {
      * SDK-side ones are separate — [configureCreditNoteHint] and
      * [configureReturnAssistantAndSkonto] — and a feature needs both to be on.
      *
+     * [ingredientBrandScreens] and [qrCodeEducationEnabled] are server-side too; both default to
+     * off. [analysisDelayMillis] keeps the analysis pending that long, so a test can look at the
+     * Analysis screen while it runs. [configurationFails] makes the `/configurations` request fail.
+     *
      * Must be called before the photo payment button is clicked, like [configureHints]. Cleared
      * in [tearDown].
      */
@@ -159,16 +163,43 @@ abstract class WarningBottomSheetTestBase {
         scenario: UiTestMockScenario,
         creditNoteHintEnabled: Boolean = true,
         returnAssistantEnabled: Boolean = true,
-        skontoEnabled: Boolean = true
+        skontoEnabled: Boolean = true,
+        ingredientBrandScreens: Set<String> = emptySet(),
+        qrCodeEducationEnabled: Boolean = false,
+        analysisDelayMillis: Long = 0,
+        configurationFails: Boolean = false
     ) {
         UiTestMockBackend.arm(
             scenario = scenario,
             clientConfiguration = UiTestMockClientConfiguration(
                 creditNoteHintEnabled = creditNoteHintEnabled,
                 returnAssistantEnabled = returnAssistantEnabled,
-                skontoEnabled = skontoEnabled
-            )
+                skontoEnabled = skontoEnabled,
+                ingredientBrandScreens = ingredientBrandScreens,
+                qrCodeEducationEnabled = qrCodeEducationEnabled
+            ),
+            analysisDelayMillis = analysisDelayMillis,
+            configurationFails = configurationFails
         )
+    }
+
+    /**
+     * Takes a photo with the camera and processes it. Only a camera photo sets the photo flow
+     * type, which the invoice education needs; on BrowserStack the camera sees the device rack,
+     * which is fine wherever the mock backend answers.
+     */
+    protected fun takePhotoAndProcess() {
+        mainScreen.clickPhotoPaymentButton()
+        onboardingScreen.clickSkipButtonIfPresent()
+        takePhotoOnCameraScreenAndProcess()
+    }
+
+    /** The camera half of [takePhotoAndProcess], for a test that is already on the camera screen. */
+    protected fun takePhotoOnCameraScreenAndProcess() {
+        captureScreen.clickCameraButton()
+        idlingResource.waitForIdle()
+        reviewScreen.assertReviewTitleIsDisplayed()
+        reviewScreen.clickProcessButton()
     }
 
     protected fun uploadFixtureInvoiceAndProcess(assetName: String) {

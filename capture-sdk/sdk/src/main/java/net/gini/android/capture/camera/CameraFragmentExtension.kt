@@ -232,6 +232,17 @@ internal abstract class CameraFragmentExtension {
     protected fun isQrEducationStepRunning(): Boolean = qrEducationStepRunning
 
     /**
+     * Whether the QR-code analysis step shows a loading indicator behind its overlay.
+     *
+     * Only the invoice-retrieval half does. The education half starts the same retrieval request,
+     * but its full-screen message is what the user watches, so no indicator may run behind it —
+     * the dim of that overlay let the indicator show through. This holds for every indicator (the
+     * Gini mark, the integrator's, the default one) and matches iOS, where
+     * `QRCodeOverlay.showAnimation` shows either the education view or the loading indicator.
+     */
+    protected fun shouldShowQrStepLoadingIndicator(): Boolean = !qrEducationStepRunning
+
+    /**
      * Sets the visibility of the Gini ingredient brand element.
      *
      * Implemented by `CameraFragmentImpl`, which binds `R.id.gc_powered_by_gini` and is the only

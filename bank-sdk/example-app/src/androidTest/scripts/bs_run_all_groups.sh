@@ -93,6 +93,17 @@ run_group "creditnote" \
   CreditNoteWarningTests \
   CreditNoteMockBackendTests
 
+run_group "ingredientbrand" \
+  IngredientBrandTests \
+  IngredientBrandConfigurationTests \
+  IngredientBrandLandscapeTests \
+  IngredientBrandQrOverlayTests
+
+# The education is a Compose animation, so this shard runs with animations ON.
+BS_DISABLE_ANIMATIONS=false run_group "ingredientbrand_education" \
+  IngredientBrandEducationTests \
+  IngredientBrandLandscapeEducationTests
+
 # DigitalInvoiceSkontoTests is left out on purpose — see bs_run_group_smoke.sh's header.
 run_group "smokejourneys" \
   SmokeJourneyTests \

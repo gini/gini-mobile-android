@@ -18,6 +18,7 @@ Builds the `example-app` and Espresso test suite APKs, uploads them to BrowserSt
 |---|---|---|
 | `BS_USER` | `<your_browserstack_user_name>` | BrowserStack username |
 | `BS_KEY` | `<your_browserstack_access_key>` | BrowserStack access key |
+| `BS_DISABLE_ANIMATIONS` | `true` | Value sent as `disableAnimations`. Only `bs_run_group_ingredientbrand_education.sh` sets it to `false`: the education message is a Compose animation that ends at once with animations off. |
 
 ### Fixed (not parameterised)
 
@@ -31,6 +32,17 @@ Builds the `example-app` and Espresso test suite APKs, uploads them to BrowserSt
 | `net.gini.android.bank.sdk.exampleapp.ui.testcases` | Default test package (runs all test classes) |
 
 All three media files are always uploaded. BrowserStack places them in the device's Downloads folder where the Espresso tests retrieve them via the system file picker.
+
+---
+
+### Ingredient brand shards (PP-3478)
+
+| Script | Classes | Notes |
+|---|---|---|
+| `bs_run_group_ingredientbrand.sh` | `IngredientBrandTests`, `IngredientBrandConfigurationTests`, `IngredientBrandLandscapeTests`, `IngredientBrandQrOverlayTests` | Mock backend. The QR tests need a real QR code in front of the camera, so they always show as **skipped** on BrowserStack — expected. |
+| `bs_run_group_ingredientbrand_education.sh` | `IngredientBrandEducationTests`, `IngredientBrandLandscapeEducationTests` | Mock backend, camera photos, **animations on** (`BS_DISABLE_ANIMATIONS=false`). |
+
+Both are also triggered by `bs_run_all_groups.sh`.
 
 ---
 
