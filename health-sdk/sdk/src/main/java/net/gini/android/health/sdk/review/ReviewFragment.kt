@@ -344,7 +344,7 @@ class ReviewFragment private constructor(
     }
 
     private fun GhsFragmentReviewBinding.configureViews() {
-        close.isGone = !viewModel.paymentFlowConfiguration.showCloseButtonOnReviewFragment
+        close.isVisible = true
     }
 
     private fun GhsFragmentReviewBinding.configureOrientation() {
