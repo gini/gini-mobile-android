@@ -91,10 +91,8 @@ class GiniCaptureDefaultNetworkServiceBuilderTest {
             .setBaseUrl("https://api.custom.example.com/")
             .setUserCenterBaseUrl("https://user.custom.example.com/")
             .setCredentialsStore(InMemoryCredentialsStore())
-            .setConnectionTimeout(30)
-            .setConnectionTimeoutUnit(TimeUnit.SECONDS)
-            .setReadWriteTimeout(90)
-            .setReadWriteTimeoutUnit(TimeUnit.SECONDS)
+            .setConnectTimeout(30, TimeUnit.SECONDS)
+            .setReadWriteTimeout(90, TimeUnit.SECONDS)
             .setDebuggingEnabled(true)
             .build()
 
@@ -103,30 +101,83 @@ class GiniCaptureDefaultNetworkServiceBuilderTest {
 
     @Test
     fun `resolves the connect and the read write timeout to milliseconds independently`() {
-        // Different units on purpose: a helper that reused the connect fields or skipped the
-        // unit conversion would fail one of the two assertions.
+        // Different units on purpose: a resolver that reused the other timeout's field or skipped
+        // the unit conversion would fail one of the two assertions.
         val builder = GiniCaptureDefaultNetworkService.builder(context)
-            .setConnectionTimeout(30)
-            .setConnectionTimeoutUnit(TimeUnit.SECONDS)
-            .setReadWriteTimeout(2)
-            .setReadWriteTimeoutUnit(TimeUnit.MINUTES)
+            .setConnectTimeout(30, TimeUnit.SECONDS)
+            .setReadWriteTimeout(2, TimeUnit.MINUTES)
 
-        assertThat(builder.connectionTimeoutInMs()).isEqualTo(30_000)
+        assertThat(builder.connectTimeoutInMs()).isEqualTo(30_000)
         assertThat(builder.readWriteTimeoutInMs()).isEqualTo(120_000)
     }
 
     @Test
-    fun `leaves a timeout unset until its unit is configured`() {
+    fun `leaves a timeout unset until it is configured`() {
         val builder = GiniCaptureDefaultNetworkService.builder(context)
 
-        assertThat(builder.connectionTimeoutInMs()).isNull()
+        assertThat(builder.connectTimeoutInMs()).isNull()
         assertThat(builder.readWriteTimeoutInMs()).isNull()
 
-        builder
-            .setReadWriteTimeout(90)
-            .setReadWriteTimeoutUnit(TimeUnit.SECONDS)
+        builder.setReadWriteTimeout(90, TimeUnit.SECONDS)
 
-        assertThat(builder.connectionTimeoutInMs()).isNull()
+        assertThat(builder.connectTimeoutInMs()).isNull()
+        assertThat(builder.readWriteTimeoutInMs()).isEqualTo(90_000)
+    }
+
+    @Test
+    fun `negative timeouts are rejected by both timeout setters`() {
+        val builder = GiniCaptureDefaultNetworkService.builder(context)
+
+        assertThat(runCatching { builder.setConnectTimeout(-1, TimeUnit.SECONDS) }.exceptionOrNull())
+            .isInstanceOf(IllegalArgumentException::class.java)
+        assertThat(runCatching { builder.setReadWriteTimeout(-1, TimeUnit.SECONDS) }.exceptionOrNull())
+            .isInstanceOf(IllegalArgumentException::class.java)
+    }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun `the deprecated connection timeout pair still resolves to connect read and write`() {
+        val builder = GiniCaptureDefaultNetworkService.builder(context)
+            .setConnectionTimeout(10)
+            .setConnectionTimeoutUnit(TimeUnit.SECONDS)
+
+        assertThat(builder.connectTimeoutInMs()).isEqualTo(10_000)
+        assertThat(builder.readWriteTimeoutInMs()).isEqualTo(10_000)
+    }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun `the deprecated connection timeout is ignored until its unit is set`() {
+        val builder = GiniCaptureDefaultNetworkService.builder(context)
+            .setConnectionTimeout(10)
+
+        assertThat(builder.connectTimeoutInMs()).isNull()
+        assertThat(builder.readWriteTimeoutInMs()).isNull()
+    }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun `the dedicated timeout setters take precedence over the deprecated connection timeout pair`() {
+        // Regardless of call order: the deprecated pair is set last here
+        val builder = GiniCaptureDefaultNetworkService.builder(context)
+            .setConnectTimeout(5, TimeUnit.SECONDS)
+            .setReadWriteTimeout(90, TimeUnit.SECONDS)
+            .setConnectionTimeout(30)
+            .setConnectionTimeoutUnit(TimeUnit.SECONDS)
+
+        assertThat(builder.connectTimeoutInMs()).isEqualTo(5_000)
+        assertThat(builder.readWriteTimeoutInMs()).isEqualTo(90_000)
+    }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun `the deprecated connection timeout pair fills in the timeout the dedicated setters left unset`() {
+        val builder = GiniCaptureDefaultNetworkService.builder(context)
+            .setConnectionTimeout(30)
+            .setConnectionTimeoutUnit(TimeUnit.SECONDS)
+            .setReadWriteTimeout(90, TimeUnit.SECONDS)
+
+        assertThat(builder.connectTimeoutInMs()).isEqualTo(30_000)
         assertThat(builder.readWriteTimeoutInMs()).isEqualTo(90_000)
     }
 
