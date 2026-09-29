@@ -37,9 +37,10 @@ expected: 15000
 but was : 60000
 ```
 
-`an explicitly configured connection timeout applies to connect only` also
-fails before the change, because `setConnectionTimeoutInMs` used to set all
-three timeouts. Only the negative-timeout test pins pre-existing behaviour.
+`an explicitly configured connect timeout applies to connect only` does not
+compile before the change, because `setConnectTimeoutInMs` is new. The
+deprecated-setter tests and the negative-timeout test pin pre-existing
+behaviour.
 
 The real-network manifestation (60 s stall on a black-holed IPv6 route) follows
 mechanically from that configuration plus OkHttp 4's sequential route attempts
@@ -81,45 +82,71 @@ health-sdk "unexpected error"), but the defect is the timeout configuration in
 
 ## Solution
 
-Minimal change in two modules: the timeout split itself in
-`core-api-library:library`, plus two new public setters in
-`capture-sdk:default-network` so capture-sdk and bank-sdk integrators can reach
-the read/write timeout (item 3). Both modules gain public API and both API dumps
-change; every other SDK picks the new defaults up transitively without code
-changes:
+Change in two modules: the timeout split itself in `core-api-library:library`,
+plus new public setters in `capture-sdk:default-network` so capture-sdk and
+bank-sdk integrators can reach both timeouts (item 3). Both modules gain public
+API and both API dumps change; every other SDK picks the new defaults up
+transitively without code changes.
+
+Decision history for the existing connection-timeout setters:
+
+- 2026-09-18: make `setConnectionTimeoutInMs` connect-only ("the name finally
+  means what it says; no third setter").
+- **2026-09-29, supersedes the above:** keep `setConnectionTimeoutInMs` (and the
+  capture-sdk `setConnectionTimeout` / `setConnectionTimeoutUnit` pair) doing
+  exactly what it always did — one value for connect, read and write — and
+  deprecate it. Review of the migration note showed that a connect-only
+  reinterpretation silently changes read/write for every integrator who passes a
+  value other than 60 s, and `0` (no timeout anywhere) would have turned into a
+  60 s read/write limit that aborts long uploads without any code change on the
+  integrator's side. A new connect-only setter carries the fix instead. The cost
+  is that integrators who already call the old setter keep their old connect
+  timeout until they migrate; the deprecation message tells them how.
 
 1. `DefaultGiniHttpClientProvider`
    - Hold two values instead of one: `connectTimeoutInMs` (new default
      **15 000 ms**) and `readWriteTimeoutInMs` (default 60 000 ms, unchanged).
    - `connectTimeout(connectTimeoutInMs)`, `readTimeout/writeTimeout(readWriteTimeoutInMs)`.
-   - `Builder.setConnectionTimeoutInMs(x)` now sets the **connect timeout only**
-     (decided 2026-09-18: the name finally means what it says; no third setter).
-   - New public setter `Builder.setReadWriteTimeoutInMs(x)` for the read and
-     write timeouts.
-   - Update the KDoc (class header, `@param`, setters) to state the split defaults
-     and that `setConnectionTimeoutInMs` no longer covers read/write.
-   - The `private constructor` signature changes and one public method is added
-     per builder → run `./gradlew core-api-library:library:apiDump`. Nothing is
-     removed; `setConnectionTimeoutInMs` keeps its signature.
+   - New public setter `Builder.setConnectTimeoutInMs(x)` for the connect
+     timeout and `Builder.setReadWriteTimeoutInMs(x)` for read and write.
+   - `Builder.setConnectionTimeoutInMs(x)` is `@Deprecated` and still sets all
+     three. The two dedicated setters take precedence over it regardless of call
+     order (resolved in `build()`: `connect ?: connection ?: default`, same for
+     read/write), so the result never depends on ordering. No `ReplaceWith`,
+     because a mechanical replacement with `setConnectTimeoutInMs` would drop
+     read/write to 60 s.
+   - KDoc (class header, example, setters) states the split defaults and the
+     precedence rule.
+   - The `private constructor` signature changes and two public methods are
+     added → `./gradlew core-api-library:library:apiDump`. Nothing is removed;
+     `setConnectionTimeoutInMs` keeps its signature and its behaviour.
 
 2. `GiniCoreAPIBuilder`
-   - `mTimeoutInMs` is replaced by `mConnectTimeoutInMs: Int?` and
-     `mReadWriteTimeoutInMs: Int?`, both defaulting to `null`;
-     `createDefaultOkHttpClient` forwards each only when the integrator set it.
-   - `setConnectionTimeoutInMs` becomes connect-only; new `open` setter
-     `setReadWriteTimeoutInMs`.
+   - `mTimeoutInMs` is replaced by `mConnectTimeoutInMs`, `mReadWriteTimeoutInMs`
+     and `mConnectionTimeoutInMs` (all `Int?`, default `null`);
+     `createDefaultOkHttpClient` forwards `connect ?: connection` and
+     `readWrite ?: connection` to the provider's dedicated setters only when the
+     integrator set something, so the provider's defaults reach every SDK.
+   - New `open` setters `setConnectTimeoutInMs` and `setReadWriteTimeoutInMs`;
+     `setConnectionTimeoutInMs` is `@Deprecated`, still `open`, still all three.
    - KDoc updated: when nothing is set, the defaults are 15 s connect / 60 s
      read & write.
 
-3. `GiniCaptureDefaultNetworkService.Builder.setConnectionTimeout` (capture-sdk:
-   default-network) forwards to `setConnectionTimeoutInMs` and therefore becomes
-   connect-only as well. Its KDoc (which still described a read timeout with a
-   backoff multiplier) is corrected. New `setReadWriteTimeout` /
-   `setReadWriteTimeoutUnit` mirror the connect timeout pair and forward to
-   `setReadWriteTimeoutInMs`, so capture-sdk and bank-sdk integrators keep a
-   timeout knob for slow uploads without a custom `GiniHttpClientProvider`
-   (added after review on 2026-09-18; `capture-sdk:default-network` API dump
-   updated).
+3. `GiniCaptureDefaultNetworkService.Builder` (capture-sdk:default-network)
+   - New `setConnectTimeout(timeout, unit)` and `setReadWriteTimeout(timeout,
+     unit)`, single-call with the unit as second parameter (the read/write
+     setter was first added on 2026-09-18 as a value/unit pair and reshaped on
+     2026-09-29 before release). Both reject negative values up front and
+     forward to `setConnectTimeoutInMs` / `setReadWriteTimeoutInMs`.
+   - `setConnectionTimeout` / `setConnectionTimeoutUnit` are `@Deprecated`,
+     still apply one value to all three, and lose to the dedicated setters
+     regardless of call order. Their KDoc (which still described a read timeout
+     with a backoff multiplier) is corrected.
+   - Two `internal` resolvers, `connectTimeoutInMs()` and
+     `readWriteTimeoutInMs()`, compute the forwarded values with the precedence
+     applied; `build()` reads them and the unit test asserts them, since the
+     built `OkHttpClient` is not reachable from this module.
+   - `capture-sdk:default-network` API dump updated.
 
 Why 15 s and not 10 s: OkHttp's connect timeout covers the TCP handshake only
 (TLS runs under the read timeout), so 10 s would be enough on healthy networks;
@@ -127,73 +154,55 @@ Why 15 s and not 10 s: OkHttp's connect timeout covers the TCP handshake only
 into a ~15 s blip before the IPv4 retry. Either value satisfies the ticket
 ("~10–15 s"); see Open questions.
 
-Public API impact: binary compatible — `setReadWriteTimeoutInMs` is added on
-`DefaultGiniHttpClientProvider.Builder` and `GiniCoreAPIBuilder`, and
-`setReadWriteTimeout` / `setReadWriteTimeoutUnit` on
-`GiniCaptureDefaultNetworkService.Builder`. No public constructor or method
-signature changed or was removed. The one changed line in the
+Public API impact: binary compatible — `setConnectTimeoutInMs` and
+`setReadWriteTimeoutInMs` are added on `DefaultGiniHttpClientProvider.Builder`
+and `GiniCoreAPIBuilder`, and `setConnectTimeout(Long, TimeUnit)` /
+`setReadWriteTimeout(Long, TimeUnit)` on `GiniCaptureDefaultNetworkService.Builder`.
+`setConnectionTimeoutInMs`, `setConnectionTimeout` and `setConnectionTimeoutUnit`
+are deprecated but keep signature and behaviour. No public constructor or
+method signature changed or was removed. The one changed line in the
 `core-api-library:library` API dump is the synthetic bridge of
 `DefaultGiniHttpClientProvider`'s `private constructor`, which gained an `I`
 for the new read/write field; it is generated for the default-argument
 constructor and only reachable from the `Builder`, so no signature an
-integrator can call moved. Two **behavioural changes**, both needing a
-release-notes entry for every SDK that ships the bumped `core-api-library`:
+integrator can call moved.
 
-- Integrators who never set a timeout: connect attempts now fail after 15 s
-  instead of 60 s.
-- Integrators who call `setConnectionTimeoutInMs` (or the capture-sdk
-  `setConnectionTimeout`): it now bounds only the connect phase. Read and write
-  stay at the 60 s default unless `setReadWriteTimeoutInMs` (capture-sdk:
-  `setReadWriteTimeout`) is called. Because the setter used to apply the same
-  value to connect, read and write, **any explicit value other than 60 s
-  changes the read/write behaviour**, not only values above it:
-  - above 60 s (e.g. 90 000 for slow uploads): read/write drop from 90 s to
-    60 s, so long uploads can time out sooner;
-  - below 60 s (e.g. 10 000): read/write rise from 10 s to 60 s, so a stalled
-    response takes six times longer to surface;
-  - `0` (OkHttp: no timeout): read/write go from unlimited to 60 s, so an
-    upload that used to run unbounded now aborts after 60 s of silence,
-    silently and without any code change on the integrator's side.
-
-  To keep the previous behaviour, integrators pass their previous value to
-  `setReadWriteTimeoutInMs` / `setReadWriteTimeout` as well. Only the value
-  60 000 is unaffected, because it equals the read/write default.
+One **behavioural change**, needing a release-notes entry for every SDK that
+ships the bumped `core-api-library`: integrators who never set a timeout get a
+15 s connect timeout instead of 60 s (read and write stay 60 s). Integrators who
+call the deprecated setters keep exactly their previous connect, read and write
+timeouts — including the IPv6 stall, until they move to the dedicated setters.
 
 Release-note bullets (draft). The API-library packages and the SDKs built
 directly on `GiniCoreAPIBuilder` (`core-api-library`, `bank-api-library`,
 `health-api-library`, `health-sdk`, `internal-payment-sdk`) expose the
 `...InMs` setters; `capture-sdk`, `capture-sdk:default-network` and `bank-sdk`
 integrators configure the network through
-`GiniCaptureDefaultNetworkService.Builder`, which exposes `setConnectionTimeout`
-/ `setReadWriteTimeout` plus the `...Unit` setters instead. Use the matching
-variant per package:
+`GiniCaptureDefaultNetworkService.Builder`. Use the matching variant per
+package:
 
 For `core-api-library`, `bank-api-library`, `health-api-library`, `health-sdk`,
 `internal-payment-sdk`:
 
-> `setConnectionTimeoutInMs` now sets only the connect timeout (default 15 s, was
-> 60 s) so that a failed IPv6 connect falls back to IPv4 quickly. Read and write
-> timeouts are configured separately with the new `setReadWriteTimeoutInMs`
-> (default 60 s, unchanged). Previously `setConnectionTimeoutInMs` applied its
-> value to connect, read and write, so any explicit connection timeout other
-> than 60 s changes your read/write behaviour: values above 60 s now give
-> shorter read/write timeouts, values below 60 s longer ones, and `0` (no
-> timeout) now gives 60 s read/write timeouts instead of unlimited. To keep your
-> previous behaviour, call `setReadWriteTimeoutInMs` with the same value.
+> The default connect timeout is now 15 s (was 60 s) so that a failed IPv6
+> connect falls back to IPv4 quickly; read and write timeouts stay at 60 s. The
+> two are configured separately with the new `setConnectTimeoutInMs` and
+> `setReadWriteTimeoutInMs`. `setConnectionTimeoutInMs` is deprecated: it keeps
+> applying one value to connect, read and write, so if you call it nothing
+> changes for you, but you also keep the slow IPv6 fallback until you switch to
+> the new setters. The new setters take precedence over the deprecated one.
 
 For `capture-sdk`, `capture-sdk:default-network`, `bank-sdk`:
 
-> `GiniCaptureDefaultNetworkService.Builder.setConnectionTimeout` (with
-> `setConnectionTimeoutUnit`) now sets only the connect timeout (default 15 s,
-> was 60 s) so that a failed IPv6 connect falls back to IPv4 quickly. Read and
-> write timeouts are configured separately with the new `setReadWriteTimeout` /
-> `setReadWriteTimeoutUnit` (default 60 s, unchanged). Previously
-> `setConnectionTimeout` applied its value to connect, read and write, so any
-> explicit connection timeout other than 60 s changes your read/write behaviour:
-> values above 60 s now give shorter read/write timeouts, values below 60 s
-> longer ones, and `0` (no timeout) now gives 60 s read/write timeouts instead
-> of unlimited. To keep your previous behaviour, call `setReadWriteTimeout` and
-> `setReadWriteTimeoutUnit` with the same value and unit.
+> The default connect timeout is now 15 s (was 60 s) so that a failed IPv6
+> connect falls back to IPv4 quickly; read and write timeouts stay at 60 s. The
+> two are configured separately with the new
+> `GiniCaptureDefaultNetworkService.Builder.setConnectTimeout(timeout, unit)`
+> and `setReadWriteTimeout(timeout, unit)`. `setConnectionTimeout` /
+> `setConnectionTimeoutUnit` are deprecated: they keep applying one value to
+> connect, read and write, so if you call them nothing changes for you, but you
+> also keep the slow IPv6 fallback until you switch to the new setters. The new
+> setters take precedence over the deprecated pair.
 
 ## Test plan
 
@@ -202,14 +211,19 @@ Stack: JUnit4 + Robolectric (`AndroidJUnit4` runner) + Truth, matching
 
 - `core-api-library/library/src/test/java/net/gini/android/core/api/http/DefaultGiniHttpClientProviderTest.kt` (new, written as the reproduction)
   - default client: connect 15 000 / read 60 000 / write 60 000 — **fails before, passes after**
-  - `setConnectionTimeoutInMs(10 000)` only: connect 10 000, read & write stay 60 000 (**fails before**: used to set all three)
+  - `setConnectTimeoutInMs(10 000)` only: connect 10 000, read & write stay 60 000
   - `setReadWriteTimeoutInMs(90 000)` only: connect stays 15 000, read & write 90 000
   - both together: connect 10 000, read & write 90 000
-  - negative timeout rejected by both setters
+  - deprecated `setConnectionTimeoutInMs(10 000)`: all three 10 000 (pins the old behaviour)
+  - precedence: dedicated setters win over the deprecated one even when it is called last; the deprecated value fills in whichever dedicated setter was not called
+  - negative timeout rejected by all three setters
 - `core-api-library/library/src/test/java/net/gini/android/core/api/internal/GiniCoreAPIBuilderTest.kt` (extend)
   - default API client (no timeout configured) has connect 15 000 / read & write 60 000 — **fails before** (builder forwards 60 000), passes after
-  - `setConnectionTimeoutInMs(10 000)` / `setReadWriteTimeoutInMs(90 000)` on the builder each reach only their OkHttp timeout(s), and both together reach the default client
-  - negative timeout rejected by both setters
+  - the same matrix as above through the client the API builder creates, proving the builder forwards each value and the precedence to the provider
+- `capture-sdk/default-network/src/test/java/net/gini/android/capture/network/GiniCaptureDefaultNetworkServiceBuilderTest.kt` (extend)
+  - `setConnectTimeout(30, SECONDS)` + `setReadWriteTimeout(2, MINUTES)` resolve to 30 000 / 120 000 (different units so a swapped field or dropped conversion fails)
+  - both resolvers `null` until set; the deprecated pair resolves to both timeouts and is ignored until its unit is set
+  - precedence in both directions; negative values rejected by both new setters
 
 Verification: `/gini-check` for `core-api-library:library` expanded through
 the dependency chain (health-api-library, bank-api-library, capture-sdk:default-network,
@@ -221,11 +235,12 @@ bank-sdk, health-sdk, internal-payment-sdk compile against it).
   fallback (~250 ms instead of a connect timeout). Tracked in PP-3504.
 - An IPv4-preferring `okhttp3.Dns` in the default provider — penalises healthy
   IPv6-first networks; superseded by PP-3504.
-- The iOS counterpart of the new read/write setters.
+- The iOS counterpart of the new connect and read/write setters.
 - Removing the AAAA record — backend/ops decision, not Android.
-- The shared integration tests call `setConnectionTimeoutInMs(60000)` explicitly;
-  they now get connect 60 s / read & write 60 s (the default), i.e. the same
-  three values as before, and are left as is.
+- The shared integration tests and three androidTests called
+  `setConnectionTimeoutInMs(60000)`; they now call `setConnectTimeoutInMs(60000)`
+  and get connect 60 s / read & write 60 s (the default), i.e. the same three
+  effective values as before.
 
 ## Open questions
 
