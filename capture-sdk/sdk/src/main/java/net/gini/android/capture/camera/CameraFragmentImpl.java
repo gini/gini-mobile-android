@@ -105,6 +105,7 @@ import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsE
 import net.gini.android.capture.util.IntentHelper;
 import net.gini.android.capture.util.UriHelper;
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
+import net.gini.android.capture.view.InjectedViewAdapterInstance;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
@@ -1107,8 +1108,16 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
     private void setCustomLoadingIndicator() {
         if (GiniCapture.hasInstance()) {
-//            mLoadingIndicator.invalidate();
-            mLoadingIndicator.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(GiniCapture.getInstance().internal().getLoadingIndicatorAdapterInstance(), injectedViewAdapter -> {
+            // The Gini brand animation replaces the loading indicator while the client
+            // configuration lists the Analysis screen in ingredientBrandScreens — the camera shows
+            // it while an invoice is retrieved for a scanned QR code, which is the analysis step of
+            // that flow. The choice is made when the indicator is shown rather than here, because
+            // this is the first screen the SDK opens and the configuration has not arrived yet.
+            InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter> adapterInstance =
+                    loadingIndicatorAdapterInstance(
+                            GiniCapture.getInstance().internal()
+                                    .getLoadingIndicatorAdapterInstance().getViewAdapter());
+            mLoadingIndicator.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(adapterInstance, injectedViewAdapter -> {
             }));
 //            mLoadingIndicator.setInjectedViewAdapter(GiniCapture.getInstance().getloadingIndicatorAdapter());
 
@@ -1305,10 +1314,14 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 analyzeQRCode(mQRCodeDocument);
                 break;
             case EPS_PAYMENT:
+                // No analysis step at all, so no ingredient brand — stated explicitly rather than
+                // relying on the flag already being false.
+                setQrInvoiceRetrievalRunning(false);
                 sendQRCodeScannedEventToUserAnalytics(true);
                 handleEPSPaymentQRCode(paymentQRCodeData);
                 break;
             default:
+                setQrInvoiceRetrievalRunning(false);
                 sendQRCodeScannedEventToUserAnalytics(false);
                 LOG.error("Unknown payment QR Code format: {}", LogSanitizer.sanitize(paymentQRCodeData));
                 break;
@@ -1374,6 +1387,9 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         if (activity == null) {
             return;
         }
+        // Only this busy state carries the ingredient brand; the camera's other three keep the
+        // integrator's indicator.
+        setQrInvoiceRetrievalRunning(true);
         if (GiniCapture.hasInstance()) {
             final NetworkRequestsManager networkRequestsManager =
                     GiniCapture.getInstance().internal().getNetworkRequestsManager();
@@ -1592,6 +1608,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     }
 
     private void requestClientDocumentCheck(final GiniCaptureDocument document) {
+        setQrInvoiceRetrievalRunning(false);
         showActivityIndicatorAndDisableInteraction();
         LOG.debug("Requesting document check from client");
         fragmentListener.onCheckImportedDocument(document,
@@ -1659,6 +1676,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
     private void handleMultiPageDocumentAndCallListener(@NonNull final Context context,
                                                         @NonNull final Intent intent, @NonNull final List<Uri> uris) {
+        setQrInvoiceRetrievalRunning(false);
         showActivityIndicatorAndDisableInteraction();
         if (mImportUrisAsyncTask != null) {
             mImportUrisAsyncTask.cancel(true);
@@ -1764,6 +1782,12 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
      * yet {@link #analyzeQRCode} raises the badge regardless, so it must still come down here.
      */
     public void hideActivityIndicatorAndEnableInteraction() {
+        // The QR-code analysis step is over, so the next busy state starts unbranded. Without this
+        // the flag stayed true for the rest of the fragment's life and QRCodePopup.progressViews(),
+        // which raises the indicator without going through any of the call sites that set it,
+        // would show the Gini mark for every later QR code — including the EPS ones that must
+        // never carry it (see handlePaymentQRCodeData).
+        setQrInvoiceRetrievalRunning(false);
         if (!isQrEducationStepRunning()) {
             setPoweredByGiniVisible(false);
         }
@@ -1946,6 +1970,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             if (photo != null) {
                 LOG.info("Picture taken");
                 getUpdateFlowTypeUseCase().execute(FlowType.Photo.INSTANCE);
+                setQrInvoiceRetrievalRunning(false);
                 showActivityIndicatorAndDisableInteraction();
                 photo.edit()
                         .crop(mCameraPreview, getRectForCroppingFromImageFrame())
