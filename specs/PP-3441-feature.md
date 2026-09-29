@@ -137,7 +137,10 @@ Decision history for the existing connection-timeout setters:
      unit)`, single-call with the unit as second parameter (the read/write
      setter was first added on 2026-09-18 as a value/unit pair and reshaped on
      2026-09-29 before release). Both reject negative values up front and
-     forward to `setConnectTimeoutInMs` / `setReadWriteTimeoutInMs`.
+     forward to `setConnectTimeoutInMs` / `setReadWriteTimeoutInMs`. The
+     millisecond conversion saturates at `Int.MAX_VALUE` (~24.9 days) instead
+     of wrapping to a negative value that the API builder would reject later in
+     `build()`, far from the setter that caused it.
    - `setConnectionTimeout` / `setConnectionTimeoutUnit` are `@Deprecated`,
      still apply one value to all three, and lose to the dedicated setters
      regardless of call order. Their KDoc (which still described a read timeout
@@ -216,6 +219,7 @@ Stack: JUnit4 + Robolectric (`AndroidJUnit4` runner) + Truth, matching
   - both together: connect 10 000, read & write 90 000
   - deprecated `setConnectionTimeoutInMs(10 000)`: all three 10 000 (pins the old behaviour)
   - precedence: dedicated setters win over the deprecated one even when it is called last; the deprecated value fills in whichever dedicated setter was not called
+  - `0` for connect and read/write reaches OkHttp as `0` (OkHttp: no timeout)
   - negative timeout rejected by all three setters
 - `core-api-library/library/src/test/java/net/gini/android/core/api/internal/GiniCoreAPIBuilderTest.kt` (extend)
   - default API client (no timeout configured) has connect 15 000 / read & write 60 000 — **fails before** (builder forwards 60 000), passes after
@@ -224,6 +228,7 @@ Stack: JUnit4 + Robolectric (`AndroidJUnit4` runner) + Truth, matching
   - `setConnectTimeout(30, SECONDS)` + `setReadWriteTimeout(2, MINUTES)` resolve to 30 000 / 120 000 (different units so a swapped field or dropped conversion fails)
   - both resolvers `null` until set; the deprecated pair resolves to both timeouts and is ignored until its unit is set
   - precedence in both directions; negative values rejected by both new setters
+  - `0` resolves to `0`; `Long.MAX_VALUE` seconds and 30 days both saturate to `Int.MAX_VALUE` ms instead of turning negative
 
 Verification: `/gini-check` for `core-api-library:library` expanded through
 the dependency chain (health-api-library, bank-api-library, capture-sdk:default-network,
