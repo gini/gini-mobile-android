@@ -67,8 +67,9 @@ class ReviewActivity : AppCompatActivity() {
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.reviewFragment) { v, insets ->
-            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updatePadding(top = bars.top, bottom = bars.bottom)
+            // Only the top inset: the Gini Health SDK reserves the bottom system bar space on the
+            // review screen itself, so applying it here as well would pad the screen twice.
+            v.updatePadding(top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top)
             insets
         }
 
