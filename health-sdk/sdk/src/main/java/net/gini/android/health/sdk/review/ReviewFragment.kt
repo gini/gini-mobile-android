@@ -16,6 +16,7 @@ import android.widget.EditText
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.ViewCompat
+import androidx.core.view.updatePadding
 import androidx.core.view.WindowInsetsAnimationCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnLayout
@@ -207,7 +208,8 @@ class ReviewFragment private constructor(
             restoreImeIfNeeded(view, savedInstanceState)
         }
 
-        applyCloseButtonStatusBarInset()
+        applyStatusBarInsetToRoot()
+        applyCloseButtonSystemBarInsets()
     }
 
     private fun restorePagerAndImeAfterRotation() {
@@ -232,22 +234,76 @@ class ReviewFragment private constructor(
         }
     }
 
-    private fun applyCloseButtonStatusBarInset() {
+    /**
+     * Reserves the status bar space at the top of the review screen, so the document page is not
+     * drawn underneath the status bar on a host that draws edge-to-edge.
+     *
+     * The window insets are read with [ViewCompat.getRootWindowInsets] and re-read on every layout
+     * pass, because a host app whose theme has an ActionBar renders this fragment inside
+     * AppCompat's `ActionBarOverlayLayout`, which consumes the window insets so an
+     * `OnApplyWindowInsetsListener` is never called. Only the part that actually overlaps is
+     * applied, so a host that already reserved the space is not padded twice.
+     */
+    private fun applyStatusBarInsetToRoot() {
+        val root = binding.constraintRoot
+        val apply = {
+            val statusBarTop = ViewCompat.getRootWindowInsets(root)
+                ?.getInsets(WindowInsetsCompat.Type.statusBars())?.top ?: 0
+            // The view's own top padding is deliberately not part of this: top padding moves the
+            // content down but not the root's top edge, so the measurement cannot feed back into
+            // itself the way a bottom measurement would.
+            val location = IntArray(2)
+            root.getLocationInWindow(location)
+            val overlap = (statusBarTop - location[1]).coerceIn(0, statusBarTop)
+            if (root.paddingTop != overlap) {
+                root.updatePadding(top = overlap)
+            }
+            Unit
+        }
+        ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
+            apply()
+            insets
+        }
+        root.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ -> apply() }
+        ViewCompat.requestApplyInsets(root)
+    }
+
+    private fun applyCloseButtonSystemBarInsets() {
         val root = binding.root
         val close = binding.close
         // doOnPreDraw is a one-shot listener — it removes itself after the first callback.
         // This guarantees that keyboard open/close events never re-trigger this code.
         root.doOnPreDraw {
             if (!close.isAttachedToWindow) return@doOnPreDraw
-            val location = IntArray(2)
-            root.getLocationInWindow(location)
-            val rootTopInWindow = location[1]
-            val statusBarTop = ViewCompat.getRootWindowInsets(root)
-                ?.getInsets(WindowInsetsCompat.Type.statusBars())?.top ?: 0
-            // Effective inset = how much MORE the button needs to be shifted beyond what
-            // the host has already provided via container offset/padding.
-            val effectiveInset = (statusBarTop - rootTopInWindow).coerceAtLeast(0)
-            close.translationY = effectiveInset.toFloat()
+            val insets = ViewCompat.getRootWindowInsets(root)
+            val rootLocation = IntArray(2)
+            root.getLocationInWindow(rootLocation)
+            val statusBarTop = insets?.getInsets(WindowInsetsCompat.Type.statusBars())?.top ?: 0
+            val closeLocation = IntArray(2)
+            close.getLocationInWindow(closeLocation)
+            // Effective inset = how much MORE the button needs to be shifted beyond what the host
+            // container and the root padding below have already provided. Measuring the button's
+            // own position (discounting a shift already applied) keeps this correct either way.
+            val closeTop = closeLocation[1] - close.translationY.toInt()
+            close.translationY = (statusBarTop - closeTop).coerceAtLeast(0).toFloat()
+
+            // In landscape the navigation bar is a side rail, so the button - which is pinned to
+            // the end of the screen - ends up underneath it. The same "how much more is needed"
+            // rule applies horizontally, on whichever side the rail is on.
+            val navigationBars = insets?.getInsets(WindowInsetsCompat.Type.navigationBars())
+            // Discount any shift already applied, so re-running cannot accumulate.
+            val closeStart = closeLocation[0] - close.translationX.toInt()
+            val leftOverlap = ((navigationBars?.left ?: 0) - closeStart).coerceAtLeast(0)
+            val rightOverlap = (closeStart + close.width -
+                (close.rootView.width - (navigationBars?.right ?: 0))).coerceAtLeast(0)
+            // Clear the rail by a small margin rather than sitting flush against it, so this
+            // button's touch target does not abut the system back/home/recents targets.
+            val gap = resources.getDimensionPixelSize(
+                net.gini.android.internal.payment.R.dimen.gps_medium
+            )
+            val shiftRight = if (leftOverlap > 0) leftOverlap + gap else 0
+            val shiftLeft = if (rightOverlap > 0) rightOverlap + gap else 0
+            close.translationX = (shiftRight - shiftLeft).toFloat()
         }
     }
 
@@ -344,7 +400,23 @@ class ReviewFragment private constructor(
     }
 
     private fun GhsFragmentReviewBinding.configureViews() {
-        close.isGone = !viewModel.paymentFlowConfiguration.showCloseButtonOnReviewFragment
+        close.isVisible = true
+        // Wired here rather than in setActionListeners(): that runs only once a payment provider
+        // app has been selected, which would leave this visible, focusable button inert until then
+        // - and permanently if none is ever selected. Closing the screen does not depend on it.
+        close.setOnClickListener { view ->
+            binding.root.findFocus()?.clearFocus()
+            binding.ghsPaymentDetails.clearFocus()
+            // Query actual IME state directly; isKeyboardShown may be stale if the animation
+            // callback did not fire (e.g. system-dismissed keyboard on older API levels).
+            val imeVisible = ViewCompat.getRootWindowInsets(binding.root)
+                ?.isVisible(WindowInsetsCompat.Type.ime()) ?: isKeyboardShown
+            if (imeVisible) {
+                view.hideKeyboard()
+            } else {
+                viewModel.reviewFragmentListener.onCloseReview()
+            }
+        }
     }
 
     private fun GhsFragmentReviewBinding.configureOrientation() {
@@ -393,19 +465,6 @@ class ReviewFragment private constructor(
 
     private fun GhsFragmentReviewBinding.setActionListeners() {
         ghsPaymentDetails.listener = reviewViewListener
-        close.setOnClickListener { view ->
-            binding.root.findFocus()?.clearFocus()
-            binding.ghsPaymentDetails.clearFocus()
-            // Query actual IME state directly; isKeyboardShown may be stale if the animation
-            // callback did not fire (e.g. system-dismissed keyboard on older API levels).
-            val imeVisible = ViewCompat.getRootWindowInsets(binding.root)
-                ?.isVisible(WindowInsetsCompat.Type.ime()) ?: isKeyboardShown
-            if (imeVisible) {
-                view.hideKeyboard()
-            } else {
-                viewModel.reviewFragmentListener.onCloseReview()
-            }
-        }
     }
 
     private fun GhsFragmentReviewBinding.setKeyboardAnimation() {

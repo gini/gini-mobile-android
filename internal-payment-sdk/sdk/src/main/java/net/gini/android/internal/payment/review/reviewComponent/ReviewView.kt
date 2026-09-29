@@ -9,7 +9,6 @@ import android.text.Spanned
 import android.text.TextWatcher
 import android.text.style.ImageSpan
 import android.util.AttributeSet
-import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
@@ -40,6 +39,7 @@ import net.gini.android.internal.payment.review.PaymentField
 import net.gini.android.internal.payment.review.ReviewViewStateLandscape
 import net.gini.android.internal.payment.review.ValidationMessage
 import net.gini.android.internal.payment.utils.amountWatcher
+import net.gini.android.internal.payment.utils.extensions.bottomSystemBarOverlap
 import net.gini.android.internal.payment.utils.extensions.clearErrorMessage
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentTheme
 import net.gini.android.internal.payment.utils.extensions.hideErrorMessage
@@ -49,6 +49,7 @@ import net.gini.android.internal.payment.utils.extensions.isLandscapeOrientation
 import net.gini.android.internal.payment.utils.extensions.setErrorMessage
 import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
 import net.gini.android.internal.payment.utils.extensions.showErrorMessage
+import net.gini.android.internal.payment.utils.extensions.systemBottomInset
 import net.gini.android.internal.payment.utils.setBackgroundTint
 import net.gini.android.internal.payment.utils.setTextIfDifferent
 import org.slf4j.LoggerFactory
@@ -169,72 +170,64 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
     }
 
     /**
-     * [handleViewInsets] -> Handles bottom padding for the payment details view based on
-     * keyboard visibility.
+     * [handleViewInsets] -> Reserves space at the bottom of the payment details view for the
+     * system navigation bar and for the keyboard, so the payment button is never covered by them.
      *
-     * - No need to handle the bottom sheet case, system insets are applied automatically.
-     * - For standard fragments:
-     *   - On Android 15+ (API 35+), relying on the raw WindowInsetsCompat ime inset adds unwanted
-     *   bottom padding when the keyboard is visible.
-     *     So we manually observe keyboard visibility and apply the correct height.
-     *   - On Android 14 and below, a WindowInsetsCompat listener is used, with an attach-aware
-     *   insets request so the padding is applied even when the listener is installed after the
-     *   initial insets dispatch.
+     * - The bottom sheet case needs no handling, system insets are applied automatically there.
+     * - Two sources are used on every API level, because neither one is reliable on its own:
+     *   - A [ViewCompat.setOnApplyWindowInsetsListener], which is the normal mechanism and also
+     *     delivers keyboard (ime) changes while they animate.
+     *   - The window insets read directly with [ViewCompat.getRootWindowInsets]. This is required
+     *     because a host app whose theme has an ActionBar renders our fragments inside AppCompat's
+     *     `ActionBarOverlayLayout`, which consumes the window insets. Insets are then never
+     *     dispatched to any view below it, so the listener above is never called and the padding
+     *     would stay at zero. Reading the window directly is unaffected by that consumption.
+     *
+     * Both sources set the same absolute padding, so applying them together is safe.
      */
-
     private fun handleViewInsets() {
         if (isReviewViewInBottomSheet()) return
-        when {
-            isAndroid15OrAbove() -> {
-                observeKeyboardVisibilityAndHeight(binding.root) { visible, height , bottom ->
-                    if (visible) {
-                        binding.gpsPaymentDetails.updatePadding(
-                            bottom = (height + extraBottomPadding(
-                                context
-                            ))
-                        )
-                        scrollFocusedViewAboveKeyboard(bottom)
-                    }
-                    else
-                        binding.gpsPaymentDetails.updatePadding(
-                            bottom = extraBottomPadding(context)
-                        )
-                }
-            }
 
-            else -> {
-                ViewCompat.setOnApplyWindowInsetsListener(binding.gpsPaymentDetails) { v, insets ->
-                    val bottom = maxOf(
-                        insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom,
-                        insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-                    )
-                    v.updatePadding(bottom = bottom)
-                    insets
-                }
-                requestApplyInsetsWhenAttached(binding.gpsPaymentDetails)
-            }
+        ViewCompat.setOnApplyWindowInsetsListener(binding.gpsPaymentDetails) { _, insets ->
+            applyBottomSystemInsets(insets)
+            insets
         }
+        requestApplyInsetsWhenAttached(binding.gpsPaymentDetails)
+
+        removeOnLayoutChangeListener(bottomInsetLayoutListener)
+        addOnLayoutChangeListener(bottomInsetLayoutListener)
+        applyBottomSystemInsetsFromWindow()
     }
 
     /**
-     * In android 15 and above, when the keyboard is shown, the focused view (EditText) was hidden
-     * behind the keyboard.
-     *
-     * [scrollFocusedViewAboveKeyboard] takes care of that view which was hidden, by calculating
-     * height of keyboard and scrolling the focused view above it.
-     * @param keyboardBottom -> this is the bottom position of the keyboard
-     * calculated by the [observeKeyboardVisibilityAndHeight] function.
-     *
-     * Important note: This function is only called when
-     * - Device is in landscape orientation
-     * - Root view is attached to the window
-     * - Focused view is an instance of EditText
-     * - Parent ScrollView is found
-     * - Review View is not in a BottomSheet
-     * - Api level is 35 or above (Android 15+)
-     * - [findParentScrollView] returns a valid ScrollView
-     *
+     * Re-reads the window insets on every layout pass. This keeps the bottom padding correct when
+     * the listener in [handleViewInsets] is never called because a host view consumed the insets,
+     * for example after a rotation or when the keyboard resizes the window.
      */
+    private val bottomInsetLayoutListener =
+        OnLayoutChangeListener { _, _, _, _, _, _, _, _, _ -> applyBottomSystemInsetsFromWindow() }
+
+    private fun applyBottomSystemInsetsFromWindow() {
+        ViewCompat.getRootWindowInsets(this)?.let { applyBottomSystemInsets(it) }
+    }
+
+    /**
+     * Applies as bottom padding only the part of the navigation bar or keyboard that actually
+     * overlaps the payment details view.
+     *
+     * See [bottomSystemBarOverlap] for why the raw inset value cannot be used as the padding.
+     */
+    private fun applyBottomSystemInsets(insets: WindowInsetsCompat) {
+        val imeInsetBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+        val target = binding.gpsPaymentDetails
+        val overlap = target.bottomSystemBarOverlap(insets.systemBottomInset())
+        if (target.paddingBottom != overlap) {
+            target.updatePadding(bottom = overlap)
+        }
+        if (isAndroid15OrAbove() && insets.isVisible(WindowInsetsCompat.Type.ime())) {
+            scrollFocusedViewAboveKeyboard(imeInsetBottom)
+        }
+    }
 
     private fun scrollFocusedViewAboveKeyboard(keyboardBottom: Int) {
         if (!resources.isLandscapeOrientation() || !rootView.isAttachedToWindow) return
@@ -268,15 +261,6 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
         return null
     }
 
-    @Suppress("MagicNumber")
-    private fun extraBottomPadding(context: Context): Int {
-        return TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            8f,
-            context.resources.displayMetrics
-        ).toInt()
-    }
-
     private fun isReviewViewInBottomSheet(): Boolean {
         var current: View? = this
         while (current != null) {
@@ -298,25 +282,6 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM
     }
 
-
-    private fun observeKeyboardVisibilityAndHeight(
-        view: View,
-        onChanged: (
-            visible: Boolean,
-            height: Int,
-            imeInsetBottom: Int
-        ) -> Unit
-    ) {
-        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
-            val isVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-            val height = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-            val navBarHeight = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
-            onChanged(isVisible, (height - navBarHeight), height)
-            insets
-        }
-
-        requestApplyInsetsWhenAttached(view)
-    }
 
     /**
      * Triggers an insets pass for [target] as soon as this view is attached to the window.
