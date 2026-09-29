@@ -71,7 +71,6 @@ internal object CxExtractionsFilter {
         return CaptureSDKResult.Success(
             specificExtractions = filteredSpecific,
             compoundExtractions = filteredCompound,
-            returnReasons = emptyList(),
         )
     }
 }

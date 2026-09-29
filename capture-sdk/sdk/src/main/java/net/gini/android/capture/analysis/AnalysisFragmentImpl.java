@@ -84,6 +84,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private AnalysisHintsAnimator mHintsAnimator;
     private View mHintsContainer;
     private View mPoweredByGiniView;
+    private boolean mHintShown;
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
     private InjectedViewContainer<CustomLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
     private boolean isScanAnimationActive;
@@ -434,9 +435,20 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         mPoweredByGiniView = view.findViewById(R.id.gc_powered_by_gini);
     }
 
+    // Once a capture suggestion has been shown the badge stays hidden for the rest of this view,
+    // matching iOS and the design: the tip takes the badge's place at the bottom of the screen.
+    // Tracked in its own flag because the hint container is hidden again when a warning bottom
+    // sheet opens, and the badge must not come back behind the sheet on the next onResume.
     @Override
     void setPoweredByGiniVisible(final boolean visible) {
-        mPoweredByGiniView.setVisibility(visible ? View.VISIBLE : View.GONE);
+        mPoweredByGiniView.setVisibility(visible && !mHintShown ? View.VISIBLE : View.GONE);
+    }
+
+    private void hidePoweredByGini() {
+        mHintShown = true;
+        if (mPoweredByGiniView != null) {
+            mPoweredByGiniView.setVisibility(View.GONE);
+        }
     }
 
     private void createHintsAnimator(@NonNull final View view) {
@@ -445,8 +457,10 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         final View hintContainer = view.findViewById(R.id.gc_analysis_hint_container);
         final TextView hintHeadlineTextView = view.findViewById(R.id.gc_analysis_hint_headline);
         mHintsContainer = hintContainer;
+        mHintShown = false;
         mHintsAnimator = new AnalysisHintsAnimator(mFragment.getActivity().getApplication(),
                 hintContainer, hintImageView, hintTextView, hintHeadlineTextView);
+        mHintsAnimator.setOnHintShownListener(this::hidePoweredByGini);
     }
 
     private void setTopBarInjectedViewContainer() {
@@ -469,16 +483,15 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         if (GiniCapture.hasInstance()) {
             // While the client configuration lists the Analysis screen in ingredientBrandScreens,
             // the animated Gini mark replaces the loading indicator and an adapter injected with
-            // GiniCapture.Builder.setLoadingIndicatorAdapter() is deliberately not consulted here
-            // — the ingredient brand must not be replaceable by the integrator (PP-3512).
-            // Chosen at view creation, before the presenter starts in onResume(), so the indicator
-            // never swaps a frame after the screen is already showing.
+            // GiniCapture.Builder.setLoadingIndicatorAdapter() is deliberately not consulted —
+            // the ingredient brand must not be replaceable by the integrator (PP-3512).
+            // The choice is made whenever the indicator is shown, not here: on the "open with"
+            // path this screen opens before the client configuration has arrived, so deciding at
+            // view creation would keep the integrator's indicator for the whole screen.
             InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter> adapterInstance =
-                    fragmentExtension.giniLoadingIndicatorAdapterInstance();
-            if (adapterInstance == null) {
-                adapterInstance = GiniCapture.getInstance().internal()
-                        .getLoadingIndicatorAdapterInstance();
-            }
+                    fragmentExtension.loadingIndicatorAdapterInstance(
+                            GiniCapture.getInstance().internal()
+                                    .getLoadingIndicatorAdapterInstance().getViewAdapter());
 
             injectedLoadingIndicatorContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(
                     adapterInstance,

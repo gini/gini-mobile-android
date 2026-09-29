@@ -454,6 +454,13 @@
       it was anchored to gc_injected_navigation_bar_container_bottom, because that container was
       empty and zero-height at the parent bottom whenever no bottom bar was injected. PP-3229
       removed that container, so the anchor moved to the parent directly.
+
+      Horizontally it centres on gc_camera_frame_wrapper rather than on the root, because this
+      variant puts the camera controls in a side pane: the root's centre is not the camera area's
+      centre, and centring on the root would leave the badge offset from gc_qr_code_status, which
+      sits inside that wrapper directly above it. The design's landscape frames draw their control
+      pane outside the 800dp frame, so there "centre of the frame" and "centre of the camera area"
+      are the same point — the camera area is what the badge is centred on in both.
     -->
     <include
         android:id="@+id/gc_powered_by_gini"
@@ -463,7 +470,7 @@
         android:layout_marginBottom="@dimen/gc_large"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="@id/gc_camera_frame_wrapper"
+        app:layout_constraintStart_toStartOf="@id/gc_camera_frame_wrapper" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

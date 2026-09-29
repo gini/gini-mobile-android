@@ -1314,10 +1314,14 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 analyzeQRCode(mQRCodeDocument);
                 break;
             case EPS_PAYMENT:
+                // No analysis step at all, so no ingredient brand — stated explicitly rather than
+                // relying on the flag already being false.
+                setQrInvoiceRetrievalRunning(false);
                 sendQRCodeScannedEventToUserAnalytics(true);
                 handleEPSPaymentQRCode(paymentQRCodeData);
                 break;
             default:
+                setQrInvoiceRetrievalRunning(false);
                 sendQRCodeScannedEventToUserAnalytics(false);
                 LOG.error("Unknown payment QR Code format: {}", LogSanitizer.sanitize(paymentQRCodeData));
                 break;
@@ -1377,14 +1381,6 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         mButtonCameraFlashTrigger.setContentDescription(activity.getString(flashButtonContentDescription));
     }
 
-    // ===================== TEMPORARY — REMOVE BEFORE COMMITTING =====================
-    // Holds the camera's QR invoice-retrieval indicator up so the whole loading animation can be
-    // watched on this screen too. Revert with:
-    //   git checkout -- capture-sdk/sdk/src/main/java/net/gini/android/capture/camera/CameraFragmentImpl.java
-    private static final long TEMP_QR_DELAY_MS = 21_000L;
-    private boolean tempQrDelayElapsed = false;
-    // ===============================================================================
-
     @VisibleForTesting
     void analyzeQRCode(final QRCodeDocument qrCodeDocument) {
         final Activity activity = mFragment.getActivity();
@@ -1394,31 +1390,14 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         // Only this busy state carries the ingredient brand; the camera's other three keep the
         // integrator's indicator.
         setQrInvoiceRetrievalRunning(true);
-        // TEMPORARY — see TEMP_QR_DELAY_MS above.
-        if (!tempQrDelayElapsed) {
-            tempQrDelayElapsed = true;
-            showActivityIndicatorAndDisableInteraction();
-            new android.os.Handler(android.os.Looper.getMainLooper())
-                    .postDelayed(() -> analyzeQRCode(qrCodeDocument), TEMP_QR_DELAY_MS);
-            return;
-        }
         if (GiniCapture.hasInstance()) {
             final NetworkRequestsManager networkRequestsManager =
                     GiniCapture.getInstance().internal().getNetworkRequestsManager();
             if (networkRequestsManager != null) {
+                // The brand element is already up: both halves raise it in
+                // CameraFragmentExtension.showQrCodePopup, which runs before this. Nothing to do
+                // here beyond swapping the QR-detected state for the loading one.
                 showActivityIndicatorAndDisableInteraction();
-                // This is the moment the invoice-retrieval half actually covers the preview: the
-                // dim is up AND the shutter is disabled. Showing the brand element any earlier
-                // (e.g. when the QR-code popup is shown) puts a screenReaderFocusable badge over a
-                // still-usable shutter for the popup's ~1s delay, which violates R13 — on phone
-                // portrait the badge overlaps the trigger's lower edge and wins explore-by-touch.
-                // This is exactly where QRCodePopup.progressViews() used to raise it.
-                // On the education half this runs too (the education flow calls back into
-                // handlePaymentQRCodeData), where it is a harmless idempotent re-show: that half
-                // already raised the badge together with its own full-screen overlay.
-                if (isIngredientBrandVisible()) {
-                    setPoweredByGiniVisible(true);
-                }
                 networkRequestsManager
                         .upload(activity, qrCodeDocument)
                         .handle((requestResult, throwable) -> {
@@ -1803,20 +1782,29 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
      * yet {@link #analyzeQRCode} raises the badge regardless, so it must still come down here.
      */
     public void hideActivityIndicatorAndEnableInteraction() {
+        // The QR-code analysis step is over, so the next busy state starts unbranded. Without this
+        // the flag stayed true for the rest of the fragment's life and QRCodePopup.progressViews(),
+        // which raises the indicator without going through any of the call sites that set it,
+        // would show the Gini mark for every later QR code — including the EPS ones that must
+        // never carry it (see handlePaymentQRCodeData).
+        setQrInvoiceRetrievalRunning(false);
         if (!isQrEducationStepRunning()) {
             setPoweredByGiniVisible(false);
         }
+        // Above the early return, and unconditional. The QR-code step blocks interaction the
+        // moment its popup appears, whether or not an integrator injected a loading indicator,
+        // while the guard below is only about that indicator — unblocking underneath it would
+        // strand a disabled shutter on every integration that injects none.
+        unblockInteractionAfterQrCodeStep();
         if (mLoadingIndicator.getInjectedViewAdapterHolder() == null
                 || mActivityIndicatorBackground == null) {
             return;
         }
         mActivityIndicatorBackground.setVisibility(View.INVISIBLE);
-        mActivityIndicatorBackground.setClickable(false);
         mLoadingIndicator.modifyAdapterIfOwned(adapter -> {
             adapter.onHidden();
             return Unit.INSTANCE;
         });
-        enableInteraction();
     }
 
     private void updatePhotoThumbnail() {
@@ -1872,6 +1860,38 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         mButtonCameraFlashTrigger.setEnabled(true);
         mPhotoThumbnail.setEnabled(true);
         mButtonCameraTrigger.setEnabled(true);
+    }
+
+    @Override
+    protected void blockInteractionForQrCodeStep() {
+        if (mActivityIndicatorBackground != null) {
+            // QRCodePopup only makes this visible. A plain View that is not clickable does not
+            // consume touches, so until this it is paint only and the shutter behind it is live.
+            mActivityIndicatorBackground.setClickable(true);
+        }
+        if (mPaneWrapper != null) {
+            // Swallowing touches is not enough for TalkBack: explore-by-touch walks the
+            // accessibility tree, so a disabled-but-present shutter would still compete with the
+            // brand element drawn over it. The whole control pane leaves the tree instead.
+            mPaneWrapper.setImportantForAccessibility(
+                    View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+        }
+        disableInteraction();
+    }
+
+    /**
+     * Undoes {@link #blockInteractionForQrCodeStep()}. Restores the pane to the
+     * {@code importantForAccessibility="no"} it carries in every camera layout, which hides the
+     * wrapper itself but keeps its controls announced.
+     */
+    private void unblockInteractionAfterQrCodeStep() {
+        if (mActivityIndicatorBackground != null) {
+            mActivityIndicatorBackground.setClickable(false);
+        }
+        if (mPaneWrapper != null) {
+            mPaneWrapper.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        }
+        enableInteraction();
     }
 
     private void disableInteraction() {

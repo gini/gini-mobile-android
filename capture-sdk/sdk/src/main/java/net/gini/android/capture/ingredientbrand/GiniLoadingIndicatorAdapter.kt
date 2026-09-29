@@ -76,9 +76,12 @@ internal class GiniLoadingIndicatorAdapter(
         animation = drawable
         return ImageView(container.context).apply {
             scaleType = ImageView.ScaleType.FIT_CENTER
-            // The animation says nothing the analysis message does not already announce, so it is
-            // not a focus stop for TalkBack.
-            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+            // Announced by TalkBack like the iOS indicator. The text is a neutral "Loading" because
+            // this adapter also runs on the camera screen's QR code overlay, not only on Analysis.
+            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
+            contentDescription = container.context.getString(
+                R.string.gc_gini_loading_indicator_content_description,
+            )
             // Matches DefaultLoadingIndicatorAdapter, which also starts hidden and is made visible
             // by the screen's onVisible() call.
             visibility = View.GONE

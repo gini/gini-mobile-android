@@ -19,7 +19,7 @@ import net.gini.android.capture.internal.qreducation.model.FlowType
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.education.GetEducationFeatureEnabledUseCase
 import net.gini.android.capture.ingredientbrand.GetIngredientBrandVisibleUseCase
-import net.gini.android.capture.ingredientbrand.CameraLoadingIndicatorAdapter
+import net.gini.android.capture.ingredientbrand.IngredientBrandLoadingIndicatorAdapter
 import net.gini.android.capture.ingredientbrand.IngredientBrandScreen
 import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
 import net.gini.android.capture.internal.provider.UnsupportedQrWarningSessionPin
@@ -76,10 +76,12 @@ internal abstract class CameraFragmentExtension {
     /**
      * The Camera screen's loading indicator.
      *
-     * Always a [CameraLoadingIndicatorAdapter], which decides between the Gini brand mark and the
-     * integrator's indicator at the moment it is shown. The Camera screen cannot decide at
-     * view-creation time: `ingredientBrandScreens` arrives asynchronously and this is the first
-     * screen the SDK opens, so the flag is still empty here on launch.
+     * Always an [IngredientBrandLoadingIndicatorAdapter], which decides between the Gini brand
+     * mark and the integrator's indicator every time it is shown. The Camera screen cannot decide
+     * at view-creation time: `ingredientBrandScreens` arrives asynchronously and this is the first
+     * screen the SDK opens, so the flag is still empty here on launch. It also cannot decide once
+     * per view, because the indicator serves four busy states and only the QR retrieval is
+     * branded.
      *
      * The Gini mark appears only while an invoice is retrieved for a scanned QR code — the
      * analysis step of the QR flow, before the Analysis screen opens. That is the one camera busy
@@ -92,7 +94,7 @@ internal abstract class CameraFragmentExtension {
     ): InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter> =
         cameraLoadingIndicatorInstance
             ?: InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter>(
-                CameraLoadingIndicatorAdapter(
+                IngredientBrandLoadingIndicatorAdapter(
                     isGiniMarkEnabled = {
                         qrInvoiceRetrievalRunning &&
                                 getIngredientBrandVisibleUseCase(IngredientBrandScreen.ANALYSIS)
@@ -188,6 +190,17 @@ internal abstract class CameraFragmentExtension {
                 educationMutex.lock()
                 onEducationFlowTriggered()
             } else {
+                // The approved design shows the brand element from the QR-detected state on
+                // (frames 2.3.2 and 2.3.3 android-ph-QrDetected, 35002:11735/11756), not only
+                // once the invoice starts loading. QRCodePopup makes the dim visible but nothing
+                // there blocks input, so the controls are taken out of reach first: R13 forbids a
+                // screenReaderFocusable badge over a shutter the user can still hit. Undone in
+                // CameraFragmentImpl.hideActivityIndicatorAndEnableInteraction, whatever the
+                // outcome of the step.
+                blockInteractionForQrCodeStep()
+                if (isIngredientBrandVisible()) {
+                    setPoweredByGiniVisible(true)
+                }
                 mPaymentQRCodePopup.show(data)
             }
         }
@@ -226,6 +239,17 @@ internal abstract class CameraFragmentExtension {
      * QR-code analysis step is starting.
      */
     protected abstract fun setPoweredByGiniVisible(visible: Boolean)
+
+    /**
+     * Puts the camera controls out of reach for the duration of the QR-code analysis step.
+     *
+     * Implemented by `CameraFragmentImpl`, which disables the controls, makes the dim swallow
+     * touches and drops the control pane out of the accessibility tree. Needed because
+     * `QRCodePopup.show` only makes the dim *visible* — a plain View that is not clickable does
+     * not consume touches, so without this the shutter stays reachable underneath while the
+     * brand element sits over it.
+     */
+    protected abstract fun blockInteractionForQrCodeStep()
 
     protected abstract fun isOnlyQRCodeScanningEnabled(): Boolean
 }

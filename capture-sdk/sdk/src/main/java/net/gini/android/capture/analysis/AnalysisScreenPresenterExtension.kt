@@ -26,7 +26,6 @@ import net.gini.android.capture.internal.qreducation.GetInvoiceEducationTypeUseC
 import net.gini.android.capture.internal.qreducation.IncrementInvoiceRecognizedCounterUseCase
 import net.gini.android.capture.internal.qreducation.model.InvoiceEducationType
 import net.gini.android.capture.internal.storage.ImageDiskStore
-import net.gini.android.capture.internal.util.NullabilityHelper.getListOrEmpty
 import net.gini.android.capture.internal.util.NullabilityHelper.getMapOrEmpty
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
@@ -166,7 +165,7 @@ internal class AnalysisScreenPresenterExtension(
             .onExtractionsAvailable(
                 getMapOrEmpty(resultHolder.extractions),
                 getMapOrEmpty(resultHolder.compoundExtractions),
-                getListOrEmpty(resultHolder.returnReasons)
+                emptyList()
             )
     }
 
@@ -383,7 +382,7 @@ internal class AnalysisScreenPresenterExtension(
             .onSchedulePayment(
                 getMapOrEmpty(resultHolder.extractions),
                 getMapOrEmpty(resultHolder.compoundExtractions),
-                getListOrEmpty(resultHolder.returnReasons)
+                emptyList()
             )
     }
 
@@ -428,6 +427,7 @@ internal class AnalysisScreenPresenterExtension(
             /* no-op */
         }
 
+        @Suppress("DEPRECATION")
         override fun onExtractionsAvailable(
             extractions: Map<String, GiniCaptureSpecificExtraction>,
             compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,
