@@ -77,7 +77,7 @@ class TransferSummaryIntegrationTest {
         )
             .setApiBaseUrl(testProperties["testApiUri"] as String)
             .setUserCenterApiBaseUrl(testProperties["testUserCenterUri"] as String)
-            .setConnectionTimeoutInMs(60000)
+            .setConnectTimeoutInMs(60000)
             .build()
     }
 

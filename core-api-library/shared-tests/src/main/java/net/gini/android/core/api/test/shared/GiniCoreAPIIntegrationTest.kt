@@ -75,7 +75,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
         giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, TEST_EMAIL_DOMAIN)
             .setApiBaseUrl(apiUri)
             .setUserCenterApiBaseUrl(userCenterUri)
-            .setConnectionTimeoutInMs(60000)
+            .setConnectTimeoutInMs(60000)
             .setCredentialsStore(credentialsStore)
             .setDebuggingEnabled(true)
             .build()
@@ -121,7 +121,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
         giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, TEST_EMAIL_DOMAIN)
             .setApiBaseUrl(apiUri)
             .setUserCenterApiBaseUrl(userCenterUri)
-            .setConnectionTimeoutInMs(60000)
+            .setConnectTimeoutInMs(60000)
             .setCache(Cache(File(ApplicationProvider.getApplicationContext<Context>().cacheDir, "no_cache"), 1))
             .build()
 
@@ -140,7 +140,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
         giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, TEST_EMAIL_DOMAIN)
             .setApiBaseUrl(apiUri)
             .setUserCenterApiBaseUrl(userCenterUri)
-            .setConnectionTimeoutInMs(60000)
+            .setConnectTimeoutInMs(60000)
             .setCredentialsStore(credentialsStore)
             .build()
 
@@ -170,7 +170,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
         giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, oldEmailDomain)
             .setApiBaseUrl(apiUri)
             .setUserCenterApiBaseUrl(userCenterUri)
-            .setConnectionTimeoutInMs(60000)
+            .setConnectTimeoutInMs(60000)
             .setCredentialsStore(credentialsStore)
             .build()
 
@@ -188,7 +188,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
         giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, newEmailDomain)
             .setApiBaseUrl(apiUri)
             .setUserCenterApiBaseUrl(userCenterUri)
-            .setConnectionTimeoutInMs(60000)
+            .setConnectTimeoutInMs(60000)
             .setCredentialsStore(credentialsStore)
             .build()
         processDocument(testDocument, TEST_DOCUMENT_CONTENT_TYPE, TEST_DOCUMENT_FILENAME, DocumentManager.DocumentType.INVOICE)
@@ -211,7 +211,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
             }
             setApiBaseUrl(apiUri)
             setUserCenterApiBaseUrl(userCenterUri)
-            setConnectionTimeoutInMs(60000)
+            setConnectTimeoutInMs(60000)
         }.build()
 
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
@@ -232,7 +232,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
             }
             setApiBaseUrl(apiUri)
             setUserCenterApiBaseUrl(userCenterUri)
-            setConnectionTimeoutInMs(60000)
+            setConnectTimeoutInMs(60000)
             setCache(Cache(File(ApplicationProvider.getApplicationContext<Context>().cacheDir, "no_cache"), 1))
         }.build()
 
@@ -393,7 +393,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
         giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, TEST_EMAIL_DOMAIN)
             .setApiBaseUrl(apiUri)
-            .setUserCenterApiBaseUrl(userCenterUri).setConnectionTimeoutInMs(60000)
+            .setUserCenterApiBaseUrl(userCenterUri).setConnectTimeoutInMs(60000)
             .setTrustManager(blockingTrustManager)
             .build()
 

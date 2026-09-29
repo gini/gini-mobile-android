@@ -644,8 +644,12 @@ internal constructor(
 
         @XmlRes
         private var networkSecurityConfigResId = 0
+        // The deprecated setConnectionTimeout / setConnectionTimeoutUnit pair sets connect, read and
+        // write at once; the dedicated setters take precedence over it regardless of call order.
         private var connectionTimeout: Long = 0
         private var connectionTimeoutUnit: TimeUnit? = null
+        private var connectTimeoutInMs: Int? = null
+        private var readWriteTimeoutInMs: Int? = null
         private var documentMetadata: DocumentMetadata? = null
         private var trustManager: TrustManager? = null
         private var httpClientProvider: GiniHttpClientProvider? = null
@@ -674,20 +678,30 @@ internal constructor(
             if (networkSecurityConfigResId != 0) {
                 giniApiBuilder.setNetworkSecurityConfigResId(networkSecurityConfigResId)
             }
-            connectionTimeoutUnit?.let { timeoutUnit ->
-                giniApiBuilder.setConnectionTimeoutInMs(
-                    TimeUnit.MILLISECONDS.convert(
-                        connectionTimeout,
-                        timeoutUnit
-                    ).toInt()
-                )
-            }
+            connectTimeoutInMs()?.let { giniApiBuilder.setConnectTimeoutInMs(it) }
+            readWriteTimeoutInMs()?.let { giniApiBuilder.setReadWriteTimeoutInMs(it) }
             trustManager?.let { giniApiBuilder.setTrustManager(it) }
             httpClientProvider?.let { giniApiBuilder.setHttpClientProvider(it) }
             giniApiBuilder.setDebuggingEnabled(isDebuggingEnabled)
             val giniBankApi = giniApiBuilder.build()
             return GiniCaptureDefaultNetworkService(giniBankApi, documentMetadata, mContext)
         }
+
+        /**
+         * The connect timeout that [build] forwards to the API builder, in milliseconds: the value
+         * set with [setConnectTimeout], else the deprecated [setConnectionTimeout] value, else
+         * `null` so that the API builder's default applies.
+         */
+        internal fun connectTimeoutInMs(): Int? =
+            connectTimeoutInMs ?: toMillis(connectionTimeout, connectionTimeoutUnit)
+
+        /**
+         * The read and write timeout that [build] forwards to the API builder, in milliseconds: the
+         * value set with [setReadWriteTimeout], else the deprecated [setConnectionTimeout] value,
+         * else `null` so that the API builder's default applies.
+         */
+        internal fun readWriteTimeoutInMs(): Int? =
+            readWriteTimeoutInMs ?: toMillis(connectionTimeout, connectionTimeoutUnit)
 
         /**
          * Set your Gini API client ID and secret. The email domain is used when generating
@@ -806,26 +820,83 @@ internal constructor(
         }
 
         /**
-         * Set the (initial) timeout for each request. A timeout error will occur if nothing is
-         * received from the underlying socket in the given time span. The initial timeout will be
-         * altered depending on the backoff multiplier and failed retries.
+         * Set the connect timeout for each request. A timeout error will occur if the TCP connection
+         * to the server is not established in the given time span. The timeout applies per resolved
+         * address of the server, so on a network with a broken IPv6 route the next (IPv4) address is
+         * tried after it elapses; keep it short to let that fallback happen quickly.
          *
-         * @param connectionTimeout initial timeout
+         * If not set, the connect timeout defaults to 15 seconds. Reading and writing are configured
+         * separately with [setReadWriteTimeout]. Takes precedence over the deprecated
+         * [setConnectionTimeout] / [setConnectionTimeoutUnit] pair.
+         *
+         * @param timeout connect timeout in [unit] (must be >= 0)
+         * @param unit the time unit of [timeout]
+         *
+         * @return the [Builder] instance
+         * @throws IllegalArgumentException if the timeout is negative
+         */
+        fun setConnectTimeout(timeout: Long, unit: TimeUnit): Builder {
+            require(timeout >= 0) { "connect timeout can't be less than 0" }
+            this.connectTimeoutInMs = toMillis(timeout, unit)
+            return this
+        }
+
+        /**
+         * Set the read and write timeout for each request. A timeout error will occur if nothing is
+         * sent to or received from the underlying socket in the given time span. Choose it generously
+         * enough for multi-page document uploads on slow connections.
+         *
+         * If not set, the read and write timeouts default to 60 seconds. Takes precedence over the
+         * deprecated [setConnectionTimeout] / [setConnectionTimeoutUnit] pair.
+         *
+         * @param timeout read and write timeout in [unit] (must be >= 0)
+         * @param unit the time unit of [timeout]
+         *
+         * @return the [Builder] instance
+         * @throws IllegalArgumentException if the timeout is negative
+         */
+        fun setReadWriteTimeout(timeout: Long, unit: TimeUnit): Builder {
+            require(timeout >= 0) { "read/write timeout can't be less than 0" }
+            this.readWriteTimeoutInMs = toMillis(timeout, unit)
+            return this
+        }
+
+        /**
+         * Set the connect, read and write timeouts of each request to the same value. The unit is
+         * set with [setConnectionTimeoutUnit]; the timeout is only applied when a unit is set.
+         *
+         * Kept for compatibility: the pair behaves as it always did and applies one value to all
+         * three timeouts. Because the connect timeout now defaults to 15 seconds so that a failed
+         * IPv6 connect falls back to IPv4 quickly, prefer [setConnectTimeout] for the connect timeout
+         * and [setReadWriteTimeout] for the read and write timeouts. Values set through those two
+         * take precedence over this pair regardless of call order. There is no drop-in replacement,
+         * since replacing this pair with [setConnectTimeout] alone would leave read and write at
+         * 60 seconds.
+         *
+         * @param connectionTimeout timeout in the unit set via [setConnectionTimeoutUnit]
          *
          * @return the [Builder] instance
          */
+        @Deprecated(
+            "Sets the connect, read and write timeouts at once. Use setConnectTimeout for the connect " +
+                    "timeout and setReadWriteTimeout for the read and write timeouts."
+        )
         fun setConnectionTimeout(connectionTimeout: Long): Builder {
             this.connectionTimeout = connectionTimeout
             return this
         }
 
         /**
-         * Set the connection timeout's time unit.
+         * Set the time unit of the deprecated [setConnectionTimeout].
          *
          * @param connectionTimeoutUnit the time unit
          *
          * @return the [Builder] instance
          */
+        @Deprecated(
+            "Sets the unit of the deprecated setConnectionTimeout. Use setConnectTimeout for the connect " +
+                    "timeout and setReadWriteTimeout for the read and write timeouts."
+        )
         fun setConnectionTimeoutUnit(connectionTimeoutUnit: TimeUnit): Builder {
             this.connectionTimeoutUnit = connectionTimeoutUnit
             return this
@@ -870,7 +941,8 @@ internal constructor(
          * settings configured via other builder methods such as:
          * - [setCache]
          * - [setTrustManager]
-         * - [setConnectionTimeout] and [setConnectionTimeoutUnit]
+         * - [setConnectTimeout] and [setReadWriteTimeout] (and the deprecated
+         *   [setConnectionTimeout] / [setConnectionTimeoutUnit] pair)
          * - [setNetworkSecurityConfigResId]
          * - [setDebuggingEnabled]
          *
@@ -925,3 +997,8 @@ internal constructor(
         fun builder(context: Context) = Builder(context)
     }
 }
+
+// Saturates instead of wrapping: a value beyond Int.MAX_VALUE ms (~24.9 days) would otherwise
+// turn negative and make the API builder reject it later, far from the call that set it.
+private fun toMillis(timeout: Long, unit: TimeUnit?): Int? =
+    unit?.let { TimeUnit.MILLISECONDS.convert(timeout, it).coerceAtMost(Int.MAX_VALUE.toLong()).toInt() }
