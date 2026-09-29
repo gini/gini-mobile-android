@@ -427,6 +427,7 @@ public final class net/gini/android/core/api/http/DefaultGiniHttpClientProvider$
 	public fun <init> (Landroid/content/Context;)V
 	public final fun build ()Lnet/gini/android/core/api/http/DefaultGiniHttpClientProvider;
 	public final fun setCache (Lokhttp3/Cache;)Lnet/gini/android/core/api/http/DefaultGiniHttpClientProvider$Builder;
+	public final fun setConnectTimeoutInMs (I)Lnet/gini/android/core/api/http/DefaultGiniHttpClientProvider$Builder;
 	public final fun setConnectionTimeoutInMs (I)Lnet/gini/android/core/api/http/DefaultGiniHttpClientProvider$Builder;
 	public final fun setDebuggingEnabled (Z)Lnet/gini/android/core/api/http/DefaultGiniHttpClientProvider$Builder;
 	public final fun setHostnames (Ljava/util/List;)Lnet/gini/android/core/api/http/DefaultGiniHttpClientProvider$Builder;
@@ -476,6 +477,7 @@ public abstract class net/gini/android/core/api/internal/GiniCoreAPIBuilder {
 	protected final fun getTrackingAnalyticsApiRetrofit ()Lretrofit2/Retrofit;
 	public fun setApiBaseUrl (Ljava/lang/String;)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
 	public fun setCache (Lokhttp3/Cache;)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
+	public fun setConnectTimeoutInMs (I)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
 	public fun setConnectionTimeoutInMs (I)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
 	public fun setCredentialsStore (Lnet/gini/android/core/api/authorization/CredentialsStore;)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
 	public final fun setDebuggingEnabled (Z)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;

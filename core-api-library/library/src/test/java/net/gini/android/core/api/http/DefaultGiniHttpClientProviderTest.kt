@@ -28,9 +28,9 @@ class DefaultGiniHttpClientProviderTest {
     }
 
     @Test
-    fun `an explicitly configured connection timeout applies to connect only`() {
+    fun `an explicitly configured connect timeout applies to connect only`() {
         val client = DefaultGiniHttpClientProvider.builder(context)
-            .setConnectionTimeoutInMs(10_000)
+            .setConnectTimeoutInMs(10_000)
             .build()
             .provideOkHttpClient()
 
@@ -52,9 +52,9 @@ class DefaultGiniHttpClientProviderTest {
     }
 
     @Test
-    fun `connection and read write timeouts can be configured together`() {
+    fun `connect and read write timeouts can be configured together`() {
         val client = DefaultGiniHttpClientProvider.builder(context)
-            .setConnectionTimeoutInMs(10_000)
+            .setConnectTimeoutInMs(10_000)
             .setReadWriteTimeoutInMs(90_000)
             .build()
             .provideOkHttpClient()
@@ -65,20 +65,59 @@ class DefaultGiniHttpClientProviderTest {
     }
 
     @Test
-    fun `a negative read write timeout is rejected`() {
-        val builder = DefaultGiniHttpClientProvider.builder(context)
+    @Suppress("DEPRECATION")
+    fun `the deprecated connection timeout still applies to connect read and write`() {
+        // Integrators who call the old setter keep exactly the behaviour they had: one value for all three
+        val client = DefaultGiniHttpClientProvider.builder(context)
+            .setConnectionTimeoutInMs(10_000)
+            .build()
+            .provideOkHttpClient()
 
-        val exception = runCatching { builder.setReadWriteTimeoutInMs(-1) }.exceptionOrNull()
-
-        assertThat(exception).isInstanceOf(IllegalArgumentException::class.java)
+        assertThat(client.connectTimeoutMillis).isEqualTo(10_000)
+        assertThat(client.readTimeoutMillis).isEqualTo(10_000)
+        assertThat(client.writeTimeoutMillis).isEqualTo(10_000)
     }
 
     @Test
-    fun `a negative connection timeout is rejected`() {
+    @Suppress("DEPRECATION")
+    fun `the dedicated timeout setters take precedence over the deprecated connection timeout`() {
+        // Regardless of call order: the deprecated setter is called last here
+        val client = DefaultGiniHttpClientProvider.builder(context)
+            .setConnectTimeoutInMs(5_000)
+            .setReadWriteTimeoutInMs(90_000)
+            .setConnectionTimeoutInMs(30_000)
+            .build()
+            .provideOkHttpClient()
+
+        assertThat(client.connectTimeoutMillis).isEqualTo(5_000)
+        assertThat(client.readTimeoutMillis).isEqualTo(90_000)
+        assertThat(client.writeTimeoutMillis).isEqualTo(90_000)
+    }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun `the deprecated connection timeout fills in the timeout the dedicated setters left unset`() {
+        val client = DefaultGiniHttpClientProvider.builder(context)
+            .setConnectionTimeoutInMs(30_000)
+            .setReadWriteTimeoutInMs(90_000)
+            .build()
+            .provideOkHttpClient()
+
+        assertThat(client.connectTimeoutMillis).isEqualTo(30_000)
+        assertThat(client.readTimeoutMillis).isEqualTo(90_000)
+        assertThat(client.writeTimeoutMillis).isEqualTo(90_000)
+    }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun `negative timeouts are rejected by all three timeout setters`() {
         val builder = DefaultGiniHttpClientProvider.builder(context)
 
-        val exception = runCatching { builder.setConnectionTimeoutInMs(-1) }.exceptionOrNull()
-
-        assertThat(exception).isInstanceOf(IllegalArgumentException::class.java)
+        assertThat(runCatching { builder.setConnectTimeoutInMs(-1) }.exceptionOrNull())
+            .isInstanceOf(IllegalArgumentException::class.java)
+        assertThat(runCatching { builder.setReadWriteTimeoutInMs(-1) }.exceptionOrNull())
+            .isInstanceOf(IllegalArgumentException::class.java)
+        assertThat(runCatching { builder.setConnectionTimeoutInMs(-1) }.exceptionOrNull())
+            .isInstanceOf(IllegalArgumentException::class.java)
     }
 }

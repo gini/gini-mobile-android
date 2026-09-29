@@ -35,7 +35,7 @@ import javax.net.ssl.TrustManager
  *
  * ```kotlin
  * val provider = DefaultGiniHttpClientProvider.builder(context)
- *     .setConnectionTimeoutInMs(10_000)
+ *     .setConnectTimeoutInMs(10_000)
  *     .setReadWriteTimeoutInMs(90_000)
  *     .setCache(cache)
  *     .setDebuggingEnabled(BuildConfig.DEBUG)
@@ -166,8 +166,11 @@ class DefaultGiniHttpClientProvider private constructor(
         private var networkSecurityConfigResId: Int = 0
         private var cache: Cache? = null
         private var trustManager: TrustManager? = null
-        private var connectTimeoutInMs: Int = DEFAULT_CONNECT_TIMEOUT_MS
-        private var readWriteTimeoutInMs: Int = DEFAULT_READ_WRITE_TIMEOUT_MS
+        // Null until set. The deprecated setConnectionTimeoutInMs sets connect, read and write at
+        // once; the dedicated setters take precedence over it regardless of call order.
+        private var connectTimeoutInMs: Int? = null
+        private var readWriteTimeoutInMs: Int? = null
+        private var connectionTimeoutInMs: Int? = null
         private var isDebuggingEnabled = false
 
         /**
@@ -221,25 +224,47 @@ class DefaultGiniHttpClientProvider private constructor(
         }
 
         /**
-         * Set the connection (connect) timeout in milliseconds.
+         * Set the connect timeout in milliseconds.
          *
          * It bounds the TCP connect to a single resolved address of the server; the TLS handshake runs under
          * the read/write timeout. OkHttp tries the resolved addresses of a host one after the other, so on a
          * network with a broken IPv6 route the first attempt fails only after this timeout and the next
          * (IPv4) address is tried afterwards. Keep it short so that this fallback happens quickly.
          *
-         * Defaults to 15 seconds.
-         *
-         * Note: this timeout no longer covers reading and writing; configure those with
-         * [setReadWriteTimeoutInMs].
+         * Defaults to 15 seconds. Reading and writing are configured separately with
+         * [setReadWriteTimeoutInMs]. Takes precedence over the deprecated [setConnectionTimeoutInMs].
          *
          * @param timeoutInMs Timeout in milliseconds (must be >= 0)
          * @return This builder instance for chaining
          * @throws IllegalArgumentException if timeout is negative
          */
+        fun setConnectTimeoutInMs(timeoutInMs: Int): Builder {
+            require(timeoutInMs >= 0) { "connectTimeoutInMs can't be less than 0" }
+            this.connectTimeoutInMs = timeoutInMs
+            return this
+        }
+
+        /**
+         * Set the connect, read and write timeouts to the same value in milliseconds.
+         *
+         * Kept for compatibility: it behaves as it always did and applies one value to all three timeouts.
+         * Because the connect timeout now defaults to 15 seconds so that a failed IPv6 connect falls back
+         * to IPv4 quickly, prefer [setConnectTimeoutInMs] for the connect timeout and
+         * [setReadWriteTimeoutInMs] for the read and write timeouts. Values set through those two setters
+         * take precedence over this one regardless of call order. There is no drop-in replacement, since
+         * replacing this call with [setConnectTimeoutInMs] alone would leave read and write at 60 seconds.
+         *
+         * @param timeoutInMs Timeout in milliseconds (must be >= 0)
+         * @return This builder instance for chaining
+         * @throws IllegalArgumentException if timeout is negative
+         */
+        @Deprecated(
+            "Sets the connect, read and write timeouts at once. Use setConnectTimeoutInMs for the connect " +
+                    "timeout and setReadWriteTimeoutInMs for the read and write timeouts."
+        )
         fun setConnectionTimeoutInMs(timeoutInMs: Int): Builder {
             require(timeoutInMs >= 0) { "connectionTimeoutInMs can't be less than 0" }
-            this.connectTimeoutInMs = timeoutInMs
+            this.connectionTimeoutInMs = timeoutInMs
             return this
         }
 
@@ -250,7 +275,7 @@ class DefaultGiniHttpClientProvider private constructor(
          * document upload) or while waiting for response data. Choose it generously enough for multi-page
          * document uploads on slow connections.
          *
-         * Defaults to 60 seconds.
+         * Defaults to 60 seconds. Takes precedence over the deprecated [setConnectionTimeoutInMs].
          *
          * @param timeoutInMs Timeout in milliseconds (must be >= 0)
          * @return This builder instance for chaining
@@ -294,8 +319,8 @@ class DefaultGiniHttpClientProvider private constructor(
                 networkSecurityConfigResId = networkSecurityConfigResId,
                 cache = cache,
                 trustManager = trustManager,
-                connectTimeoutInMs = connectTimeoutInMs,
-                readWriteTimeoutInMs = readWriteTimeoutInMs,
+                connectTimeoutInMs = connectTimeoutInMs ?: connectionTimeoutInMs ?: DEFAULT_CONNECT_TIMEOUT_MS,
+                readWriteTimeoutInMs = readWriteTimeoutInMs ?: connectionTimeoutInMs ?: DEFAULT_READ_WRITE_TIMEOUT_MS,
                 isDebuggingEnabled = isDebuggingEnabled
             )
         }

@@ -61,9 +61,12 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     private var mMoshi: Moshi? = null
     private var mCredentialsStore: CredentialsStore? = null
     // Null until the consumer sets a timeout: the default http client provider then keeps its own
-    // defaults (short connect timeout, long read/write timeout)
+    // defaults (short connect timeout, long read/write timeout). The deprecated
+    // setConnectionTimeoutInMs sets connect, read and write at once; the dedicated setters take
+    // precedence over it regardless of call order.
     private var mConnectTimeoutInMs: Int? = null
     private var mReadWriteTimeoutInMs: Int? = null
+    private var mConnectionTimeoutInMs: Int? = null
     private var mCache: Cache? = null
     private var mTrustManager: TrustManager? = null
     private var mUserApiRetrofit: Retrofit? = null
@@ -140,23 +143,45 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     abstract fun getGiniApiType(): GiniApiType
 
     /**
-     * Sets the connection (connect) timeout for each request: a timeout error will occur if the TCP connection to
-     * the server is not established in the given time span. The TLS handshake runs under the read/write timeout.
+     * Sets the connect timeout for each request: a timeout error will occur if the TCP connection to the server
+     * is not established in the given time span. The TLS handshake runs under the read/write timeout.
      *
      * The timeout applies per resolved address of the server. On a network with a broken IPv6 route the first
      * connection attempt fails only after this timeout and the next (IPv4) address of the host is tried afterwards,
      * so keep it short to let that fallback happen quickly.
      *
-     * If not set, the connect timeout defaults to 15 seconds.
+     * If not set, the connect timeout defaults to 15 seconds. Reading and writing are configured separately with
+     * [setReadWriteTimeoutInMs]. Takes precedence over the deprecated [setConnectionTimeoutInMs].
      *
-     * Note: this timeout no longer covers reading and writing; configure those with [setReadWriteTimeoutInMs].
+     * @param connectTimeoutInMs timeout in milliseconds
+     * @return The builder instance to enable chaining.
+     */
+    open fun setConnectTimeoutInMs(connectTimeoutInMs: Int): GiniCoreAPIBuilder<DM, G, DR, E> {
+        require(connectTimeoutInMs >= 0) { "connectTimeoutInMs can't be less than 0" }
+        mConnectTimeoutInMs = connectTimeoutInMs
+        return this
+    }
+
+    /**
+     * Sets the connect, read and write timeouts of each request to the same value.
+     *
+     * Kept for compatibility: it behaves as it always did and applies one value to all three timeouts. Because
+     * the connect timeout now defaults to 15 seconds so that a failed IPv6 connect falls back to IPv4 quickly,
+     * prefer [setConnectTimeoutInMs] for the connect timeout and [setReadWriteTimeoutInMs] for the read and
+     * write timeouts. Values set through those two setters take precedence over this one regardless of call
+     * order. There is no drop-in replacement, since replacing this call with [setConnectTimeoutInMs] alone
+     * would leave read and write at 60 seconds.
      *
      * @param connectionTimeoutInMs timeout in milliseconds
      * @return The builder instance to enable chaining.
      */
+    @Deprecated(
+        "Sets the connect, read and write timeouts at once. Use setConnectTimeoutInMs for the connect " +
+                "timeout and setReadWriteTimeoutInMs for the read and write timeouts."
+    )
     open fun setConnectionTimeoutInMs(connectionTimeoutInMs: Int): GiniCoreAPIBuilder<DM, G, DR, E> {
         require(connectionTimeoutInMs >= 0) { "connectionTimeoutInMs can't be less than 0" }
-        mConnectTimeoutInMs = connectionTimeoutInMs
+        mConnectionTimeoutInMs = connectionTimeoutInMs
         return this
     }
 
@@ -165,7 +190,8 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
      * received from the underlying socket in the given time span. Choose it generously enough for multi-page
      * document uploads on slow connections.
      *
-     * If not set, the read and write timeouts default to 60 seconds.
+     * If not set, the read and write timeouts default to 60 seconds. Takes precedence over the deprecated
+     * [setConnectionTimeoutInMs].
      *
      * @param readWriteTimeoutInMs timeout in milliseconds
      * @return The builder instance to enable chaining.
@@ -253,7 +279,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
      *
      * If a provider is set, it will be used instead of the SDK's default client creation.
      * The provider's client will override any HTTP-related settings configured via other
-     * builder methods (e.g., [setCache], [setTrustManager], [setConnectionTimeoutInMs], [setReadWriteTimeoutInMs]).
+     * builder methods (e.g., [setCache], [setTrustManager], [setConnectTimeoutInMs], [setReadWriteTimeoutInMs]).
      *
      * @param provider A [GiniHttpClientProvider] implementation
      * @return The builder instance to enable chaining.
@@ -540,8 +566,8 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
                 }
                 mCache?.let { setCache(it) }
                 mTrustManager?.let { setTrustManager(it) }
-                mConnectTimeoutInMs?.let { setConnectionTimeoutInMs(it) }
-                mReadWriteTimeoutInMs?.let { setReadWriteTimeoutInMs(it) }
+                (mConnectTimeoutInMs ?: mConnectionTimeoutInMs)?.let { setConnectTimeoutInMs(it) }
+                (mReadWriteTimeoutInMs ?: mConnectionTimeoutInMs)?.let { setReadWriteTimeoutInMs(it) }
                 setDebuggingEnabled(isDebuggingEnabled)
             }
             .build()

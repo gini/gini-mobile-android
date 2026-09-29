@@ -171,8 +171,8 @@ class GiniCoreAPIBuilderTest {
     }
 
     @Test
-    fun `an explicitly configured connection timeout is applied to connect only of the default api client`() {
-        val client = builder().apply { setConnectionTimeoutInMs(10_000) }.apiOkHttpClient()
+    fun `an explicitly configured connect timeout is applied to connect only of the default api client`() {
+        val client = builder().apply { setConnectTimeoutInMs(10_000) }.apiOkHttpClient()
 
         assertThat(client.connectTimeoutMillis).isEqualTo(10_000)
         assertThat(client.readTimeoutMillis).isEqualTo(60_000)
@@ -189,9 +189,9 @@ class GiniCoreAPIBuilderTest {
     }
 
     @Test
-    fun `connection and read write timeouts configured together both reach the default api client`() {
+    fun `connect and read write timeouts configured together both reach the default api client`() {
         val client = builder().apply {
-            setConnectionTimeoutInMs(10_000)
+            setConnectTimeoutInMs(10_000)
             setReadWriteTimeoutInMs(90_000)
         }.apiOkHttpClient()
 
@@ -201,12 +201,53 @@ class GiniCoreAPIBuilderTest {
     }
 
     @Test
-    fun `negative timeouts are rejected by both timeout setters`() {
+    @Suppress("DEPRECATION")
+    fun `the deprecated connection timeout still applies to connect read and write of the default api client`() {
+        val client = builder().apply { setConnectionTimeoutInMs(10_000) }.apiOkHttpClient()
+
+        assertThat(client.connectTimeoutMillis).isEqualTo(10_000)
+        assertThat(client.readTimeoutMillis).isEqualTo(10_000)
+        assertThat(client.writeTimeoutMillis).isEqualTo(10_000)
+    }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun `the dedicated timeout setters take precedence over the deprecated connection timeout`() {
+        // Regardless of call order: the deprecated setter is called last here
+        val client = builder().apply {
+            setConnectTimeoutInMs(5_000)
+            setReadWriteTimeoutInMs(90_000)
+            setConnectionTimeoutInMs(30_000)
+        }.apiOkHttpClient()
+
+        assertThat(client.connectTimeoutMillis).isEqualTo(5_000)
+        assertThat(client.readTimeoutMillis).isEqualTo(90_000)
+        assertThat(client.writeTimeoutMillis).isEqualTo(90_000)
+    }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun `the deprecated connection timeout fills in the timeout the dedicated setters left unset`() {
+        val client = builder().apply {
+            setConnectionTimeoutInMs(30_000)
+            setReadWriteTimeoutInMs(90_000)
+        }.apiOkHttpClient()
+
+        assertThat(client.connectTimeoutMillis).isEqualTo(30_000)
+        assertThat(client.readTimeoutMillis).isEqualTo(90_000)
+        assertThat(client.writeTimeoutMillis).isEqualTo(90_000)
+    }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun `negative timeouts are rejected by all three timeout setters`() {
         val builder = builder()
 
-        assertThat(runCatching { builder.setConnectionTimeoutInMs(-1) }.exceptionOrNull())
+        assertThat(runCatching { builder.setConnectTimeoutInMs(-1) }.exceptionOrNull())
             .isInstanceOf(IllegalArgumentException::class.java)
         assertThat(runCatching { builder.setReadWriteTimeoutInMs(-1) }.exceptionOrNull())
+            .isInstanceOf(IllegalArgumentException::class.java)
+        assertThat(runCatching { builder.setConnectionTimeoutInMs(-1) }.exceptionOrNull())
             .isInstanceOf(IllegalArgumentException::class.java)
     }
 
