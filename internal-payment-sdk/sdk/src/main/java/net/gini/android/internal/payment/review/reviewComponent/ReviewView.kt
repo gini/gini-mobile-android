@@ -39,6 +39,7 @@ import net.gini.android.internal.payment.review.PaymentField
 import net.gini.android.internal.payment.review.ReviewViewStateLandscape
 import net.gini.android.internal.payment.review.ValidationMessage
 import net.gini.android.internal.payment.utils.amountWatcher
+import net.gini.android.internal.payment.utils.extensions.bottomSystemBarOverlap
 import net.gini.android.internal.payment.utils.extensions.clearErrorMessage
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentTheme
 import net.gini.android.internal.payment.utils.extensions.hideErrorMessage
@@ -48,6 +49,7 @@ import net.gini.android.internal.payment.utils.extensions.isLandscapeOrientation
 import net.gini.android.internal.payment.utils.extensions.setErrorMessage
 import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
 import net.gini.android.internal.payment.utils.extensions.showErrorMessage
+import net.gini.android.internal.payment.utils.extensions.systemBottomInset
 import net.gini.android.internal.payment.utils.setBackgroundTint
 import net.gini.android.internal.payment.utils.setTextIfDifferent
 import org.slf4j.LoggerFactory
@@ -210,17 +212,17 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
     }
 
     /**
-     * Applies the larger of the navigation bar and keyboard inset as bottom padding. The padding is
-     * an absolute value, so calling this from several sources cannot add the inset twice.
+     * Applies as bottom padding only the part of the navigation bar or keyboard that actually
+     * overlaps the payment details view.
+     *
+     * See [bottomSystemBarOverlap] for why the raw inset value cannot be used as the padding.
      */
     private fun applyBottomSystemInsets(insets: WindowInsetsCompat) {
         val imeInsetBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-        val bottom = maxOf(
-            insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom,
-            imeInsetBottom
-        )
-        if (binding.gpsPaymentDetails.paddingBottom != bottom) {
-            binding.gpsPaymentDetails.updatePadding(bottom = bottom)
+        val target = binding.gpsPaymentDetails
+        val overlap = target.bottomSystemBarOverlap(insets.systemBottomInset())
+        if (target.paddingBottom != overlap) {
+            target.updatePadding(bottom = overlap)
         }
         if (isAndroid15OrAbove() && insets.isVisible(WindowInsetsCompat.Type.ime())) {
             scrollFocusedViewAboveKeyboard(imeInsetBottom)

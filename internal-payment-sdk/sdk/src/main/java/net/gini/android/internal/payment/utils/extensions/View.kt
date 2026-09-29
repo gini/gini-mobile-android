@@ -68,6 +68,51 @@ fun View.onKeyboardAction(onKeyboardActivate: () -> Unit) {
 }
 
 /**
+ * Returns how much of [systemBottom] - the navigation bar or keyboard inset - actually overlaps
+ * this view.
+ *
+ * The inset value itself must not be used as padding directly. [ViewCompat.getRootWindowInsets]
+ * reports the window's raw insets, before anything consumed them, so on a host that is not drawing
+ * edge-to-edge - where the system already keeps the content above the navigation bar - it still
+ * reports the full bar height and padding by that value would leave an empty strip. Measuring the
+ * overlap is host independent: it is the full inset edge-to-edge, zero when the space is already
+ * reserved, and the correct remainder when a host container reserved part of it.
+ *
+ * Whether this view's own [View.getPaddingBottom] has to be discounted depends on how its height
+ * is set. A view that wraps its content grows by the padding applied on the previous pass, so
+ * without discounting it the measurement feeds back into itself. A view with a fixed or
+ * constraint-resolved height does not grow, and discounting would under-measure it - it would
+ * report no overlap on the pass after the padding was applied and drop the padding again.
+ */
+internal fun View.bottomSystemBarOverlap(systemBottom: Int): Int {
+    val location = IntArray(2)
+    getLocationInWindow(location)
+    val heightGrowsWithPadding = layoutParams?.height == ViewGroup.LayoutParams.WRAP_CONTENT
+    val bottom = location[1] + height - if (heightGrowsWithPadding) paddingBottom else 0
+    return (bottom - (rootView.height - systemBottom)).coerceIn(0, systemBottom)
+}
+
+/**
+ * Returns how much of [systemTop] - the status bar inset - actually overlaps this view.
+ *
+ * Unlike [bottomSystemBarOverlap] no padding has to be discounted: top padding moves this view's
+ * content down but not its top edge, so the measurement cannot feed back into itself.
+ */
+fun View.topSystemBarOverlap(systemTop: Int): Int {
+    val location = IntArray(2)
+    getLocationInWindow(location)
+    return (systemTop - location[1]).coerceIn(0, systemTop)
+}
+
+/**
+ * The larger of the navigation bar and the keyboard bottom inset.
+ */
+internal fun WindowInsetsCompat.systemBottomInset(): Int = maxOf(
+    getInsets(WindowInsetsCompat.Type.navigationBars()).bottom,
+    getInsets(WindowInsetsCompat.Type.ime()).bottom
+)
+
+/**
  * [applyWindowInsetsWithTopPadding]
  * From Android 15 onwards we have to support the edge to edge enforcement. In health example app
  * and SDK we are going to use this method, so we can protect the view from display cut outs
