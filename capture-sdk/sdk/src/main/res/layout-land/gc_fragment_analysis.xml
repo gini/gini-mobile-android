@@ -1,0 +1,176 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/gc_layout_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/backgroundColor"
+    tools:context=".analysis.AnalysisFragment">
+
+    <net.gini.android.capture.view.InjectedViewContainer
+        android:id="@+id/gc_navigation_top_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:alpha="@dimen/gc_analysis_preview_alpha"
+        android:background="@color/gc_dark_01"
+        android:clipChildren="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/gc_analysis_overlay"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar"
+        app:layout_constraintWidth_percent="@dimen/gc_analysis_preview_width_percentage">
+
+        <ImageView
+            android:id="@+id/gc_image_picture"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="?attr/backgroundColor"
+            android:scaleType="fitCenter"
+             />
+
+    </FrameLayout>
+
+    <!--
+      Phone landscape (Figma 35002:11528, 4.1.3 android-phL-Capture-analyze). A phone in landscape
+      is too short to centre the loading indicator and the analysis message in the whole screen, as
+      the portrait layout does: the tips card, once it slides in, would cover them. Here the two
+      sit between the top bar and the top of the tips card instead, so they move up when the card
+      grows (a large font size, a long tip, a narrow screen).
+
+      The overlay stays the full size and only covers the preview behind it; it has no children
+      here. The loading indicator and the message are declared right after it, so they still draw
+      on top of it and below the education overlay, and TalkBack reads them in the same order.
+    -->
+    <LinearLayout
+        android:id="@+id/gc_analysis_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="?attr/backgroundColor"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar" />
+
+    <!--
+      layout_constrainedHeight lets the container shrink when the space above the tips card is
+      smaller than the indicator (a short phone, a very large font size). It still wraps its content
+      otherwise, so the default and the integrator's indicators keep their own size, and the Gini
+      mark (scaleType fitCenter) only gets smaller when it would not fit.
+    -->
+    <net.gini.android.capture.view.InjectedViewContainer
+        android:id="@+id/gc_injected_loading_indicator_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toTopOf="@id/gc_analysis_message"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/gc_analysis_message"
+        style="@style/GiniCaptureTheme.Typography.Body2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/gc_large"
+        android:layout_marginEnd="@dimen/gc_large"
+        android:gravity="center"
+        android:text="@string/gc_analysis_activity_indicator_message"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/gc_analysis_hint_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gc_injected_loading_indicator_container"
+        tools:visibility="visible" />
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/gc_education_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar" />
+
+    <!--
+      The Gini ingredient brand element. Hidden unless the client configuration lists the Analysis
+      screen in ingredientBrandScreens. Unlike the portrait layout, the tips card does not stand on
+      it here: the badge hides as the first tip slides in (AnalysisFragmentImpl.hidePoweredByGini),
+      so the two never share the screen, and the card can take the badge's place at the bottom.
+    -->
+    <include
+        android:id="@+id/gc_powered_by_gini"
+        layout="@layout/gc_powered_by_gini"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/gc_large"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/gc_analysis_hint_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="@dimen/gc_large"
+        android:layout_marginEnd="@dimen/gc_large"
+        android:importantForAccessibility="yes"
+        android:layout_marginBottom="@dimen/gc_large"
+        android:background="@drawable/gc_analysis_tips_background"
+        android:minHeight="@dimen/gc_analysis_hint_container_min_height"
+        android:paddingTop="@dimen/gc_medium"
+        android:paddingBottom="@dimen/gc_large"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/gc_analysis_hint_image"
+            android:layout_width="@dimen/gc_analysis_hint_icon_size"
+            android:layout_height="@dimen/gc_analysis_hint_icon_size"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/gc_large_24"
+            android:scaleType="center"
+            tools:src="@drawable/gc_analysis_tips_background" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/gc_large"
+            android:layout_marginEnd="@dimen/gc_large"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/gc_analysis_hint_headline"
+                style="@style/GiniCaptureTheme.Typography.Subtitle1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@id/gc_analysis_hint_container"
+                tools:text="Tipp:" />
+
+            <TextView
+                android:id="@+id/gc_analysis_hint_text"
+                style="@style/GiniCaptureTheme.Typography.Body2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gc_dark_05"
+                tools:text="Gute Lichtverhältnisse beim Aufnehmen des Fotos beschleunigen die Analyse." />
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

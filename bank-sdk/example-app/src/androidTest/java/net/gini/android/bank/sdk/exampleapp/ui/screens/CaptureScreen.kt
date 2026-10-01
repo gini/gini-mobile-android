@@ -13,6 +13,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
+import net.gini.android.bank.sdk.exampleapp.ui.resources.AppResources
 import net.gini.android.bank.sdk.exampleapp.ui.resources.SimpleIdlingResource
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
@@ -20,14 +21,24 @@ import org.hamcrest.Matchers.allOf
 class CaptureScreen {
     private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
+    /**
+     * Whether the camera screen is shown. Checked by its shutter button, which every camera
+     * layout has (phone and tablet, portrait and landscape). The "Scan" text is still accepted,
+     * but it is not enough on its own: the tablet camera layouts (layout-sw600dp*) have no view
+     * with exactly that text at that index, so tablet runs never found the camera screen.
+     */
     fun checkScanTextDisplayed(): Boolean {
+        val shutterButton = device.findObject(
+            UiSelector().resourceId(AppResources.resId("gc_button_camera_trigger"))
+        )
+        if (shutterButton.waitForExists(CAMERA_SCREEN_TIMEOUT_MS)) return true
         val scanText = device.findObject(
             UiSelector()
                 .className("android.widget.TextView")
                 .text("Scan")
                 .index(1)
         )
-        return scanText.waitForExists(5000)
+        return scanText.exists()
     }
 
     fun assertCameraTitle(): CaptureScreen {
@@ -114,5 +125,10 @@ class CaptureScreen {
         val idlingResource = SimpleIdlingResource(500)
         IdlingRegistry.getInstance().register(idlingResource)
         idlingResource.waitForIdle()
+    }
+
+    private companion object {
+        /** The same wait the "Scan" text check used on its own before. */
+        const val CAMERA_SCREEN_TIMEOUT_MS = 5_000L
     }
 }

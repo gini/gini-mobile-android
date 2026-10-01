@@ -17,6 +17,8 @@ set -e
 #   bs_run_group_import.sh         – Import / FileImportError / ErrorScreen / OpenWith
 #   bs_run_group_duedate.sh        – Due Date Hint / Schedule Payment bottom sheet
 #   bs_run_group_creditnote.sh     – Credit Note warning bottom sheet
+#   bs_run_group_ingredientbrand.sh           – Ingredient brand (badge + Gini indicator)
+#   bs_run_group_ingredientbrand_education.sh – Ingredient brand during the education (animations ON)
 #   bs_run_group_smoke.sh          – the Xray smoke selection (the release gate)
 #   bs_run_all_groups.sh           – builds+uploads ONCE, then triggers every shard
 #
@@ -31,6 +33,9 @@ set -e
 #   ARTIFACT_URLS_FILE  If set, the five artifact URLs are written to this file (as
 #       `NAME=value` lines) after upload, so a caller can source and reuse them.
 #   SKIP_TRIGGER=true   Do the build + upload but do NOT trigger a test run.
+#   BS_DISABLE_ANIMATIONS  "true" (default) or "false". The education message is a Compose
+#       animation that ends at once with animations off, so its tests need "false"; see
+#       bs_run_group_ingredientbrand_education.sh. Every other group keeps the default.
 #
 # Examples:
 #   BS_USER="myuser" BS_KEY="mykey" ./bs_build_and_upload.sh
@@ -224,6 +229,7 @@ else
 fi
 
 BUILD_NAME="${BUILD_NAME:-local-$(date +%Y%m%d-%H%M%S)}"
+BS_DISABLE_ANIMATIONS="${BS_DISABLE_ANIMATIONS:-true}"
 
 BUILD_RESPONSE=$(curl -s -u "$BS_USER:$BS_KEY" \
   -X POST "https://api-cloud.browserstack.com/app-automate/espresso/v2/build" \
@@ -237,7 +243,7 @@ BUILD_RESPONSE=$(curl -s -u "$BS_USER:$BS_KEY" \
     \"singleRunnerInvocation\": \"true\",
     \"useOrchestrator\": \"true\",
     \"clearPackageData\": \"true\",
-    \"disableAnimations\": \"true\",
+    \"disableAnimations\": \"$BS_DISABLE_ANIMATIONS\",
     $FILTER_JSON
     \"uploadMedia\": [\"$IMAGE_URL\", \"$PDF_URL\", \"$SAMPLE_PDF_URL\"]
   }")

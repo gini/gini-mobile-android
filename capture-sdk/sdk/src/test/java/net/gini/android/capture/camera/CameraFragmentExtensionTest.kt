@@ -49,6 +49,8 @@ class CameraFragmentExtensionTest {
         override fun isOnlyQRCodeScanningEnabled() = onlyQRCodeScanningEnabled()
 
         fun educationStepRunning(): Boolean = isQrEducationStepRunning()
+
+        fun showsQrStepLoadingIndicator(): Boolean = shouldShowQrStepLoadingIndicator()
     }
 
     private lateinit var configurationProvider: GiniBankConfigurationProvider
@@ -169,6 +171,37 @@ class CameraFragmentExtensionTest {
 
         assertThat(extension.poweredByGiniCalls).containsExactly(true)
         assertThat(extension.educationStepRunning()).isTrue()
+    }
+
+    /**
+     * Matches iOS (`QRCodeOverlay.showAnimation` shows the education view *or* the loading
+     * indicator, never both) and the epic: while the QR-code education message is on screen, no
+     * loading indicator runs behind it — not the Gini mark, not the integrator's, not the default.
+     */
+    @Test
+    fun `education half shows no loading indicator`() {
+        configurationProvider.update { it.copy(ingredientBrandScreens = setOf("Analysis")) }
+
+        runEducationHalf()
+
+        assertThat(extension.showsQrStepLoadingIndicator()).isFalse()
+    }
+
+    @Test
+    fun `education half shows no loading indicator without ingredient branding either`() {
+        runEducationHalf()
+
+        assertThat(extension.showsQrStepLoadingIndicator()).isFalse()
+    }
+
+    /** The retrieval half keeps its indicator, and so does a retrieval after an education. */
+    @Test
+    fun `retrieval half shows the loading indicator, also after an earlier education`() {
+        runEducationHalf()
+
+        runRetrievalHalf()
+
+        assertThat(extension.showsQrStepLoadingIndicator()).isTrue()
     }
 
     @Test

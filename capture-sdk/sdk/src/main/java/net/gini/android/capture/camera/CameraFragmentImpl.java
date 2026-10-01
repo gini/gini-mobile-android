@@ -244,7 +244,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private ViewGroup mButtonImportDocumentWrapper;
     private Button mButtonImportDocument;
     private ConstraintLayout mCameraFrameWrapper;
-    private View mActivityIndicatorBackground;
+    @VisibleForTesting
+    View mActivityIndicatorBackground;
     @VisibleForTesting
     ImageView mImageFrame;
     private ViewStubSafeInflater mViewStubInflater;
@@ -265,7 +266,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private boolean isIbanDetectedOnceForUserAnalytics = false;
 
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
-    private InjectedViewContainer<CustomLoadingIndicatorAdapter> mLoadingIndicator;
+    @VisibleForTesting
+    InjectedViewContainer<CustomLoadingIndicatorAdapter> mLoadingIndicator;
 
     private IBANRecognizerFilter ibanRecognizerFilter;
     private CropToCameraFrameTextRecognizer cropToCameraFrameTextRecognizer;
@@ -1396,8 +1398,9 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             if (networkRequestsManager != null) {
                 // The brand element is already up: both halves raise it in
                 // CameraFragmentExtension.showQrCodePopup, which runs before this. Nothing to do
-                // here beyond swapping the QR-detected state for the loading one.
-                showActivityIndicatorAndDisableInteraction();
+                // here beyond swapping the QR-detected state for the loading one — without an
+                // indicator while the education message covers the screen.
+                showActivityIndicatorAndDisableInteraction(shouldShowQrStepLoadingIndicator());
                 networkRequestsManager
                         .upload(activity, qrCodeDocument)
                         .handle((requestResult, throwable) -> {
@@ -1744,16 +1747,27 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     }
 
     public void showActivityIndicatorAndDisableInteraction() {
+        showActivityIndicatorAndDisableInteraction(true);
+    }
+
+    /**
+     * @param showIndicator {@code false} keeps the dim and the disabled controls but leaves the
+     *                      loading indicator hidden — used by the QR-code education half, whose
+     *                      message must not have an indicator behind it.
+     */
+    private void showActivityIndicatorAndDisableInteraction(final boolean showIndicator) {
         if (mLoadingIndicator.getInjectedViewAdapterHolder() == null
                 || mActivityIndicatorBackground == null) {
             return;
         }
         mActivityIndicatorBackground.setVisibility(View.VISIBLE);
         mActivityIndicatorBackground.setClickable(true);
-        mLoadingIndicator.modifyAdapterIfOwned(adapter -> {
-            adapter.onVisible();
-            return Unit.INSTANCE;
-        });
+        if (showIndicator) {
+            mLoadingIndicator.modifyAdapterIfOwned(adapter -> {
+                adapter.onVisible();
+                return Unit.INSTANCE;
+            });
+        }
         disableInteraction();
     }
 

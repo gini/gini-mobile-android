@@ -8,13 +8,33 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import android.view.ViewGroup
 import com.nhaarman.mockitokotlin2.*
+import io.mockk.coEvery
+import io.mockk.every
+import io.mockk.mockk
 import jersey.repackaged.jsr166e.CompletableFuture
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureHelper
+import net.gini.android.capture.di.clientConfigurationModule
+import net.gini.android.capture.di.educationModule
+import net.gini.android.capture.di.getGiniCaptureKoin
+import net.gini.android.capture.di.qrEducationModule
+import net.gini.android.capture.document.QRCodeDocument
+import net.gini.android.capture.education.GetEducationFeatureEnabledUseCase
 import net.gini.android.capture.internal.camera.api.CameraInterface
+import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
+import net.gini.android.capture.internal.provider.UnsupportedQrWarningSessionPin
+import net.gini.android.capture.internal.qrcode.PaymentQRCodeData
+import net.gini.android.capture.internal.qreducation.GetQrEducationTypeUseCase
+import net.gini.android.capture.internal.qreducation.IncrementQrCodeRecognizedCounterUseCase
+import net.gini.android.capture.internal.qreducation.UpdateFlowTypeUseCase
+import net.gini.android.capture.internal.qreducation.model.QrEducationType
 import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.internal.util.CancelListener
+import net.gini.android.capture.network.GiniCaptureNetworkService
+import net.gini.android.capture.view.CustomLoadingIndicatorAdapter
+import net.gini.android.capture.view.InjectedViewContainer
 import net.gini.android.capture.tracking.CameraScreenEvent
 import net.gini.android.capture.tracking.Event
 import net.gini.android.capture.tracking.EventTracker
@@ -24,8 +44,11 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.core.module.Module
+import org.koin.dsl.module
 import org.robolectric.Robolectric
 
 /**
@@ -37,9 +60,39 @@ import org.robolectric.Robolectric
 @RunWith(AndroidJUnit4::class)
 class CameraFragmentImplTest {
 
+    private lateinit var qrEducationTypeUseCase: GetQrEducationTypeUseCase
+    private lateinit var educationFeatureEnabledUseCase: GetEducationFeatureEnabledUseCase
+    private lateinit var koinTestModule: Module
+
+    @Before
+    fun setup() {
+        // Same overrides as CameraFragmentExtensionTest: showQrCodePopup resolves these on the way
+        // into both halves of the QR-code step, and the production definitions need Android
+        // infrastructure a JVM unit test has not got.
+        qrEducationTypeUseCase = mockk(relaxed = true)
+        educationFeatureEnabledUseCase = mockk(relaxed = true)
+        koinTestModule = module {
+            single { GiniBankConfigurationProvider() }
+            single { UnsupportedQrWarningSessionPin() }
+            single { qrEducationTypeUseCase }
+            single { educationFeatureEnabledUseCase }
+            single { mockk<UpdateFlowTypeUseCase>(relaxed = true) }
+            single { mockk<IncrementQrCodeRecognizedCounterUseCase>(relaxed = true) }
+        }
+        getGiniCaptureKoin().loadModules(listOf(koinTestModule))
+    }
+
     @After
     fun tearDown() {
         GiniCaptureHelper.setGiniCaptureInstance(null)
+        // unloadModules drops the overriding definitions without restoring the production ones.
+        // This class runs in Robolectric's sandbox, whose Koin context is shared with every other
+        // Robolectric test class in this JVM (CameraFragmentTest resolves UpdateFlowTypeUseCase in
+        // onStart), so the production modules the test module overrode are loaded back.
+        getGiniCaptureKoin().unloadModules(listOf(koinTestModule))
+        getGiniCaptureKoin().loadModules(
+            listOf(educationModule, qrEducationModule, clientConfigurationModule)
+        )
     }
 
     @Test
@@ -248,6 +301,115 @@ class CameraFragmentImplTest {
         assertEquals(false, fragmentImpl.mOnlyQRCodeScanningRuntimeOverride)
         assertFalse(fragmentImpl.isOnlyQRCodeScanningEnabledForTest())
         assertTrue(fragmentImpl.mQRCodeScanningDisabledByUser)
+    }
+
+    @Test
+    fun `showActivityIndicatorAndDisableInteraction shows the dim and the loading indicator`() {
+        // Given: an injected loading indicator the camera owns
+        val activity = Robolectric.buildActivity(FragmentActivity::class.java).get()
+        val fragmentImpl = CameraFragmentImplWithoutQRCodeReader(mock(), mock<CancelListener>(), false)
+        val adapter = RecordingLoadingIndicatorAdapter()
+        fragmentImpl.mActivityIndicatorBackground = View(activity).apply { visibility = View.INVISIBLE }
+        fragmentImpl.mLoadingIndicator = loadingIndicatorOwning(adapter)
+
+        // When: the public, unconditional variant is used (every busy state but the QR step)
+        fragmentImpl.showActivityIndicatorAndDisableInteraction()
+
+        // Then: the dim swallows touches and the indicator is shown
+        assertEquals(View.VISIBLE, fragmentImpl.mActivityIndicatorBackground.visibility)
+        assertTrue(fragmentImpl.mActivityIndicatorBackground.isClickable)
+        assertEquals(1, adapter.visibleCalls)
+    }
+
+    @Test
+    fun `analyzeQRCode shows the loading indicator on the invoice-retrieval half`() {
+        // Given: a network service, so the QR code can be uploaded, and no education on screen
+        GiniCapture.Builder().setGiniCaptureNetworkService(mock<GiniCaptureNetworkService>()).build()
+        val activity = Robolectric.buildActivity(FragmentActivity::class.java).get()
+        val fragmentImpl = qrCodeFragmentImpl(activity)
+        val adapter = RecordingLoadingIndicatorAdapter()
+        fragmentImpl.mActivityIndicatorBackground = View(activity).apply { visibility = View.INVISIBLE }
+        fragmentImpl.mLoadingIndicator = loadingIndicatorOwning(adapter)
+
+        // When: the invoice is retrieved for the scanned QR code
+        fragmentImpl.analyzeQRCode(qrCodeDocument())
+
+        // Then: the dim and the indicator are both up
+        assertEquals(View.VISIBLE, fragmentImpl.mActivityIndicatorBackground.visibility)
+        assertEquals(1, adapter.visibleCalls)
+    }
+
+    /**
+     * Matches iOS (`QRCodeOverlay.showAnimation` shows the education view *or* the loading
+     * indicator, never both): the education message is what the user watches, and the dim of its
+     * overlay let an indicator behind it show through.
+     */
+    @Test
+    fun `analyzeQRCode shows no loading indicator while the QR-code education is on screen`() {
+        // Given: the education half of the QR-code step is running
+        GiniCapture.Builder().setGiniCaptureNetworkService(mock<GiniCaptureNetworkService>()).build()
+        val activity = Robolectric.buildActivity(FragmentActivity::class.java).get()
+        val fragmentImpl = qrCodeFragmentImpl(activity)
+        val adapter = RecordingLoadingIndicatorAdapter()
+        fragmentImpl.mActivityIndicatorBackground = View(activity).apply { visibility = View.INVISIBLE }
+        fragmentImpl.mLoadingIndicator = loadingIndicatorOwning(adapter)
+        fragmentImpl.qrCodeEducationPopup = mockk(relaxed = true)
+        fragmentImpl.mPaymentQRCodePopup = mockk(relaxed = true)
+        coEvery { qrEducationTypeUseCase.execute() } returns QrEducationType.PHOTO_DOC
+        every { educationFeatureEnabledUseCase.invoke() } returns true
+        fragmentImpl.showQrCodePopup(paymentQRCodeData()) { }
+
+        // When: the education half starts the invoice retrieval behind its overlay
+        fragmentImpl.analyzeQRCode(qrCodeDocument())
+
+        // Then: the dim still blocks the controls, but no indicator runs behind the message
+        assertEquals(View.VISIBLE, fragmentImpl.mActivityIndicatorBackground.visibility)
+        assertTrue(fragmentImpl.mActivityIndicatorBackground.isClickable)
+        assertEquals(0, adapter.visibleCalls)
+    }
+
+    private fun qrCodeFragmentImpl(activity: FragmentActivity): CameraFragmentImplWithoutQRCodeReader {
+        val fragmentCallback = mock<FragmentImplCallback> {
+            on { this.activity } doReturn activity
+        }
+        return CameraFragmentImplWithoutQRCodeReader(fragmentCallback, mock<CancelListener>(), false)
+    }
+
+    private fun paymentQRCodeData() = PaymentQRCodeData(
+        PaymentQRCodeData.Format.EPC069_12,
+        "BCD\n002\n1\nSCT\nGENODEF1S04\nGini GmbH\nDE75512108001245126199\nEUR12.50\n\n\nInvoice 42",
+        "Gini GmbH",
+        "Invoice 42",
+        "DE75512108001245126199",
+        "GENODEF1S04",
+        "12.50:EUR"
+    )
+
+    private fun qrCodeDocument(): QRCodeDocument = QRCodeDocument.fromPaymentQRCodeData(paymentQRCodeData())
+
+    /**
+     * An [InjectedViewContainer] that owns [adapter]: `modifyAdapterIfOwned` runs its lambda on it.
+     * The real container only hands the adapter out once it is attached to a window, which a JVM
+     * test has not got.
+     */
+    private fun loadingIndicatorOwning(
+        adapter: CustomLoadingIndicatorAdapter
+    ): InjectedViewContainer<CustomLoadingIndicatorAdapter> = mockk {
+        every { injectedViewAdapterHolder } returns mockk()
+        every { modifyAdapterIfOwned(any()) } answers {
+            firstArg<(CustomLoadingIndicatorAdapter) -> Unit>().invoke(adapter)
+        }
+    }
+
+    private class RecordingLoadingIndicatorAdapter : CustomLoadingIndicatorAdapter {
+        var visibleCalls = 0
+
+        override fun onCreateView(container: ViewGroup): View = View(container.context)
+        override fun onVisible() {
+            visibleCalls++
+        }
+        override fun onHidden() = Unit
+        override fun onDestroy() = Unit
     }
 
     private open class CameraFragmentImplWithoutQRCodeReader(fragment: FragmentImplCallback,
