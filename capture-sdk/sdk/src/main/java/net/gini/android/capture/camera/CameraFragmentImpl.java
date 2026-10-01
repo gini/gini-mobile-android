@@ -2417,10 +2417,13 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                         )
                 )
         );
+        final String pleaseTakePicture =
+                mFragment.getActivity().getString(R.string.gc_iban_detected_please_take_picture);
         if (ibans.size() == 1) {
-            mIbanDetectedTextView.setText(String.format("%s%s", ibans.get(0), mFragment.getActivity().getString(R.string.gc_iban_detected_please_take_picture)));
+            mIbanDetectedTextView.setText(ibans.get(0) + pleaseTakePicture);
         } else {
-            mIbanDetectedTextView.setText(String.format("%s%s", mFragment.getActivity().getString(R.string.gc_iban_detected), mFragment.getActivity().getString(R.string.gc_iban_detected_please_take_picture)));
+            mIbanDetectedTextView.setText(
+                    mFragment.getActivity().getString(R.string.gc_iban_detected) + pleaseTakePicture);
         }
     }
 

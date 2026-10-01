@@ -86,7 +86,7 @@ class AnalysisHintsAnimator {
     @NonNull
     private ViewPropertyAnimatorCompat getSlideDownAnimation() {
         return ViewCompat.animate(mHintContainer)
-                .translationY(mContainerViewHeight)
+                .translationY((float) mContainerViewHeight)
                 .setDuration(HINT_ANIMATION_DURATION)
                 .setListener(new ViewPropertyAnimatorListenerAdapter() {
                     @Override

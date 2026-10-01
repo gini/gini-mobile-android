@@ -82,7 +82,7 @@ class ImmutablePhoto implements Photo {
     }
 
     @Override
-    public ImageDocument.ImageFormat getImageFormat() {
+    public synchronized ImageDocument.ImageFormat getImageFormat() {
         return mImageFormat;
     }
 
