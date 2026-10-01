@@ -205,8 +205,12 @@ private fun ScreenStateContent(
     }
 }
 
+/**
+ * Internal (not private) so SkontoScreenContentTest can render the ready state without a
+ * [SkontoFragmentViewModel]; it is never used outside this file in production code.
+ */
 @Composable
-private fun ScreenReadyState(
+internal fun ScreenReadyState(
     state: SkontoScreenState.Ready,
     amountFormatter: AmountFormatter,
     callbacks: SkontoScreenCallbacks,
