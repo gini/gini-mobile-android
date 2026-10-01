@@ -77,11 +77,6 @@ public class ExtractionsContainer extends net.gini.android.core.api.models.Extra
         return 0;
     }
 
-    @Override
-    public void writeToParcel(@NonNull Parcel dest, int flags) {
-        super.writeToParcel(dest, flags);
-    }
-
     public static final Creator<ExtractionsContainer> CREATOR = new Creator<ExtractionsContainer>() {
         @Override
         public ExtractionsContainer createFromParcel(Parcel in) {

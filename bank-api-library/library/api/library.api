@@ -183,7 +183,6 @@ public class net/gini/android/bank/api/models/ExtractionsContainer : net/gini/an
 	public fun <init> (Ljava/util/Map;Ljava/util/Map;Ljava/util/List;)V
 	public fun describeContents ()I
 	public fun getReturnReasons ()Ljava/util/List;
-	public fun writeToParcel (Landroid/os/Parcel;I)V
 }
 
 public final class net/gini/android/bank/api/models/ResolvePaymentInput {
