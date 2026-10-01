@@ -1,14 +1,18 @@
 package net.gini.android.capture.internal.util
 
+import android.content.ContentResolver
 import android.content.Context
 import android.media.ExifInterface
 import android.net.Uri
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import java.io.File
 
@@ -76,5 +80,41 @@ class ExifOrientationReaderTest {
         } finally {
             file.delete()
         }
+    }
+
+    @Test
+    fun `returns no rotation for a uri that yields no stream`() {
+        val uri = Uri.parse("content://net.gini.android.capture.test/no-stream.heic")
+        // Robolectric's shadow resolver never answers null, so this needs a stand-in
+        val nullResolver = mockk<ContentResolver> { every { openInputStream(uri) } returns null }
+        val nullContext = mockk<Context> { every { contentResolver } returns nullResolver }
+
+        assertThat(ExifOrientationReader.readRotationForDisplay(uri, nullContext)).isEqualTo(0)
+    }
+
+    /**
+     * A Uri the app may not read answers "no rotation" instead of throwing: the import pipeline
+     * rejects such a Uri with a proper validation error, which a crash here would pre-empt.
+     */
+    @Test
+    fun `returns no rotation for a uri the app is not permitted to read`() {
+        val uri = Uri.parse("content://net.gini.android.capture.test/forbidden.heic")
+        shadowOf(context.contentResolver).registerInputStreamSupplier(uri) {
+            throw SecurityException("no permission")
+        }
+
+        assertThat(ExifOrientationReader.readRotationForDisplay(uri, context)).isEqualTo(0)
+    }
+
+    /** Before Android 7 the platform reader cannot read from a stream, and there is no HEIC anyway. */
+    @Test
+    @Config(sdk = [23])
+    fun `returns no rotation before Android 7 without touching the uri`() {
+        val uri = Uri.parse("content://net.gini.android.capture.test/never-opened.heic")
+        shadowOf(context.contentResolver).registerInputStreamSupplier(uri) {
+            throw AssertionError("the uri must not be opened before Android 7")
+        }
+
+        assertThat(ExifOrientationReader.readRotationForDisplay(uri, context)).isEqualTo(0)
     }
 }

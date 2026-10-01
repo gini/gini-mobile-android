@@ -1,5 +1,6 @@
 package net.gini.android.capture.ingredientbrand
 
+import android.app.Activity
 import android.graphics.drawable.Animatable
 import android.os.Looper
 import android.provider.Settings
@@ -9,10 +10,22 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.vectordrawable.graphics.drawable.Animatable2Compat
+import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.google.common.truth.Truth.assertThat
+import io.mockk.every
+import io.mockk.just
+import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.runs
+import io.mockk.slot
+import io.mockk.unmockkStatic
+import io.mockk.verify
 import net.gini.android.capture.R
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter
+import org.junit.After
 import org.junit.Test
+import org.robolectric.Robolectric
 import org.robolectric.Shadows
 import org.junit.runner.RunWith
 
@@ -33,14 +46,31 @@ class GiniLoadingIndicatorAdapterTest {
 
     private class RecordingFallback : CustomLoadingIndicatorAdapter {
         var createdView = false
+        var visibleCount = 0
+        var hiddenCount = 0
+        var destroyCount = 0
+
         override fun onCreateView(container: ViewGroup): View {
             createdView = true
             return View(container.context)
         }
 
-        override fun onVisible() = Unit
-        override fun onHidden() = Unit
-        override fun onDestroy() = Unit
+        override fun onVisible() {
+            visibleCount++
+        }
+
+        override fun onHidden() {
+            hiddenCount++
+        }
+
+        override fun onDestroy() {
+            destroyCount++
+        }
+    }
+
+    @After
+    fun tearDown() {
+        unmockkStatic(AnimatedVectorDrawableCompat::class)
     }
 
     @Test
@@ -229,5 +259,100 @@ class GiniLoadingIndicatorAdapterTest {
 
         assertThat(view.measuredWidth).isAtMost(cramped)
         assertThat(view.measuredHeight).isAtMost(cramped)
+    }
+
+    /**
+     * `AnimatedVectorDrawableCompat.create` answers null when the drawable cannot be inflated.
+     * The branding then degrades to the integrator's indicator — the analysis flow itself must
+     * never be the thing that gives way.
+     */
+    @Test
+    fun `falls back to the integrator indicator when the animation cannot be created`() {
+        mockkStatic(AnimatedVectorDrawableCompat::class)
+        every { AnimatedVectorDrawableCompat.create(any(), any()) } returns null
+        val fallback = RecordingFallback()
+        val adapter = GiniLoadingIndicatorAdapter(fallback)
+
+        val view = adapter.onCreateView(container)
+        adapter.onVisible()
+        adapter.onHidden()
+        adapter.onDestroy()
+
+        assertThat(fallback.createdView).isTrue()
+        assertThat(view).isNotInstanceOf(ImageView::class.java)
+        assertThat(fallback.visibleCount).isEqualTo(1)
+        assertThat(fallback.hiddenCount).isEqualTo(1)
+        assertThat(fallback.destroyCount).isEqualTo(1)
+    }
+
+    /**
+     * The drawable's own loop is not honoured on every API level below 24, so the adapter
+     * restarts the animation when a cycle ends — but only while the indicator is still shown.
+     */
+    @Test
+    fun `restarts the animation when a cycle ends while the indicator is shown`() {
+        val (adapter, drawable, callback) = adapterWithCapturedAnimationCallback()
+        adapter.onVisible()
+
+        callback.onAnimationEnd(drawable)
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        verify(exactly = 2) { drawable.start() }
+    }
+
+    /**
+     * `stop()` fires the same `onAnimationEnd` as a finished cycle. Hiding the indicator must not
+     * restart it, or it would keep running invisibly for the rest of the screen's life.
+     */
+    @Test
+    fun `does not restart the animation when the cycle ends because the indicator was hidden`() {
+        val (adapter, drawable, callback) = adapterWithCapturedAnimationCallback()
+        adapter.onVisible()
+        adapter.onHidden()
+
+        callback.onAnimationEnd(drawable)
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        verify(exactly = 1) { drawable.start() }
+    }
+
+    /** The restart is posted; if the indicator is hidden before the post runs, it must stay stopped. */
+    @Test
+    fun `drops a pending restart when the indicator is hidden before it runs`() {
+        val (adapter, drawable, callback) = adapterWithCapturedAnimationCallback()
+        adapter.onVisible()
+
+        callback.onAnimationEnd(drawable)
+        adapter.onHidden()
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        verify(exactly = 1) { drawable.start() }
+    }
+
+    private data class CapturedAdapter(
+        val adapter: GiniLoadingIndicatorAdapter,
+        val drawable: AnimatedVectorDrawableCompat,
+        val callback: Animatable2Compat.AnimationCallback,
+    )
+
+    /**
+     * Robolectric does not drive the animation's frame clock, so the end-of-cycle callback never
+     * fires on its own. A stand-in drawable hands the registered callback back to the test, which
+     * then fires it exactly where a real cycle would.
+     *
+     * The view is attached to a window, as InjectedViewContainer would: the restart is delivered
+     * with `View.post`, which a detached view only queues until it is attached.
+     */
+    private fun adapterWithCapturedAnimationCallback(): CapturedAdapter {
+        val drawable = mockk<AnimatedVectorDrawableCompat>(relaxed = true)
+        val callbackSlot = slot<Animatable2Compat.AnimationCallback>()
+        every { drawable.registerAnimationCallback(capture(callbackSlot)) } just runs
+        mockkStatic(AnimatedVectorDrawableCompat::class)
+        every { AnimatedVectorDrawableCompat.create(any(), any()) } returns drawable
+        val activity = Robolectric.buildActivity(Activity::class.java).setup().get()
+        val attachedContainer = FrameLayout(activity).also { activity.setContentView(it) }
+        val adapter = GiniLoadingIndicatorAdapter()
+        attachedContainer.addView(adapter.onCreateView(attachedContainer))
+        return CapturedAdapter(adapter, drawable, callbackSlot.captured)
     }
 }
