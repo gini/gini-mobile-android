@@ -244,7 +244,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private ViewGroup mButtonImportDocumentWrapper;
     private Button mButtonImportDocument;
     private ConstraintLayout mCameraFrameWrapper;
-    private View mActivityIndicatorBackground;
+    @VisibleForTesting
+    View mActivityIndicatorBackground;
     @VisibleForTesting
     ImageView mImageFrame;
     private ViewStubSafeInflater mViewStubInflater;
@@ -265,7 +266,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private boolean isIbanDetectedOnceForUserAnalytics = false;
 
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
-    private InjectedViewContainer<CustomLoadingIndicatorAdapter> mLoadingIndicator;
+    @VisibleForTesting
+    InjectedViewContainer<CustomLoadingIndicatorAdapter> mLoadingIndicator;
 
     private IBANRecognizerFilter ibanRecognizerFilter;
     private CropToCameraFrameTextRecognizer cropToCameraFrameTextRecognizer;
