@@ -402,7 +402,8 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         layoutParams.width = newWidth;
         layoutParams.height = newHeight;
         mImageDocumentView.setLayoutParams(layoutParams);
-        mImageDocumentView.setRotation((float) rotationForDisplay);
+        final float rotationDegrees = (float) rotationForDisplay;
+        mImageDocumentView.setRotation(rotationDegrees);
     }
 
     // Required by superclass
