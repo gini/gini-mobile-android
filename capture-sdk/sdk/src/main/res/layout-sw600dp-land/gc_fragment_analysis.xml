@@ -88,6 +88,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar" />
 
+    <!--
+      The Gini ingredient brand element. Declared before the hint container because that
+      container constrains itself to this view's top. Hidden unless the client configuration
+      lists the Analysis screen in ingredientBrandScreens; while it is gone, ConstraintLayout
+      collapses it onto the parent bottom, so the hint container keeps the exact bottom
+      margin it had before this element existed.
+    -->
+    <include
+        android:id="@+id/gc_powered_by_gini"
+        layout="@layout/gc_powered_by_gini"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/gc_large"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <LinearLayout
         android:id="@+id/gc_analysis_hint_container"
         android:layout_width="@dimen/gc_analysis_hint_container_width"
@@ -101,7 +119,7 @@
         android:paddingTop="@dimen/gc_medium"
         android:paddingBottom="@dimen/gc_large"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/gc_powered_by_gini"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 

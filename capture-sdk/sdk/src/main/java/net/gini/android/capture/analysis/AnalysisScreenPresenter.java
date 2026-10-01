@@ -22,6 +22,7 @@ import net.gini.android.capture.document.GiniCaptureDocumentError;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 import net.gini.android.capture.document.PdfDocument;
 import net.gini.android.capture.error.ErrorType;
+import net.gini.android.capture.ingredientbrand.IngredientBrandScreen;
 import net.gini.android.capture.internal.camera.photo.ParcelableMemoryCache;
 import net.gini.android.capture.internal.document.DocumentRenderer;
 import net.gini.android.capture.internal.document.DocumentRendererFactory;
@@ -42,7 +43,6 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -205,6 +205,8 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
             createDocumentRenderer();
         }
         clearParcelableMemoryCache();
+        getView().setPoweredByGiniVisible(
+                extension.getIngredientBrandVisibleUseCase().invoke(IngredientBrandScreen.ANALYSIS));
         getView().showScanAnimation(mIsInvoiceSavingEnabled);
         loadDocumentData();
         showHintsForImage();
@@ -757,7 +759,6 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                 resultHolder.getResult(),
                 extractions,
                 new HashMap<>(),
-                new ArrayList<>(),
                 resultHolder.getDocumentId(),
                 resultHolder.getDocumentFileName()
         );

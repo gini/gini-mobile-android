@@ -16,11 +16,19 @@ import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 sealed class CaptureResult : Parcelable {
     /**
      * Extractions were found.
+     *
+     * [returnReasons] is deprecated: return reasons are no longer supported and the SDK never
+     * populates this list, so results produced by the SDK always carry an empty list.
      */
-    class Success(
+    class Success @JvmOverloads constructor(
         val specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
         val compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,
-        val returnReasons: List<GiniCaptureReturnReason>,
+        @Suppress("kotlin:S1133") // Intentional deprecation, removal is scheduled for the next major version
+        @Deprecated(
+            "Return reasons are no longer supported. The SDK never populates this list and it " +
+                "will be removed in the next major version."
+        )
+        val returnReasons: List<GiniCaptureReturnReason> = emptyList(),
     ) : CaptureResult()
 
     /**
@@ -28,11 +36,19 @@ sealed class CaptureResult : Parcelable {
      *
      * Carries the same extractions as [Success]. Open your scheduled transfer flow with them
      * instead of executing the payment immediately.
+     *
+     * [returnReasons] is deprecated: return reasons are no longer supported and the SDK never
+     * populates this list, so results produced by the SDK always carry an empty list.
      */
-    class SchedulePayment(
+    class SchedulePayment @JvmOverloads constructor(
         val specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
         val compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,
-        val returnReasons: List<GiniCaptureReturnReason>,
+        @Suppress("kotlin:S1133") // Intentional deprecation, removal is scheduled for the next major version
+        @Deprecated(
+            "Return reasons are no longer supported. The SDK never populates this list and it " +
+                "will be removed in the next major version."
+        )
+        val returnReasons: List<GiniCaptureReturnReason> = emptyList(),
     ) : CaptureResult()
 
     /**
@@ -61,15 +77,13 @@ fun CaptureSDKResult.toCaptureResult(): CaptureResult {
         is CaptureSDKResult.Success -> {
             CaptureResult.Success(
                 this.specificExtractions,
-                this.compoundExtractions,
-                this.returnReasons
+                this.compoundExtractions
             )
         }
         is CaptureSDKResult.SchedulePayment -> {
             CaptureResult.SchedulePayment(
                 this.specificExtractions,
-                this.compoundExtractions,
-                this.returnReasons
+                this.compoundExtractions
             )
         }
         is CaptureSDKResult.Empty -> {

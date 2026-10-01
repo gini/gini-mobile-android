@@ -13,6 +13,7 @@ import net.gini.android.capture.R;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.ViewPropertyAnimatorCompat;
@@ -43,6 +44,8 @@ class AnalysisHintsAnimator {
     private ViewPropertyAnimatorCompat mHintAnimation;
     private List<AnalysisHint> mHints;
     private Runnable mHintCycleRunnable;
+    @Nullable
+    private Runnable mOnHintShownListener;
 
     public AnalysisHintsAnimator(
             @NonNull final Context context,
@@ -61,6 +64,14 @@ class AnalysisHintsAnimator {
         mContainerViewHeight = containerViewHeight;
     }
 
+    /**
+     * Called each time a hint is about to slide into view. At that moment the container is still
+     * translated below the screen, so the listener can change the layout without a visible jump.
+     */
+    public void setOnHintShownListener(@Nullable final Runnable listener) {
+        mOnHintShownListener = listener;
+    }
+
     public void start() {
         mHintCycleRunnable = new Runnable() {
             @Override
@@ -74,8 +85,9 @@ class AnalysisHintsAnimator {
 
     @NonNull
     private ViewPropertyAnimatorCompat getSlideDownAnimation() {
+        final float slideDistance = (float) mContainerViewHeight;
         return ViewCompat.animate(mHintContainer)
-                .translationY(mContainerViewHeight)
+                .translationY(slideDistance)
                 .setDuration(HINT_ANIMATION_DURATION)
                 .setListener(new ViewPropertyAnimatorListenerAdapter() {
                     @Override
@@ -89,6 +101,9 @@ class AnalysisHintsAnimator {
         setNextHint();
         if (!TextUtils.isEmpty(mHintHeadlineTextView.getText())) {
             mHintContainer.setVisibility(View.VISIBLE);
+            if (mOnHintShownListener != null) {
+                mOnHintShownListener.run();
+            }
         }
         mHintAnimation = getSlideUpAnimation();
         mHintAnimation.start();

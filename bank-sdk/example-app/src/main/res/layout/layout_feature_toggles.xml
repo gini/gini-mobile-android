@@ -23,6 +23,14 @@
         android:text="@string/open_with_switch_label" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_openWithUriBasedApi"
+        style="@style/SwitchConfigurationStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:text="@string/open_with_uri_based_api_switch_label" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/switch_CaptureSdk"
         style="@style/SwitchConfigurationStyle"
         android:layout_width="match_parent"

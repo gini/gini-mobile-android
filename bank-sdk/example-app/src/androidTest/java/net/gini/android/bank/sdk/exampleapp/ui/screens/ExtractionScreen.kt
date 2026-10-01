@@ -51,6 +51,14 @@ class ExtractionScreen {
         ).waitForExists(EXTRACTION_TIMEOUT)
     }
 
+    /** Like [assertExtractionScreenIsDisplayed], but checks the current screen without waiting. */
+    fun isExtractionScreenDisplayedNow(): Boolean {
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        return device.findObject(
+            UiSelector().resourceId(AppResources.resId("transfer_summary"))
+        ).exists()
+    }
+
     // The scheduled-payment indicator is GONE unless ExtractionsActivity was launched for
     // a CaptureResult.SchedulePayment; a GONE view is absent from the accessibility tree,
     // so exists() distinguishes the schedule path from the pay-now Success path.

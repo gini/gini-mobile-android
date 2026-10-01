@@ -46,7 +46,10 @@ class CaptureFlowHostActivity : AppCompatActivity() {
 
         configureGiniBank()
         findViewById<FragmentContainerView>(R.id.fragment_host).getFragment<ClientBankSDKFragment>()
-            .startBankSdkForIntent(openWithIntent)
+            .startBankSdkForIntent(
+                openWithIntent,
+                configurationViewModel.configurationFlow.value.isOpenWithUriBasedApiEnabled
+            )
     }
 
     private fun configureGiniBank() {

@@ -1,9 +1,22 @@
 package net.gini.android.capture.camera
 
 import com.google.common.truth.Truth.assertThat
+import io.mockk.coEvery
+import io.mockk.every
+import io.mockk.mockk
 import net.gini.android.capture.di.getGiniCaptureKoin
+import net.gini.android.capture.education.GetEducationFeatureEnabledUseCase
+import android.view.View
+import android.view.ViewGroup
+import net.gini.android.capture.ingredientbrand.IngredientBrandLoadingIndicatorAdapter
+import net.gini.android.capture.view.CustomLoadingIndicatorAdapter
 import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
 import net.gini.android.capture.internal.provider.UnsupportedQrWarningSessionPin
+import net.gini.android.capture.internal.qrcode.PaymentQRCodeData
+import net.gini.android.capture.internal.qreducation.GetQrEducationTypeUseCase
+import net.gini.android.capture.internal.qreducation.IncrementQrCodeRecognizedCounterUseCase
+import net.gini.android.capture.internal.qreducation.UpdateFlowTypeUseCase
+import net.gini.android.capture.internal.qreducation.model.QrEducationType
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -12,11 +25,43 @@ import org.koin.dsl.module
 
 class CameraFragmentExtensionTest {
 
+    /**
+     * Records every [setPoweredByGiniVisible] call and exposes the `protected`
+     * [isQrEducationStepRunning], so the tests can assert on both.
+     */
+    private class RecordingExtension(
+        private val onlyQRCodeScanningEnabled: () -> Boolean
+    ) : CameraFragmentExtension() {
+
+        val poweredByGiniCalls = mutableListOf<Boolean>()
+
+        var interactionBlockedCount = 0
+
+        override fun hideImageCorners() = Unit
+        override fun blockInteractionForQrCodeStep() {
+            interactionBlockedCount++
+        }
+
+        override fun setPoweredByGiniVisible(visible: Boolean) {
+            poweredByGiniCalls += visible
+        }
+
+        override fun isOnlyQRCodeScanningEnabled() = onlyQRCodeScanningEnabled()
+
+        fun educationStepRunning(): Boolean = isQrEducationStepRunning()
+
+        fun showsQrStepLoadingIndicator(): Boolean = shouldShowQrStepLoadingIndicator()
+    }
+
     private lateinit var configurationProvider: GiniBankConfigurationProvider
     private lateinit var sessionPin: UnsupportedQrWarningSessionPin
+    private lateinit var qrEducationTypeUseCase: GetQrEducationTypeUseCase
+    private lateinit var educationFeatureEnabledUseCase: GetEducationFeatureEnabledUseCase
     private lateinit var koinTestModule: Module
-    private lateinit var extension: CameraFragmentExtension
+    private lateinit var extension: RecordingExtension
     private var onlyQRCodeScanningEnabled = false
+
+    private val qrCodeData = mockk<PaymentQRCodeData>(relaxed = true)
 
     @Before
     fun setup() {
@@ -24,28 +69,147 @@ class CameraFragmentExtensionTest {
         // which is shared by all tests running in the same JVM.
         configurationProvider = GiniBankConfigurationProvider()
         sessionPin = UnsupportedQrWarningSessionPin()
+        // Stubbed rather than real: showQrCodePopup resolves these on the way into both halves,
+        // and the production definitions need Android infrastructure a JVM unit test has not got.
+        qrEducationTypeUseCase = mockk(relaxed = true)
+        educationFeatureEnabledUseCase = mockk(relaxed = true)
         koinTestModule = module {
             single { configurationProvider }
             single { sessionPin }
+            single { qrEducationTypeUseCase }
+            single { educationFeatureEnabledUseCase }
+            single { mockk<UpdateFlowTypeUseCase>(relaxed = true) }
+            single { mockk<IncrementQrCodeRecognizedCounterUseCase>(relaxed = true) }
         }
         getGiniCaptureKoin().loadModules(listOf(koinTestModule))
         onlyQRCodeScanningEnabled = false
-        extension = object : CameraFragmentExtension() {
-            override fun hideImageCorners() = Unit
-            override fun isOnlyQRCodeScanningEnabled() = onlyQRCodeScanningEnabled
-        }
+        extension = RecordingExtension { onlyQRCodeScanningEnabled }
+        extension.mPaymentQRCodePopup = mockk(relaxed = true)
+        extension.qrCodeEducationPopup = mockk(relaxed = true)
     }
 
     @After
     fun tearDown() {
         // Koin's unloadModules drops the overriding definitions instead of restoring the
-        // production ones, so the session pin is re-declared here: otherwise the shared Koin
-        // context is left with no UnsupportedQrWarningSessionPin definition and every later
-        // test in this JVM that resolves it fails with NoDefinitionFoundException.
+        // production ones, so the definitions that have no capture-sdk production binding are
+        // re-declared here: otherwise the shared Koin context is left without them and every
+        // later test in this JVM that resolves one fails with NoDefinitionFoundException.
         getGiniCaptureKoin().unloadModules(listOf(koinTestModule))
         getGiniCaptureKoin().loadModules(
             listOf(module { single { UnsupportedQrWarningSessionPin() } })
         )
+    }
+
+    /** Drives [CameraFragmentExtension.showQrCodePopup] into its invoice-retrieval branch. */
+    private fun runRetrievalHalf() {
+        coEvery { qrEducationTypeUseCase.execute() } returns null
+        every { educationFeatureEnabledUseCase.invoke() } returns false
+        extension.showQrCodePopup(qrCodeData) { }
+    }
+
+    /**
+     * Drives [CameraFragmentExtension.showQrCodePopup] into its QR-code education branch.
+     *
+     * The stubbed `show` never runs its completion callback, which is what the real overlay does
+     * only after its animation. That is deliberate and does not block: the education mutex starts
+     * unlocked, so the `lock()` straight after `show` acquires it and returns immediately. Each
+     * test builds a fresh extension, so the mutex left locked here never leaks into another one.
+     */
+    private fun runEducationHalf() {
+        coEvery { qrEducationTypeUseCase.execute() } returns QrEducationType.PHOTO_DOC
+        every { educationFeatureEnabledUseCase.invoke() } returns true
+        extension.showQrCodePopup(qrCodeData) { }
+    }
+
+    /**
+     * The approved design shows the brand element from the QR-detected state on, not only once
+     * the invoice starts loading, so the retrieval half raises it when its popup appears.
+     *
+     * R13 still holds because the controls are put out of reach first — asserted here rather
+     * than left implicit, since raising the badge over a live shutter is the exact thing that
+     * rule forbids.
+     */
+    @Test
+    fun `retrieval half raises the brand element once the controls are out of reach`() {
+        configurationProvider.update { it.copy(ingredientBrandScreens = setOf("Analysis")) }
+
+        runRetrievalHalf()
+
+        assertThat(extension.poweredByGiniCalls).containsExactly(true)
+        assertThat(extension.interactionBlockedCount).isEqualTo(1)
+    }
+
+    @Test
+    fun `retrieval half leaves the brand element alone when the configuration does not list the screen`() {
+        runRetrievalHalf()
+
+        assertThat(extension.poweredByGiniCalls).isEmpty()
+        // Still blocked: the step covers the preview whether or not the badge is enabled.
+        assertThat(extension.interactionBlockedCount).isEqualTo(1)
+    }
+
+    /**
+     * Starts with the education half so the flag is genuinely `true` going in — otherwise this
+     * would pass on the initial `false` alone and would not notice the reset at the top of
+     * `showQrCodePopup` being removed.
+     */
+    @Test
+    fun `retrieval half does not leave the education step marked as running`() {
+        runEducationHalf()
+        assertThat(extension.educationStepRunning()).isTrue()
+
+        runRetrievalHalf()
+
+        assertThat(extension.educationStepRunning()).isFalse()
+    }
+
+    @Test
+    fun `education half raises the brand element when the configuration lists the screen`() {
+        configurationProvider.update { it.copy(ingredientBrandScreens = setOf("Analysis")) }
+
+        runEducationHalf()
+
+        assertThat(extension.poweredByGiniCalls).containsExactly(true)
+        assertThat(extension.educationStepRunning()).isTrue()
+    }
+
+    /**
+     * Matches iOS (`QRCodeOverlay.showAnimation` shows the education view *or* the loading
+     * indicator, never both) and the epic: while the QR-code education message is on screen, no
+     * loading indicator runs behind it — not the Gini mark, not the integrator's, not the default.
+     */
+    @Test
+    fun `education half shows no loading indicator`() {
+        configurationProvider.update { it.copy(ingredientBrandScreens = setOf("Analysis")) }
+
+        runEducationHalf()
+
+        assertThat(extension.showsQrStepLoadingIndicator()).isFalse()
+    }
+
+    @Test
+    fun `education half shows no loading indicator without ingredient branding either`() {
+        runEducationHalf()
+
+        assertThat(extension.showsQrStepLoadingIndicator()).isFalse()
+    }
+
+    /** The retrieval half keeps its indicator, and so does a retrieval after an education. */
+    @Test
+    fun `retrieval half shows the loading indicator, also after an earlier education`() {
+        runEducationHalf()
+
+        runRetrievalHalf()
+
+        assertThat(extension.showsQrStepLoadingIndicator()).isTrue()
+    }
+
+    @Test
+    fun `education half leaves the brand element alone when the configuration does not list the screen`() {
+        runEducationHalf()
+
+        assertThat(extension.poweredByGiniCalls).isEmpty()
+        assertThat(extension.educationStepRunning()).isTrue()
     }
 
     @Test
@@ -128,5 +292,37 @@ class CameraFragmentExtensionTest {
 
         // Then: the next session pins the new warning again
         assertThat(extension.isUnsupportedQRCodeWarningEnabled()).isTrue()
+    }
+
+    private class NoopIndicatorAdapter : CustomLoadingIndicatorAdapter {
+        override fun onCreateView(container: ViewGroup): View = View(container.context)
+        override fun onVisible() = Unit
+        override fun onHidden() = Unit
+        override fun onDestroy() = Unit
+    }
+
+    /**
+     * The camera always binds its own adapter, which chooses between the Gini mark and the
+     * integrator's indicator when the indicator is shown. It cannot choose here: this is the first
+     * screen the SDK opens and ingredientBrandScreens has not arrived yet.
+     */
+    @Test
+    fun `always provides the camera loading indicator adapter`() {
+        val instance = extension.loadingIndicatorAdapterInstance(NoopIndicatorAdapter())
+
+        assertThat(instance.viewAdapter)
+            .isInstanceOf(IngredientBrandLoadingIndicatorAdapter::class.java)
+    }
+
+    /**
+     * InjectedViewContainer tracks adapter ownership per instance, so the camera must hand back the
+     * same one across view recreations rather than a fresh instance each time.
+     */
+    @Test
+    fun `reuses the same loading indicator instance across view recreations`() {
+        val first = extension.loadingIndicatorAdapterInstance(NoopIndicatorAdapter())
+        val second = extension.loadingIndicatorAdapterInstance(NoopIndicatorAdapter())
+
+        assertThat(second).isSameInstanceAs(first)
     }
 }

@@ -185,6 +185,8 @@ compose-material3 = { module = "androidx.compose.material3:material3" }
 compose-activity = { module = "androidx.activity:activity-compose", version.ref = "compose-activity" }
 compose-tools-uiTooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-tools-uiToolingPreview = { module = "androidx.compose.ui:ui-tooling-preview" }
+compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
+compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 accompanist-themeAdapter = { module = "com.google.android.material:compose-theme-adapter-3", version.ref = "accompanist-themeAdapter" }
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
 koin-core = { module = "io.insert-koin:koin-core" }

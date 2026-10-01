@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.Document;
@@ -18,6 +19,7 @@ import net.gini.android.capture.document.ImageMultiPageDocument;
 import net.gini.android.capture.internal.camera.photo.Photo;
 import net.gini.android.capture.internal.camera.photo.PhotoFactory;
 import net.gini.android.capture.internal.util.DeviceHelper;
+import net.gini.android.capture.internal.util.ExifOrientationReader;
 import net.gini.android.capture.internal.util.FileImportValidator;
 import net.gini.android.capture.internal.util.LogSanitizer;
 import net.gini.android.capture.internal.util.MimeType;
@@ -50,6 +52,7 @@ public abstract class AbstractImportImageUrisAsyncTask extends
 
     @SuppressLint("StaticFieldLeak")
     private final Context mContext;
+    @Nullable
     private final Intent mIntent;
     private final AsyncCallback<ImageMultiPageDocument, ImportedFileValidationException> mCallback;
     private final GiniCapture mGiniCapture;
@@ -65,6 +68,20 @@ public abstract class AbstractImportImageUrisAsyncTask extends
                     callback) {
         mContext = context;
         mIntent = intent;
+        mGiniCapture = giniCapture;
+        mSource = source;
+        mImportMethod = importMethod;
+        mCallback = callback;
+    }
+
+    protected AbstractImportImageUrisAsyncTask(@NonNull final Context context,
+            @NonNull final GiniCapture giniCapture,
+            @NonNull final Document.Source source,
+            @NonNull final Document.ImportMethod importMethod,
+            @NonNull final AsyncCallback<ImageMultiPageDocument, ImportedFileValidationException>
+                    callback) {
+        mContext = context;
+        mIntent = null;
         mGiniCapture = giniCapture;
         mSource = source;
         mImportMethod = importMethod;
@@ -161,6 +178,14 @@ public abstract class AbstractImportImageUrisAsyncTask extends
         // Create Photo
         LOG.debug("Create Photo from uri {}", LogSanitizer.sanitize(uri));
         final Photo photo = PhotoFactory.newPhotoFromDocument(document);
+        if (document.getFormat() == ImageDocument.ImageFormat.HEIC) {
+            // The JPEG exif reader cannot read a HEIF container, so the photo
+            // has no rotation yet. Take it from the platform reader before the
+            // image is re-encoded and the original tag is gone - otherwise a
+            // portrait photo would be uploaded lying on its side.
+            photo.setRotationForDisplay(
+                    ExifOrientationReader.readRotationForDisplay(uri, mContext));
+        }
         if (isCancelled()) {
             LOG.debug(LOG_IMPORT_CANCELLED, LogSanitizer.sanitize(uri));
             return null;
@@ -171,6 +196,21 @@ public abstract class AbstractImportImageUrisAsyncTask extends
         if (isCancelled()) {
             LOG.debug(LOG_IMPORT_CANCELLED, LogSanitizer.sanitize(uri));
             return null;
+        }
+        if (photo.getImageFormat() == ImageDocument.ImageFormat.HEIC) {
+            // Compressing re-encodes to JPEG and says so by changing the
+            // format. Still HEIC means the image could not be decoded - a
+            // truncated or otherwise broken file. The Gini API does not accept
+            // HEIC, so uploading the original bytes would fail silently later
+            // instead of telling the user now.
+            LOG.error("Failed to convert HEIC to JPEG for uri {}", LogSanitizer.sanitize(uri));
+            if (shouldHaltOnError(multiPageDocument,
+                    new ImportedFileValidationException(
+                            FileImportValidator.Error.TYPE_NOT_SUPPORTED))) {
+                LOG.debug(LOG_HALT_ON_ERROR, LogSanitizer.sanitize(uri));
+                return null;
+            }
+            return document;
         }
         // Save to local storage
         LOG.debug("Save compressed Photo to local storage created from uri {}", LogSanitizer.sanitize(uri));
@@ -203,8 +243,12 @@ public abstract class AbstractImportImageUrisAsyncTask extends
         final String deviceOrientation = DeviceHelper.getDeviceOrientation(
                 mContext);
         final String deviceType = DeviceHelper.getDeviceType(mContext);
-        return DocumentFactory.newImageDocumentFromUri(uri,
-                mIntent, mContext, deviceOrientation,
+        if (mIntent != null) {
+            return DocumentFactory.newImageDocumentFromUri(uri,
+                    mIntent, mContext, deviceOrientation,
+                    deviceType, mImportMethod);
+        }
+        return DocumentFactory.newImageDocumentFromUri(uri, mContext, deviceOrientation,
                 deviceType, mImportMethod);
     }
 

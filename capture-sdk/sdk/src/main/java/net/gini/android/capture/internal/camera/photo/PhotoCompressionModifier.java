@@ -3,6 +3,8 @@ package net.gini.android.capture.internal.camera.photo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import net.gini.android.capture.document.ImageDocument;
+
 import java.io.ByteArrayOutputStream;
 
 import androidx.annotation.NonNull;
@@ -45,6 +47,9 @@ class PhotoCompressionModifier implements PhotoModifier {
 
             final byte[] jpeg = byteArrayOutputStream.toByteArray();
             mPhoto.setData(jpeg);
+            // The data is JPEG now whatever it was before, so the photo has to
+            // report JPEG - an imported HEIC is converted by exactly this step.
+            mPhoto.setImageFormat(ImageDocument.ImageFormat.JPEG);
             mPhoto.updateBitmapPreview();
 
             mPhoto.updateExif();

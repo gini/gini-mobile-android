@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
 import net.gini.android.capture.databinding.GcFragmentPhotoTipsHelpBinding
-import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter
 import net.gini.android.capture.internal.ui.IntervalClickListener
 import net.gini.android.capture.internal.util.autoCleared
 import net.gini.android.capture.internal.util.getLayoutInflaterWithGiniCaptureTheme
@@ -37,7 +36,6 @@ class PhotoTipsHelpFragment : Fragment() {
         binding = GcFragmentPhotoTipsHelpBinding.inflate(inflater)
         setupTipList()
         setupTopBarNavigation()
-        setupBottomBarNavigation()
         return binding.root
     }
 
@@ -53,26 +51,9 @@ class PhotoTipsHelpFragment : Fragment() {
             topBarInjectedViewContainer.injectedViewAdapterHolder = InjectedViewAdapterHolder<NavigationBarTopAdapter>(
                 GiniCapture.getInstance().internal().navigationBarTopAdapterInstance
             ) { injectedViewAdapter: NavigationBarTopAdapter ->
-                injectedViewAdapter.setNavButtonType(
-                    if (GiniCapture.getInstance()
-                            .isBottomNavigationBarEnabled
-                    ) NavButtonType.NONE else NavButtonType.BACK
-                )
+                injectedViewAdapter.setNavButtonType(NavButtonType.BACK)
                 injectedViewAdapter.setTitle(getString(R.string.gc_title_photo_tips))
                 injectedViewAdapter.setOnNavButtonClickListener(IntervalClickListener {
-                    NavHostFragment.findNavController(this@PhotoTipsHelpFragment).popBackStack()
-                })
-            }
-        }
-    }
-
-    private fun setupBottomBarNavigation() {
-        val injectedViewContainer = binding.gcInjectedNavigationBarContainerBottom
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
-            injectedViewContainer.injectedViewAdapterHolder = InjectedViewAdapterHolder<HelpNavigationBarBottomAdapter>(
-                GiniCapture.getInstance().internal().helpNavigationBarBottomAdapterInstance
-            ) { injectedViewAdapter: HelpNavigationBarBottomAdapter ->
-                injectedViewAdapter.setOnBackClickListener(IntervalClickListener {
                     NavHostFragment.findNavController(this@PhotoTipsHelpFragment).popBackStack()
                 })
             }

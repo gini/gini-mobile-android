@@ -82,7 +82,7 @@ class TransferSummaryIntegrationTest {
         )
             .setApiBaseUrl(testProperties["testApiUri"] as String)
             .setUserCenterApiBaseUrl(testProperties["testUserCenterUri"] as String)
-            .setConnectionTimeoutInMs(60000)
+            .setConnectTimeoutInMs(60000)
             .build()
     }
 
@@ -227,8 +227,7 @@ class TransferSummaryIntegrationTest {
 
             return CaptureResult.Success(
                 specificExtractions = analysisResult.extractions,
-                compoundExtractions = analysisResult.compoundExtractions,
-                returnReasons = analysisResult.returnReasons
+                compoundExtractions = analysisResult.compoundExtractions
             )
 
         } catch (e: Exception) {

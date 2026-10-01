@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  The Gini ingredient brand element ("Powered by gini"). Shown when the client configuration lists
+  the screen in ingredientBrandScreens.
+
+  One image, not a composed layout. gc_powered_by_gini_badge carries the pill, the wordmark and the
+  logo as path data, so there is no colour, dimension, text style or string resource behind this
+  element for an integrator to override — the badge is switched on by the backend and deliberately
+  has no integrator-facing switch, so its appearance must not move when an integrator restyles the
+  SDK. It also reproduces the Figma component exactly rather than approximating its SF Pro letter
+  shapes with Roboto.
+
+  Sized by the drawable's own 90x24dp intrinsic size. The content description is the only text and
+  is deliberately not translated: "Powered by Gini" is a brand lockup, and iOS pins the same string
+  for the same reason (PP-2570 spec R11).
+-->
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:contentDescription="Powered by Gini"
+    android:focusable="false"
+    android:importantForAccessibility="yes"
+    android:src="@drawable/gc_powered_by_gini_badge"
+    tools:ignore="HardcodedText" />

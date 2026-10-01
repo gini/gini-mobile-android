@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.filters.RequiresDevice;
+import androidx.test.filters.SdkSuppress;
 
 /**
  * Created by Alpar Szotyori on 09.08.2018.
@@ -24,20 +25,29 @@ public class FileImportValidatorTest {
 
     private static final String PDF = "invoice.pdf";
     private static final String PDF_WITH_PASSWORD = "invoice-password.pdf";
+    private static final String HEIC = "invoice.heic";
+    private static final String HEIC_GENERIC_EXTENSION = "invoice-generic-extension.bin";
 
     private static Uri sPdfContentUri;
     private static Uri sPdfWithPasswordContentUri;
+    private static Uri sHeicContentUri;
+    private static Uri sHeicGenericExtensionContentUri;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         sPdfContentUri = Helpers.getAssetFileFileContentUri(PDF);
         sPdfWithPasswordContentUri = Helpers.getAssetFileFileContentUri(PDF_WITH_PASSWORD);
+        sHeicContentUri = Helpers.getAssetFileFileContentUri(HEIC);
+        sHeicGenericExtensionContentUri =
+                Helpers.getAssetFileFileContentUri(HEIC_GENERIC_EXTENSION);
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
         Helpers.deleteAssetFileFromContentUri(PDF);
         Helpers.deleteAssetFileFromContentUri(PDF_WITH_PASSWORD);
+        Helpers.deleteAssetFileFromContentUri(HEIC);
+        Helpers.deleteAssetFileFromContentUri(HEIC_GENERIC_EXTENSION);
     }
 
     @RequiresDevice
@@ -64,5 +74,55 @@ public class FileImportValidatorTest {
         assertThat(result).isFalse();
         assertThat(fileImportValidator.getError()).isEqualTo(
                 FileImportValidator.Error.PASSWORD_PROTECTED_PDF);
+    }
+
+    @RequiresDevice
+    @SdkSuppress(minSdkVersion = 28)
+    @Test
+    public void should_acceptHEIC_onApi28AndAbove() {
+        // Given
+        final FileImportValidator fileImportValidator = new FileImportValidator(
+                ApplicationProvider.getApplicationContext(), FILE_SIZE_LIMIT);
+        // When
+        final boolean result = fileImportValidator.matchesCriteria(sHeicContentUri);
+        // Then
+        assertThat(result).isTrue();
+    }
+
+    /**
+     * The file-manager "share with" case: the extension names no usable type, so only the
+     * container header identifies the file.
+     *
+     * <p> This needs a device. Robolectric's MimeTypeMap contains only what a test puts into it,
+     * so it cannot show what Android really answers — and Android really maps {@code .bin} to
+     * {@code application/octet-stream}, which used to be accepted as an answer and skipped the
+     * header check.
+     */
+    @RequiresDevice
+    @SdkSuppress(minSdkVersion = 28)
+    @Test
+    public void should_acceptHEIC_whenTheExtensionNamesNoUsableType() {
+        // Given
+        final FileImportValidator fileImportValidator = new FileImportValidator(
+                ApplicationProvider.getApplicationContext(), FILE_SIZE_LIMIT);
+        // When
+        final boolean result = fileImportValidator.matchesCriteria(sHeicGenericExtensionContentUri);
+        // Then
+        assertThat(result).isTrue();
+    }
+
+    @RequiresDevice
+    @SdkSuppress(minSdkVersion = 28)
+    @Test
+    public void should_NotAcceptHEIC_whenOverTheSizeLimit() {
+        // Given
+        final FileImportValidator fileImportValidator = new FileImportValidator(
+                ApplicationProvider.getApplicationContext(), 1024);
+        // When
+        final boolean result = fileImportValidator.matchesCriteria(sHeicContentUri);
+        // Then
+        assertThat(result).isFalse();
+        assertThat(fileImportValidator.getError()).isEqualTo(
+                FileImportValidator.Error.SIZE_TOO_LARGE);
     }
 }

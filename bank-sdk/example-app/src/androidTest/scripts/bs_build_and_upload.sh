@@ -17,7 +17,10 @@ set -e
 #   bs_run_group_import.sh         – Import / FileImportError / ErrorScreen / OpenWith
 #   bs_run_group_duedate.sh        – Due Date Hint / Schedule Payment bottom sheet
 #   bs_run_group_creditnote.sh     – Credit Note warning bottom sheet
-#   bs_run_all_groups.sh           – builds+uploads ONCE, then triggers all six shards
+#   bs_run_group_ingredientbrand.sh           – Ingredient brand (badge + Gini indicator)
+#   bs_run_group_ingredientbrand_education.sh – Ingredient brand during the education (animations ON)
+#   bs_run_group_smoke.sh          – the Xray smoke selection (the release gate)
+#   bs_run_all_groups.sh           – builds+uploads ONCE, then triggers every shard
 #   bs_run_release.sh              – the shards in this release's scope (see its header)
 #
 # BrowserStack credentials must be set via environment variables:
@@ -38,6 +41,9 @@ set -e
 #   ARTIFACT_URLS_FILE  If set, the five artifact URLs are written to this file (as
 #       `NAME=value` lines) after upload, so a caller can source and reuse them.
 #   SKIP_TRIGGER=true   Do the build + upload but do NOT trigger a test run.
+#   BS_DISABLE_ANIMATIONS  "true" (default) or "false". The education message is a Compose
+#       animation that ends at once with animations off, so its tests need "false"; see
+#       bs_run_group_ingredientbrand_education.sh. Every other group keeps the default.
 #
 # Examples:
 #   BS_USER="myuser" BS_KEY="mykey" ./bs_build_and_upload.sh
@@ -71,8 +77,16 @@ TEST_APK="$APK_DIR/androidTest/$FLAVOR/$BUILD_TYPE/example-app-dev-exampleApp-de
 
 # Media files live in the androidTest assets (single source of truth — the test APK
 # copies them onto the device itself for local runs; this script uploads the same files
-# to BrowserStack's device storage). camera_injection_image.jpeg is deliberately NOT the
-# same file as test_image.jpeg — it is the image BrowserStack injects into the camera.
+# to BrowserStack's device storage).
+#
+# camera_injection_image.jpeg is NOT injected into the camera, despite its name.
+# BrowserStack does not support camera image injection for Espresso at all — a build
+# requesting it is rejected with:
+#   [BROWSERSTACK_INVALID_PARAMETER] Currently, we do not support image injection feature
+#   with this framework.
+# (Injection is an Appium/XCUITest feature.) The file is uploaded as ordinary device media
+# like the other two. On a BrowserStack device the camera therefore photographs the device
+# rack, so a test may capture pages but must never assert on what the photo contains.
 TEST_ASSETS="$SCRIPT_DIR/../assets"
 TEST_IMAGE="$TEST_ASSETS/camera_injection_image.jpeg"
 TEST_PDF="$TEST_ASSETS/Testrechnung-RA-1.pdf"
@@ -235,6 +249,7 @@ else
 fi
 
 BUILD_NAME="${BUILD_NAME:-local-$(date +%Y%m%d-%H%M%S)}"
+BS_DISABLE_ANIMATIONS="${BS_DISABLE_ANIMATIONS:-true}"
 
 echo "BrowserStack project: $BS_PROJECT"
 echo "Build name:           $BUILD_NAME"
@@ -251,7 +266,7 @@ BUILD_RESPONSE=$(curl -s -u "$BS_USER:$BS_KEY" \
     \"singleRunnerInvocation\": \"true\",
     \"useOrchestrator\": \"true\",
     \"clearPackageData\": \"true\",
-    \"disableAnimations\": \"true\",
+    \"disableAnimations\": \"$BS_DISABLE_ANIMATIONS\",
     $FILTER_JSON
     \"uploadMedia\": [\"$IMAGE_URL\", \"$PDF_URL\", \"$SAMPLE_PDF_URL\"]
   }")

@@ -9,6 +9,9 @@ import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
+import net.gini.android.capture.internal.util.HeicHeader;
+import net.gini.android.capture.internal.util.MimeType;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -152,13 +155,50 @@ public final class UriHelper {
         return -1;
     }
 
+    /**
+     * Retrieves the mime type of a Uri.
+     *
+     * <p> When neither the content resolver nor the file extension can name the
+     * type, the file's header is inspected for a HEIF container. Content
+     * providers and {@link MimeTypeMap} do not know HEIC on every Android
+     * version, and a file manager sharing a {@code file://} Uri often supplies
+     * no type at all, which would otherwise make a perfectly valid HEIC photo
+     * look unsupported.
+     *
+     * <p> {@code application/octet-stream} counts as "not named" wherever it
+     * comes from. It is what a provider falls back to when it cannot identify a
+     * file, and it is also what {@link MimeTypeMap} returns for a {@code .bin}
+     * extension, so accepting it from either source would skip the header check
+     * for exactly the files that need it.
+     *
+     * @param uri     a {@link Uri} pointing to a file
+     * @param context Android context
+     * @return the mime type, or null if it could not be determined
+     */
     @Nullable
     public static String getMimeType(@NonNull final Uri uri, @NonNull final Context context) {
         final String type = context.getContentResolver().getType(uri);
-        if (type == null) {
-            return getMimeTypeFromUrl(uri.getPath());
+        if (namesTheType(type)) {
+            return type;
         }
-        return type;
+        final String typeFromUrl = getMimeTypeFromUrl(uri.getPath());
+        if (namesTheType(typeFromUrl)) {
+            return typeFromUrl;
+        }
+        if (HeicHeader.isHeic(uri, context)) {
+            return MimeType.IMAGE_HEIC.asString();
+        }
+        // Nothing identified the file. Hand back whatever was on offer, so the
+        // caller still sees "application/octet-stream" rather than null.
+        return typeFromUrl != null ? typeFromUrl : type;
+    }
+
+    /**
+     * Whether {@code mimeType} actually identifies the file, as opposed to being
+     * absent or the generic "some bytes" type.
+     */
+    private static boolean namesTheType(@Nullable final String mimeType) {
+        return mimeType != null && !MimeType.APPLICATION_OCTET_STREAM.equals(mimeType);
     }
 
     @Nullable
