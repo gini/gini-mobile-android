@@ -1069,6 +1069,7 @@ public final class net/gini/android/capture/databinding/GcFragmentCameraBinding 
 	public final field gcDocumentImportButtonSubtitle Landroid/widget/TextView;
 	public final field gcFlashGroupWrapper Landroidx/constraintlayout/widget/ConstraintLayout;
 	public final field gcGuidelineImageStart Landroidx/constraintlayout/widget/Guideline;
+	public final field gcGuidelineScreenCenter Landroidx/constraintlayout/widget/Guideline;
 	public final field gcIbanDetected Landroid/widget/TextView;
 	public final field gcInjectedLoadingIndicator Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcNavigationTopBar Lnet/gini/android/capture/view/InjectedViewContainer;
