@@ -66,11 +66,9 @@ class ReviewActivity : AppCompatActivity() {
             insets
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.reviewFragment) { v, insets ->
-            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updatePadding(top = bars.top, bottom = bars.bottom)
-            insets
-        }
+        // No window insets are applied to the fragment container on purpose: the Gini Health SDK
+        // reserves the space its own screens need. Compensating here would hide SDK defects from
+        // this example app and would apply the insets twice once the SDK handles them.
 
         binding.payInvoiceButton.root.setOnClickListener {
             startPaymentFlow(binding, documentId)

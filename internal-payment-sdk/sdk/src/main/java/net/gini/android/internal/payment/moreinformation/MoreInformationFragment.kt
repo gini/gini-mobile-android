@@ -11,6 +11,9 @@ import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.annotation.VisibleForTesting
 import androidx.core.text.buildSpannedString
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -27,7 +30,10 @@ import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.utils.UrlSpanNoUnderline
 import net.gini.android.internal.payment.utils.autoCleared
+import net.gini.android.internal.payment.utils.extensions.bottomSystemBarOverlap
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
+import net.gini.android.internal.payment.utils.extensions.systemBottomInset
+import net.gini.android.internal.payment.utils.extensions.topSystemBarOverlap
 import net.gini.android.internal.payment.utils.extensions.getLocaleStringResource
 import net.gini.android.internal.payment.utils.extensions.isViewModelInitialized
 
@@ -75,6 +81,45 @@ class MoreInformationFragment private constructor(
             parentFragmentManager.beginTransaction().remove(this).commitAllowingStateLoss()
         }
     }
+    /**
+     * Reserves the space this screen needs for the system bars: the status bar at the top of the
+     * screen, and the navigation bar at the bottom of the scrollable FAQ list so its last entry
+     * can be scrolled clear of the bar on a host that draws edge-to-edge.
+     *
+     * The window insets are read from two sources because neither is reliable on its own: the
+     * usual [ViewCompat.setOnApplyWindowInsetsListener], and [ViewCompat.getRootWindowInsets]
+     * re-read on every layout pass. The latter is required because a host app whose theme has an
+     * ActionBar renders this fragment inside AppCompat's `ActionBarOverlayLayout`, which consumes
+     * the window insets, so the listener is never called. Both apply the same absolute padding,
+     * measured with [topSystemBarOverlap] and [bottomSystemBarOverlap], so they cannot reserve
+     * the space twice.
+     */
+    private fun reserveSpaceForSystemBars() {
+        val root = binding.root
+        val scrollView = binding.nestedScrollView
+        val apply = {
+            ViewCompat.getRootWindowInsets(root)?.let { insets ->
+                val topOverlap = root.topSystemBarOverlap(
+                    insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+                )
+                if (root.paddingTop != topOverlap) {
+                    root.updatePadding(top = topOverlap)
+                }
+                val bottomOverlap = scrollView.bottomSystemBarOverlap(insets.systemBottomInset())
+                if (scrollView.paddingBottom != bottomOverlap) {
+                    scrollView.updatePadding(bottom = bottomOverlap)
+                }
+            }
+            Unit
+        }
+        ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
+            apply()
+            insets
+        }
+        root.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ -> apply() }
+        ViewCompat.requestApplyInsets(root)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -87,6 +132,7 @@ class MoreInformationFragment private constructor(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        reserveSpaceForSystemBars()
         binding.gpsMoreInformationDetails.text = buildSpannedString {
             append(getLocaleStringResource(R.string.gps_more_information_details))
             append(" ")
