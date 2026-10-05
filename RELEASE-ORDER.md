@@ -20,11 +20,11 @@ Release order for :internal-payment-sdk:sdk 2.1.1:
  2. :health-api-library:library 6.2.0
  3. :internal-payment-sdk:sdk 2.1.1
 
-Release order for :health-sdk:sdk 6.1.0:
+Release order for :health-sdk:sdk 6.1.1:
  1. :core-api-library:library 3.7.0
  2. :health-api-library:library 6.2.0
  3. :internal-payment-sdk:sdk 2.1.1
- 4. :health-sdk:sdk 6.1.0
+ 4. :health-sdk:sdk 6.1.1
 
 Release order for :capture-sdk:default-network 4.6.0:
  1. :core-api-library:library 3.7.0
