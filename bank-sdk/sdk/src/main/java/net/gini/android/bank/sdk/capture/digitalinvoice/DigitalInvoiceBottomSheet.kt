@@ -37,7 +37,6 @@ import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.bank.sdk.util.wrappedWithGiniCaptureTheme
 import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
@@ -487,13 +486,6 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
 
     override fun disableInput() {
         // Not applicable in bottom sheet - input disabling not needed here
-    }
-
-    override fun showReturnReasonDialog(
-        reasons: List<GiniCaptureReturnReason>,
-        resultCallback: ReturnReasonDialogResultCallback
-    ) {
-        // Not applicable in bottom sheet - return reason dialog not shown here
     }
 
     override fun onSave(selectableLineItem: SelectableLineItem) {

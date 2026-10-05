@@ -66,6 +66,16 @@ public final class DocumentFactory {
                 importMethod);
     }
 
+    @NonNull
+    public static ImageDocument newImageDocumentFromUri(@NonNull final Uri externalUri,
+                                                        @NonNull final Context context,
+                                                        @NonNull final String deviceOrientation,
+                                                        @NonNull final String deviceType,
+                                                        @NonNull final Document.ImportMethod importMethod) {
+        return ImageDocument.fromUri(externalUri, context, deviceOrientation, deviceType,
+                importMethod);
+    }
+
     public static ImageDocument newEmptyImageDocument(@NonNull final Document.Source source,
                                                       @NonNull final Document.ImportMethod importMethod) {
         return ImageDocument.empty(source, importMethod);

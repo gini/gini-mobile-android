@@ -20,6 +20,7 @@ Builds the `example-app` and Espresso test suite APKs, uploads them to BrowserSt
 | `BS_KEY` | `<your_browserstack_access_key>` | BrowserStack access key |
 | `BS_PROJECT` | `gini-mobile-android` | BrowserStack App Automate project the build lands in. The default is the everyday project — this script and every `bs_run_group_*.sh` wrapper go there, so day-to-day runs stay in one place. The exception is `bs_run_release.sh`, which sets this to a per-release project (`GiniBankSDK-Android-<version>`) for release sign-off; see [Release sign-off](#release-sign-off). Override it per run to name a project yourself. Mirrors the iOS convention (`BS_PROJECT` in the iOS repo's `bs_shared.sh`). |
 | `BUILD_NAME` | `local-<timestamp>` | Build name inside the project. The `bs_run_group_*.sh` wrappers set this to `group-<feature>-<timestamp>`. |
+| `BS_DISABLE_ANIMATIONS` | `true` | Value sent as `disableAnimations`. Only `bs_run_group_ingredientbrand_education.sh` sets it to `false`: the education message is a Compose animation that ends at once with animations off. |
 
 ### Release sign-off
 
@@ -56,6 +57,17 @@ BS_USER="myuser" BS_KEY="mykey" BS_PROJECT="GiniBankSDK-Android-4.6.0-RC1" ./bs_
 | `net.gini.android.bank.sdk.exampleapp.ui.testcases` | Default test package (runs all test classes) |
 
 All three media files are always uploaded. BrowserStack places them in the device's Downloads folder where the Espresso tests retrieve them via the system file picker.
+
+---
+
+### Ingredient brand shards (PP-3478)
+
+| Script | Classes | Notes |
+|---|---|---|
+| `bs_run_group_ingredientbrand.sh` | `IngredientBrandTests`, `IngredientBrandConfigurationTests`, `IngredientBrandLandscapeTests`, `IngredientBrandQrOverlayTests` | Mock backend. The QR tests need a real QR code in front of the camera, so they always show as **skipped** on BrowserStack — expected. |
+| `bs_run_group_ingredientbrand_education.sh` | `IngredientBrandEducationTests`, `IngredientBrandLandscapeEducationTests` | Mock backend, camera photos, **animations on** (`BS_DISABLE_ANIMATIONS=false`). |
+
+Both are also triggered by `bs_run_all_groups.sh`.
 
 ---
 

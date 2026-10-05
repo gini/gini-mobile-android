@@ -42,16 +42,36 @@ object UiTestMockBackend {
     @Volatile
     var clientConfiguration: UiTestMockClientConfiguration = UiTestMockClientConfiguration()
 
+    /**
+     * How long `analyze` waits before it delivers the result. `0` delivers at once, as a mock
+     * normally does; a test that must look at the Analysis screen (or the QR overlay) while the
+     * analysis runs sets a delay so the screen stays up.
+     */
+    @Volatile
+    var analysisDelayMillis: Long = 0
+
+    /**
+     * When `true`, `getConfiguration` fails instead of serving [clientConfiguration], like a
+     * `/configurations` request that never reaches the backend. The SDK then keeps the values it
+     * saved from the last successful request.
+     */
+    @Volatile
+    var configurationFails: Boolean = false
+
     val isArmed: Boolean
         get() = scenario != null
 
     /** Arms the mock. Called from instrumented tests only. */
     fun arm(
         scenario: UiTestMockScenario,
-        clientConfiguration: UiTestMockClientConfiguration = UiTestMockClientConfiguration()
+        clientConfiguration: UiTestMockClientConfiguration = UiTestMockClientConfiguration(),
+        analysisDelayMillis: Long = 0,
+        configurationFails: Boolean = false
     ) {
         this.scenario = scenario
         this.clientConfiguration = clientConfiguration
+        this.analysisDelayMillis = analysisDelayMillis
+        this.configurationFails = configurationFails
     }
 
     /**
@@ -61,6 +81,8 @@ object UiTestMockBackend {
     fun disarm() {
         scenario = null
         clientConfiguration = UiTestMockClientConfiguration()
+        analysisDelayMillis = 0
+        configurationFails = false
     }
 
     /**
@@ -70,7 +92,9 @@ object UiTestMockBackend {
     fun networkService(): GiniCaptureNetworkService =
         UiTestMockNetworkService(
             scenario = requireNotNull(scenario) { "UiTestMockBackend is not armed" },
-            clientConfiguration = clientConfiguration
+            clientConfiguration = clientConfiguration,
+            analysisDelayMillis = analysisDelayMillis,
+            configurationFails = configurationFails
         )
 }
 
@@ -94,6 +118,12 @@ enum class UiTestMockScenario {
 
     /** An ordinary invoice: payment fields, no `businessDocType`. */
     INVOICE,
+
+    /** The analysis succeeds but finds nothing, so the SDK opens its No Results screen. */
+    NO_RESULTS,
+
+    /** The analysis request fails, so the SDK opens its Error screen. */
+    ANALYSIS_ERROR,
 }
 
 /**
@@ -104,9 +134,16 @@ enum class UiTestMockScenario {
  * [UiTestMockScenario.CREDIT_NOTE_WITH_LINE_ITEMS] needs `returnAssistantEnabled` on. `skontoEnabled`
  * is here so a test can turn Skonto OFF and isolate the Return Assistant branch of
  * `CaptureFlowFragment.processOnFinishedResultSuccessState`.
+ *
+ * `ingredientBrandScreens` switches the Gini ingredient brand (the Powered by Gini badge and the
+ * Gini loading indicator); empty means off. `qrCodeEducationEnabled` switches both the invoice
+ * education on the Analysis screen and the QR code education on the camera screen. Both default to
+ * off, so a test that does not ask for them sees neither.
  */
 data class UiTestMockClientConfiguration(
     val creditNoteHintEnabled: Boolean = true,
     val returnAssistantEnabled: Boolean = true,
     val skontoEnabled: Boolean = true,
+    val ingredientBrandScreens: Set<String> = emptySet(),
+    val qrCodeEducationEnabled: Boolean = false,
 )

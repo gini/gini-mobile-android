@@ -1,6 +1,7 @@
 package net.gini.android.bank.sdk.exampleapp.ui.testcases
 
 import android.Manifest
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.rule.GrantPermissionRule
@@ -115,5 +116,33 @@ class ImportPdfImageTests {
         pdfUploader.uploadPdfFromFiles("sample.pdf")
         idlingResource.waitForIdle()
         assertEquals(true, extractionScreen.checkTransferSummaryButtonIsClickable())
+    }
+
+    /**
+     * Imports a real `.heic` photo through the gallery — the flow PP-3499 is about.
+     *
+     * Before that ticket the SDK refused HEIC outright and the user got the
+     * "file type not supported" dialog instead of ever reaching review. Reaching the
+     * review screen is therefore what proves the import worked, the same way it does for
+     * a JPEG in [test1_uploadPhoto].
+     *
+     * The photo goes in through the **Photos** entry, not Files: the SDK opens the Files
+     * entry with `type = application/pdf` (`FileChooserFragment.createGetPdfDocumentIntent`),
+     * so a HEIC is not even listed there.
+     *
+     * The asset is inserted into MediaStore with its true `image/heic` type — storing it as
+     * anything else would make this pass without exercising HEIC at all.
+     */
+    @Test
+    fun test4_uploadHeicPhoto() {
+        imageUploader.copyImageToDownloads(getApplicationContext(), "invoice.heic")
+        mainScreen.clickPhotoPaymentButton()
+        onboardingScreen.clickSkipButtonIfPresent()
+        captureScreen.clickFilesButton()
+        captureScreen.clickPhotos()
+        imageUploader.uploadImageFromPhotos()
+        imageUploader.clickAddButton()
+        idlingResource.waitForIdle()
+        reviewScreen.assertReviewTitleIsDisplayed()
     }
 }

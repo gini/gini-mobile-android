@@ -49,7 +49,6 @@ import net.gini.android.capture.internal.util.FileImportHelper;
 import net.gini.android.capture.review.multipage.previews.MiddlePageManager;
 import net.gini.android.capture.review.multipage.previews.PreviewFragmentListener;
 import net.gini.android.capture.review.multipage.previews.PreviewPagesAdapter;
-import net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomAdapter;
 import net.gini.android.capture.saveinvoiceslocally.SaveInvoicesFeatureEvaluator;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
@@ -109,18 +108,14 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     private LinearLayout mAddPagesWrapperLayout;
     private Button mAddPagesButton;
     private TabLayout mTabIndicator;
-    private ConstraintLayout mProcessDocumentsWrapper;
     private InjectedViewContainer<NavigationBarTopAdapter> mTopAdapterInjectedViewContainer;
     private InjectedViewContainer<OnButtonLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
-    private InjectedViewContainer<ReviewNavigationBarBottomAdapter> mReviewNavigationBarBottomAdapter;
     private boolean mNextClicked;
     private boolean mPreviewsShown;
     private SnapHelper mSnapHelper;
     private MiddlePageManager mSnapManager;
     private boolean mInstanceStateSaved;
     private boolean isOnButtonLoadingIndicatorActive;
-    private boolean isBottomNavigationBarContinueButtonEnabled;
-    private boolean isBottomNavigationBarLoadingIndicatorActive;
 
     private boolean mShouldScrollToLastPage = false;
     private CancelListener mCancelListener;
@@ -466,22 +461,16 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         mAddPagesButton = view.findViewById(R.id.gc_add_page_button);
         mRecyclerView = view.findViewById(R.id.gc_pager_recycler_view);
         injectedLoadingIndicatorContainer = view.findViewById(R.id.gc_injected_loading_indicator_container);
-        mProcessDocumentsWrapper = view.findViewById(R.id.gc_process_documents_wrapper);
 
-        // Please Do not remove the below check [ContextHelper.isPortraitOrTablet(requireContext())], as we have different
-        // layouts for landscape, we don't need bottom bar in landscape mode only because of repositioning related to buttons.
-        // In phones and tablets regardless of orientation this bottom bar is needed.
-        if (ContextHelper.isPortraitOrTablet(requireContext()))
-            setReviewNavigationBarBottomAdapter(view);
-        else {
-            // this is landscape mode in phones only , where we don't show the bottom bar but
-            // we have to handle visibility of add pages.
+        // Please Do not remove the below check [ContextHelper.isPortraitOrTablet(requireContext())], as we have
+        // different layouts for landscape in phones only, where the visibility of add pages has to be handled here.
+        if (!ContextHelper.isPortraitOrTablet(requireContext())) {
             handleAddPagesVisibility();
         }
     }
 
     private void setInjectedLoadingIndicatorContainer() {
-        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
+        if (GiniCapture.hasInstance()) {
             injectedLoadingIndicatorContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(
                     GiniCapture.getInstance().internal().getOnButtonLoadingIndicatorAdapterInstance(), injectedViewAdapter -> {
                 if (isOnButtonLoadingIndicatorActive) {
@@ -499,56 +488,6 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
                         ? R.drawable.gc_bg_on_save_invoices_locally
                         : R.drawable.gc_bg_off_save_invoices_locally
         );
-    }
-
-    private void setReviewNavigationBarBottomAdapter(View view) {
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
-
-            mReviewNavigationBarBottomAdapter =
-                    view.findViewById(R.id.gc_injected_navigation_bar_container_bottom);
-
-            ViewGroup.LayoutParams params = mReviewNavigationBarBottomAdapter.getLayoutParams();
-            params.height = (int) getResources().getDimension(R.dimen.gc_review_bottom_bar_height);
-
-            mReviewNavigationBarBottomAdapter.setLayoutParams(params);
-
-            hideViewsIfBottomBarEnabled();
-
-            mReviewNavigationBarBottomAdapter.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(
-                    GiniCapture.getInstance().internal().getReviewNavigationBarBottomAdapterInstance(),
-                    injectedViewAdapter -> {
-                        injectedViewAdapter.setOnAddPageButtonClickListener(new IntervalClickListener(v -> {
-                            if (mUserAnalyticsEventTracker != null) {
-                                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.ADD_PAGES_TAPPED,
-                                        new HashSet<UserAnalyticsEventProperty>() {
-                                            {
-                                                add(new UserAnalyticsEventProperty.Screen(screenName));
-                                            }
-                                        });
-                            }
-                            NavHostFragment.findNavController(this).navigate(MultiPageReviewFragmentDirections.toCameraFragmentForAddingPages());
-                        }));
-
-                        boolean isMultiPage = GiniCapture.getInstance().isMultiPageEnabled();
-
-                        injectedViewAdapter.setAddPageButtonVisibility(isMultiPage ? View.VISIBLE : View.GONE);
-                        injectedViewAdapter.setOnContinueButtonClickListener(new IntervalClickListener(v -> onNextButtonClicked()));
-
-                        injectedViewAdapter.setContinueButtonEnabled(isBottomNavigationBarContinueButtonEnabled);
-                        if (isBottomNavigationBarLoadingIndicatorActive) {
-                            injectedViewAdapter.showLoadingIndicator();
-                        } else {
-                            injectedViewAdapter.hideLoadingIndicator();
-                        }
-                    }));
-        }
-    }
-
-    private void hideViewsIfBottomBarEnabled() {
-        // Please Do not remove the below check [ContextHelper.isPortraitOrTablet(requireContext())], as we have different
-        // layouts for landscape in phone only!!  and in landscape (phone only) these buttons should not be hidden.
-        if (ContextHelper.isPortraitOrTablet(requireContext()))
-            mProcessDocumentsWrapper.setVisibility(View.GONE);
     }
 
     //Add empty tabs to present dots on the screen
@@ -629,7 +568,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     private void setInputHandlers() {
         ClickListenerExtKt.setIntervalClickListener(mButtonNext, v -> onNextButtonClicked());
 
-        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
+        if (GiniCapture.hasInstance()) {
             handleAddPagesVisibility();
         }
 
@@ -752,22 +691,11 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         if (!GiniCapture.hasInstance())
             return;
 
-        if (!GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
-            mButtonNext.setEnabled(enabled);
-            if (enabled) {
-                mButtonNext.animate().alpha(1.0f).start();
-            } else {
-                mButtonNext.animate().alpha(0.5f).start();
-            }
+        mButtonNext.setEnabled(enabled);
+        if (enabled) {
+            mButtonNext.animate().alpha(1.0f).start();
         } else {
-            isBottomNavigationBarContinueButtonEnabled = enabled;
-            if (mReviewNavigationBarBottomAdapter == null) {
-                return;
-            }
-            mReviewNavigationBarBottomAdapter.modifyAdapterIfOwned(injectedViewAdapter -> {
-                injectedViewAdapter.setContinueButtonEnabled(enabled);
-                return Unit.INSTANCE;
-            });
+            mButtonNext.animate().alpha(0.5f).start();
         }
     }
 
@@ -922,7 +850,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     }
 
     private void showIndicator() {
-        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
+        if (GiniCapture.hasInstance()) {
             isOnButtonLoadingIndicatorActive = true;
             if (injectedLoadingIndicatorContainer == null) {
                 return;
@@ -931,35 +859,17 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
                 injectedViewAdapter.onVisible();
                 return Unit.INSTANCE;
             });
-        } else {
-            isBottomNavigationBarLoadingIndicatorActive = true;
-            if (mReviewNavigationBarBottomAdapter == null) {
-                return;
-            }
-            mReviewNavigationBarBottomAdapter.modifyAdapterIfOwned(injectedViewAdapter -> {
-                injectedViewAdapter.showLoadingIndicator();
-                return Unit.INSTANCE;
-            });
         }
     }
 
     private void hideIndicator() {
-        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
+        if (GiniCapture.hasInstance()) {
             isOnButtonLoadingIndicatorActive = false;
             if (injectedLoadingIndicatorContainer == null) {
                 return;
             }
             injectedLoadingIndicatorContainer.modifyAdapterIfOwned(injectedViewAdapter -> {
                 injectedViewAdapter.onHidden();
-                return Unit.INSTANCE;
-            });
-        } else {
-            isBottomNavigationBarLoadingIndicatorActive = false;
-            if (mReviewNavigationBarBottomAdapter == null) {
-                return;
-            }
-            mReviewNavigationBarBottomAdapter.modifyAdapterIfOwned(injectedViewAdapter -> {
-                injectedViewAdapter.hideLoadingIndicator();
                 return Unit.INSTANCE;
             });
         }

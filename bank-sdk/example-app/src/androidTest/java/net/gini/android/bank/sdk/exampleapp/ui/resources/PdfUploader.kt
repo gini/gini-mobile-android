@@ -8,6 +8,7 @@ import android.provider.MediaStore
 import androidx.annotation.RequiresApi
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiObjectNotFoundException
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 
@@ -22,7 +23,6 @@ class PdfUploader {
     // quick fallback in case Android ever adopts the same behaviour.
     fun uploadPdfFromFiles(file: String) {
         device.waitForIdle()
-        val fileList = UiScrollable(UiSelector().scrollable(true))
 
         // Check for BrowserStack Custom_Files folder.
         val customFilesFolder = device.findObject(
@@ -31,7 +31,7 @@ class PdfUploader {
         if (customFilesFolder.waitForExists(2000)) {
             customFilesFolder.click()
             device.waitForIdle()
-            fileList.getChildByText(UiSelector().text(file), file).click()
+            clickFile(file)
             return
         }
 
@@ -39,7 +39,30 @@ class PdfUploader {
         // Navigate there from the Recents view.
         navigateToDownloads()
 
-        fileList.getChildByText(UiSelector().text(file), file).click()
+        clickFile(file)
+    }
+
+    /**
+     * Taps [file] in the picker's file list.
+     *
+     * The file is looked up by its name first, and the list is scrolled only when the file is
+     * not on screen and the picker actually has a scrollable list. The Samsung tablet picker
+     * (Galaxy Tab, Android 16) shows Downloads as a grid with no scrollable container, so the
+     * earlier UiScrollable-only lookup failed there with
+     * `UiObjectNotFoundException: UiSelector[SCROLLABLE=true]` before looking for the file.
+     */
+    private fun clickFile(file: String) {
+        val fileItem = device.findObject(UiSelector().text(file))
+        if (fileItem.waitForExists(FILE_TIMEOUT_MS)) {
+            fileItem.click()
+            return
+        }
+        val fileList = UiScrollable(UiSelector().scrollable(true))
+        if (fileList.exists()) {
+            fileList.getChildByText(UiSelector().text(file), file).click()
+            return
+        }
+        throw UiObjectNotFoundException("\"$file\" is not shown in the file picker, and it has no list to scroll")
     }
 
     private fun navigateToDownloads() {
@@ -105,5 +128,10 @@ class PdfUploader {
         }
 
         return false
+    }
+
+    private companion object {
+        /** Waits for the picker to list the folder's files before falling back to scrolling. */
+        const val FILE_TIMEOUT_MS = 5_000L
     }
 }

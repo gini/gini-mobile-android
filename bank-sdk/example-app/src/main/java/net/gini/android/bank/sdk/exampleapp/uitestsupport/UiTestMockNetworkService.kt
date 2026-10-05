@@ -1,5 +1,7 @@
 package net.gini.android.bank.sdk.exampleapp.uitestsupport
 
+import android.os.Handler
+import android.os.Looper
 import net.gini.android.capture.Document
 import net.gini.android.capture.internal.network.Configuration
 import net.gini.android.capture.network.AnalysisResult
@@ -16,7 +18,8 @@ import java.util.UUID
  * Serves the canned responses for one [UiTestMockScenario]. See [UiTestMockBackend] for why this
  * exists and how it is wired in.
  *
- * Upload and delete succeed immediately, `analyze` returns the scenario's payload, and
+ * Upload and delete succeed immediately, `analyze` returns the scenario's payload (after
+ * `analysisDelayMillis`, on the main thread like the default network service), and
  * `getConfiguration` returns the flags the test asked for. The uploaded bytes are ignored, so the
  * fixture document on screen is irrelevant to the outcome — that is the whole point.
  *
@@ -28,8 +31,12 @@ import java.util.UUID
  */
 internal class UiTestMockNetworkService(
     private val scenario: UiTestMockScenario,
-    private val clientConfiguration: UiTestMockClientConfiguration
+    private val clientConfiguration: UiTestMockClientConfiguration,
+    private val analysisDelayMillis: Long = 0,
+    private val configurationFails: Boolean = false
 ) : GiniCaptureNetworkService {
+
+    private val mainHandler = Handler(Looper.getMainLooper())
 
     override fun upload(
         document: Document,
@@ -51,16 +58,31 @@ internal class UiTestMockNetworkService(
         giniApiDocumentIdRotationMap: LinkedHashMap<String, Int>,
         callback: GiniCaptureNetworkCallback<AnalysisResult, Error>
     ): CancellationToken {
-        callback.success(
-            AnalysisResult(
-                DOCUMENT_ID,
-                DOCUMENT_FILENAME,
-                specificExtractions(),
-                compoundExtractions(),
-                emptyList()
+        val deliver = Runnable {
+            if (scenario == UiTestMockScenario.ANALYSIS_ERROR) {
+                callback.failure(Error(ANALYSIS_ERROR_MESSAGE))
+                return@Runnable
+            }
+            callback.success(
+                AnalysisResult(
+                    DOCUMENT_ID,
+                    DOCUMENT_FILENAME,
+                    specificExtractions(),
+                    compoundExtractions(),
+                    emptyList()
+                )
             )
-        )
-        return NoOpCancellationToken
+        }
+        if (analysisDelayMillis <= 0) {
+            deliver.run()
+            return NoOpCancellationToken
+        }
+        // Delivered on the main thread, like GiniCaptureDefaultNetworkService does. Cancelling
+        // drops the pending result, so a screen the test closed never receives it.
+        mainHandler.postDelayed(deliver, analysisDelayMillis)
+        return object : CancellationToken {
+            override fun cancel() = mainHandler.removeCallbacks(deliver)
+        }
     }
 
     override fun sendFeedback(
@@ -74,6 +96,10 @@ internal class UiTestMockNetworkService(
     override fun getConfiguration(
         callback: GiniCaptureNetworkCallback<Configuration, Error>
     ): CancellationToken {
+        if (configurationFails) {
+            callback.failure(Error(CONFIGURATION_ERROR_MESSAGE))
+            return NoOpCancellationToken
+        }
         callback.success(
             Configuration(
                 id = UUID.randomUUID(),
@@ -82,7 +108,7 @@ internal class UiTestMockNetworkService(
                 isSkontoEnabled = clientConfiguration.skontoEnabled,
                 isReturnAssistantEnabled = clientConfiguration.returnAssistantEnabled,
                 isTransactionDocsEnabled = false,
-                isQrCodeEducationEnabled = false,
+                isQrCodeEducationEnabled = clientConfiguration.qrCodeEducationEnabled,
                 isInstantPaymentEnabled = false,
                 isEInvoiceEnabled = false,
                 amplitudeApiKey = "",
@@ -91,7 +117,8 @@ internal class UiTestMockNetworkService(
                 isPaymentDueHintEnabled = false,
                 isUnsupportedQRCodeWarningEnabled = false,
                 isPaymentScheduleHintEnabled = false,
-                isCreditNoteHintEnabled = clientConfiguration.creditNoteHintEnabled
+                isCreditNoteHintEnabled = clientConfiguration.creditNoteHintEnabled,
+                ingredientBrandScreens = clientConfiguration.ingredientBrandScreens
             )
         )
         return NoOpCancellationToken
@@ -104,6 +131,7 @@ internal class UiTestMockNetworkService(
     // ── payloads ────────────────────────────────────────────────────────────────────────────────
 
     private fun specificExtractions(): Map<String, GiniCaptureSpecificExtraction> {
+        if (scenario == UiTestMockScenario.NO_RESULTS) return emptyMap()
         val extractions = linkedMapOf(
             "iban" to extraction("iban", "DE74700500000000028273", "iban"),
             "paymentRecipient" to extraction("paymentRecipient", "UI Test Recipient GmbH", "text"),
@@ -120,7 +148,9 @@ internal class UiTestMockNetworkService(
 
     private fun compoundExtractions(): Map<String, GiniCaptureCompoundExtraction> = when (scenario) {
         UiTestMockScenario.CREDIT_NOTE,
-        UiTestMockScenario.INVOICE -> emptyMap()
+        UiTestMockScenario.INVOICE,
+        UiTestMockScenario.NO_RESULTS,
+        UiTestMockScenario.ANALYSIS_ERROR -> emptyMap()
 
         UiTestMockScenario.CREDIT_NOTE_WITH_LINE_ITEMS -> mapOf("lineItems" to lineItems())
     }
@@ -133,15 +163,15 @@ internal class UiTestMockNetworkService(
     private fun lineItems(): GiniCaptureCompoundExtraction =
         GiniCaptureCompoundExtraction(
             "lineItems",
-            listOf(
-                linkedMapOf(
-                    "description" to extraction("description", "UI test article", "text"),
-                    "quantity" to extraction("quantity", "1", "number"),
-                    "baseGross" to extraction("baseGross", LINE_ITEM_GROSS, "amount"),
-                    "artNumber" to extraction("artNumber", "UITEST-1", "text")
-                )
-            )
+            listOf(lineItem("UI test article", "UITEST-1"))
         )
+
+    private fun lineItem(description: String, artNumber: String) = linkedMapOf(
+        "description" to extraction("description", description, "text"),
+        "quantity" to extraction("quantity", "1", "number"),
+        "baseGross" to extraction("baseGross", LINE_ITEM_GROSS, "amount"),
+        "artNumber" to extraction("artNumber", artNumber, "text")
+    )
 
     private fun extraction(name: String, value: String, entity: String) =
         GiniCaptureSpecificExtraction(name, value, entity, null, emptyList())
@@ -156,6 +186,8 @@ internal class UiTestMockNetworkService(
         const val CLIENT_ID = "ui-test-mock-client"
         const val AMOUNT_TO_PAY = "42.00:EUR"
         const val LINE_ITEM_GROSS = "42.00:EUR"
+        const val ANALYSIS_ERROR_MESSAGE = "UI test mock: analysis failed"
+        const val CONFIGURATION_ERROR_MESSAGE = "UI test mock: /configurations failed"
     }
 }
 
@@ -164,5 +196,7 @@ private val UiTestMockScenario.isCreditNote: Boolean
         UiTestMockScenario.CREDIT_NOTE,
         UiTestMockScenario.CREDIT_NOTE_WITH_LINE_ITEMS -> true
 
-        UiTestMockScenario.INVOICE -> false
+        UiTestMockScenario.INVOICE,
+        UiTestMockScenario.NO_RESULTS,
+        UiTestMockScenario.ANALYSIS_ERROR -> false
     }

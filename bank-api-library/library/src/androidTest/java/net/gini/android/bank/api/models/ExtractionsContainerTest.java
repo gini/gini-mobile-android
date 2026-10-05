@@ -41,16 +41,9 @@ public class ExtractionsContainerTest {
         rows.add(row);
         final CompoundExtraction compoundExtraction = new CompoundExtraction("lineItems", rows);
 
-        final List<ReturnReason> returnReasons = new ArrayList<>();
-        final Map<String, String> localizedLabels = new HashMap<>();
-        localizedLabels.put("de", "I mogs net");
-        localizedLabels.put("en", "It stinks");
-        returnReasons.add(new ReturnReason("r1", localizedLabels));
-
         final ExtractionsContainer extractions = new ExtractionsContainer(
                 Collections.singletonMap("amountToPay", specificExtraction),
-                Collections.singletonMap("lineItems", compoundExtraction),
-                returnReasons
+                Collections.singletonMap("lineItems", compoundExtraction)
         );
 
         final ExtractionsContainer restoredExtractions =
@@ -60,6 +53,5 @@ public class ExtractionsContainerTest {
         assertEquals("lineItems", restoredExtractions.getCompoundExtractions().get("lineItems").getName());
         assertEquals("CORE ICON - Sweatjacke - emerald", restoredExtractions.getCompoundExtractions().get(
                 "lineItems").getSpecificExtractionMaps().get(0).get("description").getValue());
-        assertEquals("I mogs net", restoredExtractions.getReturnReasons().get(0).getLocalizedLabels().get("de"));
     }
 }

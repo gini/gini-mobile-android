@@ -9,7 +9,6 @@ import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoSavedAmountUseC
 import net.gini.android.capture.Amount
 import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
-import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -209,7 +208,6 @@ internal class DigitalInvoice(
         selectableLineItems.find { sli -> sli.lineItem.id == selectableLineItem.lineItem.id }
             ?.let { sli ->
                 sli.selected = true
-                sli.reason = null
             }
         recalculateSkontoData()
     }
@@ -222,11 +220,10 @@ internal class DigitalInvoice(
         this.skontoEnabled = enabled
     }
 
-    fun deselectLineItem(selectableLineItem: SelectableLineItem, reason: GiniCaptureReturnReason?) {
+    fun deselectLineItem(selectableLineItem: SelectableLineItem) {
         selectableLineItems.find { sli -> sli.lineItem.id == selectableLineItem.lineItem.id }
             ?.let { sli ->
                 sli.selected = false
-                sli.reason = reason
             }
         recalculateSkontoData()
     }
@@ -339,11 +336,6 @@ internal class DigitalInvoice(
                     else -> lineItemExtraction
                 }
             }.toMutableMap()
-            sli.reason?.let { returnReason ->
-                extractions["returnReason"] = GiniCaptureSpecificExtraction(
-                    "returnReason", returnReason.id, "", null, emptyList()
-                )
-            }
             extractions
         }
     }

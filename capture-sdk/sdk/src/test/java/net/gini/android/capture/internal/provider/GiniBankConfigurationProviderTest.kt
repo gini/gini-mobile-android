@@ -20,6 +20,11 @@ class GiniBankConfigurationProviderTest {
     }
 
     @Test
+    fun `ingredientBrandScreens is empty before any configuration arrives`() {
+        assertThat(GiniBankConfigurationProvider().provide().ingredientBrandScreens).isEmpty()
+    }
+
+    @Test
     fun `concurrent updates do not lose each other's fields`() {
         // Regression test for the read-copy-write race between the network callback (background
         // thread, sets clientID/amplitudeApiKey) and the DataStore observer (main thread, sets
@@ -38,7 +43,11 @@ class GiniBankConfigurationProviderTest {
                 val observerUpdate = executor.submit {
                     start.await()
                     provider.update {
-                        it.copy(isUnsupportedQRCodeWarningEnabled = true, isSkontoEnabled = true)
+                        it.copy(
+                            isUnsupportedQRCodeWarningEnabled = true,
+                            isSkontoEnabled = true,
+                            ingredientBrandScreens = setOf("Analysis")
+                        )
                     }
                 }
                 start.countDown()
@@ -50,6 +59,7 @@ class GiniBankConfigurationProviderTest {
                 assertThat(result.amplitudeApiKey).isEqualTo("api-key")
                 assertThat(result.isUnsupportedQRCodeWarningEnabled).isTrue()
                 assertThat(result.isSkontoEnabled).isTrue()
+                assertThat(result.ingredientBrandScreens).containsExactly("Analysis")
             } finally {
                 executor.shutdown()
             }

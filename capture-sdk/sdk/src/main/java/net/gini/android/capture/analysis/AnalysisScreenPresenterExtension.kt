@@ -21,11 +21,11 @@ import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.document.GiniCaptureDocument
 import net.gini.android.capture.document.GiniCaptureDocumentError
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument
+import net.gini.android.capture.ingredientbrand.GetIngredientBrandVisibleUseCase
 import net.gini.android.capture.internal.qreducation.GetInvoiceEducationTypeUseCase
 import net.gini.android.capture.internal.qreducation.IncrementInvoiceRecognizedCounterUseCase
 import net.gini.android.capture.internal.qreducation.model.InvoiceEducationType
 import net.gini.android.capture.internal.storage.ImageDiskStore
-import net.gini.android.capture.internal.util.NullabilityHelper.getListOrEmpty
 import net.gini.android.capture.internal.util.NullabilityHelper.getMapOrEmpty
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
@@ -56,6 +56,9 @@ internal class AnalysisScreenPresenterExtension(
 
     val paymentScheduleHintEnabledUseCase:
             GetPaymentScheduleHintEnabledUseCase by getGiniCaptureKoin().inject()
+
+    val ingredientBrandVisibleUseCase:
+            GetIngredientBrandVisibleUseCase by getGiniCaptureKoin().inject()
 
     val lastAnalyzedDocumentProvider: LastAnalyzedDocumentProvider
             by getGiniCaptureKoin().inject()
@@ -162,7 +165,7 @@ internal class AnalysisScreenPresenterExtension(
             .onExtractionsAvailable(
                 getMapOrEmpty(resultHolder.extractions),
                 getMapOrEmpty(resultHolder.compoundExtractions),
-                getListOrEmpty(resultHolder.returnReasons)
+                emptyList()
             )
     }
 
@@ -379,7 +382,7 @@ internal class AnalysisScreenPresenterExtension(
             .onSchedulePayment(
                 getMapOrEmpty(resultHolder.extractions),
                 getMapOrEmpty(resultHolder.compoundExtractions),
-                getListOrEmpty(resultHolder.returnReasons)
+                emptyList()
             )
     }
 
@@ -424,6 +427,7 @@ internal class AnalysisScreenPresenterExtension(
             /* no-op */
         }
 
+        @Suppress("DEPRECATION")
         override fun onExtractionsAvailable(
             extractions: Map<String, GiniCaptureSpecificExtraction>,
             compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,

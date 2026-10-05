@@ -139,21 +139,6 @@ class CxExtractionsFilterTest {
 
     // endregion
 
-    // region filterForCxExtractions — returnReasons preserved
-
-    @Test
-    fun `returnReasons are cleared after filtering`() {
-        val input = successResult(
-            specific = mapOf("iban" to makeSpecific("iban")),
-        )
-
-        val filtered = CxExtractionsFilter.filterForCxExtractions(input)
-
-        assertTrue("Expected returnReasons to be empty", filtered.returnReasons.isEmpty())
-    }
-
-    // endregion
-
     // region filterForCxExtractions — crossBorderPayment with empty rows
 
     @Test
@@ -233,7 +218,6 @@ class CxExtractionsFilterTest {
     ) = CaptureSDKResult.Success(
         specificExtractions = specific,
         compoundExtractions = compound,
-        returnReasons = emptyList(),
     )
 
     // endregion
