@@ -98,7 +98,7 @@ internal fun View.bottomSystemBarOverlap(systemBottom: Int): Int {
  * Unlike [bottomSystemBarOverlap] no padding has to be discounted: top padding moves this view's
  * content down but not its top edge, so the measurement cannot feed back into itself.
  */
-fun View.topSystemBarOverlap(systemTop: Int): Int {
+internal fun View.topSystemBarOverlap(systemTop: Int): Int {
     val location = IntArray(2)
     getLocationInWindow(location)
     return (systemTop - location[1]).coerceIn(0, systemTop)
