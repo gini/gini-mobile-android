@@ -2,7 +2,6 @@ package net.gini.android.internal.payment.review.reviewComponent
 
 import android.content.Context
 import android.text.Editable
-import android.os.Build
 import android.os.Parcelable
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -10,9 +9,6 @@ import android.text.TextWatcher
 import android.text.style.ImageSpan
 import android.util.AttributeSet
 import android.view.View
-import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.ScrollView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
@@ -45,7 +41,6 @@ import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithG
 import net.gini.android.internal.payment.utils.extensions.hideErrorMessage
 import net.gini.android.internal.payment.utils.extensions.hideKeyboard
 import net.gini.android.internal.payment.utils.extensions.hideKeyboardFully
-import net.gini.android.internal.payment.utils.extensions.isLandscapeOrientation
 import net.gini.android.internal.payment.utils.extensions.setErrorMessage
 import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
 import net.gini.android.internal.payment.utils.extensions.showErrorMessage
@@ -216,49 +211,17 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
      * overlaps the payment details view.
      *
      * See [bottomSystemBarOverlap] for why the raw inset value cannot be used as the padding.
+     *
+     * Only the navigation bar is handled here. The keyboard is reserved by the hosting fragment on
+     * its own root, which lifts this whole panel above it; compensating for the keyboard here as
+     * well moved the focused field off screen in landscape.
      */
     private fun applyBottomSystemInsets(insets: WindowInsetsCompat) {
-        val imeInsetBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
         val target = binding.gpsPaymentDetails
         val overlap = target.bottomSystemBarOverlap(insets.systemBottomInset())
         if (target.paddingBottom != overlap) {
             target.updatePadding(bottom = overlap)
         }
-        if (isAndroid15OrAbove() && insets.isVisible(WindowInsetsCompat.Type.ime())) {
-            scrollFocusedViewAboveKeyboard(imeInsetBottom)
-        }
-    }
-
-    private fun scrollFocusedViewAboveKeyboard(keyboardBottom: Int) {
-        if (!resources.isLandscapeOrientation() || !rootView.isAttachedToWindow) return
-
-        findParentScrollView(this)?.let { scrollView ->
-            val focusedView = rootView.findFocus() as? EditText ?: return
-
-            val location = IntArray(2)
-            focusedView.getLocationOnScreen(location)
-            val viewBottom = location[1] + focusedView.height
-
-            val keyboardTop = rootView.height - keyboardBottom
-
-            if (viewBottom > keyboardTop) {
-                val scrollAmount = viewBottom - keyboardTop
-                scrollView.post {
-                    scrollView.smoothScrollBy(0, scrollAmount)
-                }
-            }
-        }
-    }
-
-    private fun findParentScrollView(view: View): ScrollView? {
-        var current = view.parent
-        while (current is ViewGroup) {
-            if (current is ScrollView) {
-                return current
-            }
-            current = current.parent
-        }
-        return null
     }
 
     private fun isReviewViewInBottomSheet(): Boolean {
@@ -276,10 +239,6 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
             current = parent as? View
         }
         return false
-    }
-
-    private fun isAndroid15OrAbove(): Boolean {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM
     }
 
 

@@ -208,7 +208,7 @@ class ReviewFragment private constructor(
             restoreImeIfNeeded(view, savedInstanceState)
         }
 
-        applyStatusBarInsetToRoot()
+        applyWindowInsetsToRoot()
         applyCloseButtonSystemBarInsets()
     }
 
@@ -244,19 +244,32 @@ class ReviewFragment private constructor(
      * `OnApplyWindowInsetsListener` is never called. Only the part that actually overlaps is
      * applied, so a host that already reserved the space is not padded twice.
      */
-    private fun applyStatusBarInsetToRoot() {
+    private fun applyWindowInsetsToRoot() {
         val root = binding.constraintRoot
         val apply = {
-            val statusBarTop = ViewCompat.getRootWindowInsets(root)
-                ?.getInsets(WindowInsetsCompat.Type.statusBars())?.top ?: 0
-            // The view's own top padding is deliberately not part of this: top padding moves the
-            // content down but not the root's top edge, so the measurement cannot feed back into
-            // itself the way a bottom measurement would.
+            val insets = ViewCompat.getRootWindowInsets(root)
+            // The root's own padding is deliberately not part of either measurement. The root
+            // fills its parent, so padding moves its content but never its own edges, and the
+            // measurement cannot feed back into itself.
             val location = IntArray(2)
             root.getLocationInWindow(location)
-            val overlap = (statusBarTop - location[1]).coerceIn(0, statusBarTop)
-            if (root.paddingTop != overlap) {
-                root.updatePadding(top = overlap)
+
+            val statusBarTop = insets?.getInsets(WindowInsetsCompat.Type.statusBars())?.top ?: 0
+            val topOverlap = (statusBarTop - location[1]).coerceIn(0, statusBarTop)
+
+            // This screen is hosted in windows that declare `adjustNothing`, so the window does
+            // not shrink when the keyboard opens and the payment panel - anchored to the bottom of
+            // this root - would stay underneath it. Reserving the overlapping part of the keyboard
+            // here moves the panel above it. Only the part that actually overlaps is reserved, so
+            // a host whose window does resize for the keyboard measures no overlap and is left
+            // alone, and the navigation bar is not included: the panel reserves that for itself.
+            val imeBottom = insets?.getInsets(WindowInsetsCompat.Type.ime())?.bottom ?: 0
+            val rootBottom = location[1] + root.height
+            val bottomOverlap = (rootBottom - (root.rootView.height - imeBottom))
+                .coerceIn(0, imeBottom)
+
+            if (root.paddingTop != topOverlap || root.paddingBottom != bottomOverlap) {
+                root.updatePadding(top = topOverlap, bottom = bottomOverlap)
             }
             Unit
         }
