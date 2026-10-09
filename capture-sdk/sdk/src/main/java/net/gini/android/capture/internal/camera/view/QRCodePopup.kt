@@ -12,12 +12,14 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import net.gini.android.capture.R
 import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter
 import net.gini.android.capture.view.InjectedViewContainer
+import net.gini.android.capture.internal.ui.runtimecolors.runtimeColorsThemedContextOrNull
+import net.gini.android.capture.internal.ui.runtimecolors.giniColor
+import net.gini.android.capture.internal.ui.runtimecolors.giniDrawable
 
 /**
  * Internal use only.
@@ -118,26 +120,21 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
             qrStatusTxt.visibility = View.VISIBLE
             qrStatusTxt.text = popupView.context.getString(R.string.gc_qr_code_detected)
             qrStatusTxt.announceForAccessibility(qrStatusTxt.text)
-            qrStatusTxt.background = ContextCompat.getDrawable(
-                popupView.context,
-                R.drawable.gc_qr_code_detected_background
-            )
+            qrStatusTxt.background = popupView.context.giniDrawable(R.drawable.gc_qr_code_detected_background)
             qrCheckImage.visibility = View.VISIBLE
-            qrStatusTxt.setTextColor(ContextCompat.getColor(popupView.context, R.color.gc_light_01))
+            qrStatusTxt.setTextColor(popupView.context.giniColor(R.color.gc_light_01))
             qrImageFrame.imageTintList = ColorStateList.valueOf(
-                ContextCompat.getColor(
-                    popupView.context,
-                    R.color.gc_success_05
-                )
+                popupView.context.giniColor(R.color.gc_success_05)
             )
             performHapticFeedback(HapticFeedbackConstants.CONFIRM)
         } else {
             performHapticFeedback(HapticFeedbackConstants.REJECT)
             if (newWarningEnabled) {
                 qrImageFrame.imageTintList = ColorStateList.valueOf(
-                    ContextCompat.getColor(popupView.context, R.color.gc_error_02)
+                    popupView.context.giniColor(R.color.gc_error_02)
                 )
-                val themedContext = ContextThemeWrapper(popupView.context, R.style.GiniCaptureTheme)
+                val themedContext = runtimeColorsThemedContextOrNull(popupView.context, R.style.GiniCaptureTheme)
+                    ?: ContextThemeWrapper(popupView.context, R.style.GiniCaptureTheme)
                 val dialogView = LayoutInflater.from(themedContext)
                     .inflate(R.layout.gc_dialog_unsupported_qr_code, null)
                 unsupportedQrDialog = MaterialAlertDialogBuilder(themedContext)
@@ -160,7 +157,7 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
             } else {
                 mUnknownQRCodeWrapper.visibility = View.VISIBLE
                 qrImageFrame.imageTintList = ColorStateList.valueOf(
-                    ContextCompat.getColor(popupView.context, R.color.gc_warning_02)
+                    popupView.context.giniColor(R.color.gc_warning_02)
                 )
             }
         }
@@ -183,7 +180,7 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
         qrCheckImage.visibility = View.GONE
         qrImageFrame.visibility = View.VISIBLE
         qrImageFrame.imageTintList =
-            ColorStateList.valueOf(ContextCompat.getColor(popupView.context, R.color.gc_light_01))
+            ColorStateList.valueOf(popupView.context.giniColor(R.color.gc_light_01))
         loadingIndicatorContainer?.modifyAdapterIfOwned { it.onHidden() }
         mInvoiceTxt.visibility = View.GONE
         supportedBackgroundView?.visibility = View.GONE

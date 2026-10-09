@@ -26,6 +26,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnButtonLoadingInd
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnboardingIllustrationAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.composables.CustomGiniComposableStyleProvider
 import net.gini.android.bank.sdk.exampleapp.ui.data.ExampleAppBankConfiguration
+import net.gini.android.bank.sdk.exampleapp.ui.data.ExampleRuntimeColorsProvider
 import net.gini.android.capture.GiniCaptureDebug
 import net.gini.android.capture.help.HelpItem
 import net.gini.android.capture.internal.util.FileImportValidator
@@ -265,6 +266,11 @@ class ConfigurationViewModel @Inject constructor(
         // enable custom primary compose button
         if (configuration.isCustomPrimaryComposeButtonEnabled) {
             result = result.copy(giniComposableStyleProvider = CustomGiniComposableStyleProvider())
+        }
+
+        // enable runtime colors with a test palette
+        if (configuration.isCustomRuntimeColorsEnabled) {
+            result = result.copy(customResourceProvider = ExampleRuntimeColorsProvider())
         }
 
         return result

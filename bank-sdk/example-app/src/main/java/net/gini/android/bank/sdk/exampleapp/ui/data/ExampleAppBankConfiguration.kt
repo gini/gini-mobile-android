@@ -107,6 +107,11 @@ data class ExampleAppBankConfiguration(
     // enable custom primary button in compose
     val isCustomPrimaryComposeButtonEnabled: Boolean = false,
 
+    // enable runtime colors with a test palette
+    // net.gini.android.bank.sdk.capture.CaptureConfiguration#customResourceProvider →
+    //    on/off switch to pass an ExampleRuntimeColorsProvider
+    val isCustomRuntimeColorsEnabled: Boolean = false,
+
     // enable event tracker
     // net.gini.android.capture.GiniCapture.Builder#setEventTracker → ignore
     val isEventTrackerEnabled: Boolean = true,

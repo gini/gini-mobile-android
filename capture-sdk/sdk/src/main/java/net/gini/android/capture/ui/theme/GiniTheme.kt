@@ -9,6 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import net.gini.android.capture.internal.ui.runtimecolors.GiniColorResolver
 import net.gini.android.capture.ui.theme.colors.GiniColorPrimitives
 import net.gini.android.capture.ui.theme.colors.GiniColorScheme
 import net.gini.android.capture.ui.theme.colors.giniDarkColorScheme
@@ -29,8 +30,12 @@ fun GiniTheme(
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
-    val giniPrimitives =
-        remember { GiniColorPrimitives.buildColorPrimitivesBasedOnResources(context) }
+    val colorResolver = GiniColorResolver.current()?.takeIf { it.isActive }
+    // Without a CustomResourceProvider the primitives come from the resources, as before.
+    val giniPrimitives = remember(colorResolver, colorResolver?.let { darkMode }) {
+        colorResolver?.primitives(context, darkMode)
+            ?: GiniColorPrimitives.buildColorPrimitivesBasedOnResources(context)
+    }
 
     val colors = if (darkMode) {
         giniDarkColorScheme(giniPrimitives)

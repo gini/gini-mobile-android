@@ -44,6 +44,14 @@
         android:layout_marginTop="@dimen/gc_medium_12"
         android:text="@string/custom_primary_compose_button_switch_label" />
 
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_customRuntimeColors"
+        style="@style/SwitchConfigurationStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gc_medium_12"
+        android:text="@string/custom_runtime_colors_switch_label" />
+
     <TextView
         android:id="@+id/textView_forceThemeTitle"
         style="@style/SwitchConfigurationStyle"

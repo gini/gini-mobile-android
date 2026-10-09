@@ -123,6 +123,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
+import net.gini.android.capture.internal.ui.runtimecolors.RuntimeColors;
 
 import static net.gini.android.capture.camera.CameraFragment.REQUEST_KEY;
 import static net.gini.android.capture.camera.CameraFragment.RESULT_KEY_SHOULD_SCROLL_TO_LAST_PAGE;
@@ -2411,10 +2412,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         isIbanDetectedOnceForUserAnalytics = true;
         mIbanDetectedTextView.setVisibility(View.VISIBLE);
         mImageFrame.setImageTintList(ColorStateList.valueOf(
-                        ContextCompat.getColor(
-                                mFragment.getActivity(),
-                                R.color.gc_success_05
-                        )
+                        RuntimeColors.giniColor(mFragment.getActivity(), R.color.gc_success_05)
                 )
         );
         final String pleaseTakePicture =
@@ -2433,10 +2431,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         // no-IBAN camera frame would overwrite it with the default color.
         if (!mUnsupportedQRCodePopup.isShown() && !isPaymentQRCodeDetectionInProgress()) {
             mImageFrame.setImageTintList(ColorStateList.valueOf(
-                            ContextCompat.getColor(
-                                    mFragment.getActivity(),
-                                    R.color.gc_light_01
-                            )
+                            RuntimeColors.giniColor(mFragment.getActivity(), R.color.gc_light_01)
                     )
             );
         }
