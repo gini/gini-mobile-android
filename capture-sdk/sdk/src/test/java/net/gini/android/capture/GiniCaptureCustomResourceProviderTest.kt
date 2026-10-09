@@ -5,6 +5,8 @@ import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import io.mockk.mockk
 import net.gini.android.capture.internal.ui.runtimecolors.GiniColorResolver
+import net.gini.android.capture.logging.ErrorLog
+import net.gini.android.capture.logging.ErrorLoggerListener
 import net.gini.android.capture.ui.theme.colors.CustomResourceProvider
 import org.junit.After
 import org.junit.Before
@@ -72,6 +74,30 @@ class GiniCaptureCustomResourceProviderTest {
 
         assertThat(oldColor).isEqualTo(OLD_COLOR)
         assertThat(newColor).isEqualTo(NEW_COLOR)
+    }
+
+    @Test
+    fun `a failing provider is reported once to the integrator error logger and falls back`() {
+        val logs = mutableListOf<ErrorLog>()
+        GiniCapture.newInstance(context)
+            .setGiniCaptureNetworkService(mockk(relaxed = true))
+            .setCustomErrorLoggerListener(object : ErrorLoggerListener {
+                override fun handleErrorLog(errorLog: ErrorLog) {
+                    logs += errorLog
+                }
+            })
+            .setCustomResourceProvider { _, _ -> error("broken provider") }
+            .build()
+        val resolver = GiniColorResolver.current()!!
+
+        val first = resolver.color(context, R.color.gc_accent_01)
+        val second = resolver.color(context, R.color.gc_accent_01)
+
+        assertThat(first).isEqualTo(context.getColor(R.color.gc_accent_01))
+        assertThat(second).isEqualTo(first)
+        assertThat(logs).hasSize(1)
+        assertThat(logs.single().description).contains("gc_accent_01")
+        assertThat(logs.single().exception).isInstanceOf(IllegalStateException::class.java)
     }
 
     private companion object {

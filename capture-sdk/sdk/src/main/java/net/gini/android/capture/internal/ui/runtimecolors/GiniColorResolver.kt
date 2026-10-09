@@ -9,6 +9,8 @@ import androidx.annotation.ColorRes
 import androidx.compose.ui.graphics.Color
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.util.ContextHelper
+import net.gini.android.capture.logging.ErrorLog
+import net.gini.android.capture.logging.ErrorLogger
 import net.gini.android.capture.ui.theme.colors.CustomResourceProvider
 import net.gini.android.capture.ui.theme.colors.GiniColorPrimitives
 import org.slf4j.Logger
@@ -138,7 +140,10 @@ internal class GiniColorResolver(private val provider: CustomResourceProvider?) 
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            LOG.error("CustomResourceProvider failed for color $name, using the default color", e)
+            val message = "CustomResourceProvider failed for color $name, using the default color"
+            LOG.error(message, e)
+            // Reaches the integrator's ErrorLoggerListener; once per name and mode thanks to the cache.
+            ErrorLogger.log(ErrorLog(description = message, exception = e))
             null
         }
 

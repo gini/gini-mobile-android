@@ -11,6 +11,7 @@ import net.gini.android.capture.ui.theme.colors.CustomResourceProvider
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 
 /**
  * Unit tests for [RuntimeDrawables]: shape colors inside XML drawables use provider colors.
@@ -40,6 +41,18 @@ class RuntimeDrawablesTest {
         RuntimeDrawables.apply(context, resolver, drawable, R.drawable.gc_photo_thumbnail_badge_background)
 
         assertThat(drawable.color!!.defaultColor).isEqualTo(ACCENT)
+    }
+
+    @Test
+    fun `shape stroke color uses the provider color and keeps the stroke width`() {
+        val drawable = context.getDrawable(R.drawable.gc_image_preview_rectangle)!!.mutate() as GradientDrawable
+        val xmlWidthPx = (3 * context.resources.displayMetrics.density + 0.5f).toInt() // android:width="3dp"
+
+        val changed = RuntimeDrawables.apply(context, resolver, drawable, R.drawable.gc_image_preview_rectangle)
+
+        assertThat(changed).isTrue()
+        assertThat(shadowOf(drawable).strokeColor).isEqualTo(ACCENT)
+        assertThat(shadowOf(drawable).strokeWidth).isEqualTo(xmlWidthPx)
     }
 
     @Test

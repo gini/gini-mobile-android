@@ -76,7 +76,12 @@ internal object RuntimeDrawables {
         val stroke = node.paletteChild("stroke", context, resolver)
         solid?.let { shape.setColor(resolver.color(context, it.colorRes)) }
         stroke?.let {
-            shape.setStroke(it.strokeWidth, resolver.color(context, it.colorRes), it.dashWidth, it.dashGap)
+            val color = resolver.color(context, it.colorRes)
+            if (it.dashWidth == 0f) {
+                shape.setStroke(it.strokeWidth, color)
+            } else {
+                shape.setStroke(it.strokeWidth, color, it.dashWidth, it.dashGap)
+            }
         }
         return solid != null || stroke != null
     }
