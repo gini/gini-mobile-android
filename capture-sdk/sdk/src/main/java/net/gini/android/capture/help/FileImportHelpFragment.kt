@@ -20,6 +20,7 @@ import net.gini.android.capture.internal.util.getLayoutInflaterWithGiniCaptureTh
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.NavButtonType
 import net.gini.android.capture.view.NavigationBarTopAdapter
+import net.gini.android.capture.internal.ui.runtimecolors.applyGiniRuntimeColors
 
 /**
  * Internal use only.
@@ -91,6 +92,7 @@ class FileImportHelpFragment : Fragment() {
             params.setMargins(resources.getDimension(R.dimen.gc_large).toInt(), 0, resources.getDimension(R.dimen.gc_large).toInt(), bottomPadding)
             view.layoutParams = params
             view.minimumHeight = resources.getDimension(R.dimen.gc_snackbar_text_height).toInt()
+            applyGiniRuntimeColors(constraintLayout.context)
 
             show()
         }

@@ -74,6 +74,7 @@ import java.util.Map;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
+import net.gini.android.capture.internal.ui.runtimecolors.RuntimeColors;
 
 import static net.gini.android.capture.internal.util.FileImportHelper.showAlertIfOpenWithDocumentAndAppIsDefault;
 import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
@@ -483,7 +484,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     }
 
     private void updateSaveInvoicesBackground() {
-        mSaveInvoicesWrapper.setBackgroundResource(
+        RuntimeColors.setGiniBackgroundResource(mSaveInvoicesWrapper,
                 mSaveInvoicesSwitch.isChecked()
                         ? R.drawable.gc_bg_on_save_invoices_locally
                         : R.drawable.gc_bg_off_save_invoices_locally

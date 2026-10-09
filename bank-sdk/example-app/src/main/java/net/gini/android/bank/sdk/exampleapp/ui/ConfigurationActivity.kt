@@ -192,6 +192,9 @@ class ConfigurationActivity : AppCompatActivity() {
         // enable custom primary button in compose
         binding.layoutGeneralUiCustomizationToggles.switchCustomPrimaryComposeButton.isChecked =
             configuration.isCustomPrimaryComposeButtonEnabled
+        // enable runtime colors with a test palette
+        binding.layoutGeneralUiCustomizationToggles.switchCustomRuntimeColors.isChecked =
+            configuration.isCustomRuntimeColorsEnabled
         // enable event tracker
         binding.layoutFeatureToggle.switchEventTracker.isChecked =
             configuration.isEventTrackerEnabled
@@ -499,6 +502,14 @@ class ConfigurationActivity : AppCompatActivity() {
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
                     isCustomPrimaryComposeButtonEnabled = isChecked
+                )
+            )
+        }
+        // enable runtime colors with a test palette
+        binding.layoutGeneralUiCustomizationToggles.switchCustomRuntimeColors.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isCustomRuntimeColorsEnabled = isChecked
                 )
             )
         }

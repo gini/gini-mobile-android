@@ -58,6 +58,7 @@ import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsE
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
 import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.util.protectViewFromInsets
+import net.gini.android.capture.internal.ui.runtimecolors.runtimeColorsThemedInflaterOrNull
 
 @Suppress("TooManyFunctions")
 class CaptureFlowFragment(private val openWithDocument: Document? = null) :
@@ -114,6 +115,11 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
+        runtimeColorsThemedInflaterOrNull(
+            inflater,
+            requireContext(),
+            net.gini.android.capture.R.style.GiniCaptureTheme
+        )?.let { return it }
         val contextThemeWrapper =
             ContextThemeWrapper(requireContext(), net.gini.android.capture.R.style.GiniCaptureTheme)
         return inflater.cloneInContext(contextThemeWrapper)

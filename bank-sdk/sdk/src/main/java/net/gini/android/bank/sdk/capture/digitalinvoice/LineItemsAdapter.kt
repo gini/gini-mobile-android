@@ -31,6 +31,8 @@ import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 import java.util.Collections.emptyList
+import net.gini.android.capture.internal.ui.runtimecolors.giniColorFromAttr
+import net.gini.android.capture.internal.ui.runtimecolors.giniColor
 
 /**
  * Created by Alpar Szotyori on 11.12.2019.
@@ -403,6 +405,7 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
             binding: GbsItemDigitalInvoiceLineItemBinding
         ): Int {
             val context = binding.root.context
+            context.giniColorFromAttr(attrRes)?.let { return it }
             val typedValue = TypedValue()
             return if (context.theme.resolveAttribute(attrRes, typedValue, true)) {
                 typedValue.data
@@ -415,7 +418,7 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
             @ColorRes colorRes: Int,
             binding: GbsItemDigitalInvoiceLineItemBinding
         ): Int {
-            return ContextCompat.getColor(binding.root.context, colorRes)
+            return binding.root.context.giniColor(colorRes)
         }
     }
 
@@ -495,8 +498,7 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
                 gbsSkontoAmount.visibility = View.VISIBLE
                 gbsSkontoAmount.text = "-${amountFormatter.format(data.savedAmount)}"
                 gbsSkontoAmount.setTextColor(
-                    ContextCompat.getColor(
-                        gbsSkontoAmount.context,
+                    gbsSkontoAmount.context.giniColor(
                         if (ContextHelper.isDarkTheme(gbsSkontoAmount.context)) {
                             net.gini.android.capture.R.color.gc_success_02
                         } else {
@@ -524,7 +526,7 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
                 gbsEditButton.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
                 gbsEditButton.focusable = View.FOCUSABLE
                 gbsEditButton.setTextColor(
-                    gbsEditButton.context.getColor(net.gini.android.capture.R.color.gc_accent_01)
+                    gbsEditButton.context.giniColor(net.gini.android.capture.R.color.gc_accent_01)
                 )
                 gbsEditButton.setOnClickListener {
                     analyticsEventTracker?.trackEvent(
@@ -535,7 +537,7 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
                 }
             } else {
                 gbsEditButton.setTextColor(
-                    gbsEditButton.context.getColor(net.gini.android.capture.R.color.gc_dark_05)
+                    gbsEditButton.context.giniColor(net.gini.android.capture.R.color.gc_dark_05)
                 )
                 gbsEditButton.setOnClickListener(null)
                 gbsEditButton.focusable = View.NOT_FOCUSABLE

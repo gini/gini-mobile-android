@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,6 +18,8 @@ import net.gini.android.capture.R
 import net.gini.android.capture.internal.camera.view.education.AnimatedEducationMessageWithIntro
 import net.gini.android.capture.internal.qreducation.model.QrEducationType
 import net.gini.android.capture.ui.theme.GiniTheme
+import androidx.compose.ui.platform.LocalContext
+import net.gini.android.capture.internal.ui.runtimecolors.giniColor
 
 @Composable
 internal fun QrCodeEducationPopupContent(
@@ -74,12 +75,12 @@ private fun QrCodeStatusBadge(
     Text(
         modifier = modifier
             .background(
-                colorResource(R.color.gc_success_05),
+                Color(LocalContext.current.giniColor(R.color.gc_success_05)),
                 shape = RoundedCornerShape(4.dp)
             )
             .padding(horizontal = 8.dp, vertical = 4.dp),
         text = stringResource(R.string.gc_qr_code_detected),
-        color = colorResource(R.color.gc_light_01),
+        color = Color(LocalContext.current.giniColor(R.color.gc_light_01)),
         style = GiniTheme.typography.caption1
     )
 }
