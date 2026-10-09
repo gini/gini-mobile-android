@@ -170,7 +170,7 @@ For every reviewed diff, verify:
 - [ ] No extraction values, IBANs, amounts, names, file names, URIs, tokens, or secrets in logs — `LogSanitizer` is not redaction
 - [ ] HTTP body/header logging only behind `isDebuggingEnabled`, default `false`
 - [ ] Every trust check fails closed; pinned hosts not reduced
-- [ ] No `exported="true"` in an SDK manifest; `file_paths.xml` not widened
+- [ ] No exported component in an SDK manifest (`exported="true"` or a new `intent-filter`); `file_paths.xml` not widened
 - [ ] Incoming URIs validated and size-limited; server-supplied URIs checked against a scheme allow-list
 - [ ] `PendingIntent`s immutable; `onNewIntent` validated like `onCreate`; no caller identity from extras
 - [ ] Runtime receivers `RECEIVER_NOT_EXPORTED`; SDK-internal broadcasts explicit (`setPackage`)

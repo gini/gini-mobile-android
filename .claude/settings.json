@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cat <<'HOOK_OUTPUT'\nINSTRUCTION: GINI ANDROID AGENTS CHECK\nOnly if this prompt asks for Gini Android SDK code to be written, changed, or reviewed\n(Kotlin, Jetpack Compose, Fragments/Views, coroutines, DI, networking, tests):\n\n1. Delegate substantive work to the gini-orchestrator agent (or /gini-task), which\n   routes to the compose/views/a11y/testing specialists.\n2. Do NOT write UI code without a11y-specialist review.\n3. The canonical repo standards live in AGENTS.md — follow them. Never create mock,\n   placeholder, or stub implementations in production code.\n\nFor questions, trivial fixes, or non-Android tasks, proceed normally.\nHOOK_OUTPUT"
+            "command": "cat <<'HOOK_OUTPUT'\nINSTRUCTION: GINI ANDROID AGENTS CHECK\nOnly if this prompt asks for Gini Android SDK code to be written, changed, or reviewed\n(Kotlin, Jetpack Compose, Fragments/Views, coroutines, DI, networking, tests):\n\n1. Delegate substantive work to the gini-orchestrator agent (or /gini-task), which\n   routes to the compose/views/a11y/testing/security specialists.\n2. Do NOT write UI code without a11y-specialist review.\n3. The canonical repo standards live in AGENTS.md — follow them. Never create mock,\n   placeholder, or stub implementations in production code.\n\nFor questions, trivial fixes, or non-Android tasks, proceed normally.\nHOOK_OUTPUT"
           }
         ]
       }
