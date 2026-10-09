@@ -41,7 +41,7 @@ Dependency chain (release order): `core-api-library` → `health-api-library`/`b
 | **views-specialist** | Fragment/`View` + ViewBinding + XML layouts + XML nav graphs + `attrs.xml`/`styles.xml`; owns health-sdk, internal-payment-sdk, and legacy capture-sdk screens and the Views fallback |
 | **a11y-specialist** | Accessibility (Compose `semantics {}` + Views `contentDescription`), TalkBack, focus/reading order — greenfield, this repo has no a11y standard yet |
 | **testing-specialist** | JUnit4, MockK/Mockito, Robolectric, Truth, Turbine, coroutines-test; testable architecture; flags the no-Compose-UI-test and no-screenshot-test gaps; asks the main agent/user to run `gini-check`/`gini-connected-check` |
-| **android-security-specialist** | Credential storage (`EncryptedCredentialsStore`, `GiniCrypto`/AndroidKeyStore), fail-closed TLS and TrustKit pinning, financial PII in logs and analytics, intents/URIs/`FileProvider`, `allowScreenshots`, `consumer-rules.pro`. SDK threat model: separates `code` from `integrator-docs` findings. Findings cite OWASP MASVS v2 controls |
+| **android-security-specialist** | Credential storage (`EncryptedCredentialsStore`, `GiniCrypto`/AndroidKeyStore), fail-closed TLS and TrustKit pinning, financial PII in logs and analytics, intents/URIs/`FileProvider`, `allowScreenshots`, `consumer-rules.pro`. SDK threat model: separates `code` from `integrator-docs` findings. Findings cite OWASP MASVS v2 controls and verified MASTG tests |
 
 ## Delegation Rules
 

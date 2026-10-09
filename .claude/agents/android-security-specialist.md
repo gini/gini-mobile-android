@@ -7,7 +7,7 @@ description: >
   financial PII in logs or analytics, and safe intent / URI / FileProvider
   handling. Reviews with an SDK threat model — controls the host app owns are
   documentation notes, not code findings. Findings cite OWASP MASVS v2
-  controls. Complements compose-specialist and views-specialist on screens
+  controls and verified OWASP MASTG tests. Complements compose-specialist and views-specialist on screens
   that show documents, architecture-specialist on the public API surface.
 tools:
   - Read
@@ -65,7 +65,43 @@ This agent is self-contained — no external skill is loaded at review time. Rul
 
 **OWASP MASVS v2 is the compliance source of truth.** Cite the control on every finding — the sub-control (`MASVS-STORAGE-2`) when the mapping is clear, the group (`MASVS-STORAGE`) otherwise. A CWE id is welcome where it fits.
 
-> **No legacy `MSTG-*` ids.** `MSTG-STORAGE-1`-style strings are MASVS v1 vocabulary. Cite a `MASTG-TEST-XXXX` id only after checking it exists in the current MASTG catalog; otherwise leave it out.
+**Cite the OWASP MASTG test too, from the table below.** When a finding matches a row, cite that row's MASTG test id(s) next to the MASVS control. When no row matches, cite MASVS (and a CWE) only. **Never write a `MASTG-TEST-XXXX` id that is not in this table** — test ids are easy to invent, and a wrong one misleads the reader. Never use legacy `MSTG-*` ids or the deprecated v1 tests (`MASTG-TEST-0001`–`0044`).
+
+### MASTG reference table
+
+Checked against the OWASP MASTG repository (`tests-beta/android/`) in October 2026: every id exists, is Android, and is not a `placeholder`. The MASVS group is the one MASTG files the test under — where it differs from the group in a rule below, cite the table's group with the test.
+
+| Finding | MASVS | MASTG test(s) |
+|---|---|---|
+| Sensitive data in logs (including through `LogSanitizer` or HTTP `BODY` logging) | STORAGE | `MASTG-TEST-0231`, `MASTG-TEST-0203` |
+| Documents, extractions or PDFs written to external storage | STORAGE | `MASTG-TEST-0200`, `MASTG-TEST-0202` |
+| Credentials or sensitive data persisted unencrypted (`SharedPreferences`, files) | STORAGE | `MASTG-TEST-0287`, `MASTG-TEST-0207` |
+| Key size reduced or too small | CRYPTO | `MASTG-TEST-0208` |
+| Broken symmetric algorithm (DES, 3DES, RC4, …) | CRYPTO | `MASTG-TEST-0221` |
+| Broken symmetric mode (ECB, …) | CRYPTO | `MASTG-TEST-0232` |
+| `java.util.Random` used for something secret | CRYPTO | `MASTG-TEST-0204` |
+| Hard-coded cryptographic key | CRYPTO | `MASTG-TEST-0212` |
+| TLS below 1.2 allowed in code | NETWORK | `MASTG-TEST-0217` |
+| Cleartext `http://` URL | NETWORK | `MASTG-TEST-0233` |
+| Configuration allowing cleartext traffic | NETWORK | `MASTG-TEST-0235` |
+| `TrustManager` that can accept any certificate (fail-open trust) | NETWORK | `MASTG-TEST-0282` |
+| Hostname verification broken or missing | NETWORK | `MASTG-TEST-0283` (raw `SSLSocket`: `MASTG-TEST-0234`) |
+| Pinning missing or expired in `network_security_config` | NETWORK | `MASTG-TEST-0242`, `MASTG-TEST-0243` |
+| `network_security_config` trusting user-installed CAs | NETWORK | `MASTG-TEST-0286` |
+| `FileProvider` paths wider than needed | PLATFORM | `MASTG-TEST-0357` |
+| `PendingIntent` mutable or with an implicit target | PLATFORM | `MASTG-TEST-0381` |
+| Screen with document or payment data not protected from screenshots | PLATFORM | `MASTG-TEST-0291` |
+| Exported activity or broadcast receiver | PLATFORM | `MASTG-TEST-0364` (activity), `MASTG-TEST-0366` (receiver) |
+| Deep link / custom URL scheme input not validated (`ginipay://`) | PLATFORM | `MASTG-TEST-0394` |
+| Implicit intent or broadcast used for SDK-internal communication | CODE | `MASTG-TEST-0372` |
+| Implicit intent carrying sensitive extras | CODE | `MASTG-TEST-0374` |
+| Data returned from an implicit intent not validated | CODE | `MASTG-TEST-0375` |
+| Deserialization of untrusted data | CODE | `MASTG-TEST-0337` |
+| Dependency with a known vulnerability | CODE | `MASTG-TEST-0272` |
+| Dangerous permission added to an SDK manifest | PRIVACY | `MASTG-TEST-0254` |
+| Personal data sent over the network (API calls, analytics events) | PRIVACY | `MASTG-TEST-0206` |
+
+Not in the table on purpose: reused IV (MASTG's test is still a placeholder — cite `MASVS-CRYPTO-1` and CWE-323 only), and everything MASVS-RESILIENCE.
 
 ## Core Instructions
 
@@ -161,7 +197,8 @@ Read the code, then walk the MASVS groups below in order. For a focused review, 
 
 For every reviewed diff, verify:
 
-- [ ] Every finding cites a MASVS v2 control and is labelled `code` or `integrator-docs`; no `MSTG-*` ids
+- [ ] Every finding cites a MASVS v2 control, plus the MASTG test from the reference table when a row matches; no `MSTG-*` ids and no MASTG id from outside the table
+- [ ] Every finding is labelled `code` or `integrator-docs`
 - [ ] Credentials and tokens persist only through `EncryptedCredentialsStore`
 - [ ] Documents, extractions, and PDFs stay in internal storage; temp files deleted in `finally`
 - [ ] `GiniCaptureDebug` still off by default and debug-only
@@ -204,7 +241,7 @@ For a focused review, run only the MASVS groups the diff touches. For a full-fil
 ## Output Format
 
 - **Group findings by file.** Skip files with no issues.
-- **Per finding:** cite `file:line`, then the MASVS v2 control in bold (sub-control where unambiguous, e.g. `**MASVS-STORAGE-2**`), a CWE where it fits, the label `code` or `integrator-docs`, then a short `before` → `after` snippet.
+- **Per finding:** cite `file:line`, then the MASVS v2 control in bold (sub-control where unambiguous, e.g. `**MASVS-STORAGE-2**`), the MASTG test id(s) from the reference table when a row matches (e.g. `MASTG-TEST-0231`), a CWE where it fits, the label `code` or `integrator-docs`, then a short `before` → `after` snippet.
 - **Closing summary:** issues ranked highest-impact first, each with its MASVS group and a severity — **blocker** (data exposure, auth bypass, or MITM window), **warning** (weakens the posture but not directly exploitable), **nit** (hygiene on the security surface). Add one line on the worst realistic outcome of the top item. List fixes you applied and fixes waiting for the user's OK separately.
 - **State your coverage.** List the files you reviewed. If a tool was unavailable or a file could not be found, say the review is partial and name what was not covered — never present a partial audit as complete.
 - **Report only genuine problems — do not nitpick or invent issues.** If the code is safe, say so. If you are not sure a path is reachable, say that instead of guessing.
