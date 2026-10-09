@@ -41,7 +41,7 @@ Dependency chain (release order): `core-api-library` → `health-api-library`/`b
 | **views-specialist** | Fragment/`View` + ViewBinding + XML layouts + XML nav graphs + `attrs.xml`/`styles.xml`; owns health-sdk, internal-payment-sdk, and legacy capture-sdk screens and the Views fallback |
 | **a11y-specialist** | Accessibility (Compose `semantics {}` + Views `contentDescription`), TalkBack, focus/reading order — greenfield, this repo has no a11y standard yet |
 | **testing-specialist** | JUnit4, MockK/Mockito, Robolectric, Truth, Turbine, coroutines-test; testable architecture; flags the no-Compose-UI-test and no-screenshot-test gaps; asks the main agent/user to run `gini-check`/`gini-connected-check` |
-| **android-security-specialist** | Credential storage (`EncryptedCredentialsStore`, `GiniCrypto`/AndroidKeyStore), fail-closed TLS and TrustKit pinning, financial PII in logs and analytics, intents/URIs/`FileProvider`, `allowScreenshots`, `consumer-rules.pro`. SDK threat model: separates `code` from `integrator-docs` findings. Findings cite OWASP MASVS v2 controls and verified MASTG tests |
+| **android-security-specialist** | Credential storage (`EncryptedCredentialsStore`, `GiniCrypto`/AndroidKeyStore), fail-closed TLS and TrustKit pinning, financial PII in logs and analytics, intents/URIs/`FileProvider`, `allowScreenshots`. SDK threat model: separates `code` from `integrator-docs` findings. Findings cite OWASP MASVS v2 controls and verified MASTG tests |
 
 ## Delegation Rules
 
@@ -51,7 +51,7 @@ Dependency chain (release order): `core-api-library` → `health-api-library`/`b
 4. Always invoke **a11y-specialist** for user-facing UI (Compose or Views).
 5. New tests or testability concerns → **testing-specialist**.
 6. When Compose feasibility is unclear (especially in health-sdk/internal-payment-sdk), ask before committing to a stack.
-7. Invoke **android-security-specialist** for any diff touching `core-api-library` `authorization/` or `http/` (credentials, `GiniCrypto`, `PubKeyManager`, `TrustManager`, `DefaultGiniHttpClientProvider`, sessions), outgoing request headers or OkHttp interceptors wherever they are added (including `GiniCoreAPIBuilder`), any SDK `AndroidManifest.xml`, `file_paths.xml`, `network_security_config.xml` or `consumer-rules.pro`, file storage of documents or PDFs, incoming or outgoing intents and URIs (`IntentHelper`, `SAFHelper`, `PaymentRequestIntent`, `PendingIntent`), analytics events, `allowScreenshots`, or logging on any of those paths. Run it alongside the UI specialists when a new screen shows documents, extractions or payment data.
+7. Invoke **android-security-specialist** for any diff touching `core-api-library` `authorization/` or `http/` (credentials, `GiniCrypto`, `PubKeyManager`, `TrustManager`, `DefaultGiniHttpClientProvider`, sessions), outgoing request headers or OkHttp interceptors wherever they are added (including `GiniCoreAPIBuilder`), any SDK `AndroidManifest.xml`, `file_paths.xml` or `network_security_config.xml`, file storage of documents or PDFs, incoming or outgoing intents and URIs (`IntentHelper`, `SAFHelper`, `PaymentRequestIntent`, `PendingIntent`), analytics events, `allowScreenshots`, or logging on any of those paths. Run it alongside the UI specialists when a new screen shows documents, extractions or payment data.
 8. Architecture, DI (Koin), coroutines/concurrency, performance, and localization standards still apply (see Mandatory Rules) — enforce them inline; dedicated specialists for those are not in the team yet.
 
 ## Mandatory Rules
