@@ -42,7 +42,7 @@ The design system lives in `capture-sdk/sdk` at `net.gini.android.capture.ui.the
 ### State & composition
 
 - **Screen structure (repo convention):** the host Fragment resolves the ViewModel and hosts a `<Name>ScreenContent(...)` composable inside `GiniTheme { }` (e.g. `SkontoFragment` → `SkontoScreenContent`); inner composables are stateless and take state + per-event callbacks (`onBackClicked`, `onProceedClicked`, …). A stateful-Route + single-`onAction`-sink split is acceptable for brand-new screens, but do **not** flag existing callback-style `ScreenContent` screens as violations.
-- `collectAsStateWithLifecycle()`, never `collectAsState()`. Hoist state low; `remember` for caching, `rememberSaveable` for process/config survival.
+- Collect ViewModel flows lifecycle-aware: Orbit's `org.orbitmvi.orbit.compose.collectAsState` (bank-sdk), capture-sdk's `collectFlow` helper (`util/compose/FlowExt.kt`), or `collectAsStateWithLifecycle()` only once the module adds `lifecycle-runtime-compose` (not in the catalog today). Never plain `androidx.compose.runtime.collectAsState` on a ViewModel flow. Hoist state low; `remember` for caching, `rememberSaveable` for process/config survival.
 - **Stability:** honest `@Immutable`/`@Stable` (a false annotation skips recomposition → stale UI); wrap unstable `LocalDate`/`LocalTime`; `StateFlow<PersistentList<T>>` for lists; primitive holders `mutableIntStateOf`/`mutableFloatStateOf`/`mutableLongStateOf`. `mutableStateListOf` returns a `SnapshotStateList` whose own mutations (`add`/`remove`/`set`/`clear`) **do** trigger recomposition — the real hazard is mutating `var` fields of an element object held inside the list (invisible to snapshots): keep elements immutable and replace them (`list[i] = item.copy(...)`).
 - **Side effects:** `LaunchedEffect(key)` (keyed coroutine work), `DisposableEffect` (listeners + `onDispose`), `rememberCoroutineScope()` (launch from callbacks), `SideEffect` (post-composition sync only). Never launch coroutines in `SideEffect`. Key deliberately (`Unit` = once); capture changing lambdas with `rememberUpdatedState`. React to state as a Flow via `snapshotFlow{}.debounce`; use `derivedStateOf` for expensive derived state.
 - Never construct `Animatable`/`MutableInteractionSource` unremembered; never mutate state during composition. Animate via `Modifier.graphicsLayer {}` / `offset {}` lambda (not `offset(x = dp)`); pass `label` to `animate*AsState`; respect reduced-motion.
@@ -76,14 +76,14 @@ The design system lives in `capture-sdk/sdk` at `net.gini.android.capture.ui.the
 
 ## Coroutines & Flow (ViewModel layer)
 
-The shared concurrency contract lives in **`.claude/rules/coroutines-flow.md`** — Read that file before reviewing any coroutine/Flow code and enforce it from there (single source of truth shared with views-specialist and testing-specialist). Key repo reality: bank-sdk one-shots go through Orbit `postSideEffect`, the other SDKs use `MutableSharedFlow` — don't demand `Channel`/`WhileSubscribed` refactors of existing code.
+The shared concurrency contract lives in **`.claude/rules/coroutines-flow.md`** — Read that file before reviewing any coroutine/Flow code and enforce it from there (single source of truth owned by concurrency-specialist, shared with views-specialist and testing-specialist). Key repo reality: bank-sdk one-shots go through Orbit `postSideEffect`, the other SDKs use `MutableSharedFlow` — don't demand `Channel`/`WhileSubscribed` refactors of existing code.
 
 ## What You Review
 
 Read the code. Flag these issues:
 
 1. **State not hoisted / stateful leaf composables.** The Fragment resolves the ViewModel and hosts a `<Name>ScreenContent` composable; inner composables should be stateless, taking state + per-event callbacks (a single `onAction` sink is fine for new screens). Flag state owned below where it's read — not the existing callback-style `ScreenContent` structure.
-2. **Wrong state APIs.** `collectAsState()` instead of `collectAsStateWithLifecycle()`; `remember` where `rememberSaveable` is needed; unremembered `Animatable`/`MutableInteractionSource`; boxing where `mutableIntStateOf`/`mutableFloatStateOf`/`mutableLongStateOf` fit.
+2. **Wrong state APIs.** Plain `androidx.compose.runtime.collectAsState()` on a ViewModel flow (use one of the lifecycle-aware collectors above — Orbit's `collectAsState` is fine); `remember` where `rememberSaveable` is needed; unremembered `Animatable`/`MutableInteractionSource`; boxing where `mutableIntStateOf`/`mutableFloatStateOf`/`mutableLongStateOf` fit.
 3. **Recomposition / stability problems.** Unstable params; **false `@Immutable`/`@Stable`** annotations (skip recomposition → stale UI); unstable `LocalDate`/`LocalTime` not wrapped; mutating `var` fields of elements held in a `mutableStateListOf` (snapshot-invisible — replace via `list[i] = item.copy(...)`; the list's own `add`/`remove`/`set` do recompose); missing `key` in lazy `items`; non-lazy layouts for large lists; reading state too high in the tree.
 4. **Heavy work in composition.** Filtering/sorting/allocation in the body instead of `remember(...)`, `derivedStateOf`, or the ViewModel.
 5. **Side effects misused.** Coroutines launched in `SideEffect` or in composition instead of `LaunchedEffect`/`DisposableEffect`/`rememberCoroutineScope`; wrong/lambda `LaunchedEffect` keys (use `rememberUpdatedState`); reacting to state per-keystroke instead of `snapshotFlow{}.debounce`; one-shot events modeled as state instead of `Channel`/`SharedFlow`; `DisposableEffect` without `onDispose`.
@@ -98,7 +98,7 @@ Read the code. Flag these issues:
 ## Review Checklist
 
 - [ ] State hoisted; stateless composables take `(state, onEvent)`
-- [ ] `collectAsStateWithLifecycle()` for ViewModel flows; `rememberSaveable` where needed
+- [ ] Lifecycle-aware collection for ViewModel flows (Orbit `collectAsState`, `collectFlow`, or `collectAsStateWithLifecycle` where available); `rememberSaveable` where needed
 - [ ] Stable parameters; `key` set in lazy lists; lazy layouts for large lists
 - [ ] No heavy work / allocation in composition (use `remember` or ViewModel)
 - [ ] Side effects in the right effect API with correct keys; one-shot events via SharedFlow/Channel
