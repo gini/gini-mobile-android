@@ -110,6 +110,10 @@ about downstream impact.
 **Legacy carve-outs — follow the local style, don't improve it:** the Java half of `capture-sdk`, and
 MVP-style code in files not otherwise being restructured.
 
+The architecture invariants — the module DAG and its two aisles, the facade shapes, layering per
+module, the DI boundaries, build architecture — live in `.claude/rules/architecture.md`, owned by
+`architecture-specialist`. Cite that file for findings in those areas instead of restating them here.
+
 ## 6. Test conventions
 
 - Unit tests in `src/test/java`, named `<ClassUnderTest>Test.kt`; instrumented in `src/androidTest`.
