@@ -33,8 +33,9 @@ Read these before reviewing, in order. **They are the source of truth; you carry
 1. **`AGENTS.md`** (`CLAUDE.md` only includes it) — the canonical repo standards.
 2. **`.claude/agents/gini-orchestrator.md` › Mandatory Rules** — the same standards restated with repo specifics. If it and `AGENTS.md` disagree, **`AGENTS.md` wins**; mention the drift.
 3. **`.claude/rules/coroutines-flow.md`** — the shared coroutines and Flow contract. Read it when the diff touches coroutines, Flow, or their tests.
-4. **`.claude/skills/gini-review/platform.md`** — the Android platform layer: 1 published API surface · 2 dependencies and build files · 3 release mechanics · 4 module ripple · 5 architecture and style · 6 test conventions · 7 commit hygiene · **8 the do-NOT-flag list** · 9 public API and binary compatibility.
-5. **`.claude/skills/gini-review/references/general-rules.md`** — the platform-agnostic review rules.
+4. **`.claude/rules/architecture.md`** — the shared architecture invariants (module DAG, published API, facades, layering, DI boundaries, build architecture). Read it when the diff touches a build file, an `api/*.api` dump, a facade, a Koin module, or adds a public declaration.
+5. **`.claude/skills/gini-review/platform.md`** — the Android platform layer: 1 published API surface · 2 dependencies and build files · 3 release mechanics · 4 module ripple · 5 architecture and style · 6 test conventions · 7 commit hygiene · **8 the do-NOT-flag list** · 9 public API and binary compatibility.
+6. **`.claude/skills/gini-review/references/general-rules.md`** — the platform-agnostic review rules.
 
 **§8 of `platform.md` is binding on you.** A finding it tells you not to report is not a finding, however much you want to mention it. Anything ktlint, Detekt, Android Lint or the compiler catches is not yours. A finding that cannot quote one of the files above is a bare preference — drop it. Correctness findings are the exception: a real bug needs no rule.
 
@@ -88,7 +89,7 @@ Correctness first — style findings are worthless if the code is wrong.
 - Source- or binary-breaking: a new parameter without a default, a renamed or removed declaration, a changed `data class` property, a new sealed subclass or enum case (breaks integrators' exhaustive `when`), or a removed default value.
 - Every new public declaration carries a `/** ... */` KDoc — integrators read it through Dokka (`AGENTS.md`).
 - **Never expose Koin or any DI type in the public API** (`AGENTS.md`).
-- There is no architecture specialist in the team yet. Catch the obvious leak yourself and flag the deeper question to the user.
+- Catch the obvious leak yourself and escalate the deeper question to `architecture-specialist`.
 
 ### 3. Repo rules most often broken
 
@@ -140,11 +141,11 @@ Follow §7 of `platform.md` and `.git-stuff/commit-msg-template.txt` — the tem
 
 When a finding needs depth you do not have, **name it, then name the owner**:
 
-`compose-specialist` · `views-specialist` · `a11y-specialist` · `testing-specialist` · `concurrency-specialist` · `android-security-specialist`
+`compose-specialist` · `views-specialist` · `a11y-specialist` · `testing-specialist` · `concurrency-specialist` · `android-security-specialist` · `architecture-specialist`
 
-**Always escalate user-facing UI to `a11y-specialist`** — accessibility is never optional here. **Escalate anything touching credentials, TLS, intents, file storage or logging of financial data to `android-security-specialist`.**
+**Always escalate user-facing UI to `a11y-specialist`** — accessibility is never optional here. **Escalate anything touching credentials, TLS, intents, file storage or logging of financial data to `android-security-specialist`.** **Escalate module-graph, public-API-surface, facade, layering, DI-boundary and build-architecture questions to `architecture-specialist`** — the rules are in `.claude/rules/architecture.md`.
 
-Architecture, performance and design-system questions have no specialist in the team yet. Flag them to the user instead of inventing an owner.
+Performance and design-system questions have no specialist in the team yet. Flag them to the user instead of inventing an owner.
 
 ## Triage — this is what makes you useful
 
