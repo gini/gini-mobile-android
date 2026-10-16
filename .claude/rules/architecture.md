@@ -125,9 +125,12 @@ nit marked "known existing pattern".
 - A nav-graph destination whose Fragment class lives in another module makes safeargs generate its
   `<Class>Directions` in **that** module's package inside this module's artifact: bank-sdk's
   `gbs_nav_graph.xml` declares `GiniCaptureFragment` with actions, so `bank-sdk/sdk/api/sdk.api`
-  publishes `net.gini.android.capture.GiniCaptureFragmentDirections` (known existing pattern). New
-  actions from a foreign destination go on the `<navigation>` root as global actions, so the generated
-  class stays in the owning module's package.
+  publishes `net.gini.android.capture.GiniCaptureFragmentDirections` (known existing pattern). Any
+  action reachable from a foreign destination — its own or a global one on an enclosing `<navigation>` —
+  generates a `<Class>Directions` in the foreign package inside this module's artifact (safeargs emits a
+  Directions class for every destination that has actions **or** whose parent graph has them, so a root
+  global action adds one public class per destination). Treat such an action as a published-API change
+  and review the `api/*.api` diff before accepting it.
 - **API libraries keep one stack per resource:** Retrofit interface `*Service` → `*RemoteSource` →
   `*Repository` → `*Manager`, results wrapped in `core-api-library` `Resource`. Retrofit, OkHttp and
   Moshi objects are created in the `*RemoteSource` or the API builder, never in a `*Manager` or
