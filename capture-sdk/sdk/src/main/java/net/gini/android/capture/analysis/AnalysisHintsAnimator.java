@@ -46,6 +46,8 @@ class AnalysisHintsAnimator {
     private Runnable mHintCycleRunnable;
     @Nullable
     private Runnable mOnHintShownListener;
+    @Nullable
+    private String mPendingHintDescription;
 
     public AnalysisHintsAnimator(
             @NonNull final Context context,
@@ -58,6 +60,19 @@ class AnalysisHintsAnimator {
         mHintImageView = hintImageView;
         mHintTextView = hintTextView;
         mHintHeadlineTextView = hintHeadlineTextView;
+        setUpAccessibility();
+    }
+
+    /**
+     * Makes the hint one TalkBack element that is read out each time a new hint has slid in.
+     */
+    private void setUpAccessibility() {
+        ViewCompat.setAccessibilityLiveRegion(mHintContainer,
+                ViewCompat.ACCESSIBILITY_LIVE_REGION_POLITE);
+        ViewCompat.setScreenReaderFocusable(mHintContainer, true);
+        mHintImageView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        mHintHeadlineTextView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        mHintTextView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
     }
 
     public void setContainerViewHeight(final int containerViewHeight) {
@@ -117,6 +132,12 @@ class AnalysisHintsAnimator {
                 .setListener(new ViewPropertyAnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(final View view) {
+                        // Changed only now that the hint is on screen: TalkBack may ignore live
+                        // region changes of an invisible or off-screen view
+                        if (mPendingHintDescription != null) {
+                            mHintContainer.setContentDescription(mPendingHintDescription);
+                            mPendingHintDescription = null;
+                        }
                         mHandler.postDelayed(mHintCycleRunnable, HINT_CYCLE_INTERVAL);
                     }
                 });
@@ -127,8 +148,10 @@ class AnalysisHintsAnimator {
         mHintImageView.setImageDrawable(
                 ContextCompat.getDrawable(mContext, nextHint.getDrawableResource()));
         mHintTextView.setText(nextHint.getTextResource());
-        mHintHeadlineTextView.setText(mContext.getString(R.string.gc_tip) + mContext.getString(nextHint.getTitleTextResource()));
-        mHintImageView.setContentDescription(mContext.getString(nextHint.getTitleTextResource()));
+        final String headline = mContext.getString(R.string.gc_tip) + mContext.getString(nextHint.getTitleTextResource());
+        mHintHeadlineTextView.setText(headline);
+        // The container is a polite live region, so changing its description reads the new hint out
+        mPendingHintDescription = headline + "\n" + mContext.getString(nextHint.getTextResource());
     }
 
     private AnalysisHint getNextHint() {
@@ -142,6 +165,7 @@ class AnalysisHintsAnimator {
     }
 
     public void stop() {
+        mPendingHintDescription = null;
         mHandler.removeCallbacks(mHintCycleRunnable);
         if (mHintAnimation != null) {
             mHintAnimation.cancel();

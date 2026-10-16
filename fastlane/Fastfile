@@ -341,8 +341,22 @@ platform :android do
         if !dry_run
           UI.message "Commit and push the new documentation"
           sh("git add --all")
-          sh("git diff --quiet --exit-code --cached || git commit -m 'Release #{project_id} documentation for tag #{git_tag}' --author='Team Mobile <team-mobile@gini.net>'")
-          git_push_with_retry("gh-pages", UI)
+          # Skip empty commits on idempotent re-runs (same tag, same output).
+          if sh("git diff --cached --quiet && echo same || echo changed", log: false).strip == "changed"
+            sh("git commit -m 'Release #{project_id} documentation for tag #{git_tag}'")
+            if git_token
+              # Signed path: GH_TOKEN (or an explicit git_token option) is present,
+              # so GitHub creates and signs the commit via REST API. Author becomes
+              # the MOBILE_CI_APP bot identity (`gini-mobile-ci[bot]`).
+              push_as_signed_commit("gini/gini-mobile-android", "gh-pages", UI)
+            else
+              # Legacy path: off-CI invocation with only git_user/git_password.
+              # Commit remains Unverified; preserved for backward compatibility.
+              git_push_with_retry("gh-pages", UI)
+            end
+          else
+            UI.message "No documentation changes to commit"
+          end
         else
           UI.message "Skipping commit and push (dry run)"
         end
