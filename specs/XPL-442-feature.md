@@ -57,7 +57,7 @@ No Gradle module changes. Files touched, all under `.claude/`:
 
 Not touched: `compose-specialist.md`, `views-specialist.md`, `a11y-specialist.md`, `testing-specialist.md` (R12), `concurrency-specialist.md`, `android-security-specialist.md`, `.claude/rules/*`, `gini-review/platform.md`, `AGENTS.md`.
 
-`specs/XPL-442-feature.md` (this file) is a personal planning file and is **not** committed.
+`specs/XPL-442-feature.md` (this file) was planned as an uncommitted personal file; the user asked for it to be committed with the other changes, following the `specs/XPL-443-feature.md` precedent on the base branch.
 
 ## Public API impact
 
@@ -94,7 +94,7 @@ Facts the agent states as patterns plus the `grep`/`ls` to re-check them — nev
 ### Lists and Views (health-sdk, internal-payment-sdk, capture-sdk, bank-sdk)
 
 - health-sdk `review/pager/DocumentPageAdapter.kt`: `ListAdapter` with a `DiffUtil.ItemCallback` (`@Suppress("DiffUtilEquals")`), `ViewPager2`, `PhotoView` (catalog `photoview`). `PageViewHolder.onBind` decodes `Resource.Success.data` with `BitmapFactory.decodeByteArray` **twice in a row** (two consecutive `setImageBitmap` calls) on the main thread, with no `BitmapFactory.Options`.
-- internal-payment-sdk `moreinformation/FaqRecyclerAdapter.kt`, `moreinformation/PaymentProvidersIconsAdapter.kt`, `bankselection/BankSelectionBottomSheet.kt` and `moreinformation/MoreInformationFragment.kt` use `notifyDataSetChanged()`; bank-sdk `capture/digitalinvoice/LineItemsAdapter.kt` mixes `DiffUtil.calculateDiff` with `notifyDataSetChanged()`; capture-sdk `help/HelpItemsAdapter.kt`, `help/PhotoTipsAdapter.kt`, `help/SupportedFormatsAdapter.java`, `internal/fileimport/providerchooser/ProvidersAdapter.java`, `onboarding/ViewPagerAdapterCompat.java` (`notifyDataSetChanged()` in `onboarding/OnboardingFragment.java`). Known existing patterns. Re-check: `grep -rn 'notifyDataSetChanged\|DiffUtil' --include='*.kt' --include='*.java' */sdk/src/main`.
+- `notifyDataSetChanged()` is called in internal-payment-sdk `moreinformation/FaqRecyclerAdapter.kt`, `moreinformation/MoreInformationFragment.kt` (on its `PaymentProvidersIconsAdapter`) and `bankselection/BankSelectionBottomSheet.kt` (on its `PaymentProviderAppsAdapter`); bank-sdk `capture/digitalinvoice/LineItemsAdapter.kt` mixes `DiffUtil.calculateDiff` and `notifyItem*` calls with `notifyDataSetChanged()`; in capture-sdk only `onboarding/OnboardingFragment.java` calls it, on its `ViewPagerAdapterCompat`. The capture-sdk `help/HelpItemsAdapter.kt`, `help/PhotoTipsAdapter.kt`, `help/SupportedFormatsAdapter.java` and `internal/fileimport/providerchooser/ProvidersAdapter.java` are static lists with no notify call at all — a `notifyDataSetChanged()` added to one of them is a new line, not an existing pattern. Known existing patterns (corrected after the code-reviewer self-review: six adapters were listed that have no notify call). Re-check: `grep -rln 'notifyDataSetChanged\|DiffUtil' --include='*.kt' --include='*.java' */sdk/src/main`.
 - Image loading in Views is plain `setImageBitmap` everywhere; there is **no Coil, Glide or Picasso** in the catalog.
 
 ### Koin graph and facade init
@@ -181,7 +181,7 @@ Git (user runs it; the branch is already at the XPL-443 tip locally and on `orig
 git push origin XPL-442-android-performance-specialist
 ```
 
-PR base `XPL-443-android-architecture-specialist` (#1007) until it merges, then `main` (GitHub retargets when the base branch is deleted); description from `.github/pull_request_template.md`; `specs/XPL-442-feature.md` stays uncommitted. Start a fresh Claude Code session after the agent file is written so the new agent is picked up for the dry runs.
+PR base `XPL-443-android-architecture-specialist` (#1007) until it merges, then `main` (GitHub retargets when the base branch is deleted); description from `.github/pull_request_template.md`; `specs/XPL-442-feature.md` is committed (user decision during the build). Start a fresh Claude Code session after the agent file is written so the new agent is picked up for the dry runs.
 
 ## Test plan
 
@@ -211,6 +211,7 @@ Agent files have no unit tests. Each MUST requirement maps to a check below; all
 The `performance-specialist` subagent type was not registered in the build session, so T4–T9 and T15 ran as general-purpose agents told to read and follow the agent file with read-only tools; T10's routing half ran on the real `gini-orchestrator` after re-reading its updated file. All passed: T4/T15 one List warning with the per-bind trigger, the `PhotoMemoryCache`/`inSampleSize` fix path and a `gfxinfo`/Profiler recipe; T5 one Size blocker naming the `play-services-mlkit-*` artifact and `architecture-specialist`; T6 a Recomposition warning with the lambda `graphicsLayer {}` direction and a Memory warning asking for display-size decode; T7 no finding on all five diffs, the two `runBlocking` diffs handed to `concurrency-specialist`; T8 report-only, "applied: none", hotspots 1–5 as nit "known existing pattern" with a consequence each, working tree unchanged; T9 asked before applying and named `architecture-specialist`; T10 picked performance + views (+ concurrency, a11y) for the adapter diff and performance + architecture for the build-file diff. T8 and T9 surfaced hotspots 9–12 above, folded into the agent's Repo Context.
 
 ### Not tested
+- R1 at runtime: the agent loading through `subagent_type: performance-specialist` with its frontmatter. The build session predated the file, so every dry run used a general-purpose agent reading the file. Close in a fresh session by running T4 and T7(a) through the `Agent` tool with that subagent type.
 - Agent quality across many sessions — nothing measures it yet (same gap as XPL-437/440/443/446).
 - The stacked PR retargeting to `main` after XPL-443 merges — GitHub does it; verify by eye.
 - `code-reviewer` and `architecture-specialist` actually escalating to this agent at run time — only their text is checked (T13, T14).
@@ -229,7 +230,7 @@ Ranked by user-visible cost. Each needs a ticket decision by the user. All verif
 7. **bank-sdk `consumer-rules.pro` keeps every Parcelable in the host app** — `-keep class * implements android.os.Parcelable` and `-keepnames class * implements android.os.Parcelable` apply to the integrator's whole code base. Consequence: R8 cannot strip or obfuscate any Parcelable in the host app once bank-sdk is integrated. Fix direction: scope the rules to `net.gini.android.bank.sdk.**`; `architecture-specialist` asks why on every consumer-rules change, so this is a joint ticket.
 8. **Two 1/8-heap caches** — `PhotoMemoryCache` and `DocumentDataMemoryCache` may together take a quarter of the host heap. A design decision to record, not a bug; only worth a ticket if an integrator reports memory pressure.
 9. **`MutablePhoto` constructor does EXIF work on the capture callback** (found by the T8 audit dry run, verified) — after the preview decode, `readRequiredTags()` and `updateExif()` run two commons-imaging metadata parses and an `ExifRewriter` full-JPEG copy on the main executor, and the result is rebuilt again by every modifier in the edit chain. Extends hotspot 1; same fix direction and the same co-ownership with `concurrency-specialist`.
-10. **Camera edit chain encodes twice** (T8, verified) — `PhotoEdit.crop()` already encodes at `DEFAULT_JPEG_COMPRESSION_QUALITY`, and `CameraFragmentImpl` chains `.crop(...).compressByDefault()`, so the cropped image is decoded and re-encoded a second time at the same quality, with `updateBitmapPreview()` and `updateExif()` repeated per modifier. Consequence: roughly double the wait before the review screen and a second full-size transient bitmap, plus a second generation of JPEG loss. Fix direction: one preview/EXIF pass at the end of `applyChanges`, skip the compression modifier when the crop succeeded.
+10. **Camera edit chain encodes twice** (T8, verified) — `PhotoEdit.crop()` already encodes at `DEFAULT_JPEG_COMPRESSION_QUALITY`, and `CameraFragmentImpl` chains `.crop(...).compressByDefault()`, so the cropped image is decoded and re-encoded a second time at the same quality, with `updateBitmapPreview()` and `updateExif()` repeated by the crop and compression modifiers (the rotation modifier only `updateExif()`). Consequence: roughly double the wait before the review screen and a second full-size transient bitmap, plus a second generation of JPEG loss. Fix direction: one preview/EXIF pass at the end of `applyChanges`, skip the compression modifier when the crop succeeded.
 11. **`CameraLifecycle` is never destroyed** (T8, library behaviour unverified) — `CameraXController.close()` moves the owner to `CREATED`; `unbindAll()` runs only in the next `open()`. If CameraX keeps the bound use cases until `ON_DESTROY` or `unbindAll()`, the controller, the `PreviewView` and the host Activity stay reachable from a process singleton between flows. Verify with a heap dump; fix direction: move the registry to `DESTROYED` in `close()` and recreate the owner per `open()`.
 12. **Two more unused capture-sdk dependencies** (T9, grep-verified, not compile-verified) — `libs.navigation.ui.ktx` and `libs.compose.activity` have no import in any capture-sdk source set. Joins hotspot 6.
 
@@ -241,7 +242,6 @@ Ranked by user-visible cost. Each needs a ticket decision by the user. All verif
 - Editing `compose-`/`views-`/`a11y-`/`testing-specialist.md`, `concurrency-specialist.md`, `android-security-specialist.md`, `.claude/rules/*`.
 - The other XPL-402 agents (debugger XPL-444, design-system XPL-445).
 - Mirroring anything to `gini-mobile-ios` (the touched files are Android-only).
-- Committing `specs/XPL-442-feature.md`.
 
 ## Open questions
 
