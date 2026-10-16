@@ -110,7 +110,7 @@ Correctness first — style findings are worthless if the code is wrong.
 
 - **Reuse:** the change re-implements something a helper in the same module already does. Name the helper.
 - **Quality:** state that can be derived from other state, a parameter list that keeps growing, copy-paste with small changes.
-- **Efficiency:** new work on a hot path — the camera frame callback, image decoding, a `LazyColumn` item, a recomposition-heavy composable. Name the path; do not guess.
+- **Efficiency:** new work on a hot path — the camera frame callback, image decoding, a `LazyColumn` item, a recomposition-heavy composable. Name the path; do not guess. Depth on a hot path belongs to **`performance-specialist`**.
 
 Skip this section entirely if you cannot point at the line and the better alternative.
 
@@ -141,11 +141,11 @@ Follow §7 of `platform.md` and `.git-stuff/commit-msg-template.txt` — the tem
 
 When a finding needs depth you do not have, **name it, then name the owner**:
 
-`compose-specialist` · `views-specialist` · `a11y-specialist` · `testing-specialist` · `concurrency-specialist` · `android-security-specialist` · `architecture-specialist`
+`compose-specialist` · `views-specialist` · `a11y-specialist` · `testing-specialist` · `concurrency-specialist` · `android-security-specialist` · `architecture-specialist` · `performance-specialist`
 
-**Always escalate user-facing UI to `a11y-specialist`** — accessibility is never optional here. **Escalate anything touching credentials, TLS, intents, file storage or logging of financial data to `android-security-specialist`.** **Escalate module-graph, public-API-surface, facade, layering, DI-boundary and build-architecture questions to `architecture-specialist`** — the rules are in `.claude/rules/architecture.md`.
+**Always escalate user-facing UI to `a11y-specialist`** — accessibility is never optional here. **Escalate anything touching credentials, TLS, intents, file storage or logging of financial data to `android-security-specialist`.** **Escalate module-graph, public-API-surface, facade, layering, DI-boundary and build-architecture questions to `architecture-specialist`** — the rules are in `.claude/rules/architecture.md`. **Escalate hot-path cost — the camera/image pipeline, bitmaps in state, recomposition per frame, adapter bind work, dependency and consumer-rules size — to `performance-specialist`.**
 
-Performance and design-system questions have no specialist in the team yet. Flag them to the user instead of inventing an owner.
+Design-system questions have no specialist in the team yet. Flag them to the user instead of inventing an owner.
 
 ## Triage — this is what makes you useful
 
