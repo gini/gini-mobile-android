@@ -110,6 +110,10 @@ about downstream impact.
 **Legacy carve-outs — follow the local style, don't improve it:** the Java half of `capture-sdk`, and
 MVP-style code in files not otherwise being restructured.
 
+The architecture invariants — the module DAG and its two aisles, the facade shapes, layering per
+module, the DI boundaries, build architecture — live in `.claude/rules/architecture.md`, owned by
+`architecture-specialist`. Cite that file for findings in those areas instead of restating them here.
+
 ## 6. Test conventions
 
 - Unit tests in `src/test/java`, named `<ClassUnderTest>Test.kt`; instrumented in `src/androidTest`.
@@ -117,10 +121,12 @@ MVP-style code in files not otherwise being restructured.
   one file.
 - Flow assertions use Turbine; suspending code uses `kotlinx-coroutines-test`.
 - Instrumented tests run under the AndroidX Test Orchestrator with `AndroidJUnitRunner`.
-- **There is no fake HTTP server in this repo.** `AGENTS.md` claims the API libraries use OkHttp
-  MockWebServer, but it appears in no build file, version-catalog entry or source file — the API
-  libraries' network-layer tests are instrumented (`src/androidTest`) and mock collaborators with
-  MockK. Never ask for a MockWebServer-style test, and do not treat its absence as a gap.
+- **API-library wire tests use OkHttp MockWebServer** (`libs.okhttp3.mockwebserver`, `testImplementation`
+  in all three API libraries): the `*WireTest` and `SelfManagedAuthenticationTest` files under
+  `src/test` in `core-api-library`, `bank-api-library` and `health-api-library`. A change to a request
+  or response path in an API library without a wire test alongside those is a legitimate finding;
+  name the existing `*WireTest` file the case belongs in. Their `src/androidTest` suites cover the
+  real-API integration paths and stay instrumented.
 
 **When a missing test is genuinely blocking:** a bug fix in decision logic, a ViewModel, a mapper, or
 an API-library request/response path — anything reachable from a plain unit test. Say which file the
