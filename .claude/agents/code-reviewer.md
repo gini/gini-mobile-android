@@ -143,7 +143,7 @@ When a finding needs depth you do not have, **name it, then name the owner**:
 
 `compose-specialist` · `views-specialist` · `a11y-specialist` · `testing-specialist` · `concurrency-specialist` · `android-security-specialist` · `architecture-specialist` · `performance-specialist`
 
-**Always escalate user-facing UI to `a11y-specialist`** — accessibility is never optional here. **Escalate anything touching credentials, TLS, intents, file storage or logging of financial data to `android-security-specialist`.** **Escalate module-graph, public-API-surface, facade, layering, DI-boundary and build-architecture questions to `architecture-specialist`** — the rules are in `.claude/rules/architecture.md`. **Escalate hot-path cost — the camera/image pipeline, bitmaps in state, recomposition per frame, adapter bind work, dependency and consumer-rules size — to `performance-specialist`.**
+**Always escalate user-facing UI to `a11y-specialist`** — accessibility is never optional here. **Escalate anything touching credentials, TLS, intents, file storage or logging of financial data to `android-security-specialist`.** **Escalate module-graph, public-API-surface, facade, layering, DI-boundary and build-architecture questions to `architecture-specialist`** — the rules are in `.claude/rules/architecture.md`. **Escalate hot-path cost — the camera/image pipeline, bitmaps in state, every Compose performance question (recomposition, stability, `key`, heavy work in composition), adapter bind work, dependency and consumer-rules size — to `performance-specialist`**, never to `compose-specialist`, which keeps Compose idiom only.
 
 Design-system questions have no specialist in the team yet. Flag them to the user instead of inventing an owner.
 
