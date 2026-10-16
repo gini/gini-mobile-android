@@ -13,7 +13,6 @@ import android.view.ViewTreeObserver
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.annotation.ColorInt
-import androidx.core.content.ContextCompat
 import androidx.core.os.BundleCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -41,6 +40,8 @@ import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
+import net.gini.android.capture.internal.ui.runtimecolors.giniColorFromAttr
+import net.gini.android.capture.internal.ui.runtimecolors.giniColor
 
 private const val ARGS_SELECTABLE_LINE_ITEM = "GBS_ARGS_SELECTABLE_LINE_ITEM"
 
@@ -398,10 +399,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
             if (hasFocus) {
                 focusedViewId = view.id
                 binding.gbsNameTxt.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        net.gini.android.capture.R.color.gc_accent_01
-                    )
+                    requireContext().giniColor(net.gini.android.capture.R.color.gc_accent_01)
                 )
                 binding.gbsArticleNameDivider.visibility = View.VISIBLE
             } else {
@@ -416,10 +414,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
             if (hasFocus) {
                 focusedViewId = view.id
                 binding.gbsUnitPriceTxt.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        net.gini.android.capture.R.color.gc_accent_01
-                    )
+                    requireContext().giniColor(net.gini.android.capture.R.color.gc_accent_01)
                 )
                 binding.gbsUnitPriceDivider.visibility = View.VISIBLE
             } else {
@@ -502,6 +497,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     @ColorInt
     private fun getBottomSheetItemTitleColor() : Int? {
         return context?.wrappedWithGiniCaptureTheme()?.let {
+            it.giniColorFromAttr(R.attr.gbsBottomSheetItemTitle)?.let { color -> return color }
             val typedArray = it.obtainStyledAttributes(R.styleable.GBSCurrencyStyle)
             typedArray.getColor(R.styleable.GBSCurrencyStyle_gbsBottomSheetItemTitle, net.gini.android.capture.R.color.gc_light_01)
         }
@@ -538,9 +534,21 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
             val typedArray = mContext.obtainStyledAttributes(R.styleable.GBSCurrencyStyle)
 
             if (items[position] == selectedCurrency) {
-                convertView.setBackgroundColor(typedArray.getColor(R.styleable.GBSCurrencyStyle_gbsCurrencyPickerItemSelectedColor, net.gini.android.capture.R.color.gc_light_01))
+                convertView.setBackgroundColor(
+                    mContext.giniColorFromAttr(R.attr.gbsCurrencyPickerItemSelectedColor)
+                        ?: typedArray.getColor(
+                            R.styleable.GBSCurrencyStyle_gbsCurrencyPickerItemSelectedColor,
+                            net.gini.android.capture.R.color.gc_light_01
+                        )
+                )
             } else {
-                convertView.setBackgroundColor(typedArray.getColor(R.styleable.GBSCurrencyStyle_gbsCurrencyPickerItemBackgroundColor, net.gini.android.capture.R.color.gc_light_01))
+                convertView.setBackgroundColor(
+                    mContext.giniColorFromAttr(R.attr.gbsCurrencyPickerItemBackgroundColor)
+                        ?: typedArray.getColor(
+                            R.styleable.GBSCurrencyStyle_gbsCurrencyPickerItemBackgroundColor,
+                            net.gini.android.capture.R.color.gc_light_01
+                        )
+                )
             }
 
             return convertView

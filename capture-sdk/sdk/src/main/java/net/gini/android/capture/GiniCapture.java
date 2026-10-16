@@ -31,7 +31,9 @@ import net.gini.android.capture.tracking.EventTracker;
 import net.gini.android.capture.tracking.OnboardingScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
+import net.gini.android.capture.internal.ui.runtimecolors.GiniColorResolver;
 import net.gini.android.capture.ui.components.GiniComposableStyleProvider;
+import net.gini.android.capture.ui.theme.colors.CustomResourceProvider;
 import net.gini.android.capture.util.CancellationToken;
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter;
@@ -132,6 +134,8 @@ public class GiniCapture {
     private final InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter> loadingIndicatorAdapterInstance;
     private final InjectedViewAdapterInstance<OnButtonLoadingIndicatorAdapter> onButtonLoadingIndicatorAdapterInstance;
     private final GiniComposableStyleProvider mGiniComposableStyleProvider;
+    private final CustomResourceProvider mCustomResourceProvider;
+    private final GiniColorResolver mColorResolver;
     private final EntryPoint entryPoint;
     private final boolean allowScreenshots;
     private final boolean saveInvoicesLocallyEnabled;
@@ -508,6 +512,8 @@ public class GiniCapture {
         mCustomUploadMetadata = builder.getCustomUploadMetadata();
         mProductTag = builder.getProductTag();
         mGiniComposableStyleProvider = builder.getGiniComposableStyleProvider();
+        mCustomResourceProvider = builder.getCustomResourceProvider();
+        mColorResolver = new GiniColorResolver(mCustomResourceProvider);
     }
 
     /**
@@ -917,6 +923,17 @@ public class GiniCapture {
         return mGiniComposableStyleProvider;
     }
 
+    /**
+     * The provider of runtime palette colors, if one was set.
+     *
+     * @return the {@link CustomResourceProvider} set with
+     * {@link Builder#setCustomResourceProvider(CustomResourceProvider)}, or {@code null}
+     */
+    @Nullable
+    public CustomResourceProvider getCustomResourceProvider() {
+        return mCustomResourceProvider;
+    }
+
     public interface CreateGiniCaptureFragmentForIntentCallback {
         void callback(CreateGiniCaptureFragmentForIntentResult result);
     }
@@ -1012,6 +1029,7 @@ public class GiniCapture {
 
         private Map<String, String> customUploadMetadata;
         private GiniComposableStyleProvider giniComposableStyleProvider;
+        private CustomResourceProvider customResourceProvider;
 
         /**
          * Create a new {@link GiniCapture} instance.
@@ -1570,6 +1588,25 @@ public class GiniCapture {
         }
 
         /**
+         * Set a provider for the colors of the Gini palette at runtime, for example colors loaded
+         * from your server. The SDK applies them on all screens. Without a provider the SDK uses
+         * its color resources, including your own {@code colors.xml} overrides.
+         *
+         * @param customResourceProvider a {@link CustomResourceProvider}
+         * @return the {@link Builder} instance
+         */
+        @NonNull
+        public Builder setCustomResourceProvider(@NonNull final CustomResourceProvider customResourceProvider) {
+            this.customResourceProvider = customResourceProvider;
+            return this;
+        }
+
+        @Nullable
+        private CustomResourceProvider getCustomResourceProvider() {
+            return customResourceProvider;
+        }
+
+        /**
          * Set the product tag to identify which extraction type to use.
          *
          * Default is {@link ProductTag.SepaExtractions}.
@@ -1604,6 +1641,11 @@ public class GiniCapture {
 
         public Internal(@NonNull final GiniCapture giniCapture) {
             mGiniCapture = giniCapture;
+        }
+
+        @NonNull
+        public GiniColorResolver getColorResolver() {
+            return mGiniCapture.mColorResolver;
         }
 
         public static GiniCaptureFragment createGiniCaptureFragmentForOpenWithDocument(@NonNull Document openWithDocument) {
