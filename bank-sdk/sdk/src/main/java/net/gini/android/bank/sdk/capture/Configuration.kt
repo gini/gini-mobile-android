@@ -14,6 +14,7 @@ import net.gini.android.capture.onboarding.OnboardingPage
 import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
 import net.gini.android.capture.tracking.EventTracker
 import net.gini.android.capture.ui.components.GiniComposableStyleProvider
+import net.gini.android.capture.ui.theme.colors.CustomResourceProvider
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter
 import net.gini.android.capture.view.NavigationBarTopAdapter
 import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter
@@ -242,6 +243,17 @@ data class CaptureConfiguration(
      * payment due hint state.
      */
     val paymentScheduleHintEnabled: Boolean = true,
+
+    /**
+     * Provider for the colors of the Gini palette at runtime, for example colors loaded from your
+     * server. The SDK applies them on all screens. Without a provider the SDK uses its color
+     * resources, including your own `colors.xml` overrides.
+     *
+     * See [CustomResourceProvider] for the palette names and the rules.
+     *
+     * Default value is `null`.
+     */
+    val customResourceProvider: CustomResourceProvider? = null,
 )
 
 internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfiguration): GiniCapture.Builder {
@@ -305,5 +317,6 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
                 )
             }
             configuration.giniComposableStyleProvider?.let { setGiniComposableStyleProvider(it) }
+            configuration.customResourceProvider?.let { setCustomResourceProvider(it) }
         }
 }
