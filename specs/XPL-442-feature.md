@@ -1,6 +1,6 @@
 # XPL-442: `performance-specialist` agent
 
-Status: implementing (6/7)
+Status: implemented
 Ticket: https://ginis.atlassian.net/browse/XPL-442 (sub-task of XPL-402 — "[Android] Add 7 specialist agents to the Claude agent team")
 
 - Source: the Jira description (user story, scope, acceptance criteria) plus the XPL-402 rule inherited from the Confluence "AI Planning" page: **every agent must be valid for our repo; generic Kotlin/Android advice is not enough.**
@@ -206,6 +206,10 @@ Agent files have no unit tests. Each MUST requirement maps to a check below; all
 | T15 Dry run with the T4 diff: the output's **Needs a human** section contains a no-build-change recipe (`gfxinfo`, Profiler or Layout Inspector) and no applied build-file change | R15 |
 | T16 (optional) `/code-review` on the branch | — |
 
+### Dry-run results (2026-10-15/16)
+
+The `performance-specialist` subagent type was not registered in the build session, so T4–T9 and T15 ran as general-purpose agents told to read and follow the agent file with read-only tools; T10's routing half ran on the real `gini-orchestrator` after re-reading its updated file. All passed: T4/T15 one List warning with the per-bind trigger, the `PhotoMemoryCache`/`inSampleSize` fix path and a `gfxinfo`/Profiler recipe; T5 one Size blocker naming the `play-services-mlkit-*` artifact and `architecture-specialist`; T6 a Recomposition warning with the lambda `graphicsLayer {}` direction and a Memory warning asking for display-size decode; T7 no finding on all five diffs, the two `runBlocking` diffs handed to `concurrency-specialist`; T8 report-only, "applied: none", hotspots 1–5 as nit "known existing pattern" with a consequence each, working tree unchanged; T9 asked before applying and named `architecture-specialist`; T10 picked performance + views (+ concurrency, a11y) for the adapter diff and performance + architecture for the build-file diff. T8 and T9 surfaced hotspots 9–12 above, folded into the agent's Repo Context.
+
 ### Not tested
 - Agent quality across many sessions — nothing measures it yet (same gap as XPL-437/440/443/446).
 - The stacked PR retargeting to `main` after XPL-443 merges — GitHub does it; verify by eye.
@@ -224,6 +228,10 @@ Ranked by user-visible cost. Each needs a ticket decision by the user. All verif
 6. **capture-sdk declares four dependencies it never uses** — `libs.orbitmvi.compose`, `libs.orbitmvi.viewmodel`, `libs.koin.androidx.compose`, `libs.koin.android.compat` in `capture-sdk/sdk/build.gradle.kts` with no source reference. Consequence: extra artifacts and their trees in every capture-sdk integrator's APK (bank-sdk integrators receive Orbit through bank-sdk anyway). Fix direction: remove, run `/gini-check` and `apiCheck`, confirm the SBOM; `architecture-specialist` co-reviews.
 7. **bank-sdk `consumer-rules.pro` keeps every Parcelable in the host app** — `-keep class * implements android.os.Parcelable` and `-keepnames class * implements android.os.Parcelable` apply to the integrator's whole code base. Consequence: R8 cannot strip or obfuscate any Parcelable in the host app once bank-sdk is integrated. Fix direction: scope the rules to `net.gini.android.bank.sdk.**`; `architecture-specialist` asks why on every consumer-rules change, so this is a joint ticket.
 8. **Two 1/8-heap caches** — `PhotoMemoryCache` and `DocumentDataMemoryCache` may together take a quarter of the host heap. A design decision to record, not a bug; only worth a ticket if an integrator reports memory pressure.
+9. **`MutablePhoto` constructor does EXIF work on the capture callback** (found by the T8 audit dry run, verified) — after the preview decode, `readRequiredTags()` and `updateExif()` run two commons-imaging metadata parses and an `ExifRewriter` full-JPEG copy on the main executor, and the result is rebuilt again by every modifier in the edit chain. Extends hotspot 1; same fix direction and the same co-ownership with `concurrency-specialist`.
+10. **Camera edit chain encodes twice** (T8, verified) — `PhotoEdit.crop()` already encodes at `DEFAULT_JPEG_COMPRESSION_QUALITY`, and `CameraFragmentImpl` chains `.crop(...).compressByDefault()`, so the cropped image is decoded and re-encoded a second time at the same quality, with `updateBitmapPreview()` and `updateExif()` repeated per modifier. Consequence: roughly double the wait before the review screen and a second full-size transient bitmap, plus a second generation of JPEG loss. Fix direction: one preview/EXIF pass at the end of `applyChanges`, skip the compression modifier when the crop succeeded.
+11. **`CameraLifecycle` is never destroyed** (T8, library behaviour unverified) — `CameraXController.close()` moves the owner to `CREATED`; `unbindAll()` runs only in the next `open()`. If CameraX keeps the bound use cases until `ON_DESTROY` or `unbindAll()`, the controller, the `PreviewView` and the host Activity stay reachable from a process singleton between flows. Verify with a heap dump; fix direction: move the registry to `DESTROYED` in `close()` and recreate the owner per `open()`.
+12. **Two more unused capture-sdk dependencies** (T9, grep-verified, not compile-verified) — `libs.navigation.ui.ktx` and `libs.compose.activity` have no import in any capture-sdk source set. Joins hotspot 6.
 
 ## Out of scope
 
@@ -247,7 +255,7 @@ Ranked by user-visible cost. Each needs a ticket decision by the user. All verif
 - [x] 4. Wire `.claude/agents/code-reviewer.md` — §4 depth line, escalation list, flip the "no specialist" sentence (R13)
 - [x] 5. Wire `.claude/agents/architecture-specialist.md` — boundary bullet hands cost to `performance-specialist` (R14)
 - [x] 6. Static lint — T1, T2, T3, T10 (grep part), T11, T12, T13, T14 (R1, R2, R9, R10, R11, R12, R13, R14)
-- [ ] 7. Dry runs — T4, T5, T6, T7, T8, T9, T15 and the orchestrator routing half of T10 (R2, R3, R4, R5, R6, R7, R8, R15)
+- [x] 7. Dry runs — T4, T5, T6, T7, T8, T9, T15 and the orchestrator routing half of T10 (R2, R3, R4, R5, R6, R7, R8, R15)
 
 Open questions resolved from the code during the build (2026-10-15):
 1. `LoadInvoiceBitmapsUseCase` decode thread: `GiniCaptureDefaultNetworkService` launches on `CoroutineScope(coroutineContext)` with `coroutineContext = Dispatchers.Main` by default and calls `callback.success` there; `InvoicePreviewFileNetworkService` resumes its `suspendCancellableCoroutine` from that callback, and Orbit's intent dispatcher is `Unconfined`, so with the default network service the decode runs on the main thread. A custom integrator `GiniCaptureNetworkService` may call back elsewhere — the agent says "with the default network service".
