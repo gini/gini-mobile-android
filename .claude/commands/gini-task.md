@@ -8,6 +8,6 @@ Use the **gini-orchestrator** agent to coordinate the following task. Invoke it 
 Task:
 $ARGUMENTS
 
-gini-orchestrator will read the task, select the right specialists (compose, views, a11y, testing, security, concurrency, architecture, and code-reviewer for finished work before a push), and enforce the repository standards — `AGENTS.md` is the canonical source; the orchestrator's Mandatory Rules restate it with repo specifics. Performance and localization standards apply inline.
+gini-orchestrator will read the task, select the right specialists (compose, views, a11y, testing, security, concurrency, architecture, debugger for failure reports, and code-reviewer for finished work before a push), and enforce the repository standards — `AGENTS.md` is the canonical source; the orchestrator's Mandatory Rules restate it with repo specifics. Performance and localization standards apply inline.
 
 When it finishes, synthesize the specialists' findings into a single clear answer for me — grouped by specialist, most important issues first.
