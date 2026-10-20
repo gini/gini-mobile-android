@@ -58,12 +58,13 @@ jobs:
       - name: build release example app for QA
         run: >
           ./gradlew health-sdk:example-app:assembleQaRelease
-          -PclientId="gini-mobile-ci" 
+          -PversionCode=${{ github.run_number }}
+          -PclientId="gini-mobile-ci"
           -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
           -PreleaseKeystoreFile="health_sdk_example.jks"
           -PreleaseKeystorePassword='${{ secrets.HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
           -PreleaseKeyAlias="health_sdk_example"
-          -PreleaseKeyPassword='${{ secrets.HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'      
+          -PreleaseKeyPassword='${{ secrets.HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
 
       - name: Check file existence
         uses: andstor/file-existence-action@076e0072799f4942c8bc574a82233e1e4d13e9d6 # v3.0.0

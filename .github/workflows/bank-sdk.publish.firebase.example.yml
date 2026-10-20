@@ -53,12 +53,13 @@ jobs:
       - name: build release example app for QA
         run: >
           ./gradlew bank-sdk:example-app:assembleQaExampleAppRelease
-          -PclientId="gini-mobile-ci" 
+          -PversionCode=${{ github.run_number }}
+          -PclientId="gini-mobile-ci"
           -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
           -PreleaseKeystoreFile="screen_api_example.jks"
           -PreleaseKeystorePassword='${{ secrets.BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
           -PreleaseKeyAlias="screen_api_example"
-          -PreleaseKeyPassword='${{ secrets.BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'      
+          -PreleaseKeyPassword='${{ secrets.BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
 
       - name: Check file existence
         uses: andstor/file-existence-action@076e0072799f4942c8bc574a82233e1e4d13e9d6 # v3.0.0
