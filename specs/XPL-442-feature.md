@@ -191,7 +191,7 @@ Agent files have no unit tests. Each MUST requirement maps to a check below; all
 | Check | Proves |
 |---|---|
 | T1 Frontmatter: `head -20` shows `name`, `description`, `tools`; file name matches `name` | R1 |
-| T2 `grep -nE ':[0-9]+' .claude/agents/performance-specialist.md` is empty; `grep -nE '\b[0-9]+ (public|classes|files|modules|lines)\b'` is empty | R11 |
+| T2 `grep -nE ':[0-9]+' .claude/agents/performance-specialist.md` is empty; `grep -nE '\b[0-9]+ (public|classes|files|modules|lines)\b'` is empty; `grep -nE '\b(two|three|four|five|six|seven|eight|nine|ten) (named classes|classes|modules|use cases|files|lines)\b'` is empty | R11 |
 | T3 Every backticked path/class/task/catalog alias in the agent file resolves: script extracts backticked tokens containing `/` or ending in `.kt`/`.java`/`.kts`/`.xml`/`.pro`/`.toml` and runs `ls`/`grep -rl`; catalog aliases (`libs.x.y`) checked against `gradle/libs.versions.toml` | R11 |
 | T4 Dry run, synthetic diff adding a full `BitmapFactory.decodeByteArray` without `Options` into `onBindViewHolder` of `capture-sdk/sdk/src/main/java/net/gini/android/capture/review/multipage/previews/PreviewPagesAdapter.kt` → one warning, *List*, names the per-bind trigger and an in-module fix | R3 |
 | T5 Dry run, synthetic diff adding `implementation("com.google.mlkit:barcode-scanning:17.3.0")` to `capture-sdk/sdk/build.gradle.kts` → blocker, *Size*, names the play-services artifact it replaces and `architecture-specialist` | R4 |
