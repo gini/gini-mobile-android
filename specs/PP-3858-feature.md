@@ -1,6 +1,6 @@
 # PP-3857: [Android] Return Wero URL for unrecognised QR codes
 
-Status: implemented (steps 1–9, 11, 12 landed; steps 10 and 13 deferred to a follow-up PR)
+Status: implemented
 Ticket: https://ginis.atlassian.net/browse/PP-3857 (iOS); file Android sub-ticket if separate tracking needed
 Parent epic: PP-2666 "[Q4] Wero QR code support"
 Backend companions:
@@ -176,13 +176,13 @@ User decisions captured at start of build:
 - [x] 7. Add extraction key constants + mapper + predicate + executor as `WeroExtractionsMapper.kt` in `capture-sdk/sdk/.../internal/qrcode/`. Constants: `WERO_PAYMENT_QR_CODE_URL_KEY`, `PAYMENT_QR_CODE_TYPE_KEY`, `WERO_PAYMENT_QR_CODE_TYPE_VALUE`. (R4, R8)
 - [x] 8. `mapWeroExtractions(specificExtractions, scannedPayload, flagEnabled)` — case-insensitive on name AND entity AND value (D5); replaces mixed extractions with single Wero entry when matched (R6); pass-through otherwise. (R4, R6, D2, D5)
 - [x] 9. `shouldRouteBackToCameraForWeroFallback(...)` + `performWeroFallbackIfNeeded(...)` returning Boolean. UI side-effect behind a lambda parameter (D3). (R5, D2, D8)
-- [~] 10. **Deferred to follow-up.** Camera QR gate — modifying `PaymentQRCodeReader` / `CameraFragmentImpl.onNonPaymentQRCodeDetected()` to upload unknown payloads when flag ON requires: (a) a QR document subtype that carries the raw payload (today `QRCodeDocument` only wraps parsed `PaymentQRCodeData` via `fromPaymentQRCodeData()`), (b) scanned-payload state plumbed from upload through `/analysis` into the extraction callback (iOS reads it off `pages[0]` on the coordinator — Android has no equivalent store today), and (c) reading the DataStore flag synchronously inside Java `CameraFragmentImpl`. Each is a design decision that deserves its own PR; file a follow-up ticket for the camera-gate + plumbing + CaptureFlowFragment wire-up (step 13) together. Until it lands, the Wero mapper is callable but has no live scanned-payload input. (R3, D6)
+- [x] 10. Camera QR gate — `PaymentQRCodeData.Format` grew a `UNKNOWN` value + `fromWeroCandidate(raw)` factory. `CameraFragmentImpl.onNonPaymentQRCodeDetected` routes unknown payloads into the standard QR pipeline when the flag is on, so the education carousel (R9) + overlay fire naturally. New `UNKNOWN` case in `handlePaymentQRCodeData`'s switch mirrors the EPC branch, parks the raw payload on `WeroScannedPayloadHolder` (single-slot `AtomicReference`), and calls `analyzeQRCode`. The analysis-success callback drains the holder unconditionally, runs the mapper, and either fires `showUnsupportedQRCodePopup(true)` in-place (fallback — camera stays live, no nav manipulation) or proceeds with the possibly-mapped extractions through the existing branches. (R3, R5, R9, D6)
 - [x] 11. Unit tests: `WeroExtractionsMapperTest.kt` — 15 cases covering mapper + gate + executor branches (flag off, no payload, case-insensitive on name/entity/value, mixed-extractions reduce, already-mapped by key, no marker). Inline builders (no JSON fixtures needed since inputs are pure Kotlin objects). (R1–R6)
 - [x] 12. Skipped — no existing `ClientConfigurationStorageTest.kt` to extend; DataStore wire-up is additive and follows the exact pattern of the 13 sibling flags. Propagation risk is covered by the Commit 3 CaptureFlowFragment test, which exercises the whole flag path end to end.
 
 ### Commit 3 — `feat(bank-sdk): Wire Wero mapper and fallback into bank networking coordinator`
 
-- [~] 13. **Deferred with step 10.** Wiring `mapWeroExtractions` + `performWeroFallbackIfNeeded` into `CaptureFlowFragment.interceptSuccessResult()` is only meaningful once the camera gate (step 10) is pushing a non-null `scannedPayload` through to `interceptSuccessResult`. Landing it now with `scannedPayload = null` would add a dead branch (mapper = pass-through, predicate = always false). Bundle with the step 10 follow-up PR. (R2, R5, R7)
+- [x] 13. `CaptureFlowFragment.interceptSuccessResult` recognises `weroPaymentQRCodeUrl` via a new `weroPaymentAvailable()` check next to `pay5ExtractionsAvailable` / `epsPaymentAvailable`. Extracted to a `hasRecognisedExtractions()` helper to stay under the Detekt `ComplexCondition` threshold. The mapper + fallback themselves live in capture-sdk's analysis-success callback — bank-sdk only needs to recognise the Wero key as a successful result (R2, R7). Fallback (R5) never reaches bank-sdk because the camera stays live.
 
 ### Deferred / out of scope for this build (per user decision + spec acknowledgements)
 
