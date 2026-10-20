@@ -173,10 +173,6 @@ internal constructor(
                     LOG.debug(
                         "Get configuration success"
                     )
-                    LOG.debug(
-                        "Wero QR code scanning flag from /configurations: {}",
-                        configurationResource.data.isWeroQRCodeScanningEnabled,
-                    )
                     callback.success(mapBankConfigurationToConfiguration(configurationResource.data))
                 }
 

@@ -1,8 +1,6 @@
 package net.gini.android.capture.internal.qrcode
 
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 /**
  * Pure-function support for the Wero QR code flow. Shared between capture-sdk and bank-sdk —
@@ -14,8 +12,6 @@ internal object WeroExtractionsMapper {
     const val WERO_PAYMENT_QR_CODE_URL_KEY = "weroPaymentQRCodeUrl"
     const val PAYMENT_QR_CODE_TYPE_KEY = "paymentQRCodeType"
     const val WERO_PAYMENT_QR_CODE_TYPE_VALUE = "wero"
-
-    private val LOG: Logger = LoggerFactory.getLogger(WeroExtractionsMapper::class.java)
 
     /**
      * Collapses the extraction map to a single `weroPaymentQRCodeUrl` entry when the backend
@@ -32,10 +28,6 @@ internal object WeroExtractionsMapper {
             !scannedPayload.isNullOrEmpty() &&
             hasWeroMarker(specificExtractions)
         return if (applies) {
-            LOG.debug(
-                "Wero marker detected; collapsing extractions to single {} entry",
-                WERO_PAYMENT_QR_CODE_URL_KEY,
-            )
             mapOf(
                 WERO_PAYMENT_QR_CODE_URL_KEY to GiniCaptureSpecificExtraction(
                     WERO_PAYMENT_QR_CODE_URL_KEY,
@@ -46,12 +38,6 @@ internal object WeroExtractionsMapper {
                 )
             )
         } else {
-            LOG.debug(
-                "Wero mapper pass-through (flag={}, payloadPresent={}, markerPresent={})",
-                flagEnabled,
-                !scannedPayload.isNullOrEmpty(),
-                hasWeroMarker(specificExtractions),
-            )
             specificExtractions
         }
     }
@@ -88,7 +74,6 @@ internal object WeroExtractionsMapper {
         ) {
             return false
         }
-        LOG.debug("Wero fallback triggered; routing back to camera for unsupported-QR warning")
         onFallback()
         return true
     }
