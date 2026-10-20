@@ -141,6 +141,15 @@ internal abstract class CameraFragmentExtension {
         }
 
     /**
+     * Whether the client configuration enables Wero QR code scanning. Unlike
+     * [isUnsupportedQRCodeWarningEnabled], this value is **not** pinned for the session: it is
+     * read fresh from the provider every time a QR code is scanned, so a configuration refresh
+     * mid-session takes effect on the next scan without needing a dedicated session reset.
+     */
+    fun isWeroQRCodeScanningEnabled(): Boolean =
+        giniBankConfigurationProvider.provide().isWeroQRCodeScanningEnabled
+
+    /**
      * Entry point of the QR-code analysis step and therefore the single place that decides which
      * of its two mutually exclusive halves runs: QR-code education below, invoice retrieval in the
      * `else` branch. R12 requires the ingredient brand element for both halves.
