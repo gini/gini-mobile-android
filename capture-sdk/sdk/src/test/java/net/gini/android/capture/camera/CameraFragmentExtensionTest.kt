@@ -385,4 +385,5 @@ class CameraFragmentExtensionTest {
 
         assertThat(extension.isWeroQRCodeScanningEnabled()).isTrue()
     }
+
 }

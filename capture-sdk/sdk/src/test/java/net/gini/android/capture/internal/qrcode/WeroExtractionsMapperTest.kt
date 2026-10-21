@@ -167,6 +167,17 @@ class WeroExtractionsMapperTest {
     }
 
     @Test
+    fun `shouldRouteBackToCameraForWeroFallback is false when payload is empty`() {
+        assertThat(
+            WeroExtractionsMapper.shouldRouteBackToCameraForWeroFallback(
+                originalSpecificExtractions = emptyMap(),
+                scannedPayload = "",
+                flagEnabled = true,
+            )
+        ).isFalse()
+    }
+
+    @Test
     fun `shouldRouteBackToCameraForWeroFallback is true for Wero candidate with empty extractions`() {
         assertThat(
             WeroExtractionsMapper.shouldRouteBackToCameraForWeroFallback(
