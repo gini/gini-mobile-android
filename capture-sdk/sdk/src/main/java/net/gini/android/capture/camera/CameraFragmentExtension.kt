@@ -5,6 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import net.gini.android.capture.di.getGiniCaptureKoin
@@ -222,6 +223,17 @@ internal abstract class CameraFragmentExtension {
             educationMutex.withLock {
                 fragmentListener.onExtractionsAvailable(extractions)
             }
+        }
+    }
+
+    /**
+     * Wero fallback counterpart of [onQrCodeRecognized]: waits on [educationMutex] so the
+     * unsupported-QR popup never interrupts the 4.5 s education carousel (iOS parity).
+     */
+    fun onQrCodeFallbackToUnsupported(onMainThread: () -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            educationMutex.withLock { /* wait */ }
+            withContext(Dispatchers.Main) { onMainThread() }
         }
     }
 

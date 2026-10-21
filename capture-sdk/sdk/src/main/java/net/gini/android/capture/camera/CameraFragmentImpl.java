@@ -1487,8 +1487,18 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                                 final boolean flagEnabled = isWeroQRCodeScanningEnabled();
                                 if (WeroExtractionsMapper.INSTANCE.shouldRouteBackToCameraForWeroFallback(
                                         originalExtractions, scannedPayload, flagEnabled)) {
-                                    setPoweredByGiniVisible(false);
-                                    showUnsupportedQRCodePopup(true);
+                                    // Wait for the education carousel (iOS parity), then tear
+                                    // down the Compose overlay the Wero flow stranded on screen
+                                    // and show the unsupported-QR popup.
+                                    onQrCodeFallbackToUnsupported(() -> {
+                                        if (mFragment.getActivity() != null
+                                                && mFragment.getView() != null) {
+                                            getQrCodeEducationPopup().hide();
+                                            setPoweredByGiniVisible(false);
+                                            showUnsupportedQRCodePopup(true);
+                                        }
+                                        return kotlin.Unit.INSTANCE;
+                                    });
                                     return null;
                                 }
                                 final Map<String, GiniCaptureSpecificExtraction> mappedExtractions =
