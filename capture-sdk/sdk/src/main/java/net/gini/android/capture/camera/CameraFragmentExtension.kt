@@ -1,6 +1,7 @@
 package net.gini.android.capture.camera
 
 import androidx.annotation.VisibleForTesting
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -50,6 +51,18 @@ internal abstract class CameraFragmentExtension {
     private val getIngredientBrandVisibleUseCase:
             GetIngredientBrandVisibleUseCase by getGiniCaptureKoin().inject()
     private val educationMutex = Mutex()
+
+    /**
+     * Dispatcher the [onQrCodeFallbackToUnsupported] worker launches on while it waits on
+     * [educationMutex]. Mutable because this class is `abstract` with no injectable constructor
+     * and is extended from Java — tests swap in a `TestDispatcher` to drive it deterministically.
+     */
+    @VisibleForTesting
+    internal var fallbackIoDispatcher: CoroutineDispatcher = Dispatchers.IO
+
+    /** Dispatcher [onQrCodeFallbackToUnsupported] hops to for the main-thread callback. */
+    @VisibleForTesting
+    internal var fallbackMainDispatcher: CoroutineDispatcher = Dispatchers.Main
 
     /**
      * Held for the lifetime of the fragment rather than rebuilt per view creation.
@@ -231,9 +244,9 @@ internal abstract class CameraFragmentExtension {
      * unsupported-QR popup never interrupts the 4.5 s education carousel (iOS parity).
      */
     fun onQrCodeFallbackToUnsupported(onMainThread: () -> Unit) {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(fallbackIoDispatcher).launch {
             educationMutex.withLock { /* wait */ }
-            withContext(Dispatchers.Main) { onMainThread() }
+            withContext(fallbackMainDispatcher) { onMainThread() }
         }
     }
 

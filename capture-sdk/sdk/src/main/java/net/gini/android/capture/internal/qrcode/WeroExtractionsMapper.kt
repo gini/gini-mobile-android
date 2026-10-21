@@ -24,14 +24,14 @@ internal object WeroExtractionsMapper {
         scannedPayload: String?,
         flagEnabled: Boolean,
     ): Map<String, GiniCaptureSpecificExtraction> {
-        val applies = flagEnabled &&
+        return if (flagEnabled &&
             !scannedPayload.isNullOrEmpty() &&
             hasWeroMarker(specificExtractions)
-        return if (applies) {
+        ) {
             mapOf(
                 WERO_PAYMENT_QR_CODE_URL_KEY to GiniCaptureSpecificExtraction(
                     WERO_PAYMENT_QR_CODE_URL_KEY,
-                    scannedPayload!!,
+                    scannedPayload,
                     WERO_PAYMENT_QR_CODE_URL_KEY,
                     null,
                     emptyList(),
