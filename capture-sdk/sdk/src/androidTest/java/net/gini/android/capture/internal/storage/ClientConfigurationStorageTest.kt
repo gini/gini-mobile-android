@@ -37,6 +37,7 @@ class ClientConfigurationStorageTest {
             isUnsupportedQRCodeWarningEnabled = true,
             isEInvoiceEnabled = true,
             isPaymentScheduleHintEnabled = true,
+            isWeroQRCodeScanningEnabled = true,
         )
 
         storage.saveConfiguration(configuration)
@@ -55,6 +56,7 @@ class ClientConfigurationStorageTest {
         assertThat(result.isPaymentDueHintEnabled).isEqualTo(configuration.isPaymentDueHintEnabled)
         assertThat(result.isUnsupportedQRCodeWarningEnabled).isTrue()
         assertThat(result.isPaymentScheduleHintEnabled).isTrue()
+        assertThat(result.isWeroQRCodeScanningEnabled).isTrue()
     }
 
     @Test
@@ -91,6 +93,7 @@ class ClientConfigurationStorageTest {
         isEInvoiceEnabled: Boolean = false,
         isPaymentScheduleHintEnabled: Boolean = false,
         ingredientBrandScreens: Set<String> = emptySet(),
+        isWeroQRCodeScanningEnabled: Boolean = false,
     ) = Configuration(
         id = UUID.randomUUID(),
         clientID = "test-client-id",
@@ -109,5 +112,6 @@ class ClientConfigurationStorageTest {
         isPaymentScheduleHintEnabled = isPaymentScheduleHintEnabled,
         isCreditNoteHintEnabled = false,
         ingredientBrandScreens = ingredientBrandScreens,
+        isWeroQRCodeScanningEnabled = isWeroQRCodeScanningEnabled,
     )
 }

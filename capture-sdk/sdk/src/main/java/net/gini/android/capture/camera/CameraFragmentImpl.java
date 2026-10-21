@@ -1313,7 +1313,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     // the EPS path via QRCodePopup.progressViews(); that was incidental, not the requirement —
     // please do not "restore" it. UNKNOWN is a Wero candidate and goes through analyzeQRCode like
     // the parsed formats, so it does raise the badge.
-    private void handlePaymentQRCodeData(@NonNull final PaymentQRCodeData paymentQRCodeData) {
+    @VisibleForTesting
+    void handlePaymentQRCodeData(@NonNull final PaymentQRCodeData paymentQRCodeData) {
         switch (paymentQRCodeData.getFormat()) {
             case EPC069_12:
             case BEZAHL_CODE:

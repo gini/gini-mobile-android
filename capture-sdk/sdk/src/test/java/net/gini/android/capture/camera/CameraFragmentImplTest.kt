@@ -421,4 +421,80 @@ class CameraFragmentImplTest {
 
             fun isOnlyQRCodeScanningEnabledForTest() = isOnlyQRCodeScanningEnabled()
     }
+
+    @Test
+    fun `onNonPaymentQRCodeDetected routes locally unparseable QR through payment popup when Wero flag is on`() {
+        GiniCapture.Builder().setQRCodeScanningEnabled(true).build()
+        val configurationProvider = getGiniCaptureKoin().get<GiniBankConfigurationProvider>()
+        configurationProvider.update { it.copy(isWeroQRCodeScanningEnabled = true) }
+
+        val activityController = Robolectric.buildActivity(FragmentActivity::class.java)
+        val fragmentCallback = mock<FragmentImplCallback> {
+            on { activity } doReturn activityController.get()
+        }
+        val fragmentImpl = CameraFragmentImplWithoutQRCodeReader(fragmentCallback, mock<CancelListener>(), false)
+        fragmentImpl.mUnsupportedQRCodePopup = mock { on { isShown } doReturn false }
+        fragmentImpl.mPaymentQRCodePopup = mock { on { isShown } doReturn false }
+        fragmentImpl.mImageFrame = mock()
+        fragmentImpl.mIbanDetectedTextView = mock { on { visibility } doReturn View.GONE }
+
+        fragmentImpl.onNonPaymentQRCodeDetected("https://wero.example/pay/123")
+
+        assertTrue(fragmentImpl.mInterfaceHidden)
+        verify(fragmentImpl.mPaymentQRCodePopup).show(any<PaymentQRCodeData>())
+    }
+
+    @Test
+    fun `onNonPaymentQRCodeDetected shows unsupported popup when Wero flag is off`() {
+        GiniCapture.Builder().setQRCodeScanningEnabled(true).build()
+
+        val activityController = Robolectric.buildActivity(FragmentActivity::class.java)
+        val fragmentCallback = mock<FragmentImplCallback> {
+            on { activity } doReturn activityController.get()
+        }
+        val fragmentImpl = CameraFragmentImplWithoutQRCodeReader(fragmentCallback, mock<CancelListener>(), false)
+        fragmentImpl.mUnsupportedQRCodePopup = mock { on { isShown } doReturn false }
+        fragmentImpl.mPaymentQRCodePopup = mock { on { isShown } doReturn false }
+        fragmentImpl.mImageFrame = mock()
+        fragmentImpl.mIbanDetectedTextView = mock { on { visibility } doReturn View.GONE }
+
+        fragmentImpl.onNonPaymentQRCodeDetected("not-a-known-qr-format")
+
+        assertTrue(fragmentImpl.mInterfaceHidden)
+        assertEquals("not-a-known-qr-format", fragmentImpl.mQRCodeContent)
+    }
+
+    @Test
+    fun `onNonPaymentQRCodeDetected is a no-op while IBAN label is visible`() {
+        GiniCapture.Builder().setQRCodeScanningEnabled(true).build()
+        val fragmentImpl = CameraFragmentImplWithoutQRCodeReader(mock(), mock<CancelListener>(), false)
+        fragmentImpl.mIbanDetectedTextView = mock { on { visibility } doReturn View.VISIBLE }
+
+        fragmentImpl.onNonPaymentQRCodeDetected("payload")
+
+        assertFalse(fragmentImpl.mInterfaceHidden)
+        assertNull(fragmentImpl.mQRCodeContent)
+    }
+
+    @Test
+    fun `handlePaymentQRCodeData UNKNOWN parks the raw payload and triggers analysis`() {
+        GiniCapture.Builder().setQRCodeScanningEnabled(true).build()
+        val captured = mutableListOf<QRCodeDocument>()
+        val fragmentImpl = object : CameraFragmentImplWithoutQRCodeReader(mock(), mock<CancelListener>(), false) {
+            override fun analyzeQRCode(doc: QRCodeDocument?) { captured += doc!! }
+        }
+
+        val weroCandidate = PaymentQRCodeData.fromWeroCandidate("https://wero.example/pay/42")
+        try {
+            fragmentImpl.handlePaymentQRCodeData(weroCandidate)
+
+            assertEquals(1, captured.size)
+            assertEquals(
+                "https://wero.example/pay/42",
+                net.gini.android.capture.internal.qrcode.WeroScannedPayloadHolder.consume()
+            )
+        } finally {
+            net.gini.android.capture.internal.qrcode.WeroScannedPayloadHolder.consume()
+        }
+    }
 }
