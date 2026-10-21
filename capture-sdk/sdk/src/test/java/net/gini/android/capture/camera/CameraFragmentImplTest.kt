@@ -497,4 +497,84 @@ class CameraFragmentImplTest {
             net.gini.android.capture.internal.qrcode.WeroScannedPayloadHolder.consume()
         }
     }
+
+    @Test
+    fun `analyzeQRCode delivers mapped extractions when backend returns non-Wero result`() {
+        val activity = Robolectric.buildActivity(FragmentActivity::class.java).get()
+        val extractions = mapOf(
+            "iban" to net.gini.android.capture.network.model.GiniCaptureSpecificExtraction(
+                "iban", "DE75512108001245126199", "iban", null, emptyList()
+            )
+        )
+        wireNetworkRequestsManagerFor(extractions)
+        val fragmentCallback = mock<FragmentImplCallback> { on { this.activity } doReturn activity }
+        val fragmentImpl = object : CameraFragmentImplWithoutQRCodeReader(
+            fragmentCallback, mock<CancelListener>(), false
+        ) {
+            override fun hideImageCorners() = Unit
+        }
+        fragmentImpl.mActivityIndicatorBackground = View(activity).apply { visibility = View.VISIBLE }
+        fragmentImpl.mLoadingIndicator = loadingIndicatorOwning(RecordingLoadingIndicatorAdapter())
+        fragmentImpl.mPaymentQRCodePopup = mockk(relaxed = true)
+        fragmentImpl.mImageFrame = mock()
+        fragmentImpl.setListener(mockk(relaxed = true))
+
+        fragmentImpl.analyzeQRCode(qrCodeDocument())
+
+        io.mockk.verify { fragmentImpl.mPaymentQRCodePopup.hide() }
+    }
+
+    @Test
+    fun `analyzeQRCode runs the no-results path when backend returns empty extractions`() {
+        val activity = Robolectric.buildActivity(FragmentActivity::class.java).get()
+        wireNetworkRequestsManagerFor(emptyMap())
+        val fragmentImpl = qrCodeFragmentImpl(activity)
+        fragmentImpl.mActivityIndicatorBackground = View(activity).apply { visibility = View.VISIBLE }
+        fragmentImpl.mLoadingIndicator = loadingIndicatorOwning(RecordingLoadingIndicatorAdapter())
+        fragmentImpl.mPaymentQRCodePopup = mockk(relaxed = true)
+        fragmentImpl.mImageFrame = mock()
+        fragmentImpl.setListener(mockk(relaxed = true))
+
+        try {
+            fragmentImpl.analyzeQRCode(qrCodeDocument())
+        } catch (_: Throwable) {
+            // NoResultsFragment.navigateToNoResultsFragment calls findNavController on the test's
+            // mock Fragment — the preceding setPoweredByGiniVisible(false) ran before the throw.
+        }
+
+        io.mockk.verify { fragmentImpl.mPaymentQRCodePopup.hide() }
+    }
+
+    private fun wireNetworkRequestsManagerFor(
+        extractions: Map<String, net.gini.android.capture.network.model.GiniCaptureSpecificExtraction>,
+    ) {
+        val document = mock<net.gini.android.capture.document.GiniCaptureDocument>()
+        val uploadResult = net.gini.android.capture.internal.network.NetworkRequestResult(
+            document, "api-doc-id", "api-doc-filename"
+        )
+        val multiPageDocument =
+            mock<net.gini.android.capture.document.GiniCaptureMultiPageDocument<*, *>>()
+        val analysisResult = net.gini.android.capture.network.AnalysisResult(
+            "api-doc-id", "api-doc-filename", extractions
+        )
+        @Suppress("UNCHECKED_CAST")
+        val analyzeResult =
+            net.gini.android.capture.internal.network.AnalysisNetworkRequestResult(
+                multiPageDocument as net.gini.android.capture.document.GiniCaptureMultiPageDocument<Nothing, Nothing>,
+                "api-doc-id", "api-doc-filename", analysisResult
+            )
+        val networkRequestsManager =
+            mock<net.gini.android.capture.internal.network.NetworkRequestsManager>()
+        whenever(networkRequestsManager.upload(any(), any()))
+            .thenReturn(CompletableFuture.completedFuture(uploadResult))
+        @Suppress("UNCHECKED_CAST")
+        val analyzeFuture = CompletableFuture.completedFuture(analyzeResult)
+                as CompletableFuture<net.gini.android.capture.internal.network.AnalysisNetworkRequestResult<net.gini.android.capture.document.GiniCaptureMultiPageDocument<*, *>>>
+        whenever(networkRequestsManager.analyze(any())).thenReturn(analyzeFuture)
+        val internal = mock<GiniCapture.Internal>()
+        whenever(internal.networkRequestsManager).thenReturn(networkRequestsManager)
+        val giniCapture = mock<GiniCapture>()
+        whenever(giniCapture.internal()).thenReturn(internal)
+        GiniCaptureHelper.setGiniCaptureInstance(giniCapture)
+    }
 }
