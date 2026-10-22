@@ -4,6 +4,11 @@ import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.education.GetEducationFeatureEnabledUseCase
 import android.view.View
@@ -325,4 +330,60 @@ class CameraFragmentExtensionTest {
 
         assertThat(second).isSameInstanceAs(first)
     }
+
+    /**
+     * Reads the private `educationMutex` reflectively so the test can hold the lock and release
+     * it on cue, mirroring the Compose completion callback that owns the unlock in production.
+     */
+    private fun CameraFragmentExtension.educationMutex(): Mutex {
+        val field = CameraFragmentExtension::class.java.getDeclaredField("educationMutex")
+        field.isAccessible = true
+        return field.get(this) as Mutex
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `onQrCodeFallbackToUnsupported invokes the callback once the education mutex is free`() =
+        runTest {
+            val dispatcher = StandardTestDispatcher(testScheduler)
+            extension.fallbackIoDispatcher = dispatcher
+            extension.fallbackMainDispatcher = dispatcher
+            var called = 0
+
+            extension.onQrCodeFallbackToUnsupported { called += 1 }
+            advanceUntilIdle()
+
+            assertThat(called).isEqualTo(1)
+        }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `onQrCodeFallbackToUnsupported waits while the education mutex is held and then fires`() =
+        runTest {
+            val dispatcher = StandardTestDispatcher(testScheduler)
+            extension.fallbackIoDispatcher = dispatcher
+            extension.fallbackMainDispatcher = dispatcher
+            val mutex = extension.educationMutex()
+            mutex.lock()
+            var called = 0
+
+            extension.onQrCodeFallbackToUnsupported { called += 1 }
+            advanceUntilIdle()
+            assertThat(called).isEqualTo(0)
+
+            mutex.unlock()
+            advanceUntilIdle()
+
+            assertThat(called).isEqualTo(1)
+        }
+
+    @Test
+    fun `isWeroQRCodeScanningEnabled reflects the configuration provider`() {
+        assertThat(extension.isWeroQRCodeScanningEnabled()).isFalse()
+
+        configurationProvider.update { it.copy(isWeroQRCodeScanningEnabled = true) }
+
+        assertThat(extension.isWeroQRCodeScanningEnabled()).isTrue()
+    }
+
 }

@@ -1,10 +1,12 @@
 package net.gini.android.capture.camera
 
 import androidx.annotation.VisibleForTesting
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import net.gini.android.capture.di.getGiniCaptureKoin
@@ -49,6 +51,18 @@ internal abstract class CameraFragmentExtension {
     private val getIngredientBrandVisibleUseCase:
             GetIngredientBrandVisibleUseCase by getGiniCaptureKoin().inject()
     private val educationMutex = Mutex()
+
+    /**
+     * Dispatcher the [onQrCodeFallbackToUnsupported] worker launches on while it waits on
+     * [educationMutex]. Mutable because this class is `abstract` with no injectable constructor
+     * and is extended from Java — tests swap in a `TestDispatcher` to drive it deterministically.
+     */
+    @VisibleForTesting
+    internal var fallbackIoDispatcher: CoroutineDispatcher = Dispatchers.IO
+
+    /** Dispatcher [onQrCodeFallbackToUnsupported] hops to for the main-thread callback. */
+    @VisibleForTesting
+    internal var fallbackMainDispatcher: CoroutineDispatcher = Dispatchers.Main
 
     /**
      * Held for the lifetime of the fragment rather than rebuilt per view creation.
@@ -141,6 +155,15 @@ internal abstract class CameraFragmentExtension {
         }
 
     /**
+     * Whether the client configuration enables Wero QR code scanning. Unlike
+     * [isUnsupportedQRCodeWarningEnabled], this value is **not** pinned for the session: it is
+     * read fresh from the provider every time a QR code is scanned, so a configuration refresh
+     * mid-session takes effect on the next scan without needing a dedicated session reset.
+     */
+    fun isWeroQRCodeScanningEnabled(): Boolean =
+        giniBankConfigurationProvider.provide().isWeroQRCodeScanningEnabled
+
+    /**
      * Entry point of the QR-code analysis step and therefore the single place that decides which
      * of its two mutually exclusive halves runs: QR-code education below, invoice retrieval in the
      * `else` branch. R12 requires the ingredient brand element for both halves.
@@ -213,6 +236,17 @@ internal abstract class CameraFragmentExtension {
             educationMutex.withLock {
                 fragmentListener.onExtractionsAvailable(extractions)
             }
+        }
+    }
+
+    /**
+     * Wero fallback counterpart of [onQrCodeRecognized]: waits on [educationMutex] so the
+     * unsupported-QR popup never interrupts the 4.5 s education carousel (iOS parity).
+     */
+    fun onQrCodeFallbackToUnsupported(onMainThread: () -> Unit) {
+        CoroutineScope(fallbackIoDispatcher).launch {
+            educationMutex.withLock { /* wait */ }
+            withContext(fallbackMainDispatcher) { onMainThread() }
         }
     }
 

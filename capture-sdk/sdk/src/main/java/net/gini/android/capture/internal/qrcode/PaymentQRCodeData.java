@@ -57,6 +57,20 @@ public class PaymentQRCodeData implements Parcelable {
         mAmount = nullToEmpty(amount);
     }
 
+    /**
+     * Builds a Wero candidate: a payment QR Code whose raw payload we forward to the backend
+     * without any client-side parsing. All structured payment fields are empty, so
+     * {@link #hasAnyPaymentData()} is {@code false} and {@link #toJson()} emits only the
+     * {@code qrcode} field.
+     *
+     * @param rawPayload the raw QR Code content that was scanned
+     * @return a {@link PaymentQRCodeData} with {@link Format#UNKNOWN}
+     */
+    @NonNull
+    public static PaymentQRCodeData fromWeroCandidate(@NonNull final String rawPayload) {
+        return new PaymentQRCodeData(Format.UNKNOWN, rawPayload, null, null, null, null, null);
+    }
+
     private String nullToEmpty(@Nullable final String str) {
         return TextUtils.isEmpty(str) ? "" : str;
     }
@@ -283,6 +297,11 @@ public class PaymentQRCodeData implements Parcelable {
         /**
          * HUB3 payment standard used in Croatia, encoded as a PDF417 barcode.
          */
-        HUB3
+        HUB3,
+        /**
+         * Unparsed QR Code content forwarded to the backend as-is — used for Wero candidates
+         * when Wero QR code scanning is enabled on the client configuration.
+         */
+        UNKNOWN
     }
 }

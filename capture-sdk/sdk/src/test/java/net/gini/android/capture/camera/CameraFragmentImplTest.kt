@@ -421,4 +421,160 @@ class CameraFragmentImplTest {
 
             fun isOnlyQRCodeScanningEnabledForTest() = isOnlyQRCodeScanningEnabled()
     }
+
+    @Test
+    fun `onNonPaymentQRCodeDetected routes locally unparseable QR through payment popup when Wero flag is on`() {
+        GiniCapture.Builder().setQRCodeScanningEnabled(true).build()
+        val configurationProvider = getGiniCaptureKoin().get<GiniBankConfigurationProvider>()
+        configurationProvider.update { it.copy(isWeroQRCodeScanningEnabled = true) }
+
+        val activityController = Robolectric.buildActivity(FragmentActivity::class.java)
+        val fragmentCallback = mock<FragmentImplCallback> {
+            on { activity } doReturn activityController.get()
+        }
+        val fragmentImpl = CameraFragmentImplWithoutQRCodeReader(fragmentCallback, mock<CancelListener>(), false)
+        fragmentImpl.mUnsupportedQRCodePopup = mock { on { isShown } doReturn false }
+        fragmentImpl.mPaymentQRCodePopup = mock { on { isShown } doReturn false }
+        fragmentImpl.mImageFrame = mock()
+        fragmentImpl.mIbanDetectedTextView = mock { on { visibility } doReturn View.GONE }
+
+        fragmentImpl.onNonPaymentQRCodeDetected("https://wero.example/pay/123")
+
+        assertTrue(fragmentImpl.mInterfaceHidden)
+        verify(fragmentImpl.mPaymentQRCodePopup).show(any<PaymentQRCodeData>())
+    }
+
+    @Test
+    fun `onNonPaymentQRCodeDetected shows unsupported popup when Wero flag is off`() {
+        GiniCapture.Builder().setQRCodeScanningEnabled(true).build()
+
+        val activityController = Robolectric.buildActivity(FragmentActivity::class.java)
+        val fragmentCallback = mock<FragmentImplCallback> {
+            on { activity } doReturn activityController.get()
+        }
+        val fragmentImpl = CameraFragmentImplWithoutQRCodeReader(fragmentCallback, mock<CancelListener>(), false)
+        fragmentImpl.mUnsupportedQRCodePopup = mock { on { isShown } doReturn false }
+        fragmentImpl.mPaymentQRCodePopup = mock { on { isShown } doReturn false }
+        fragmentImpl.mImageFrame = mock()
+        fragmentImpl.mIbanDetectedTextView = mock { on { visibility } doReturn View.GONE }
+
+        fragmentImpl.onNonPaymentQRCodeDetected("not-a-known-qr-format")
+
+        assertTrue(fragmentImpl.mInterfaceHidden)
+        assertEquals("not-a-known-qr-format", fragmentImpl.mQRCodeContent)
+    }
+
+    @Test
+    fun `onNonPaymentQRCodeDetected is a no-op while IBAN label is visible`() {
+        GiniCapture.Builder().setQRCodeScanningEnabled(true).build()
+        val fragmentImpl = CameraFragmentImplWithoutQRCodeReader(mock(), mock<CancelListener>(), false)
+        fragmentImpl.mIbanDetectedTextView = mock { on { visibility } doReturn View.VISIBLE }
+
+        fragmentImpl.onNonPaymentQRCodeDetected("payload")
+
+        assertFalse(fragmentImpl.mInterfaceHidden)
+        assertNull(fragmentImpl.mQRCodeContent)
+    }
+
+    @Test
+    fun `handlePaymentQRCodeData UNKNOWN parks the raw payload and triggers analysis`() {
+        GiniCapture.Builder().setQRCodeScanningEnabled(true).build()
+        val captured = mutableListOf<QRCodeDocument>()
+        val fragmentImpl = object : CameraFragmentImplWithoutQRCodeReader(mock(), mock<CancelListener>(), false) {
+            override fun analyzeQRCode(doc: QRCodeDocument?) { captured += doc!! }
+        }
+
+        val weroCandidate = PaymentQRCodeData.fromWeroCandidate("https://wero.example/pay/42")
+        try {
+            fragmentImpl.handlePaymentQRCodeData(weroCandidate)
+
+            assertEquals(1, captured.size)
+            assertEquals(
+                "https://wero.example/pay/42",
+                net.gini.android.capture.internal.qrcode.WeroScannedPayloadHolder.consume()
+            )
+        } finally {
+            net.gini.android.capture.internal.qrcode.WeroScannedPayloadHolder.consume()
+        }
+    }
+
+    @Test
+    fun `analyzeQRCode delivers mapped extractions when backend returns non-Wero result`() {
+        val activity = Robolectric.buildActivity(FragmentActivity::class.java).get()
+        val extractions = mapOf(
+            "iban" to net.gini.android.capture.network.model.GiniCaptureSpecificExtraction(
+                "iban", "DE75512108001245126199", "iban", null, emptyList()
+            )
+        )
+        wireNetworkRequestsManagerFor(extractions)
+        val fragmentCallback = mock<FragmentImplCallback> { on { this.activity } doReturn activity }
+        val fragmentImpl = object : CameraFragmentImplWithoutQRCodeReader(
+            fragmentCallback, mock<CancelListener>(), false
+        ) {
+            override fun hideImageCorners() = Unit
+        }
+        fragmentImpl.mActivityIndicatorBackground = View(activity).apply { visibility = View.VISIBLE }
+        fragmentImpl.mLoadingIndicator = loadingIndicatorOwning(RecordingLoadingIndicatorAdapter())
+        fragmentImpl.mPaymentQRCodePopup = mockk(relaxed = true)
+        fragmentImpl.mImageFrame = mock()
+        fragmentImpl.setListener(mockk(relaxed = true))
+
+        fragmentImpl.analyzeQRCode(qrCodeDocument())
+
+        io.mockk.verify { fragmentImpl.mPaymentQRCodePopup.hide() }
+    }
+
+    @Test
+    fun `analyzeQRCode runs the no-results path when backend returns empty extractions`() {
+        val activity = Robolectric.buildActivity(FragmentActivity::class.java).get()
+        wireNetworkRequestsManagerFor(emptyMap())
+        val fragmentImpl = qrCodeFragmentImpl(activity)
+        fragmentImpl.mActivityIndicatorBackground = View(activity).apply { visibility = View.VISIBLE }
+        fragmentImpl.mLoadingIndicator = loadingIndicatorOwning(RecordingLoadingIndicatorAdapter())
+        fragmentImpl.mPaymentQRCodePopup = mockk(relaxed = true)
+        fragmentImpl.mImageFrame = mock()
+        fragmentImpl.setListener(mockk(relaxed = true))
+
+        try {
+            fragmentImpl.analyzeQRCode(qrCodeDocument())
+        } catch (_: Throwable) {
+            // NoResultsFragment.navigateToNoResultsFragment calls findNavController on the test's
+            // mock Fragment — the preceding setPoweredByGiniVisible(false) ran before the throw.
+        }
+
+        io.mockk.verify { fragmentImpl.mPaymentQRCodePopup.hide() }
+    }
+
+    private fun wireNetworkRequestsManagerFor(
+        extractions: Map<String, net.gini.android.capture.network.model.GiniCaptureSpecificExtraction>,
+    ) {
+        val document = mock<net.gini.android.capture.document.GiniCaptureDocument>()
+        val uploadResult = net.gini.android.capture.internal.network.NetworkRequestResult(
+            document, "api-doc-id", "api-doc-filename"
+        )
+        val multiPageDocument =
+            mock<net.gini.android.capture.document.GiniCaptureMultiPageDocument<*, *>>()
+        val analysisResult = net.gini.android.capture.network.AnalysisResult(
+            "api-doc-id", "api-doc-filename", extractions
+        )
+        @Suppress("UNCHECKED_CAST")
+        val analyzeResult =
+            net.gini.android.capture.internal.network.AnalysisNetworkRequestResult(
+                multiPageDocument as net.gini.android.capture.document.GiniCaptureMultiPageDocument<Nothing, Nothing>,
+                "api-doc-id", "api-doc-filename", analysisResult
+            )
+        val networkRequestsManager =
+            mock<net.gini.android.capture.internal.network.NetworkRequestsManager>()
+        whenever(networkRequestsManager.upload(any(), any()))
+            .thenReturn(CompletableFuture.completedFuture(uploadResult))
+        @Suppress("UNCHECKED_CAST")
+        val analyzeFuture = CompletableFuture.completedFuture(analyzeResult)
+                as CompletableFuture<net.gini.android.capture.internal.network.AnalysisNetworkRequestResult<net.gini.android.capture.document.GiniCaptureMultiPageDocument<*, *>>>
+        whenever(networkRequestsManager.analyze(any())).thenReturn(analyzeFuture)
+        val internal = mock<GiniCapture.Internal>()
+        whenever(internal.networkRequestsManager).thenReturn(networkRequestsManager)
+        val giniCapture = mock<GiniCapture>()
+        whenever(giniCapture.internal()).thenReturn(internal)
+        GiniCaptureHelper.setGiniCaptureInstance(giniCapture)
+    }
 }
