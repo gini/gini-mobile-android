@@ -122,7 +122,12 @@ class WeroExtractionsMapperTest {
         )
 
         assertThat(result.keys).containsExactly(WERO_PAYMENT_QR_CODE_URL_KEY)
-        assertThat(result.getValue(WERO_PAYMENT_QR_CODE_URL_KEY).value).isEqualTo(weroUrl)
+        val entry = result.getValue(WERO_PAYMENT_QR_CODE_URL_KEY)
+        assertThat(entry.value).isEqualTo(weroUrl)
+        // Candidates mirror handleEPSPaymentQRCode: one GiniCaptureExtraction carrying the payload.
+        assertThat(entry.candidates).hasSize(1)
+        assertThat(entry.candidates[0].value).isEqualTo(weroUrl)
+        assertThat(entry.candidates[0].entity).isEqualTo(WERO_PAYMENT_QR_CODE_URL_KEY)
     }
 
     @Test

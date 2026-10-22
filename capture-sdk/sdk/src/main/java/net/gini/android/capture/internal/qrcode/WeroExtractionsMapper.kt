@@ -1,5 +1,6 @@
 package net.gini.android.capture.internal.qrcode
 
+import net.gini.android.capture.network.model.GiniCaptureExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 
 /**
@@ -34,7 +35,9 @@ internal object WeroExtractionsMapper {
                     scannedPayload,
                     WERO_PAYMENT_QR_CODE_URL_KEY,
                     null,
-                    emptyList(),
+                    // Matches handleEPSPaymentQRCode: candidates carries the raw payload as a
+                    // single GiniCaptureExtraction so Wero and EPS deliver the same shape.
+                    listOf(GiniCaptureExtraction(scannedPayload, WERO_PAYMENT_QR_CODE_URL_KEY, null)),
                 )
             )
         } else {
