@@ -8,12 +8,12 @@ import android.widget.TextView;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.StringRes;
+import androidx.annotation.VisibleForTesting;
 import androidx.recyclerview.widget.RecyclerView;
 
 import net.gini.android.capture.DocumentImportEnabledFileTypes;
 import net.gini.android.capture.R;
 import net.gini.android.capture.di.CaptureSdkJavaInterop;
-import net.gini.android.capture.einvoice.GetEInvoiceFeatureEnabledUseCase;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,13 +35,22 @@ public class SupportedFormatsAdapter extends
 
     private final List<Enum> mItems;
     private Boolean isQRDocument;
-    private GetEInvoiceFeatureEnabledUseCase getEInvoiceFeatureEnabledUseCase;
     private boolean isEInvoiceEnabled;
+    private boolean isWeroQRCodeScanningEnabled;
 
     public SupportedFormatsAdapter(Boolean isQrCodeDocument) {
+        this(isQrCodeDocument,
+                CaptureSdkJavaInterop.getEInvoiceFeatureEnabledUseCase().invoke(),
+                CaptureSdkJavaInterop.getWeroQRCodeScanningEnabledUseCase().invoke());
+    }
+
+    @VisibleForTesting
+    SupportedFormatsAdapter(Boolean isQrCodeDocument,
+                            boolean isEInvoiceEnabled,
+                            boolean isWeroQRCodeScanningEnabled) {
         isQRDocument = isQrCodeDocument;
-        getEInvoiceFeatureEnabledUseCase = CaptureSdkJavaInterop.getEInvoiceFeatureEnabledUseCase();
-        isEInvoiceEnabled = getEInvoiceFeatureEnabledUseCase.invoke();
+        this.isEInvoiceEnabled = isEInvoiceEnabled;
+        this.isWeroQRCodeScanningEnabled = isWeroQRCodeScanningEnabled;
         mItems = setUpItems();
     }
 
@@ -59,6 +68,9 @@ public class SupportedFormatsAdapter extends
             items.add(SupportedFormat.QR_PAY_BY_SQUARE);
             items.add(SupportedFormat.QR_UPNQR);
             items.add(SupportedFormat.QR_HUB3);
+            if (isWeroQRCodeScanningEnabled) {
+                items.add(SupportedFormat.QR_WERO);
+            }
             return items;
         }
 
@@ -83,6 +95,21 @@ public class SupportedFormatsAdapter extends
         items.add(SectionHeader.UNSUPPORTED_FORMATS);
         Collections.addAll(items, UnsupportedFormat.values());
         return items;
+    }
+
+    /**
+     * The string resource of each item in display order: the title for section headers and
+     * the label for format rows.
+     */
+    @VisibleForTesting
+    List<Integer> getItemLabels() {
+        final List<Integer> labels = new ArrayList<>();
+        for (final Enum item : mItems) {
+            labels.add(item instanceof SectionHeader
+                    ? ((SectionHeader) item).title
+                    : ((FormatInfo) item).getLabel());
+        }
+        return labels;
     }
 
     @Override
@@ -194,6 +221,7 @@ public class SupportedFormatsAdapter extends
         QR_PAY_BY_SQUARE(R.string.gc_supported_format_qr_type_pay_by_square),
         QR_UPNQR(R.string.gc_supported_format_qr_type_upnqr),
         QR_HUB3(R.string.gc_supported_format_qr_type_hub3),
+        QR_WERO(R.string.gc_supported_format_qr_type_wero),
         E_INVOICES(R.string.gc_supported_format_e_invoices);
 
         @DrawableRes
