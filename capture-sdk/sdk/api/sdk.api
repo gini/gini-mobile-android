@@ -1434,6 +1434,7 @@ public final class net/gini/android/capture/di/CaptureSdkJavaInterop {
 	public static final field $stable I
 	public static final field INSTANCE Lnet/gini/android/capture/di/CaptureSdkJavaInterop;
 	public static final fun getEInvoiceFeatureEnabledUseCase ()Lnet/gini/android/capture/einvoice/GetEInvoiceFeatureEnabledUseCase;
+	public static final fun getWeroQRCodeScanningEnabledUseCase ()Lnet/gini/android/capture/wero/GetWeroQRCodeScanningEnabledUseCase;
 }
 
 public final class net/gini/android/capture/document/DocumentFactory {
@@ -5581,5 +5582,11 @@ public abstract interface class net/gini/android/capture/view/NavigationBarTopAd
 public abstract interface class net/gini/android/capture/view/OnButtonLoadingIndicatorAdapter : net/gini/android/capture/view/InjectedViewAdapter {
 	public abstract fun onHidden ()V
 	public abstract fun onVisible ()V
+}
+
+public final class net/gini/android/capture/wero/GetWeroQRCodeScanningEnabledUseCase {
+	public static final field $stable I
+	public fun <init> (Lnet/gini/android/capture/internal/provider/GiniBankConfigurationProvider;)V
+	public final fun invoke ()Z
 }
 
