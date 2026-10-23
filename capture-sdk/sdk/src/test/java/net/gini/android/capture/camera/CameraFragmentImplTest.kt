@@ -531,6 +531,7 @@ class CameraFragmentImplTest {
         io.mockk.verify { fragmentImpl.mPaymentQRCodePopup.hide() }
     }
 
+    @kotlinx.coroutines.ExperimentalCoroutinesApi
     @Test
     fun `analyzeQRCode routes back to camera and shows unsupported popup for Wero fallback`() {
         val configurationProvider = getGiniCaptureKoin().get<GiniBankConfigurationProvider>()
@@ -604,6 +605,68 @@ class CameraFragmentImplTest {
         }
 
         io.mockk.verify { fragmentImpl.mPaymentQRCodePopup.hide() }
+    }
+
+    @Test
+    fun `analyzeQRCode drains WeroScannedPayloadHolder when analyze fails`() {
+        val configurationProvider = getGiniCaptureKoin().get<GiniBankConfigurationProvider>()
+        configurationProvider.update { it.copy(isWeroQRCodeScanningEnabled = true) }
+        try {
+            val activity = Robolectric.buildActivity(FragmentActivity::class.java).get()
+            wireNetworkRequestsManagerForAnalyzeFailure()
+            net.gini.android.capture.internal.qrcode.WeroScannedPayloadHolder
+                .set("https://wero.example/pay/failed")
+
+            val fragmentCallback = mock<FragmentImplCallback> {
+                on { this.activity } doReturn activity
+                on { view } doReturn View(activity)
+            }
+            val fragmentImpl = CameraFragmentImplSuppressingImageCorners(
+                fragmentCallback, mock<CancelListener>()
+            )
+            fragmentImpl.mActivityIndicatorBackground =
+                View(activity).apply { visibility = View.VISIBLE }
+            fragmentImpl.mLoadingIndicator =
+                loadingIndicatorOwning(RecordingLoadingIndicatorAdapter())
+            fragmentImpl.mPaymentQRCodePopup = mockk(relaxed = true)
+            fragmentImpl.mImageFrame = mock()
+            fragmentImpl.setListener(mockk(relaxed = true))
+
+            try {
+                fragmentImpl.analyzeQRCode(qrCodeDocument())
+            } catch (_: Throwable) {
+                // handleAnalysisError navigates via a NavController the test does not wire;
+                // the unconditional drain at the top of the handler runs before any such throw.
+            }
+
+            assertNull(
+                "Holder must be drained after a failed /analysis so the next scan isn't miscategorized",
+                net.gini.android.capture.internal.qrcode.WeroScannedPayloadHolder.consume()
+            )
+        } finally {
+            configurationProvider.update { it.copy(isWeroQRCodeScanningEnabled = false) }
+            net.gini.android.capture.internal.qrcode.WeroScannedPayloadHolder.consume()
+        }
+    }
+
+    private fun wireNetworkRequestsManagerForAnalyzeFailure() {
+        val document = mock<net.gini.android.capture.document.GiniCaptureDocument>()
+        val uploadResult = net.gini.android.capture.internal.network.NetworkRequestResult(
+            document, "api-doc-id", "api-doc-filename"
+        )
+        val networkRequestsManager =
+            mock<net.gini.android.capture.internal.network.NetworkRequestsManager>()
+        whenever(networkRequestsManager.upload(any(), any()))
+            .thenReturn(CompletableFuture.completedFuture(uploadResult))
+        val failingAnalyze =
+            CompletableFuture<net.gini.android.capture.internal.network.AnalysisNetworkRequestResult<net.gini.android.capture.document.GiniCaptureMultiPageDocument<*, *>>>()
+        failingAnalyze.completeExceptionally(RuntimeException("backend 500"))
+        whenever(networkRequestsManager.analyze(any())).thenReturn(failingAnalyze)
+        val internal = mock<GiniCapture.Internal>()
+        whenever(internal.networkRequestsManager).thenReturn(networkRequestsManager)
+        val giniCapture = mock<GiniCapture>()
+        whenever(giniCapture.internal()).thenReturn(internal)
+        GiniCaptureHelper.setGiniCaptureInstance(giniCapture)
     }
 
     private fun wireNetworkRequestsManagerFor(
