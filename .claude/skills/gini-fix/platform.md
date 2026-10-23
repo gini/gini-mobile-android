@@ -41,6 +41,16 @@ those branch from the matching version branch, not `main` (see RELEASE.md).
   release introduced a change.
 - Inter-module effects: a bug surfacing in bank-sdk may root-cause in
   capture-sdk or core-api-library — see the dependency chain in AGENTS.md.
+- **Root-cause agent:** when the reproduction from step 2 does not already
+  point at the defective line, hand the hunt to the **`debugger-specialist`**
+  agent (Task tool, `subagent_type: "debugger-specialist"`) with the ticket
+  id, the artifact (stack trace, ANR trace, Gradle/CI output or the test's
+  run history) and the SDK version. It is read-only — it runs single-class
+  tests, `git log`/`blame` and `adb logcat`, never a fix — and returns one
+  hypothesis with `file:line` evidence, a reproduction plan, impact and
+  confidence, and a route line naming the specialist who owns the code.
+  Carry those into `specs/<ticket>-bug.md`; the fix stays with this workflow
+  (step 6) or with the named specialist via `/gini-task`.
 
 ## Regression test conventions
 
