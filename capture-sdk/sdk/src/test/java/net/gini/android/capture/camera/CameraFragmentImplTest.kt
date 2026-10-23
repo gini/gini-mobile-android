@@ -422,6 +422,17 @@ class CameraFragmentImplTest {
             fun isOnlyQRCodeScanningEnabledForTest() = isOnlyQRCodeScanningEnabled()
     }
 
+    /**
+     * Named subclass that no-ops [hideImageCorners]. An anonymous override tripped a Kotlin IR
+     * compiler bug when the test then set the `internal` dispatcher properties on the extension.
+     */
+    private class CameraFragmentImplSuppressingImageCorners(
+        fragment: FragmentImplCallback,
+        cancelListener: CancelListener,
+    ) : CameraFragmentImplWithoutQRCodeReader(fragment, cancelListener, false) {
+        override fun hideImageCorners() = Unit
+    }
+
     @Test
     fun `onNonPaymentQRCodeDetected routes locally unparseable QR through payment popup when Wero flag is on`() {
         GiniCapture.Builder().setQRCodeScanningEnabled(true).build()
@@ -508,11 +519,7 @@ class CameraFragmentImplTest {
         )
         wireNetworkRequestsManagerFor(extractions)
         val fragmentCallback = mock<FragmentImplCallback> { on { this.activity } doReturn activity }
-        val fragmentImpl = object : CameraFragmentImplWithoutQRCodeReader(
-            fragmentCallback, mock<CancelListener>(), false
-        ) {
-            override fun hideImageCorners() = Unit
-        }
+        val fragmentImpl = CameraFragmentImplSuppressingImageCorners(fragmentCallback, mock<CancelListener>())
         fragmentImpl.mActivityIndicatorBackground = View(activity).apply { visibility = View.VISIBLE }
         fragmentImpl.mLoadingIndicator = loadingIndicatorOwning(RecordingLoadingIndicatorAdapter())
         fragmentImpl.mPaymentQRCodePopup = mockk(relaxed = true)
@@ -522,6 +529,60 @@ class CameraFragmentImplTest {
         fragmentImpl.analyzeQRCode(qrCodeDocument())
 
         io.mockk.verify { fragmentImpl.mPaymentQRCodePopup.hide() }
+    }
+
+    @Test
+    fun `analyzeQRCode routes back to camera and shows unsupported popup for Wero fallback`() {
+        val configurationProvider = getGiniCaptureKoin().get<GiniBankConfigurationProvider>()
+        configurationProvider.update { it.copy(isWeroQRCodeScanningEnabled = true) }
+        try {
+            val activity = Robolectric.buildActivity(FragmentActivity::class.java).get()
+            // Non-Wero extractions: backend did not classify the uploaded payload as Wero.
+            val extractions = mapOf(
+                "iban" to net.gini.android.capture.network.model.GiniCaptureSpecificExtraction(
+                    "iban", "DE75512108001245126199", "iban", null, emptyList()
+                )
+            )
+            wireNetworkRequestsManagerFor(extractions)
+            net.gini.android.capture.internal.qrcode.WeroScannedPayloadHolder
+                .set("https://wero.example/pay/42")
+
+            val fragmentCallback = mock<FragmentImplCallback> {
+                on { this.activity } doReturn activity
+                on { view } doReturn View(activity)
+            }
+            val fragmentImpl = CameraFragmentImplSuppressingImageCorners(
+                fragmentCallback, mock<CancelListener>()
+            )
+            // Run the fallback worker synchronously so the Main-dispatched lambda executes
+            // before the test assertions. Cast to the Kotlin extension parent to dodge a Kotlin
+            // IR compiler bug that trips on setting internal properties via an anonymous subclass
+            // of the Java-intermediate CameraFragmentImpl.
+            val extension: CameraFragmentExtension = fragmentImpl
+            extension.fallbackIoDispatcher = kotlinx.coroutines.test.UnconfinedTestDispatcher()
+            extension.fallbackMainDispatcher = kotlinx.coroutines.test.UnconfinedTestDispatcher()
+            fragmentImpl.mActivityIndicatorBackground =
+                View(activity).apply { visibility = View.VISIBLE }
+            fragmentImpl.mLoadingIndicator = loadingIndicatorOwning(RecordingLoadingIndicatorAdapter())
+            fragmentImpl.mPaymentQRCodePopup = mockk(relaxed = true)
+            fragmentImpl.mUnsupportedQRCodePopup = mockk(relaxed = true)
+            fragmentImpl.qrCodeEducationPopup = mockk(relaxed = true)
+            fragmentImpl.mImageFrame = mock()
+            fragmentImpl.mIbanDetectedTextView = mock { on { visibility } doReturn View.GONE }
+            val listener = mockk<CameraFragmentListener>(relaxed = true)
+            fragmentImpl.setListener(listener)
+
+            fragmentImpl.analyzeQRCode(qrCodeDocument())
+
+            // Fallback branch: user stays on camera, education popup is torn down, unsupported
+            // popup appears, and no extraction is delivered to the integrator.
+            io.mockk.verify { fragmentImpl.qrCodeEducationPopup.hide() }
+            io.mockk.verify { fragmentImpl.mUnsupportedQRCodePopup.show(null) }
+            io.mockk.verify(exactly = 0) { listener.onExtractionsAvailable(any()) }
+        } finally {
+            configurationProvider.update { it.copy(isWeroQRCodeScanningEnabled = false) }
+            net.gini.android.capture.internal.qrcode.WeroScannedPayloadHolder.consume()
+        }
     }
 
     @Test
