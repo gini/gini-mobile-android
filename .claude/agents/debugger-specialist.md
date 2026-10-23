@@ -110,7 +110,7 @@ Pick the one class that matches the report. Do not run all four at once. If the 
    - `ActivityNotFoundException`, `FileUriExposedException`, `SecurityException` on a URI or permission → intents, `FileProvider`, permissions. Route `android-security-specialist`.
    - `UninitializedPropertyAccessException`, `NullPointerException` at a Java↔Kotlin boundary, `ClassCastException` → the owning screen's specialist, by the first SDK frame.
    - `CancellationException` escaping to the integrator, or `Resource.Cancelled` treated as an error → `concurrency-specialist`.
-   - `OutOfMemoryError` on image import or page rendering → `concurrency-specialist` for the in-flight work, and note it for the performance owner once that agent exists.
+   - `OutOfMemoryError` on image import or page rendering → `performance-specialist` for what is held or decoded (bitmaps in state, a decode per bind, cache sizing); add `concurrency-specialist` when the in-flight work is the cause.
 4. **Note the module seam.** A top frame in `capture-sdk` with the argument coming from `bank-sdk` (or `default-network`) is a seam cause — the fix may belong to either side; say which and why.
 5. **Ask for the device and API level.** `minSdk 23`: a symbol missing on the reported API level is a version-gate cause.
 
@@ -120,7 +120,7 @@ Pick the one class that matches the report. Do not run all four at once. If the 
 7. **Frames that explain a hang here:** `runBlocking` / `BlockingCoroutine` on `main` (legitimate only inside `GiniSessionInterceptor` on an OkHttp thread); `Tasks.await` outside the QR-code `HandlerThread`; `synchronized` in capture-sdk Java taken on `main` while a worker holds it; `Dispatchers.Main` doing file I/O, bitmap decode or PDF rendering; an Orbit `intent {}` that switches to `mainDispatcher` for heavy work; a `Mutex` used as a signal between callbacks (one waiter never unlocked); an `AsyncTask.get()` or `HandlerThread` join on `main`.
 8. **Deadlocks:** `"main"` waiting on a monitor held by a thread that waits on `main`. The paused-process trace names both.
 9. **No `StrictMode` exists in the SDKs** to switch on, and there is no benchmark module. Say what you would need (a trace from the host with `StrictMode` enabled, or a debuggable example-app build) if the sample is missing.
-10. **Route** `concurrency-specialist`; add `compose-specialist` when the sample is a recomposition storm (`androidx.compose.runtime` frames repeating).
+10. **Route** `concurrency-specialist`; add `performance-specialist` when the sample is a recomposition storm (`androidx.compose.runtime` frames repeating) — every Compose performance finding is its, not `compose-specialist`'s.
 
 ### Gradle / CI failures
 
@@ -175,7 +175,7 @@ Run these in order:
 - **Evidence:** bullets, each anchored to `path/to/File.kt:LINE` or a quoted log/trace line. No paraphrase without a citation. Rules are cited by file and section (`coroutines-flow.md › Rules`, `architecture.md › DI boundaries`), never copied.
 - **Reproduction / verification plan:** the concrete steps or command that reproduce, or the exact steps you would take and what blocks you here.
 - **Alternatives ruled out:** what else fit the symptom and why the evidence excludes it.
-- **Route to:** `compose-specialist` | `views-specialist` | `concurrency-specialist` | `architecture-specialist` | `testing-specialist` | `android-security-specialist` | `a11y-specialist` | `none — environment`, with a one-line reason. Two owners only when the cause spans a seam; say which owns the first move.
+- **Route to:** `compose-specialist` | `views-specialist` | `concurrency-specialist` | `architecture-specialist` | `performance-specialist` | `testing-specialist` | `android-security-specialist` | `a11y-specialist` | `none — environment`, with a one-line reason. Two owners only when the cause spans a seam; say which owns the first move.
 - **What I did NOT do:** "No fix applied. No files edited." — always present.
 - **Verification status:** the exact commands you ran and their result, and the ones you did not run with the reason (denied, no device, no credentials). Nobody should read an unrun check as a passed one.
 
@@ -194,7 +194,8 @@ Impact describes the failure. Confidence describes your hypothesis. Report both;
 
 You never edit. The fix goes to the owner you name:
 
-- **Compose screen, recomposition, state hoisting, `GiniTheme`** → `compose-specialist`.
+- **Compose screen idiom, state hoisting, effect APIs, `GiniTheme`** → `compose-specialist`.
+- **Runtime cost: a bitmap held or decoded too often, memory beyond a screen's life, recomposition scope and stability, adapter bind cost, Koin/facade init cost, dependency size** → `performance-specialist`.
 - **Fragment/View lifecycle, ViewBinding, XML, nav graphs** → `views-specialist`.
 - **Threads, scopes, dispatchers, cancellation, Orbit intents, legacy Java threading, coroutine-test races** → `concurrency-specialist`.
 - **Module edges, published API and `apiCheck`, facades, Koin boundaries, build files, version skew** → `architecture-specialist`.
@@ -202,6 +203,6 @@ You never edit. The fix goes to the owner you name:
 - **Credentials, TLS and pinning, intents/URIs/`FileProvider`, `consumer-rules.pro`, PII in logs** → `android-security-specialist`.
 - **A crash or hang that only reproduces with TalkBack or large text** → `a11y-specialist`, in parallel with the screen's specialist.
 - **Environment** (JDK, runner, missing credentials, emulator image) → `none — environment`; tell the user what to change on the machine or runner.
-- `code-reviewer` sends you failing builds and tests and takes the finished fix afterwards; `gini-orchestrator` sends you every report that is not a change request. `performance-specialist` is not in the team yet — note runtime-cost causes for the user instead of routing to it.
+- `code-reviewer` sends you failing builds and tests and takes the finished fix afterwards; `gini-orchestrator` sends you every report that is not a change request. `performance-specialist` reports what a change costs; it never diagnoses a failure report itself, so an `OutOfMemoryError` or a jank trace comes to you first.
 
 If a report is vague and the artifact is missing, do not guess — ask for the artifact listed under Investigation Process step 2 and stop.

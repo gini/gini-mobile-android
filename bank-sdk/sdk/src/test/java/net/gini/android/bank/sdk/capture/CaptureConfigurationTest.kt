@@ -7,8 +7,11 @@ import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.ProductTag
 import net.gini.android.capture.network.GiniCaptureNetworkService
+import net.gini.android.capture.ui.theme.colors.CustomResourceProvider
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertSame
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -89,5 +92,30 @@ class CaptureConfigurationTest {
 
         assertEquals(false, GiniCapture.getInstance().isPaymentDueHintEnabled)
         assertEquals(true, GiniCapture.getInstance().isPaymentScheduleHintEnabled)
+    }
+
+    @Test
+    fun `customResourceProvider defaults to null`() {
+        GiniBank.setCaptureConfiguration(
+            context,
+            CaptureConfiguration(networkService = mockNetworkService)
+        )
+
+        assertNull(GiniCapture.getInstance().customResourceProvider)
+    }
+
+    @Test
+    fun `customResourceProvider is forwarded to GiniCapture`() {
+        val provider = CustomResourceProvider { _, _ -> null }
+
+        GiniBank.setCaptureConfiguration(
+            context,
+            CaptureConfiguration(
+                networkService = mockNetworkService,
+                customResourceProvider = provider
+            )
+        )
+
+        assertSame(provider, GiniCapture.getInstance().customResourceProvider)
     }
 }

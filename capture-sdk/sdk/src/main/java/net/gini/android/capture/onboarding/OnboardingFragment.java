@@ -16,7 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Group;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -34,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.gini.android.capture.internal.ui.runtimecolors.RuntimeColors;
 
 
 import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
@@ -284,8 +284,7 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
             pageIndicator.setLayoutParams(layoutParams);
             pageIndicator.setScaleType(ImageView.ScaleType.CENTER);
             pageIndicator.setImageDrawable(
-                    ResourcesCompat.getDrawable(mContext.getResources(),
-                            R.drawable.gc_onboarding_page_indicator, mContext.getTheme()));
+                    RuntimeColors.giniDrawable(mContext, R.drawable.gc_onboarding_page_indicator));
             pageIndicator.setImageAlpha(102);
             pageIndicator.setTag("pageIndicator");
             return pageIndicator;

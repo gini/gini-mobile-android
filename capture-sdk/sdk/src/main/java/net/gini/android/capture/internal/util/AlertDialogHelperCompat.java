@@ -1,6 +1,7 @@
 package net.gini.android.capture.internal.util;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 
 import androidx.annotation.NonNull;
@@ -10,6 +11,8 @@ import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import net.gini.android.capture.GiniCapture;
+import net.gini.android.capture.R;
+import net.gini.android.capture.internal.ui.runtimecolors.RuntimeColors;
 /**
  * Created by Alpar Szotyori on 04.02.2019.
  *
@@ -33,7 +36,12 @@ public final class AlertDialogHelperCompat {
         if (activity == null) {
             return;
         }
-        final AlertDialog alertDialog = new MaterialAlertDialogBuilder(activity)
+        // With a CustomResourceProvider the dialog uses the provider colors; without one, null
+        // keeps the activity context as before.
+        final Context runtimeColorsContext =
+                RuntimeColors.runtimeColorsThemedContextOrNull(activity, R.style.GiniCaptureTheme);
+        final Context dialogContext = runtimeColorsContext != null ? runtimeColorsContext : activity;
+        final AlertDialog alertDialog = new MaterialAlertDialogBuilder(dialogContext)
                 .setMessage(message)
                 .setPositiveButton(positiveButtonTitle, positiveButtonClickListener)
                 .setNegativeButton(negativeButtonTitle, negativeButtonClickListener)

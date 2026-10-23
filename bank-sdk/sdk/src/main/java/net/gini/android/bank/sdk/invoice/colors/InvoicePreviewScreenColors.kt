@@ -6,7 +6,7 @@ import androidx.compose.ui.graphics.Color
 import net.gini.android.bank.sdk.invoice.colors.section.InvoicePreviewScreenFooterColors
 import net.gini.android.capture.ui.components.menu.context.GiniContextMenuColors
 import net.gini.android.capture.ui.components.topbar.GiniTopBarColors
-import net.gini.android.capture.ui.theme.colors.GiniColorPrimitives
+import net.gini.android.capture.internal.ui.runtimecolors.giniFixedColorPrimitives
 
 @Immutable
 data class InvoicePreviewScreenColors(
@@ -28,10 +28,10 @@ data class InvoicePreviewScreenColors(
             fun colors(
                 // IMPORTANT! Use GiniColorPrimitives carefully!
                 // Using of this class skips adaptation to light/dark modes!
-                contentColor: Color = GiniColorPrimitives().dark02,
+                contentColor: Color = giniFixedColorPrimitives().dark02,
                 // IMPORTANT! Use GiniColorPrimitives carefully!
                 // Using of this class skips adaptation to light/dark modes!
-                backgroundColor: Color = GiniColorPrimitives().light01,
+                backgroundColor: Color = giniFixedColorPrimitives().light01,
             ) = CloseButton(
                 contentColor = contentColor,
                 backgroundColor = backgroundColor,
@@ -57,42 +57,42 @@ data class InvoicePreviewScreenColors(
         fun colors(
             // IMPORTANT! Use GiniColorPrimitives carefully!
             // Using of this class skips adaptation to light/dark modes!
-            background: Color = GiniColorPrimitives().dark01,
+            background: Color = giniFixedColorPrimitives().dark01,
             footerColors: InvoicePreviewScreenFooterColors =
                 InvoicePreviewScreenFooterColors.colors(),
             topBarColors: GiniTopBarColors = GiniTopBarColors.colors(
                 // IMPORTANT! Use GiniColorPrimitives carefully!
                 // Using of this class skips adaptation to light/dark modes!
-                containerColor = GiniColorPrimitives().dark01.copy(alpha = 0.5f),
+                containerColor = giniFixedColorPrimitives().dark01.copy(alpha = 0.5f),
                 // IMPORTANT! Use GiniColorPrimitives carefully!
                 // Using of this class skips adaptation to light/dark modes!
-                contentColor = GiniColorPrimitives().light01,
+                contentColor = giniFixedColorPrimitives().light01,
                 // IMPORTANT! Use GiniColorPrimitives carefully!
                 // Using of this class skips adaptation to light/dark modes!
-                navigationContentColor = GiniColorPrimitives().light01,
+                navigationContentColor = giniFixedColorPrimitives().light01,
                 // IMPORTANT! Use GiniColorPrimitives carefully!
                 // Using of this class skips adaptation to light/dark modes!
-                actionContentColor = GiniColorPrimitives().light01,
+                actionContentColor = giniFixedColorPrimitives().light01,
             ),
             // IMPORTANT! Use GiniColorPrimitives carefully!
             // Using of this class skips adaptation to light/dark modes!
             topBarOverflowMenuColors: GiniContextMenuColors = GiniContextMenuColors.colors(
-                containerColor = GiniColorPrimitives().dark01,
+                containerColor = giniFixedColorPrimitives().dark01,
                 borderColor = Color.Transparent,
                 itemColors = GiniContextMenuColors.ItemColors(
-                    textColor = GiniColorPrimitives().light01,
-                    iconTint = GiniColorPrimitives().light01,
+                    textColor = giniFixedColorPrimitives().light01,
+                    iconTint = giniFixedColorPrimitives().light01,
                 )
             ),
             // IMPORTANT! Use GiniColorPrimitives carefully!
             // Using of this class skips adaptation to light/dark modes!
             errorMessage: ErrorMessage = ErrorMessage(
-                messageColor = GiniColorPrimitives().light06,
+                messageColor = giniFixedColorPrimitives().light06,
                 errorHint = ErrorHint(
-                    iconColor = GiniColorPrimitives().error01,
-                    textColor = GiniColorPrimitives().light01,
-                    containerColor = GiniColorPrimitives().light01.copy(alpha = 0.15f),
-                    containerStrokeColor = GiniColorPrimitives().error04.copy(alpha = 0.15f),
+                    iconColor = giniFixedColorPrimitives().error01,
+                    textColor = giniFixedColorPrimitives().light01,
+                    containerColor = giniFixedColorPrimitives().light01.copy(alpha = 0.15f),
+                    containerStrokeColor = giniFixedColorPrimitives().error04.copy(alpha = 0.15f),
                 )
             ),
         ) = InvoicePreviewScreenColors(
