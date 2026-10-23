@@ -4,9 +4,9 @@ import net.gini.android.capture.network.model.GiniCaptureExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 
 /**
- * Pure-function support for the Wero QR code flow. Shared between capture-sdk and bank-sdk —
- * both callers run the same mapper and fallback logic at their respective /analysis call sites,
- * so platform behaviour stays identical.
+ * Pure-function support for the Wero QR code flow. Called from capture-sdk's `/analysis`-success
+ * callback in `CameraFragmentImpl` to collapse Wero extractions to a single `weroPaymentQRCodeUrl`
+ * entry or to drive the fallback-to-camera decision.
  */
 internal object WeroExtractionsMapper {
 
