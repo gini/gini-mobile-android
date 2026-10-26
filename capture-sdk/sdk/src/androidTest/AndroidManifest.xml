@@ -18,6 +18,10 @@
             android:name="net.gini.android.capture.internal.ui.ErrorSnackbarTestActivity"
             android:theme="@style/GiniCaptureTheme" />
         <activity android:name="net.gini.android.capture.internal.camera.api.NoOpActivity" />
+        <activity
+            android:name="net.gini.android.capture.internal.camera.view.QRCodePopupTestActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/GiniCaptureTheme" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
