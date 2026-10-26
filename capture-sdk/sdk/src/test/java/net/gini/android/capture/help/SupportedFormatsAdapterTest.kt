@@ -9,8 +9,11 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import net.gini.android.capture.R
+import net.gini.android.capture.di.getGiniCaptureKoin
+import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.dsl.module
 import org.robolectric.Shadows.shadowOf
 
 @RunWith(AndroidJUnit4::class)
@@ -37,6 +40,29 @@ class SupportedFormatsAdapterTest {
         assertThat(adapter.itemLabels)
             .containsExactlyElementsIn(qrLabelsWithoutWero + R.string.gc_supported_format_qr_type_wero)
             .inOrder()
+    }
+
+    @Test
+    fun `public constructor reads the Wero flag from the client configuration`() {
+        // GiniBankConfigurationProvider is registered in the SDK's isolated Koin context by the
+        // Bank SDK's DI bridge, so a capture-sdk unit test has to provide its own definition.
+        val provider = GiniBankConfigurationProvider().apply {
+            update { it.copy(isWeroQRCodeScanningEnabled = true) }
+        }
+        val koinTestModule = module { single { provider } }
+        getGiniCaptureKoin().loadModules(listOf(koinTestModule))
+        try {
+            val adapter = SupportedFormatsAdapter(true)
+
+            assertThat(adapter.itemLabels.last()).isEqualTo(R.string.gc_supported_format_qr_type_wero)
+        } finally {
+            // unloadModules drops the definition instead of restoring the previous one, and the
+            // isolated context is process-wide — re-load a default for later test classes.
+            getGiniCaptureKoin().unloadModules(listOf(koinTestModule))
+            getGiniCaptureKoin().loadModules(
+                listOf(module { single { GiniBankConfigurationProvider() } })
+            )
+        }
     }
 
     @Test
