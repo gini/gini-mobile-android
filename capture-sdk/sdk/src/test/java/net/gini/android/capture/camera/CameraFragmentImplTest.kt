@@ -332,7 +332,7 @@ class CameraFragmentImplTest {
         fragmentImpl.mLoadingIndicator = loadingIndicatorOwning(adapter)
 
         // When: the invoice is retrieved for the scanned QR code
-        fragmentImpl.analyzeQRCode(qrCodeDocument())
+        fragmentImpl.analyzeQRCode(qrCodeDocument(), null)
 
         // Then: the dim and the indicator are both up
         assertEquals(View.VISIBLE, fragmentImpl.mActivityIndicatorBackground.visibility)
@@ -360,7 +360,7 @@ class CameraFragmentImplTest {
         fragmentImpl.showQrCodePopup(paymentQRCodeData()) { }
 
         // When: the education half starts the invoice retrieval behind its overlay
-        fragmentImpl.analyzeQRCode(qrCodeDocument())
+        fragmentImpl.analyzeQRCode(qrCodeDocument(), null)
 
         // Then: the dim still blocks the controls, but no indicator runs behind the message
         assertEquals(View.VISIBLE, fragmentImpl.mActivityIndicatorBackground.visibility)
@@ -488,25 +488,22 @@ class CameraFragmentImplTest {
     }
 
     @Test
-    fun `handlePaymentQRCodeData UNKNOWN parks the raw payload and triggers analysis`() {
+    fun `handlePaymentQRCodeData UNKNOWN passes the raw payload into analyzeQRCode`() {
         GiniCapture.Builder().setQRCodeScanningEnabled(true).build()
-        val captured = mutableListOf<QRCodeDocument>()
+        val capturedDocs = mutableListOf<QRCodeDocument>()
+        val capturedPayloads = mutableListOf<String?>()
         val fragmentImpl = object : CameraFragmentImplWithoutQRCodeReader(mock(), mock<CancelListener>(), false) {
-            override fun analyzeQRCode(doc: QRCodeDocument?) { captured += doc!! }
+            override fun analyzeQRCode(doc: QRCodeDocument?, payload: String?) {
+                capturedDocs += doc!!
+                capturedPayloads += payload
+            }
         }
 
         val weroCandidate = PaymentQRCodeData.fromWeroCandidate("https://wero.example/pay/42")
-        try {
-            fragmentImpl.handlePaymentQRCodeData(weroCandidate)
+        fragmentImpl.handlePaymentQRCodeData(weroCandidate)
 
-            assertEquals(1, captured.size)
-            assertEquals(
-                "https://wero.example/pay/42",
-                net.gini.android.capture.internal.qrcode.WeroScannedPayloadHolder.consume()
-            )
-        } finally {
-            net.gini.android.capture.internal.qrcode.WeroScannedPayloadHolder.consume()
-        }
+        assertEquals(1, capturedDocs.size)
+        assertEquals("https://wero.example/pay/42", capturedPayloads.single())
     }
 
     @Test
@@ -525,10 +522,20 @@ class CameraFragmentImplTest {
         fragmentImpl.mPaymentQRCodePopup = mockk(relaxed = true)
         fragmentImpl.mImageFrame = mock()
         fragmentImpl.setListener(mockk(relaxed = true))
+        val tracker = mockk<net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker>(relaxed = true)
+        fragmentImpl.mUserAnalyticsEventTracker = tracker
 
-        fragmentImpl.analyzeQRCode(qrCodeDocument())
+        fragmentImpl.analyzeQRCode(qrCodeDocument(), null)
 
         io.mockk.verify { fragmentImpl.mPaymentQRCodePopup.hide() }
+        // The UNKNOWN handlePaymentQRCodeData branch deferred QR_CODE_SCANNED to the
+        // /analysis-success callback; the Wero-confirmed delivery here must fire valid=true.
+        io.mockk.verify {
+            tracker.trackEvent(
+                eq(net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent.QR_CODE_SCANNED),
+                any()
+            )
+        }
     }
 
     @kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -545,8 +552,6 @@ class CameraFragmentImplTest {
                 )
             )
             wireNetworkRequestsManagerFor(extractions)
-            net.gini.android.capture.internal.qrcode.WeroScannedPayloadHolder
-                .set("https://wero.example/pay/42")
 
             val fragmentCallback = mock<FragmentImplCallback> {
                 on { this.activity } doReturn activity
@@ -572,17 +577,27 @@ class CameraFragmentImplTest {
             fragmentImpl.mIbanDetectedTextView = mock { on { visibility } doReturn View.GONE }
             val listener = mockk<CameraFragmentListener>(relaxed = true)
             fragmentImpl.setListener(listener)
+            val tracker = mockk<net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker>(relaxed = true)
+            fragmentImpl.mUserAnalyticsEventTracker = tracker
 
-            fragmentImpl.analyzeQRCode(qrCodeDocument())
+            fragmentImpl.analyzeQRCode(qrCodeDocument(), "https://wero.example/pay/42")
 
             // Fallback branch: user stays on camera, education popup is torn down, unsupported
             // popup appears, and no extraction is delivered to the integrator.
             io.mockk.verify { fragmentImpl.qrCodeEducationPopup.hide() }
             io.mockk.verify { fragmentImpl.mUnsupportedQRCodePopup.show(null) }
             io.mockk.verify(exactly = 0) { listener.onExtractionsAvailable(any()) }
+            // The UNKNOWN handlePaymentQRCodeData branch no longer fires valid=true before
+            // classification, so the analytics latch is still open here and the fallback popup
+            // correctly reports QR_CODE_SCANNED with valid=false.
+            io.mockk.verify {
+                tracker.trackEvent(
+                    eq(net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent.QR_CODE_SCANNED),
+                    any()
+                )
+            }
         } finally {
             configurationProvider.update { it.copy(isWeroQRCodeScanningEnabled = false) }
-            net.gini.android.capture.internal.qrcode.WeroScannedPayloadHolder.consume()
         }
     }
 
@@ -598,75 +613,13 @@ class CameraFragmentImplTest {
         fragmentImpl.setListener(mockk(relaxed = true))
 
         try {
-            fragmentImpl.analyzeQRCode(qrCodeDocument())
+            fragmentImpl.analyzeQRCode(qrCodeDocument(), null)
         } catch (_: Throwable) {
             // NoResultsFragment.navigateToNoResultsFragment calls findNavController on the test's
             // mock Fragment — the preceding setPoweredByGiniVisible(false) ran before the throw.
         }
 
         io.mockk.verify { fragmentImpl.mPaymentQRCodePopup.hide() }
-    }
-
-    @Test
-    fun `analyzeQRCode drains WeroScannedPayloadHolder when analyze fails`() {
-        val configurationProvider = getGiniCaptureKoin().get<GiniBankConfigurationProvider>()
-        configurationProvider.update { it.copy(isWeroQRCodeScanningEnabled = true) }
-        try {
-            val activity = Robolectric.buildActivity(FragmentActivity::class.java).get()
-            wireNetworkRequestsManagerForAnalyzeFailure()
-            net.gini.android.capture.internal.qrcode.WeroScannedPayloadHolder
-                .set("https://wero.example/pay/failed")
-
-            val fragmentCallback = mock<FragmentImplCallback> {
-                on { this.activity } doReturn activity
-                on { view } doReturn View(activity)
-            }
-            val fragmentImpl = CameraFragmentImplSuppressingImageCorners(
-                fragmentCallback, mock<CancelListener>()
-            )
-            fragmentImpl.mActivityIndicatorBackground =
-                View(activity).apply { visibility = View.VISIBLE }
-            fragmentImpl.mLoadingIndicator =
-                loadingIndicatorOwning(RecordingLoadingIndicatorAdapter())
-            fragmentImpl.mPaymentQRCodePopup = mockk(relaxed = true)
-            fragmentImpl.mImageFrame = mock()
-            fragmentImpl.setListener(mockk(relaxed = true))
-
-            try {
-                fragmentImpl.analyzeQRCode(qrCodeDocument())
-            } catch (_: Throwable) {
-                // handleAnalysisError navigates via a NavController the test does not wire;
-                // the unconditional drain at the top of the handler runs before any such throw.
-            }
-
-            assertNull(
-                "Holder must be drained after a failed /analysis so the next scan isn't miscategorized",
-                net.gini.android.capture.internal.qrcode.WeroScannedPayloadHolder.consume()
-            )
-        } finally {
-            configurationProvider.update { it.copy(isWeroQRCodeScanningEnabled = false) }
-            net.gini.android.capture.internal.qrcode.WeroScannedPayloadHolder.consume()
-        }
-    }
-
-    private fun wireNetworkRequestsManagerForAnalyzeFailure() {
-        val document = mock<net.gini.android.capture.document.GiniCaptureDocument>()
-        val uploadResult = net.gini.android.capture.internal.network.NetworkRequestResult(
-            document, "api-doc-id", "api-doc-filename"
-        )
-        val networkRequestsManager =
-            mock<net.gini.android.capture.internal.network.NetworkRequestsManager>()
-        whenever(networkRequestsManager.upload(any(), any()))
-            .thenReturn(CompletableFuture.completedFuture(uploadResult))
-        val failingAnalyze =
-            CompletableFuture<net.gini.android.capture.internal.network.AnalysisNetworkRequestResult<net.gini.android.capture.document.GiniCaptureMultiPageDocument<*, *>>>()
-        failingAnalyze.completeExceptionally(RuntimeException("backend 500"))
-        whenever(networkRequestsManager.analyze(any())).thenReturn(failingAnalyze)
-        val internal = mock<GiniCapture.Internal>()
-        whenever(internal.networkRequestsManager).thenReturn(networkRequestsManager)
-        val giniCapture = mock<GiniCapture>()
-        whenever(giniCapture.internal()).thenReturn(internal)
-        GiniCaptureHelper.setGiniCaptureInstance(giniCapture)
     }
 
     private fun wireNetworkRequestsManagerFor(
