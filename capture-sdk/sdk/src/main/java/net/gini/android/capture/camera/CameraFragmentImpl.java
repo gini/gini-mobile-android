@@ -73,7 +73,6 @@ import net.gini.android.capture.internal.qrcode.PaymentQRCodeReader;
 import net.gini.android.capture.internal.qrcode.QRCodeDetectorTask;
 import net.gini.android.capture.internal.qrcode.QRCodeDetectorTaskMLKit;
 import net.gini.android.capture.internal.qrcode.WeroExtractionsMapper;
-import net.gini.android.capture.internal.qrcode.WeroScannedPayloadHolder;
 import net.gini.android.capture.internal.qreducation.model.FlowType;
 import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.internal.textrecognition.CropToCameraFrameTextRecognizer;
@@ -1327,7 +1326,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 QRCodeDocument mQRCodeDocument = QRCodeDocument.fromPaymentQRCodeData(
                         paymentQRCodeData);
                 sendQRCodeScannedEventToUserAnalytics(true);
-                analyzeQRCode(mQRCodeDocument);
+                analyzeQRCode(mQRCodeDocument, null);
                 break;
             case EPS_PAYMENT:
                 // No analysis step at all, so no ingredient brand — stated explicitly rather than
@@ -1338,14 +1337,16 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 break;
             case UNKNOWN:
                 // Wero candidate: raw QR payload forwarded to the backend for classification.
-                // Same analysis path as the parsed formats above; the payload is parked in the
-                // single-slot holder for analyzeQRCode's /analysis-success callback, which uses
-                // it to collapse the Wero extractions or to fall back to the unsupported-QR
-                // popup when the backend did not classify the payload as Wero.
+                // Same analysis path as the parsed formats above; the payload is passed through
+                // so analyzeQRCode's /analysis-success callback can collapse the Wero extractions
+                // or fall back to the unsupported-QR popup when the backend did not classify the
+                // payload as Wero.
+                // Analytics are deliberately not sent here: validity is only known after
+                // classification, so the QR_CODE_SCANNED event fires in the /analysis-success
+                // callback (true on the Wero-confirmed branch, false via showUnsupportedQRCodePopup
+                // on the fallback branch).
                 QRCodeDocument weroDoc = QRCodeDocument.fromPaymentQRCodeData(paymentQRCodeData);
-                WeroScannedPayloadHolder.INSTANCE.set(paymentQRCodeData.getUnparsedContent());
-                sendQRCodeScannedEventToUserAnalytics(true);
-                analyzeQRCode(weroDoc);
+                analyzeQRCode(weroDoc, paymentQRCodeData.getUnparsedContent());
                 break;
             default:
                 setQrInvoiceRetrievalRunning(false);
@@ -1408,8 +1409,13 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         mButtonCameraFlashTrigger.setContentDescription(activity.getString(flashButtonContentDescription));
     }
 
+    // Nesting comes from the jsr166e CompletableFuture BiFun chain (upload → thenCompose →
+    // analyze), not from branch sprawl we can flatten. Extracting the inner handlers would
+    // duplicate the generic type parameters across private methods without improving readability.
+    @SuppressWarnings("java:S3776")
     @VisibleForTesting
-    void analyzeQRCode(final QRCodeDocument qrCodeDocument) {
+    void analyzeQRCode(final QRCodeDocument qrCodeDocument,
+                       @Nullable final String weroCandidatePayload) {
         final Activity activity = mFragment.getActivity();
         if (activity == null) {
             return;
@@ -1467,10 +1473,10 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                             // asynchronous (onQrCodeRecognized hops to another dispatcher and waits
                             // on the education mutex).
                             hideActivityIndicatorAndEnableInteraction();
-                            // Drain the parked Wero payload unconditionally so a cancelled or
-                            // failed analysis never leaves stale residue that a later successful
-                            // non-Wero scan would misinterpret as its own payload.
-                            final String scannedPayload = WeroScannedPayloadHolder.INSTANCE.consume();
+                            // Local to this analyzeQRCode call: dies with the handler, so an
+                            // early return of a later call can never leave stale residue that a
+                            // following non-Wero scan would misinterpret as its own payload.
+                            final String scannedPayload = weroCandidatePayload;
                             if (throwable != null
                                     && !isCancellation(throwable)) {
                                 handleAnalysisError(throwable, qrCodeDocument);
@@ -1496,6 +1502,12 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                                                 && mFragment.getView() != null) {
                                             getQrCodeEducationPopup().hide();
                                             setPoweredByGiniVisible(false);
+                                            // The IBAN recognizer stays active during the
+                                            // upload+classify window. If it detected an IBAN
+                                            // meanwhile, showUnsupportedQRCodePopup's guard would
+                                            // skip the popup silently and leave mInterfaceHidden
+                                            // stuck true, blocking every later QR scan.
+                                            hideIBANsDetectedOnScreen();
                                             showUnsupportedQRCodePopup(true);
                                         }
                                         return kotlin.Unit.INSTANCE;
@@ -1523,6 +1535,10 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                                 // triggered below stops this fragment (onStop).
                                 // onQrCodeRecognized runs on Dispatchers.IO and must not touch
                                 // views at all.
+                                // For Wero candidates this is also where valid=true is reported —
+                                // the UNKNOWN branch of handlePaymentQRCodeData defers the event
+                                // because validity is only known after classification.
+                                sendQRCodeScannedEventToUserAnalytics(true);
                                 onQrCodeRecognized(mappedExtractions);
                             }
                             return null;
