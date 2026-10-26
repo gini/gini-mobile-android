@@ -1409,6 +1409,10 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         mButtonCameraFlashTrigger.setContentDescription(activity.getString(flashButtonContentDescription));
     }
 
+    // Nesting comes from the jsr166e CompletableFuture BiFun chain (upload → thenCompose →
+    // analyze), not from branch sprawl we can flatten. Extracting the inner handlers would
+    // duplicate the generic type parameters across private methods without improving readability.
+    @SuppressWarnings("java:S3776")
     @VisibleForTesting
     void analyzeQRCode(final QRCodeDocument qrCodeDocument,
                        @Nullable final String weroCandidatePayload) {
