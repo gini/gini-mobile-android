@@ -320,6 +320,7 @@ public class net/gini/android/capture/GiniCapture {
 	public fun getAllowScreenshots ()Z
 	public fun getCustomHelpItems ()Ljava/util/List;
 	public fun getCustomOnboardingPages ()Ljava/util/ArrayList;
+	public fun getCustomResourceProvider ()Lnet/gini/android/capture/ui/theme/colors/CustomResourceProvider;
 	public fun getCustomUploadMetadata ()Ljava/util/Map;
 	public fun getDocumentImportEnabledFileTypes ()Lnet/gini/android/capture/DocumentImportEnabledFileTypes;
 	public fun getEntryPoint ()Lnet/gini/android/capture/EntryPoint;
@@ -369,6 +370,7 @@ public class net/gini/android/capture/GiniCapture$Builder {
 	public fun setCustomErrorLoggerListener (Lnet/gini/android/capture/logging/ErrorLoggerListener;)Lnet/gini/android/capture/GiniCapture$Builder;
 	public fun setCustomHelpItems (Ljava/util/List;)Lnet/gini/android/capture/GiniCapture$Builder;
 	public fun setCustomOnboardingPages (Ljava/util/ArrayList;)Lnet/gini/android/capture/GiniCapture$Builder;
+	public fun setCustomResourceProvider (Lnet/gini/android/capture/ui/theme/colors/CustomResourceProvider;)Lnet/gini/android/capture/GiniCapture$Builder;
 	public fun setDocumentImportEnabledFileTypes (Lnet/gini/android/capture/DocumentImportEnabledFileTypes;)Lnet/gini/android/capture/GiniCapture$Builder;
 	public fun setEntryPoint (Lnet/gini/android/capture/EntryPoint;)Lnet/gini/android/capture/GiniCapture$Builder;
 	public fun setEventTracker (Lnet/gini/android/capture/tracking/EventTracker;)Lnet/gini/android/capture/GiniCapture$Builder;
@@ -425,6 +427,7 @@ public class net/gini/android/capture/GiniCapture$Internal {
 	public fun <init> (Lnet/gini/android/capture/GiniCapture;)V
 	public fun createDocumentForImportedUris (Ljava/util/List;Landroid/content/Context;Lnet/gini/android/capture/AsyncCallback;)Lnet/gini/android/capture/util/CancellationToken;
 	public static fun createGiniCaptureFragmentForOpenWithDocument (Lnet/gini/android/capture/Document;)Lnet/gini/android/capture/GiniCaptureFragment;
+	public fun getColorResolver ()Lnet/gini/android/capture/internal/ui/runtimecolors/GiniColorResolver;
 	public fun getCompoundExtractions ()Ljava/util/Map;
 	public fun getDocumentDataMemoryCache ()Lnet/gini/android/capture/internal/cache/DocumentDataMemoryCache;
 	public fun getErrorLogger ()Lnet/gini/android/capture/logging/ErrorLogger;
@@ -2813,6 +2816,20 @@ public class net/gini/android/capture/internal/ui/ViewStubSafeInflater {
 	public fun inflate ()Landroid/view/View;
 }
 
+public final class net/gini/android/capture/internal/ui/runtimecolors/RuntimeColorPrimitivesKt {
+	public static final fun giniFixedColorPrimitives (Landroidx/compose/runtime/Composer;I)Lnet/gini/android/capture/ui/theme/colors/GiniColorPrimitives;
+}
+
+public final class net/gini/android/capture/internal/ui/runtimecolors/RuntimeColors {
+	public static final fun applyGiniRuntimeColors (Lcom/google/android/material/snackbar/Snackbar;Landroid/content/Context;)Lcom/google/android/material/snackbar/Snackbar;
+	public static final fun giniColor (Landroid/content/Context;I)I
+	public static final fun giniColorFromAttr (Landroid/content/Context;I)Ljava/lang/Integer;
+	public static final fun giniDrawable (Landroid/content/Context;I)Landroid/graphics/drawable/Drawable;
+	public static final fun runtimeColorsThemedContextOrNull (Landroid/content/Context;I)Landroid/content/Context;
+	public static final fun runtimeColorsThemedInflaterOrNull (Landroid/view/LayoutInflater;Landroid/content/Context;I)Landroid/view/LayoutInflater;
+	public static final fun setGiniBackgroundResource (Landroid/view/View;I)V
+}
+
 public final class net/gini/android/capture/internal/util/ActivityHelper {
 	public static fun enableHomeAsUp (Landroidx/appcompat/app/AppCompatActivity;)V
 	public static fun forcePortraitOrientationOnPhones (Landroid/app/Activity;)V
@@ -4700,6 +4717,10 @@ public final class net/gini/android/capture/ui/theme/GiniTheme {
 
 public final class net/gini/android/capture/ui/theme/GiniThemeKt {
 	public static final fun GiniTheme (ZLkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+}
+
+public abstract interface class net/gini/android/capture/ui/theme/colors/CustomResourceProvider {
+	public abstract fun customPreferredColor (Ljava/lang/String;Z)Ljava/lang/Integer;
 }
 
 public final class net/gini/android/capture/ui/theme/colors/GiniColorPrimitives {

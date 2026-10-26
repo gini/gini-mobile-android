@@ -5,8 +5,8 @@ import android.graphics.PorterDuff
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
-import androidx.core.content.ContextCompat
 import net.gini.android.capture.R
+import net.gini.android.capture.internal.ui.runtimecolors.giniColor
 
 /**
  * Adapter for injecting a custom progress/loading animation.
@@ -40,7 +40,7 @@ class DefaultLoadingIndicatorAdapter: CustomLoadingIndicatorAdapter {
                 ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             indeterminateTintMode = PorterDuff.Mode.SRC_IN
             isIndeterminate = true
-            indeterminateTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.gc_accent_01))
+            indeterminateTintList = ColorStateList.valueOf(context.giniColor(R.color.gc_accent_01))
             visibility = View.GONE
         }
         this.progressBar = progressBar

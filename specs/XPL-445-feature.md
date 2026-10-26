@@ -96,6 +96,7 @@ No Gradle module changes. All under `.claude/` and `specs/`:
 | `.claude/agents/code-reviewer.md` | escalation list; replace the "no specialist" sentence |
 | `.claude/agents/architecture-specialist.md` | boundary bullet: drop `design-system-specialist` from "planned but not written yet"; hand theme resources to it |
 | `.claude/agents/performance-specialist.md` | one boundary sentence: `design-system-specialist` owns token choice, performance owns the cost (Open question 2, resolved) |
+| `.claude/skills/gini-build/platform.md` | new "Agent files" section: dry-running a new agent, and removing a topic from its old owner |
 | `specs/XPL-445-feature.md` | this spec |
 
 ## Design — the agent file
@@ -160,6 +161,13 @@ Found by the full-audit dry run (2026-10-21), verified against the code:
 13. **Card status colours** (`containerSuccess/Warning/Error`) use the same light pastels in the dark scheme — maybe on purpose; a11y to check contrast.
 14. For `performance-specialist`: `extractGiniTypography()` runs `obtainStyledAttributes` per style on every `GiniTheme` recomposition without `remember`.
 
+## Merge with `main` (2026-10-26)
+
+`main` gained two changes after this branch was cut. Both are folded in:
+
+- **XPL-444 `debugger-specialist` (#1015).** Conflicts in the orchestrator, `code-reviewer.md`, `architecture-specialist.md`, `performance-specialist.md`, `gini-task.md` and the hook were resolved by keeping both agents. Orchestrator rules: 11 is design-system, 12 is debugger, 13 code-reviewer, 14 localization. `debugger-specialist.md` now routes theme causes and `GiniTheme` to `design-system-specialist` (it predates this agent), so R13's "unchanged" list no longer applies to it.
+- **PP-3849 runtime colours.** `CustomResourceProvider` is a third customisation path for the 32 `gc_` palette names. The agent file now covers it: colour reads must go through `GiniTheme` or the `RuntimeColors.kt` helpers (`giniColor()` …), or the provider does not reach them. It also changes two hotspots: `gc_warning_05` (2) can now be overridden through the provider, though still not through XML; and hotspot 10 (`remember` without a key, forced `darkMode` on system primitives) now applies only when no provider is set.
+
 ## Out of scope
 
 - Fixing any hotspot; creating the tickets (the user creates them).
@@ -188,4 +196,4 @@ Found by the full-audit dry run (2026-10-21), verified against the code:
 - [x] 5. Wire `code-reviewer.md`, `architecture-specialist.md` (and `performance-specialist.md` if Open question 2 = yes) (R14).
 - [x] 6. Static lint T1–T3, T12, T13 greps.
 - [x] 7. Dry runs T4–T11 (2026-10-21; run by a general-purpose agent that loaded the agent file, because a new agent type only loads in a fresh session). All passed: T4 three warnings with existing tokens and no invented spacing object; T5 blocker + ask first + `architecture-specialist`; T6/T7 dark-mode warnings; T8 no findings; T9 handed to `compose-specialist`/`a11y-specialist`; T10 "Figma comparison not run" under Needs a human; T11 report-only, "applied: none", every Repo Context fact confirmed. Their feedback was folded into the agent file: non-transitive `R` in bank-sdk, `gc_*` blast radius into bank-sdk and the example apps, the Root-vs-child typography split, the bank-sdk night chain, severity for changed defaults, dead `...Colors` fields, mixed diffs, and new lines in literal-heavy files.
-- [ ] 8. User commits (`ai:` type, `XPL-445` last line, no `Co-Authored-By` trailer per XPL-442 convention): `ai: Add design-system-specialist agent`, then `ai: Route design-system work to design-system-specialist`. PR against `main` from `.github/pull_request_template.md`.
+- [x] 8. User commits (`ai:` type, `XPL-445` last line, no `Co-Authored-By` trailer per XPL-442 convention): `ai: Add design-system-specialist agent`, then `ai: Route design-system work to design-system-specialist`. PR against `main` from `.github/pull_request_template.md`.
