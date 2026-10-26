@@ -1498,6 +1498,12 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                                                 && mFragment.getView() != null) {
                                             getQrCodeEducationPopup().hide();
                                             setPoweredByGiniVisible(false);
+                                            // The IBAN recognizer stays active during the
+                                            // upload+classify window. If it detected an IBAN
+                                            // meanwhile, showUnsupportedQRCodePopup's guard would
+                                            // skip the popup silently and leave mInterfaceHidden
+                                            // stuck true, blocking every later QR scan.
+                                            hideIBANsDetectedOnScreen();
                                             showUnsupportedQRCodePopup(true);
                                         }
                                         return kotlin.Unit.INSTANCE;

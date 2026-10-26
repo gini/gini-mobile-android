@@ -601,6 +601,54 @@ class CameraFragmentImplTest {
         }
     }
 
+    @kotlinx.coroutines.ExperimentalCoroutinesApi
+    @Test
+    fun `Wero fallback clears a visible IBAN label so the unsupported popup is not swallowed`() {
+        val configurationProvider = getGiniCaptureKoin().get<GiniBankConfigurationProvider>()
+        configurationProvider.update { it.copy(isWeroQRCodeScanningEnabled = true) }
+        try {
+            val activity = Robolectric.buildActivity(FragmentActivity::class.java).get()
+            val extractions = mapOf(
+                "iban" to net.gini.android.capture.network.model.GiniCaptureSpecificExtraction(
+                    "iban", "DE75512108001245126199", "iban", null, emptyList()
+                )
+            )
+            wireNetworkRequestsManagerFor(extractions)
+
+            val fragmentCallback = mock<FragmentImplCallback> {
+                on { this.activity } doReturn activity
+                on { view } doReturn View(activity)
+            }
+            val fragmentImpl = CameraFragmentImplSuppressingImageCorners(
+                fragmentCallback, mock<CancelListener>()
+            )
+            val extension: CameraFragmentExtension = fragmentImpl
+            extension.fallbackIoDispatcher = kotlinx.coroutines.test.UnconfinedTestDispatcher()
+            extension.fallbackMainDispatcher = kotlinx.coroutines.test.UnconfinedTestDispatcher()
+            fragmentImpl.mActivityIndicatorBackground =
+                View(activity).apply { visibility = View.VISIBLE }
+            fragmentImpl.mLoadingIndicator = loadingIndicatorOwning(RecordingLoadingIndicatorAdapter())
+            fragmentImpl.mPaymentQRCodePopup = mockk(relaxed = true)
+            fragmentImpl.mUnsupportedQRCodePopup = mockk(relaxed = true)
+            fragmentImpl.qrCodeEducationPopup = mockk(relaxed = true)
+            fragmentImpl.mImageFrame = mock()
+            // IBAN detected during the upload+classify window — hideIBANsDetectedOnScreen must
+            // run before showUnsupportedQRCodePopup so its visibility guard does not swallow the
+            // popup, which would leave mInterfaceHidden stuck true and block later QR scans.
+            val ibanLabel = mock<android.widget.TextView> {
+                on { visibility } doReturn View.VISIBLE
+            }
+            fragmentImpl.mIbanDetectedTextView = ibanLabel
+            fragmentImpl.setListener(mockk(relaxed = true))
+
+            fragmentImpl.analyzeQRCode(qrCodeDocument(), "https://wero.example/pay/42")
+
+            verify(ibanLabel).setVisibility(View.GONE)
+        } finally {
+            configurationProvider.update { it.copy(isWeroQRCodeScanningEnabled = false) }
+        }
+    }
+
     @Test
     fun `analyzeQRCode runs the no-results path when backend returns empty extractions`() {
         val activity = Robolectric.buildActivity(FragmentActivity::class.java).get()
