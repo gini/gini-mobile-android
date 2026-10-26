@@ -137,7 +137,10 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
                     ?: ContextThemeWrapper(popupView.context, R.style.GiniCaptureTheme)
                 val dialogView = LayoutInflater.from(themedContext)
                     .inflate(R.layout.gc_dialog_unsupported_qr_code, null)
-                unsupportedQrDialog = MaterialAlertDialogBuilder(themedContext)
+                unsupportedQrDialog = MaterialAlertDialogBuilder(
+                    themedContext,
+                    R.style.GiniCaptureTheme_ThemeOverlay_MaterialAlertDialog_UnsupportedQrCode
+                )
                     .setView(dialogView)
                     .setCancelable(false)
                     .create()

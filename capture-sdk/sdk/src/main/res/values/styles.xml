@@ -59,6 +59,14 @@
         <item name="android:colorAccent">?attr/colorPrimary</item>
     </style>
 
+    <!-- Replaces the inherited 65% landscape window minimum, which stretched this one-line dialog.
+         Must stay a minimum: the framework first measures dialogs at 320dp and only DecorView's
+         minimum-width pass grows them past that, so a fixed width collapses to 320dp on a device.
+         Parent-less on purpose: MaterialAlertDialogBuilder already applies materialAlertDialogTheme. -->
+    <style name="GiniCaptureTheme.ThemeOverlay.MaterialAlertDialog.UnsupportedQrCode" parent="">
+        <item name="android:windowMinWidthMajor">@dimen/gc_unsupported_qr_code_dialog_min_width</item>
+    </style>
+
     <!-- Widgets -->
 
     <style name="Root.GiniCaptureTheme.Widget.Button.OutlinedButton" parent="Widget.Material3.Button.OutlinedButton">
