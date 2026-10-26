@@ -35,8 +35,8 @@ public class SupportedFormatsAdapter extends
 
     private final List<Enum> mItems;
     private Boolean isQRDocument;
-    private boolean isEInvoiceEnabled;
-    private boolean isWeroQRCodeScanningEnabled;
+    private final boolean isEInvoiceEnabled;
+    private final boolean isWeroQRCodeScanningEnabled;
 
     public SupportedFormatsAdapter(Boolean isQrCodeDocument) {
         this(isQrCodeDocument,
