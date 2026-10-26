@@ -105,7 +105,7 @@ Pick the one class that matches the report. Do not run all four at once. If the 
    - `IllegalArgumentException` from `NavController` (`Navigation action/destination … cannot be found`, `… is unknown to this NavController`) → a nav-graph action fired from the wrong destination or after a pop. Route `views-specialist` (or `compose-specialist` when the screen is Compose-hosted).
    - `IllegalStateException: Fragment … not attached` / `not associated with a fragment manager` / `Can not perform this action after onSaveInstanceState` → lifecycle. Route `views-specialist`.
    - `CalledFromWrongThreadException`, `NetworkOnMainThreadException`, a View touched from a callback thread → threading. Route `concurrency-specialist`.
-   - `Resources$NotFoundException`, `InflateException`, a missing theme attribute → theming, `vectorDrawables.useSupportLibrary`, the host's theme. Route `views-specialist` / `compose-specialist`.
+   - `Resources$NotFoundException`, `InflateException`, a missing theme attribute → theming, `vectorDrawables.useSupportLibrary`, the host's theme. Route `design-system-specialist` when the cause is a theme attribute, style or prefixed resource (a day-only attribute, a renamed `gc_`/`gbs_` resource the host still overrides); otherwise `views-specialist` / `compose-specialist`.
    - `NoSuchMethodError`, `AbstractMethodError`, `ClassNotFoundException`, `NoClassDefFoundError` on a `net.gini.android` class → capture/default-network version skew in the host, or a host R8 keep rule. Route `architecture-specialist`; add `android-security-specialist` when `consumer-rules.pro` is the question.
    - `ActivityNotFoundException`, `FileUriExposedException`, `SecurityException` on a URI or permission → intents, `FileProvider`, permissions. Route `android-security-specialist`.
    - `UninitializedPropertyAccessException`, `NullPointerException` at a Java↔Kotlin boundary, `ClassCastException` → the owning screen's specialist, by the first SDK frame.
@@ -175,7 +175,7 @@ Run these in order:
 - **Evidence:** bullets, each anchored to `path/to/File.kt:LINE` or a quoted log/trace line. No paraphrase without a citation. Rules are cited by file and section (`coroutines-flow.md › Rules`, `architecture.md › DI boundaries`), never copied.
 - **Reproduction / verification plan:** the concrete steps or command that reproduce, or the exact steps you would take and what blocks you here.
 - **Alternatives ruled out:** what else fit the symptom and why the evidence excludes it.
-- **Route to:** `compose-specialist` | `views-specialist` | `concurrency-specialist` | `architecture-specialist` | `performance-specialist` | `testing-specialist` | `android-security-specialist` | `a11y-specialist` | `none — environment`, with a one-line reason. Two owners only when the cause spans a seam; say which owns the first move.
+- **Route to:** `compose-specialist` | `views-specialist` | `concurrency-specialist` | `architecture-specialist` | `performance-specialist` | `design-system-specialist` | `testing-specialist` | `android-security-specialist` | `a11y-specialist` | `none — environment`, with a one-line reason. Two owners only when the cause spans a seam; say which owns the first move.
 - **What I did NOT do:** "No fix applied. No files edited." — always present.
 - **Verification status:** the exact commands you ran and their result, and the ones you did not run with the reason (denied, no device, no credentials). Nobody should read an unrun check as a passed one.
 
@@ -194,7 +194,8 @@ Impact describes the failure. Confidence describes your hypothesis. Report both;
 
 You never edit. The fix goes to the owner you name:
 
-- **Compose screen idiom, state hoisting, effect APIs, `GiniTheme`** → `compose-specialist`.
+- **Compose screen idiom, state hoisting, effect APIs** → `compose-specialist`.
+- **Theme attributes, `GiniTheme` and its tokens, colour/dimen/style resources, night and `sw600dp` variants** → `design-system-specialist`.
 - **Runtime cost: a bitmap held or decoded too often, memory beyond a screen's life, recomposition scope and stability, adapter bind cost, Koin/facade init cost, dependency size** → `performance-specialist`.
 - **Fragment/View lifecycle, ViewBinding, XML, nav graphs** → `views-specialist`.
 - **Threads, scopes, dispatchers, cancellation, Orbit intents, legacy Java threading, coroutine-test races** → `concurrency-specialist`.
