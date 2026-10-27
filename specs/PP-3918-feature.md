@@ -1,6 +1,6 @@
 # PP-3918: [Android] UI Automation for Xray Error Screen Test Suite
 
-Status: implementing (7/8)
+Status: implemented
 Ticket: https://ginis.atlassian.net/browse/PP-3918
 Epic: https://ginis.atlassian.net/browse/PP-2671
 iOS twin: https://ginis.atlassian.net/browse/PP-3919 (Backlog)
@@ -155,14 +155,18 @@ Definitions:
 
 ### BrowserStack
 
-- **R17 (MUST, entry):** `bs_run_group_errorscreens.sh` runs `ErrorAndNoResultScreenMockBackendTests`, and
-  `bs_run_all_groups.sh` has `run_group "errorscreens" ErrorAndNoResultScreenMockBackendTests`.
-  `FileImportErrorDialogTests` and `OpenWithTest` stay in the `import` group.
-- **R18 (MUST, async):** On BrowserStack, every R5–R13 test passes (not skipped) in 3 runs of the
-  `errorscreens` group, and R14–R15 pass in 3 runs of the `import` group. The build ids are recorded
-  in the PR description. (Later change, asked by the user: `bs_run_group_errorscreens.sh` now runs
-  every test in the case → test table, so one errorscreens build covers all 22 cases; only
-  `ErrorScreenTests#test2` and `#test4` skip there, by design.)
+- **R17 (MUST, entry):** `bs_run_group_errorscreens.sh` runs every test in the case → test table:
+  `ErrorAndNoResultScreenMockBackendTests`, `ErrorScreenTests`, `NoResultsTests`,
+  `FileImportErrorDialogTests` and `OpenWithTest#opening_unsupported_file_with_MainActivity_does_not_start_Bank_SDK`
+  (whole classes, because BrowserStack rejects a `class` filter of 1000+ characters).
+  `bs_run_all_groups.sh` has `run_group "errorscreens" ErrorAndNoResultScreenMockBackendTests`. The
+  other classes also stay in their own groups (`import`, `extraction`, `smoke`).
+- **R18 (MUST, async):** On BrowserStack, one run of `bs_run_group_errorscreens.sh` passes with no
+  failures. The script runs every test in the case → test table, so that one build covers all 22
+  cases; the only skips are `ErrorScreenTests#test2`–`#test4`, which switch the network off and skip
+  themselves on BrowserStack by design. The build id is recorded in the PR description. (Changed
+  with the user from "3 runs of the `errorscreens` and `import` groups": the ticket only asks for the
+  tests to run on BrowserStack.)
 - **R19 (SHOULD, async):** Each R5–R11 test waits up to 30 s for the error header, like
   `NoResultScreen.waitForNoResultScreen`, because remote devices are slow.
 
@@ -327,8 +331,8 @@ different text. A mock that ignored the status would fail at least 6 of the 7 ty
 - `opening_unsupported_file_with_MainActivity_does_not_start_Bank_SDK` — R15
 
 R4 is shown by re-running `CreditNoteMockBackendTests` and `IngredientBrandTests` unchanged. R17 and
-R18 are process checks for `/gini-build`: run `bs_run_group_errorscreens.sh` and
-`bs_run_group_import.sh` 3 times each, and record the build ids.
+R18 are process checks for `/gini-build`: run `bs_run_group_errorscreens.sh` once on BrowserStack
+and record the build id.
 
 The mock enum and the `UiTestMockNetworkService` branch have no unit test. The example app has no
 unit-test setup for `uitestsupport/` (the same gap PP-3478 recorded), and every branch is exercised
@@ -383,9 +387,9 @@ by `ErrorAndNoResultScreenMockBackendTests`.
 - [x] 5. Asset `unsupported.txt` + `OpenWithTest#opening_unsupported_file_with_MainActivity_does_not_start_Bank_SDK` (R15)
 - [x] 6. Xray keys in the KDoc of the existing tests (R16)
 - [x] 7. `bs_run_group_errorscreens.sh`, `bs_run_all_groups.sh`, `bs_build_and_upload.md` (R17)
-- [ ] 8. Verify: compile androidTest, ktlint/detekt, run the new and touched classes on an emulator; BrowserStack runs (R18) by the user
+- [x] 8. Verify: compile androidTest, ktlint/detekt, run the new and touched classes on an emulator; BrowserStack runs (R18) by the user
   - Local (Samsung S22, Android 16): ErrorAndNoResultScreenMockBackendTests 9/9, OpenWithTest unsupported-file test, CreditNoteMockBackendTests 6/6 and IngredientBrandTests 11/11 pass.
   - FileImportErrorDialogTests#test4 passed 4 of 7 runs on that phone. Cause: its Downloads folder is crowded, and the picker sometimes scrolls the new file under the toolbar, so the tap misses (the existing test1 fails there the same way). PdfUploader is left unchanged; stability is judged on BrowserStack, where Downloads holds only the uploaded files.
   - BrowserStack run 1 (Pixel 9 + Pixel 10 Pro, Android 16): import group `693b654e9cbb414a42ece3ae8e7cfa8227074dde` 44 passed / 6 skipped (the 3 offline ErrorScreenTests × 2 devices, expected) / 0 failed, test4 green on both; errorscreens group `57eb2e7c23d74826f4a70970fbb6e23b3bdf1d2d` 18/18 passed.
   - BrowserStack, errorscreens group with every mapped class (all 22 cases in one build): `72dd47fabc86a1aa46a83292c75fb4eaef3c954e` 34 passed / 6 skipped (ErrorScreenTests #test2–#test4 × 2 devices, expected) / 0 failed.
-  - Open: runs 2 and 3 of each group (R18), if the user still wants them.
+  - R18 met by build `72dd47fabc86a1aa46a83292c75fb4eaef3c954e`; the user agreed one green run is enough.
