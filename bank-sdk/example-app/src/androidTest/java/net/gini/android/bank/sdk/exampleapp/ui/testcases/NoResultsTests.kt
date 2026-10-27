@@ -51,6 +51,10 @@ class NoResultsTests {
         IdlingRegistry.getInstance().register(idlingResource)
     }
 
+    /**
+     * TC-020 / PP-3435 (smoke) and the upload half of PP-2904. The camera half is
+     * [ErrorAndNoResultScreenMockBackendTests.test9_cameraPhotoNoResults_showsNoResultScreen].
+     */
     @Test
     fun test1_uploadInvalidImageAndClickEnterManuallyButton_NavigatesToMainScreen() {
         imageUploader.copyImageToDownloads(getApplicationContext(), "image-no-result.png")
@@ -99,6 +103,10 @@ class NoResultsTests {
     }
 
 
+    /**
+     * TC-021 / PP-3436 (smoke) and PP-2907. PP-2907 expects an error dialog for a non-invoice
+     * file, but on Android a valid non-invoice PDF opens the No Results screen.
+     */
     @Test
     fun test2_uploadInvalidPdfAndClickEnterManuallyButton_NavigatesToMainScreen() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {

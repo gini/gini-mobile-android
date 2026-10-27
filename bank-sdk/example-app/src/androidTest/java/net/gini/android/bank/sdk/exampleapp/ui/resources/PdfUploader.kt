@@ -2,6 +2,7 @@ package net.gini.android.bank.sdk.exampleapp.ui.resources
 
 import android.content.ContentValues
 import android.content.Context
+import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
@@ -89,13 +90,19 @@ class PdfUploader {
         }
     }
 
+    /** Removes every file named [filename] from Downloads that this app is allowed to delete. */
     @RequiresApi(Build.VERSION_CODES.Q)
-    fun copyPdfToDownloads(context: Context, filename: String) {
+    private fun deleteFromDownloads(context: Context, filename: String) {
         context.contentResolver.delete(
             MediaStore.Downloads.EXTERNAL_CONTENT_URI,
             "${MediaStore.MediaColumns.DISPLAY_NAME} = ?",
             arrayOf(filename)
         )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    fun copyPdfToDownloads(context: Context, filename: String) {
+        deleteFromDownloads(context, filename)
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
             put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
@@ -108,6 +115,48 @@ class PdfUploader {
         context.contentResolver.openOutputStream(uri)?.use { output ->
             context.assets.open(filename).use { input -> input.copyTo(output) }
         }
+    }
+
+    /**
+     * Writes a PDF of exactly [sizeBytes] into Downloads, for the file-size limit test. It is
+     * generated rather than shipped as an asset, so the test APK uploaded to BrowserStack stays
+     * small.
+     *
+     * Only the header and the end marker are real PDF; the rest is one long comment. That is
+     * enough because the SDK checks the size before it parses the PDF
+     * (`FileImportValidator.matchesCriteria`).
+     *
+     * Returns the new file's Uri, so the caller can delete exactly this file. Deleting by name is
+     * not enough: a copy left by an earlier install of the app cannot be deleted by this one, and
+     * MediaStore then saves the new file as "name (1).pdf". Pass a [filename] that is new on every
+     * run for the same reason.
+     */
+    @RequiresApi(Build.VERSION_CODES.Q)
+    fun writeLargePdfToDownloads(context: Context, filename: String, sizeBytes: Long): Uri {
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
+            put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
+            put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+        }
+        val uri = requireNotNull(
+            context.contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
+        ) { "Could not create $filename in Downloads" }
+        val header = "%PDF-1.4\n%".toByteArray()
+        val footer = "\n%%EOF\n".toByteArray()
+        requireNotNull(context.contentResolver.openOutputStream(uri)) {
+            "Could not open $filename for writing"
+        }.use { output ->
+            output.write(header)
+            val padding = ByteArray(PADDING_CHUNK_BYTES) { 'x'.code.toByte() }
+            var remaining = sizeBytes - header.size - footer.size
+            while (remaining > 0) {
+                val chunk = minOf(remaining, padding.size.toLong()).toInt()
+                output.write(padding, 0, chunk)
+                remaining -= chunk
+            }
+            output.write(footer)
+        }
+        return uri
     }
 
     private fun openNavigationDrawer(): Boolean {
@@ -133,5 +182,7 @@ class PdfUploader {
     private companion object {
         /** Waits for the picker to list the folder's files before falling back to scrolling. */
         const val FILE_TIMEOUT_MS = 5_000L
+
+        const val PADDING_CHUNK_BYTES = 64 * 1024
     }
 }

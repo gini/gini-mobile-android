@@ -104,6 +104,13 @@ BS_DISABLE_ANIMATIONS=false run_group "ingredientbrand_education" \
   IngredientBrandEducationTests \
   IngredientBrandLandscapeEducationTests
 
+# Canned backend — every error screen on demand, including no internet (PP-3918).
+# Only this class: bs_run_group_errorscreens.sh also lists ErrorScreenTests, NoResultsTests,
+# FileImportErrorDialogTests and an OpenWithTest method, which run here in the import and
+# extraction groups already.
+run_group "errorscreens" \
+  ErrorAndNoResultScreenMockBackendTests
+
 # DigitalInvoiceSkontoTests is left out on purpose — see bs_run_group_smoke.sh's header.
 run_group "smokejourneys" \
   SmokeJourneyTests \

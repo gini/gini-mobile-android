@@ -1,0 +1,1 @@
+This is a plain text file. The Gini Bank SDK only accepts PDF, XML and images, so it must refuse it.

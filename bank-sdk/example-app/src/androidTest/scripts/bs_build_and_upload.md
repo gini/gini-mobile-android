@@ -69,6 +69,12 @@ All three media files are always uploaded. BrowserStack places them in the devic
 
 Both are also triggered by `bs_run_all_groups.sh`.
 
+### Error and No Results screens shard (PP-3918)
+
+| Script | Classes | Notes |
+|---|---|---|
+| `bs_run_group_errorscreens.sh` | `ErrorAndNoResultScreenMockBackendTests`, `ErrorScreenTests`, `NoResultsTests`, `FileImportErrorDialogTests`, `OpenWithTest#opening_unsupported_file_…` | Every test mapped to the Xray folder "Error & No result screens" (PP-2895…PP-2917), in one build; each entry names its cases. The mock-backend class forces each error screen, including no internet. Whole classes because BrowserStack rejects a `class` filter of 1000+ characters; this brings in two tests outside the set (`ErrorScreenTests#test3`, `FileImportErrorDialogTests#test3`). `ErrorScreenTests#test2`–`#test4` skip themselves on BrowserStack (the network can't be switched off). `bs_run_all_groups.sh` runs only the mock-backend class here, because the other classes already run in its import and extraction groups. |
+
 ---
 
 ## Output APKs
