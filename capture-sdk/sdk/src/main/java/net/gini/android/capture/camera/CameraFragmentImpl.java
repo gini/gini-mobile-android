@@ -645,6 +645,10 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         // alone — see setPoweredByGiniVisible.
         qrCodeEducationPopup = new QRCodeEducationPopup<>(
                 view.findViewById(R.id.gc_qr_code_education_compose_view));
+        // The previous view's carousel went away with that view, and an EPS code reaches
+        // onQrCodeRecognized without passing through showQrCodePopup, which is where the other
+        // steps drop a signal left behind by an interrupted carousel (PP-3937).
+        resetQrEducationStep();
     }
 
     /**

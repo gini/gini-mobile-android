@@ -88,6 +88,11 @@ All in `capture-sdk:sdk`, no public API impact (`CameraFragmentExtension` is `in
   launch both waiters on it. Waiters `await()` the current step's Deferred (if any) instead of
   `withLock`. The listener call in `onQrCodeRecognized` keeps running on the IO dispatcher as
   today; the Wero fallback keeps hopping to the main dispatcher.
+- Add `resetQrEducationStep()`, which drops the current step's Deferred and running flag.
+  `CameraFragmentImpl.createPopups` calls it on every view creation next to the fresh
+  `QRCodeEducationPopup`: `handleEPSPaymentQRCode` reaches `onQrCodeRecognized` without passing
+  through `showQrCodePopup`, so on a fragment that survived an interrupted carousel with a
+  recreated view an EPS scan would otherwise await the dead carousel until `onDestroy`.
 - Add `cancelQrStepWaiters()`, which cancels that scope's job.
   `CameraFragmentImpl.onDestroy` calls it, so waiters end with `CancellationException` when the
   fragment is destroyed — nothing is delivered to a dead screen.
@@ -96,7 +101,8 @@ All in `capture-sdk:sdk`, no public API impact (`CameraFragmentExtension` is `in
   constructor passes `Dispatchers.IO`/`Main` explicitly and gains a package-private
   `@VisibleForTesting` overload that forwards test dispatchers.
 
-`CameraFragmentImpl.java`: call the new teardown from `onDestroy()`; add the dispatcher-forwarding
+`CameraFragmentImpl.java`: call the new teardown from `onDestroy()` and the reset from
+`createPopups(View)`; add the dispatcher-forwarding
 constructor overload; update the two comments that mention "the education mutex".
 
 Tests: `CameraFragmentExtensionTest` loses the reflective `educationMutex()` accessor — the

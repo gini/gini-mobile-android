@@ -466,6 +466,48 @@ class CameraFragmentExtensionTest {
             verify(exactly = 1) { extension.fragmentListener.onExtractionsAvailable(any()) }
         }
 
+    /**
+     * Same surviving fragment, recreated view, but the next scan is an EPS code:
+     * `CameraFragmentImpl.handleEPSPaymentQRCode` calls [CameraFragmentExtension.onQrCodeRecognized]
+     * without going through `showQrCodePopup`, so nothing on that path replaces the dead
+     * carousel's signal. The view recreation (`CameraFragmentImpl.createPopups`) has to drop it.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `a waiter that skipped showQrCodePopup after an interrupted education step is released by the view recreation`() =
+        runTest {
+            extensionOn(StandardTestDispatcher(testScheduler), slot())
+            runEducationHalf()
+
+            extension.resetQrEducationStep()
+            extension.onQrCodeRecognized(emptyMap())
+            advanceUntilIdle()
+
+            assertThat(extension.hasPendingQrStepWaiters()).isFalse()
+            assertThat(extension.educationStepRunning()).isFalse()
+            verify(exactly = 1) { extension.fragmentListener.onExtractionsAvailable(any()) }
+        }
+
+    /**
+     * The failure mode the test above guards against, pinned so a future refactoring that routes
+     * the EPS path around the reset is caught: without the view recreation the waiter does hang
+     * on the interrupted carousel.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `a waiter that skipped showQrCodePopup after an interrupted education step stays parked without the view recreation`() =
+        runTest {
+            extensionOn(StandardTestDispatcher(testScheduler), slot())
+            runEducationHalf()
+
+            extension.onQrCodeRecognized(emptyMap())
+            advanceUntilIdle()
+
+            assertThat(extension.hasPendingQrStepWaiters()).isTrue()
+            verify(exactly = 0) { extension.fragmentListener.onExtractionsAvailable(any()) }
+            extension.cancelQrStepWaiters()
+        }
+
     @Test
     fun `isWeroQRCodeScanningEnabled reflects the configuration provider`() {
         assertThat(extension.isWeroQRCodeScanningEnabled()).isFalse()

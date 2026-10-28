@@ -85,7 +85,12 @@ internal abstract class CameraFragmentExtension(
      * never released, and the next education step on the same fragment (back from the no-results
      * screen, scan again) blocked the main thread in `lock()` for good.
      *
-     * Written on the main thread by [showQrCodePopup], read by the waiters on [qrStepScope].
+     * Dropped in two places: [showQrCodePopup] replaces it for every step it starts, and
+     * [resetQrEducationStep] clears it when the camera view is recreated, because not every
+     * waiter arrives through [showQrCodePopup] — an EPS code goes straight to [onQrCodeRecognized].
+     *
+     * Written on the main thread by [showQrCodePopup] and [resetQrEducationStep], read by the
+     * waiters on [qrStepScope].
      */
     @Volatile
     private var educationStepCompletion: CompletableDeferred<Unit>? = null
@@ -288,6 +293,23 @@ internal abstract class CameraFragmentExtension(
     /** Suspends until the current education step's carousel completed; returns at once without one. */
     private suspend fun awaitEducationStep() {
         educationStepCompletion?.await()
+    }
+
+    /**
+     * Forgets the education step of a camera view that no longer exists.
+     *
+     * `CameraFragmentImpl.createPopups` calls it on every view creation, next to the fresh
+     * [qrCodeEducationPopup]. The carousel of the previous view was disposed with that view, so
+     * a signal it left uncompleted can never complete now — and [showQrCodePopup] is not the only
+     * way into the waiters: `CameraFragmentImpl.handleEPSPaymentQRCode` calls [onQrCodeRecognized]
+     * directly. Without this, an EPS scan on a fragment that survived an interrupted carousel
+     * (empty-extractions or analysis-error branch navigated away, user came back, view recreated)
+     * awaited the dead carousel until the fragment was destroyed — the same re-entry hang the
+     * retrieval and education steps already avoid by replacing the signal themselves.
+     */
+    fun resetQrEducationStep() {
+        qrEducationStepRunning = false
+        educationStepCompletion = null
     }
 
     /**
