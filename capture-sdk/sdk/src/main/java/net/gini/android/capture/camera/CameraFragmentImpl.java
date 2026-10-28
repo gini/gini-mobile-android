@@ -124,6 +124,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
+import kotlinx.coroutines.CoroutineDispatcher;
+import kotlinx.coroutines.Dispatchers;
 import net.gini.android.capture.internal.ui.runtimecolors.RuntimeColors;
 
 import static net.gini.android.capture.camera.CameraFragment.REQUEST_KEY;
@@ -277,6 +279,21 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private View mDetectionErrorDismissButton;
 
     CameraFragmentImpl(@NonNull final FragmentImplCallback fragment, @NonNull final CancelListener cancelListener, final boolean addPages) {
+        this(fragment, cancelListener, addPages, Dispatchers.getIO(), Dispatchers.getMain());
+    }
+
+    /**
+     * Test seam: runs the QR-code step's waiters (see {@code CameraFragmentExtension}) on the given
+     * dispatchers instead of IO/Main, so a JVM test can drive them deterministically. The
+     * production constructor above passes the same defaults the Kotlin parent declares.
+     */
+    @VisibleForTesting
+    CameraFragmentImpl(@NonNull final FragmentImplCallback fragment,
+                       @NonNull final CancelListener cancelListener,
+                       final boolean addPages,
+                       @NonNull final CoroutineDispatcher qrStepDispatcher,
+                       @NonNull final CoroutineDispatcher qrStepMainDispatcher) {
+        super(qrStepDispatcher, qrStepMainDispatcher);
         mFragment = fragment;
         mCancelListener = cancelListener;
         fragmentListener = NO_OP_LISTENER;
@@ -984,6 +1001,10 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         if (mImportUrisAsyncTask != null) {
             mImportUrisAsyncTask.cancel(true);
         }
+        // A coroutine still waiting for an education carousel that will never complete (the view
+        // was destroyed mid-animation) must not outlive the fragment — it would pin this instance,
+        // the fragment, its views and the Activity for the rest of the process (PP-3937).
+        cancelQrStepWaiters();
     }
 
     private void closeCamera() {
@@ -1471,7 +1492,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                             // hideActivityIndicatorAndEnableInteraction() for the full contract.
                             // Waiting for onStop() instead would be too late anyway: navigation is
                             // asynchronous (onQrCodeRecognized hops to another dispatcher and waits
-                            // on the education mutex).
+                            // for the education carousel to complete).
                             hideActivityIndicatorAndEnableInteraction();
                             // Local to this analyzeQRCode call: dies with the handler, so an
                             // early return of a later call can never leave stale residue that a

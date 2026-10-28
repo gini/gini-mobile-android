@@ -14,6 +14,13 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import jersey.repackaged.jsr166e.CompletableFuture
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureHelper
 import net.gini.android.capture.di.clientConfigurationModule
@@ -412,9 +419,13 @@ class CameraFragmentImplTest {
         override fun onDestroy() = Unit
     }
 
-    private open class CameraFragmentImplWithoutQRCodeReader(fragment: FragmentImplCallback,
-                                                        cancelListener: CancelListener, addPages: Boolean
-    ) : CameraFragmentImpl(fragment, cancelListener, addPages) {
+    private open class CameraFragmentImplWithoutQRCodeReader(
+        fragment: FragmentImplCallback,
+        cancelListener: CancelListener,
+        addPages: Boolean,
+        qrStepDispatcher: CoroutineDispatcher = Dispatchers.IO,
+        qrStepMainDispatcher: CoroutineDispatcher = Dispatchers.Main,
+    ) : CameraFragmentImpl(fragment, cancelListener, addPages, qrStepDispatcher, qrStepMainDispatcher) {
             override fun initQRCodeReader() {
                 // Do nothing, because no QR code reader is available in JVM tests
             }
@@ -423,13 +434,16 @@ class CameraFragmentImplTest {
     }
 
     /**
-     * Named subclass that no-ops [hideImageCorners]. An anonymous override tripped a Kotlin IR
-     * compiler bug when the test then set the `internal` dispatcher properties on the extension.
+     * No-ops [hideImageCorners] and runs the QR-code step's waiters on an unconfined test
+     * dispatcher, so the Wero fallback's Main-dispatched lambda executes before the assertions.
      */
+    @OptIn(ExperimentalCoroutinesApi::class)
     private class CameraFragmentImplSuppressingImageCorners(
         fragment: FragmentImplCallback,
         cancelListener: CancelListener,
-    ) : CameraFragmentImplWithoutQRCodeReader(fragment, cancelListener, false) {
+    ) : CameraFragmentImplWithoutQRCodeReader(
+        fragment, cancelListener, false, UnconfinedTestDispatcher(), UnconfinedTestDispatcher()
+    ) {
         override fun hideImageCorners() = Unit
     }
 
@@ -560,13 +574,6 @@ class CameraFragmentImplTest {
             val fragmentImpl = CameraFragmentImplSuppressingImageCorners(
                 fragmentCallback, mock<CancelListener>()
             )
-            // Run the fallback worker synchronously so the Main-dispatched lambda executes
-            // before the test assertions. Cast to the Kotlin extension parent to dodge a Kotlin
-            // IR compiler bug that trips on setting internal properties via an anonymous subclass
-            // of the Java-intermediate CameraFragmentImpl.
-            val extension: CameraFragmentExtension = fragmentImpl
-            extension.fallbackIoDispatcher = kotlinx.coroutines.test.UnconfinedTestDispatcher()
-            extension.fallbackMainDispatcher = kotlinx.coroutines.test.UnconfinedTestDispatcher()
             fragmentImpl.mActivityIndicatorBackground =
                 View(activity).apply { visibility = View.VISIBLE }
             fragmentImpl.mLoadingIndicator = loadingIndicatorOwning(RecordingLoadingIndicatorAdapter())
@@ -622,9 +629,6 @@ class CameraFragmentImplTest {
             val fragmentImpl = CameraFragmentImplSuppressingImageCorners(
                 fragmentCallback, mock<CancelListener>()
             )
-            val extension: CameraFragmentExtension = fragmentImpl
-            extension.fallbackIoDispatcher = kotlinx.coroutines.test.UnconfinedTestDispatcher()
-            extension.fallbackMainDispatcher = kotlinx.coroutines.test.UnconfinedTestDispatcher()
             fragmentImpl.mActivityIndicatorBackground =
                 View(activity).apply { visibility = View.VISIBLE }
             fragmentImpl.mLoadingIndicator = loadingIndicatorOwning(RecordingLoadingIndicatorAdapter())
@@ -647,6 +651,38 @@ class CameraFragmentImplTest {
         } finally {
             configurationProvider.update { it.copy(isWeroQRCodeScanningEnabled = false) }
         }
+    }
+
+    /**
+     * Pins the one production line the PP-3937 leak fix depends on: the fragment's teardown must
+     * cancel the coroutines still waiting for an education carousel that will never complete.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `onDestroy releases a waiter parked on an interrupted education carousel`() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        val fragmentImpl = CameraFragmentImplWithoutQRCodeReader(
+            mock(), mock<CancelListener>(), false, dispatcher, dispatcher
+        )
+        fragmentImpl.mPaymentQRCodePopup = mockk(relaxed = true)
+        // The stubbed popup never fires its completion callback — a disposed ComposeView.
+        fragmentImpl.qrCodeEducationPopup = mockk(relaxed = true)
+        coEvery { qrEducationTypeUseCase.execute() } returns QrEducationType.PHOTO_DOC
+        every { educationFeatureEnabledUseCase.invoke() } returns true
+        fragmentImpl.showQrCodePopup(paymentQRCodeData()) { }
+        var fallbackCalled = 0
+        fragmentImpl.onQrCodeFallbackToUnsupported { fallbackCalled += 1 }
+        advanceUntilIdle()
+        // Called through the Kotlin parent type: the Kotlin IR compiler cannot resolve an
+        // `internal` member on a Kotlin subclass of the Java-intermediate CameraFragmentImpl.
+        val extension: CameraFragmentExtension = fragmentImpl
+        assertTrue(extension.hasPendingQrStepWaiters())
+
+        fragmentImpl.onDestroy()
+        advanceUntilIdle()
+
+        assertFalse(extension.hasPendingQrStepWaiters())
+        assertEquals(0, fallbackCalled)
     }
 
     @Test
