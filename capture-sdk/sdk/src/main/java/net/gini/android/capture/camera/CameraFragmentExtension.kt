@@ -268,13 +268,19 @@ internal abstract class CameraFragmentExtension(
     /**
      * Hands the extractions to [fragmentListener] once the education carousel — if this step
      * shows one — has completed. The listener is called on [qrStepScope]'s dispatcher, as before.
+     *
+     * Both waiters capture [educationStepCompletion] on the calling thread, before `launch`, so
+     * each binds to the step that was current when it was called — the same per-step binding the
+     * carousel callback has on its side — rather than to whatever the field holds once the
+     * dispatcher gets to run the coroutine. `null` means a plain retrieval step: no wait.
      */
     fun onQrCodeRecognized(
         extractions: Map<String, GiniCaptureSpecificExtraction>
     ) {
         hideImageCorners()
+        val step = educationStepCompletion
         qrStepScope.launch {
-            awaitEducationStep()
+            step?.await()
             fragmentListener.onExtractionsAvailable(extractions)
         }
     }
@@ -284,15 +290,11 @@ internal abstract class CameraFragmentExtension(
      * unsupported-QR popup never interrupts the 4.5 s animation (iOS parity).
      */
     fun onQrCodeFallbackToUnsupported(onMainThread: () -> Unit) {
+        val step = educationStepCompletion
         qrStepScope.launch {
-            awaitEducationStep()
+            step?.await()
             withContext(qrStepMainDispatcher) { onMainThread() }
         }
-    }
-
-    /** Suspends until the current education step's carousel completed; returns at once without one. */
-    private suspend fun awaitEducationStep() {
-        educationStepCompletion?.await()
     }
 
     /**
