@@ -217,7 +217,9 @@ Test methods (8): `test1_cameraPhoto_noResults_showsTipsRetakeAndEnterManually` 
 (R5), `test4_cameraPhoto_navigationBack_returnsToCamera` (R6), `test5_cameraPhoto_systemBack_returnsToCamera`
 (R7), `test6_qr_noResults_showsQrHeaderFormatsRetakeAndEnterManually` (R10),
 `test7_qr_enterManually_returnsToMainScreen` (R11), `test8_qr_retakeImages_returnsToCamera` (R12).
-A private `openCameraAndScanQrCode()` with the `Assume` mirrors `IngredientBrandQrOverlayTests`.
+`openCameraAndScanQrCode()` with the `Assume` is shared with `IngredientBrandQrOverlayTests` through
+`WarningBottomSheetTestBase` (hoisted in review, together with `QR_DETECTION_TIMEOUT_MS` and the
+`analysisScreen` page object).
 
 ### `NoResultsTests` (extend) — `ui/testcases/NoResultsTests.kt`
 

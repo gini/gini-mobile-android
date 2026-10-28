@@ -3,7 +3,6 @@ package net.gini.android.bank.sdk.exampleapp.ui.testcases
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import net.gini.android.bank.sdk.exampleapp.ui.resources.LandscapeDarkModeRule
 import net.gini.android.bank.sdk.exampleapp.ui.resources.ScreenLoadingIndicatorConfigurator
-import net.gini.android.bank.sdk.exampleapp.ui.screens.AnalysisScreen
 import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockScenario
 import org.junit.After
 import org.junit.Assert.assertFalse
@@ -41,7 +40,6 @@ class IngredientBrandLandscapeTests : WarningBottomSheetTestBase() {
     @get:Rule(order = Int.MIN_VALUE + 1)
     val landscapeDarkMode = LandscapeDarkModeRule()
 
-    private val analysisScreen = AnalysisScreen()
 
     @Before
     fun checkDarkMode() {
@@ -210,7 +208,7 @@ class IngredientBrandLandscapeTests : WarningBottomSheetTestBase() {
     fun test3_landscapeDark_qr_noEducation_showsBadgeAndGiniMark() {
         arm(qrCodeEducationEnabled = false, analysisDelayMillis = QR_DELAY_MS)
 
-        openCameraAndScanQrCode()
+        openCameraInLandscapeAndScanQrCode()
 
         assertTrue("Gini loading indicator is not shown", analysisScreen.waitForGiniLoadingIndicator())
         assertTrue("Powered by Gini badge is not shown", analysisScreen.isPoweredByGiniDisplayed())
@@ -221,7 +219,7 @@ class IngredientBrandLandscapeTests : WarningBottomSheetTestBase() {
     fun test4_landscapeDark_qr_education_showsBadgeWithoutIndicator() {
         arm(qrCodeEducationEnabled = true, analysisDelayMillis = QR_DELAY_MS)
 
-        openCameraAndScanQrCode()
+        openCameraInLandscapeAndScanQrCode()
 
         assertTrue("QR code education did not appear", analysisScreen.waitForQrCodeEducation())
         assertTrue("Powered by Gini badge is not shown", analysisScreen.isPoweredByGiniDisplayed())
@@ -241,8 +239,12 @@ class IngredientBrandLandscapeTests : WarningBottomSheetTestBase() {
         )
     }
 
-    /** Skipped, not failed, when the camera cannot see a QR code — always the case on BrowserStack. */
-    private fun openCameraAndScanQrCode() {
+    /**
+     * The landscape variant of [WarningBottomSheetTestBase.openCameraAndScanQrCode]: the device is
+     * turned on the camera screen before the scan. Skipped, not failed, when the camera cannot see
+     * a QR code — always the case on BrowserStack.
+     */
+    private fun openCameraInLandscapeAndScanQrCode() {
         mainScreen.clickPhotoPaymentButton()
         onboardingScreen.clickSkipButtonIfPresent()
         assertTrue("Camera screen did not appear", captureScreen.checkScanTextDisplayed())
@@ -273,7 +275,6 @@ class IngredientBrandLandscapeTests : WarningBottomSheetTestBase() {
 
         /** The mock never reads it; see IngredientBrandTests. */
         const val ANY_PDF = "sample.pdf"
-        const val QR_DETECTION_TIMEOUT_MS = 20_000L
 
         /** The first tip starts sliding in 5 s after the Analysis screen starts. */
         const val BEFORE_FIRST_TIP_TIMEOUT_MS = 3_000L

@@ -1,12 +1,10 @@
 package net.gini.android.bank.sdk.exampleapp.ui.testcases
 
 import androidx.test.platform.app.InstrumentationRegistry
-import net.gini.android.bank.sdk.exampleapp.ui.screens.AnalysisScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.NoResultScreen
 import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockScenario
 import net.gini.android.capture.R
 import org.junit.Assert.assertTrue
-import org.junit.Assume
 import org.junit.Test
 
 /**
@@ -31,8 +29,10 @@ import org.junit.Test
  * [test7_qr_enterManually_returnsToMainScreen] and [test8_qr_retakeImages_returnsToCamera] the
  * camera must really see a SEPA payment QR code. Run them on a local device and hold the back
  * camera in front of `src/androidTest/assets/sepa_payment_qr_poster.png` (for example opened
- * full screen on a laptop). When no QR code is detected within [QR_DETECTION_TIMEOUT_MS], each
- * of them is SKIPPED — never passed, never failed — exactly like [IngredientBrandQrOverlayTests].
+ * full screen on a laptop). When no QR code is detected within
+ * [WarningBottomSheetTestBase.QR_DETECTION_TIMEOUT_MS], each
+ * of them is SKIPPED — never passed, never failed — through the shared
+ * [WarningBottomSheetTestBase.openCameraAndScanQrCode], exactly like [IngredientBrandQrOverlayTests].
  * On BrowserStack the camera only sees the device rack, so those three always skip.
  *
  * The mock ignores what the QR code says; any readable SEPA payment QR code works.
@@ -40,7 +40,6 @@ import org.junit.Test
 class NoResultsMockBackendTests : WarningBottomSheetTestBase() {
 
     private val noResultScreen = NoResultScreen()
-    private val analysisScreen = AnalysisScreen()
 
     /** PP-3189 / PP-3195: a camera photo with empty extractions shows the full No Results screen. */
     @Test
@@ -157,17 +156,6 @@ class NoResultsMockBackendTests : WarningBottomSheetTestBase() {
         assertDisplayed(R.string.gc_title_no_results)
     }
 
-    /** Skipped, not failed, when the camera cannot see a QR code — see the class KDoc. */
-    private fun openCameraAndScanQrCode() {
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButtonIfPresent()
-        Assume.assumeTrue(
-            "No SEPA payment QR code in front of the camera — hold the device in front of " +
-                "sepa_payment_qr_poster.png. Always skipped on BrowserStack.",
-            analysisScreen.waitForQrCodeDetected(QR_DETECTION_TIMEOUT_MS)
-        )
-    }
-
     private fun assertDisplayed(resId: Int) {
         val name = resources.getResourceEntryName(resId)
         assertTrue("'$name' is not displayed", noResultScreen.checkElementWithTextIsDisplayed(resId))
@@ -175,8 +163,4 @@ class NoResultsMockBackendTests : WarningBottomSheetTestBase() {
 
     private val resources
         get() = InstrumentationRegistry.getInstrumentation().targetContext.resources
-
-    private companion object {
-        const val QR_DETECTION_TIMEOUT_MS = 20_000L
-    }
 }
