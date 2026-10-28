@@ -241,12 +241,16 @@ internal abstract class CameraFragmentExtension(
                 val completion = CompletableDeferred<Unit>()
                 educationStepCompletion = completion
                 qrCodeEducationPopup.show(type) {
-                    runBlocking {
-                        incrementQrCodeRecognizedCounterUseCase.execute()
+                    try {
+                        runBlocking {
+                            incrementQrCodeRecognizedCounterUseCase.execute()
+                        }
+                    } finally {
+                        // Completes this step's own signal, not whatever the field holds by now:
+                        // a callback from an earlier carousel can never release a later step's
+                        // waiters. In `finally` so a failing counter write cannot park them.
+                        completion.complete(Unit)
                     }
-                    // Completes this step's own signal, not whatever the field holds by now: a
-                    // callback from an earlier carousel can never release a later step's waiters.
-                    completion.complete(Unit)
                 }
                 onEducationFlowTriggered()
             } else {
