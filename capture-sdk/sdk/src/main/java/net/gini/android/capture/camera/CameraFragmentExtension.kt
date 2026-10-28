@@ -27,6 +27,7 @@ import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
 import net.gini.android.capture.internal.provider.UnsupportedQrWarningSessionPin
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter
 import net.gini.android.capture.view.InjectedViewAdapterInstance
+import net.gini.android.capture.wero.GetWeroQRCodeScanningEnabledUseCase
 
 internal abstract class CameraFragmentExtension {
 
@@ -46,6 +47,8 @@ internal abstract class CameraFragmentExtension {
             GetEducationFeatureEnabledUseCase by getGiniCaptureKoin().inject()
     private val giniBankConfigurationProvider:
             GiniBankConfigurationProvider by getGiniCaptureKoin().inject()
+    private val getWeroQRCodeScanningEnabledUseCase:
+            GetWeroQRCodeScanningEnabledUseCase by getGiniCaptureKoin().inject()
     private val unsupportedQrWarningSessionPin:
             UnsupportedQrWarningSessionPin by getGiniCaptureKoin().inject()
     private val getIngredientBrandVisibleUseCase:
@@ -160,8 +163,7 @@ internal abstract class CameraFragmentExtension {
      * read fresh from the provider every time a QR code is scanned, so a configuration refresh
      * mid-session takes effect on the next scan without needing a dedicated session reset.
      */
-    fun isWeroQRCodeScanningEnabled(): Boolean =
-        giniBankConfigurationProvider.provide().isWeroQRCodeScanningEnabled
+    fun isWeroQRCodeScanningEnabled(): Boolean = getWeroQRCodeScanningEnabledUseCase()
 
     /**
      * Entry point of the QR-code analysis step and therefore the single place that decides which
