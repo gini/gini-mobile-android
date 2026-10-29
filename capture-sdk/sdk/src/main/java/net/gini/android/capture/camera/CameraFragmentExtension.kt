@@ -1,14 +1,16 @@
 package net.gini.android.capture.camera
 
 import androidx.annotation.VisibleForTesting
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.einvoice.GetEInvoiceFeatureEnabledUseCase
 import net.gini.android.capture.internal.camera.view.QRCodePopup
@@ -29,7 +31,17 @@ import net.gini.android.capture.view.CustomLoadingIndicatorAdapter
 import net.gini.android.capture.view.InjectedViewAdapterInstance
 import net.gini.android.capture.wero.GetWeroQRCodeScanningEnabledUseCase
 
-internal abstract class CameraFragmentExtension {
+internal abstract class CameraFragmentExtension(
+    /**
+     * Dispatcher the QR-code step's waiters ([onQrCodeRecognized], [onQrCodeFallbackToUnsupported])
+     * run on while they wait for the education carousel. Off the main thread, as the step has
+     * always been: `Dispatchers.IO` in production, a `TestDispatcher` in tests. The Java subclass
+     * `CameraFragmentImpl` passes both dispatchers explicitly; the defaults serve Kotlin subclasses.
+     */
+    qrStepDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    /** Dispatcher [onQrCodeFallbackToUnsupported] hops to for its main-thread callback. */
+    private val qrStepMainDispatcher: CoroutineDispatcher = Dispatchers.Main,
+) {
 
     @VisibleForTesting
     lateinit var qrCodeEducationPopup: QRCodeEducationPopup<PaymentQRCodeData>
@@ -53,19 +65,38 @@ internal abstract class CameraFragmentExtension {
             UnsupportedQrWarningSessionPin by getGiniCaptureKoin().inject()
     private val getIngredientBrandVisibleUseCase:
             GetIngredientBrandVisibleUseCase by getGiniCaptureKoin().inject()
-    private val educationMutex = Mutex()
 
     /**
-     * Dispatcher the [onQrCodeFallbackToUnsupported] worker launches on while it waits on
-     * [educationMutex]. Mutable because this class is `abstract` with no injectable constructor
-     * and is extended from Java — tests swap in a `TestDispatcher` to drive it deterministically.
+     * Owns every coroutine that waits for the QR-code education carousel — [onQrCodeRecognized]
+     * and [onQrCodeFallbackToUnsupported]. The waiters used to be launched on throwaway
+     * `CoroutineScope(...)` instances that nothing cancelled, so a carousel that never completed
+     * (camera view destroyed mid-animation) left them suspended for the process lifetime, pinning
+     * this fragment, its views and the host Activity. `CameraFragmentImpl.onDestroy` cancels this
+     * scope through [cancelQrStepWaiters] (PP-3937).
      */
-    @VisibleForTesting
-    internal var fallbackIoDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val qrStepScope = CoroutineScope(SupervisorJob() + qrStepDispatcher)
 
-    /** Dispatcher [onQrCodeFallbackToUnsupported] hops to for the main-thread callback. */
-    @VisibleForTesting
-    internal var fallbackMainDispatcher: CoroutineDispatcher = Dispatchers.Main
+    /**
+     * Completion signal of the education step started last on this fragment; `null` when the last
+     * step was a plain retrieval or no step ran yet. Created per education step by
+     * [showQrCodePopup] and completed by the carousel's completion callback, which the Compose
+     * `LaunchedEffect` in `AnimatedEducationMessageWithIntro` fires after the 4.5 s animation.
+     *
+     * One instance per step on purpose. Destroying the camera view disposes the composition, so an
+     * interrupted carousel never completes its signal, and the next step must not inherit that.
+     * The previous `Mutex`-as-signal did exactly that: the lock taken for the interrupted step was
+     * never released, and the next education step on the same fragment (back from the no-results
+     * screen, scan again) blocked the main thread in `lock()` for good.
+     *
+     * Dropped in two places: [showQrCodePopup] replaces it for every step it starts, and
+     * [resetQrEducationStep] clears it when the camera view is recreated, because not every
+     * waiter arrives through [showQrCodePopup] — an EPS code goes straight to [onQrCodeRecognized].
+     *
+     * Written on the main thread by [showQrCodePopup] and [resetQrEducationStep], read by the
+     * waiters on [qrStepScope].
+     */
+    @Volatile
+    private var educationStepCompletion: CompletableDeferred<Unit>? = null
 
     /**
      * Held for the lifetime of the fragment rather than rebuilt per view creation.
@@ -197,6 +228,9 @@ internal abstract class CameraFragmentExtension {
         runBlocking {
             updateFlowTypeUseCase.execute(FlowType.QrCode)
             qrEducationStepRunning = false
+            // A retrieval step has no carousel to wait for; a signal left behind by an interrupted
+            // education step must not hold up this step's waiters either.
+            educationStepCompletion = null
             val type = getQrEducationTypeUseCase.execute()
             if (type != null && getEducationFeatureEnabledUseCase.invoke()) {
                 // Set before show(): the overlay and the badge must go up in the same frame, and
@@ -206,13 +240,20 @@ internal abstract class CameraFragmentExtension {
                 if (isIngredientBrandVisible()) {
                     setPoweredByGiniVisible(true)
                 }
+                val completion = CompletableDeferred<Unit>()
+                educationStepCompletion = completion
                 qrCodeEducationPopup.show(type) {
-                    runBlocking {
-                        incrementQrCodeRecognizedCounterUseCase.execute()
-                        educationMutex.unlock()
+                    try {
+                        runBlocking {
+                            incrementQrCodeRecognizedCounterUseCase.execute()
+                        }
+                    } finally {
+                        // Completes this step's own signal, not whatever the field holds by now:
+                        // a callback from an earlier carousel can never release a later step's
+                        // waiters. In `finally` so a failing counter write cannot park them.
+                        completion.complete(Unit)
                     }
                 }
-                educationMutex.lock()
                 onEducationFlowTriggered()
             } else {
                 // The approved design shows the brand element from the QR-detected state on
@@ -230,27 +271,70 @@ internal abstract class CameraFragmentExtension {
             }
         }
 
+    /**
+     * Hands the extractions to [fragmentListener] once the education carousel — if this step
+     * shows one — has completed. The listener is called on [qrStepScope]'s dispatcher, as before.
+     *
+     * Both waiters capture [educationStepCompletion] on the calling thread, before `launch`, so
+     * each binds to the step that was current when it was called — the same per-step binding the
+     * carousel callback has on its side — rather than to whatever the field holds once the
+     * dispatcher gets to run the coroutine. `null` means a plain retrieval step: no wait.
+     */
     fun onQrCodeRecognized(
         extractions: Map<String, GiniCaptureSpecificExtraction>
     ) {
         hideImageCorners()
-        CoroutineScope(Dispatchers.IO).launch {
-            educationMutex.withLock {
-                fragmentListener.onExtractionsAvailable(extractions)
-            }
+        val step = educationStepCompletion
+        qrStepScope.launch {
+            step?.await()
+            fragmentListener.onExtractionsAvailable(extractions)
         }
     }
 
     /**
-     * Wero fallback counterpart of [onQrCodeRecognized]: waits on [educationMutex] so the
-     * unsupported-QR popup never interrupts the 4.5 s education carousel (iOS parity).
+     * Wero fallback counterpart of [onQrCodeRecognized]: waits for the education carousel so the
+     * unsupported-QR popup never interrupts the 4.5 s animation (iOS parity).
      */
     fun onQrCodeFallbackToUnsupported(onMainThread: () -> Unit) {
-        CoroutineScope(fallbackIoDispatcher).launch {
-            educationMutex.withLock { /* wait */ }
-            withContext(fallbackMainDispatcher) { onMainThread() }
+        val step = educationStepCompletion
+        qrStepScope.launch {
+            step?.await()
+            withContext(qrStepMainDispatcher) { onMainThread() }
         }
     }
+
+    /**
+     * Forgets the education step of a camera view that no longer exists.
+     *
+     * `CameraFragmentImpl.createPopups` calls it on every view creation, next to the fresh
+     * [qrCodeEducationPopup]. The carousel of the previous view was disposed with that view, so
+     * a signal it left uncompleted can never complete now — and [showQrCodePopup] is not the only
+     * way into the waiters: `CameraFragmentImpl.handleEPSPaymentQRCode` calls [onQrCodeRecognized]
+     * directly. Without this, an EPS scan on a fragment that survived an interrupted carousel
+     * (empty-extractions or analysis-error branch navigated away, user came back, view recreated)
+     * awaited the dead carousel until the fragment was destroyed — the same re-entry hang the
+     * retrieval and education steps already avoid by replacing the signal themselves.
+     */
+    fun resetQrEducationStep() {
+        qrEducationStepRunning = false
+        educationStepCompletion = null
+    }
+
+    /**
+     * Cancels every coroutine still waiting for the carousel. `CameraFragmentImpl.onDestroy` calls
+     * it so nothing outlives the fragment: a waiter parked on an interrupted carousel would
+     * otherwise keep this instance — and through it the fragment, its views and the Activity —
+     * reachable for the rest of the process. After this, a late [onQrCodeRecognized] or
+     * [onQrCodeFallbackToUnsupported] launches nothing, which is right for a destroyed screen.
+     */
+    fun cancelQrStepWaiters() {
+        qrStepScope.cancel()
+    }
+
+    /** Whether a waiter launched by this extension is still suspended. */
+    @VisibleForTesting
+    internal fun hasPendingQrStepWaiters(): Boolean =
+        qrStepScope.coroutineContext[Job]?.children?.any { it.isActive } == true
 
     abstract fun hideImageCorners()
 

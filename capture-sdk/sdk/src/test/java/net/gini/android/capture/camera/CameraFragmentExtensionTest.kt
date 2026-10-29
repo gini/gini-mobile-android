@@ -4,8 +4,11 @@ import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
+import io.mockk.verify
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -35,8 +38,10 @@ class CameraFragmentExtensionTest {
      * [isQrEducationStepRunning], so the tests can assert on both.
      */
     private class RecordingExtension(
-        private val onlyQRCodeScanningEnabled: () -> Boolean
-    ) : CameraFragmentExtension() {
+        private val onlyQRCodeScanningEnabled: () -> Boolean,
+        qrStepDispatcher: CoroutineDispatcher = Dispatchers.IO,
+        qrStepMainDispatcher: CoroutineDispatcher = Dispatchers.Main,
+    ) : CameraFragmentExtension(qrStepDispatcher, qrStepMainDispatcher) {
 
         val poweredByGiniCalls = mutableListOf<Boolean>()
 
@@ -88,7 +93,7 @@ class CameraFragmentExtensionTest {
         }
         getGiniCaptureKoin().loadModules(listOf(koinTestModule))
         onlyQRCodeScanningEnabled = false
-        extension = RecordingExtension { onlyQRCodeScanningEnabled }
+        extension = RecordingExtension({ onlyQRCodeScanningEnabled })
         extension.mPaymentQRCodePopup = mockk(relaxed = true)
         extension.qrCodeEducationPopup = mockk(relaxed = true)
     }
@@ -115,10 +120,10 @@ class CameraFragmentExtensionTest {
     /**
      * Drives [CameraFragmentExtension.showQrCodePopup] into its QR-code education branch.
      *
-     * The stubbed `show` never runs its completion callback, which is what the real overlay does
-     * only after its animation. That is deliberate and does not block: the education mutex starts
-     * unlocked, so the `lock()` straight after `show` acquires it and returns immediately. Each
-     * test builds a fresh extension, so the mutex left locked here never leaks into another one.
+     * The stubbed `show` never runs its completion callback by itself — in production the Compose
+     * `LaunchedEffect` fires it after the animation, and never when the camera view is destroyed
+     * first. Tests that need the carousel to complete capture the callback with
+     * [extensionOn] and invoke it on cue.
      */
     private fun runEducationHalf() {
         coEvery { qrEducationTypeUseCase.execute() } returns QrEducationType.PHOTO_DOC
@@ -332,22 +337,45 @@ class CameraFragmentExtensionTest {
     }
 
     /**
-     * Reads the private `educationMutex` reflectively so the test can hold the lock and release
-     * it on cue, mirroring the Compose completion callback that owns the unlock in production.
+     * Replaces [extension] with one whose waiters run on [dispatcher], and whose education popup
+     * stub hands the carousel's completion callback to [onCarouselComplete] — the Compose
+     * `LaunchedEffect` owns that call in production, so a test completes the step by invoking it.
      */
-    private fun CameraFragmentExtension.educationMutex(): Mutex {
-        val field = CameraFragmentExtension::class.java.getDeclaredField("educationMutex")
-        field.isAccessible = true
-        return field.get(this) as Mutex
+    private fun extensionOn(
+        dispatcher: CoroutineDispatcher,
+        onCarouselComplete: io.mockk.CapturingSlot<() -> Unit>,
+    ) {
+        extension = RecordingExtension({ onlyQRCodeScanningEnabled }, dispatcher, dispatcher)
+        extension.mPaymentQRCodePopup = mockk(relaxed = true)
+        extension.qrCodeEducationPopup = mockk(relaxed = true) {
+            every { show(any(), capture(onCarouselComplete)) } returns Unit
+        }
+        extension.fragmentListener = mockk(relaxed = true)
+    }
+
+    /**
+     * The real carousel's `onComplete` never fires when the camera view is destroyed during the
+     * 4.5 s animation: the ComposeView disposes its composition and the `LaunchedEffect` dies with
+     * it. The stubbed `show` models exactly that. The next education step on the same fragment
+     * instance — back from the no-results screen the empty-extractions branch navigated to, scan
+     * again — must start normally; the signal left behind by the interrupted step must never block
+     * it. Before the fix this parked the main thread in `educationMutex.lock()` for good.
+     */
+    @Test(timeout = 5_000)
+    fun `a second education step is not blocked by a carousel that never completed`() {
+        runEducationHalf()
+
+        runEducationHalf()
+
+        verify(exactly = 2) { extension.qrCodeEducationPopup.show(any(), any()) }
+        assertThat(extension.educationStepRunning()).isTrue()
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `onQrCodeFallbackToUnsupported invokes the callback once the education mutex is free`() =
+    fun `onQrCodeFallbackToUnsupported invokes the callback at once when no education step ran`() =
         runTest {
-            val dispatcher = StandardTestDispatcher(testScheduler)
-            extension.fallbackIoDispatcher = dispatcher
-            extension.fallbackMainDispatcher = dispatcher
+            extensionOn(StandardTestDispatcher(testScheduler), slot())
             var called = 0
 
             extension.onQrCodeFallbackToUnsupported { called += 1 }
@@ -358,23 +386,126 @@ class CameraFragmentExtensionTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `onQrCodeFallbackToUnsupported waits while the education mutex is held and then fires`() =
+    fun `onQrCodeFallbackToUnsupported waits for the carousel to complete and then fires once`() =
         runTest {
-            val dispatcher = StandardTestDispatcher(testScheduler)
-            extension.fallbackIoDispatcher = dispatcher
-            extension.fallbackMainDispatcher = dispatcher
-            val mutex = extension.educationMutex()
-            mutex.lock()
+            val onCarouselComplete = slot<() -> Unit>()
+            extensionOn(StandardTestDispatcher(testScheduler), onCarouselComplete)
+            runEducationHalf()
             var called = 0
 
             extension.onQrCodeFallbackToUnsupported { called += 1 }
             advanceUntilIdle()
             assertThat(called).isEqualTo(0)
 
-            mutex.unlock()
+            onCarouselComplete.captured()
             advanceUntilIdle()
 
             assertThat(called).isEqualTo(1)
+        }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `onQrCodeRecognized delivers the extractions once the carousel completed`() =
+        runTest {
+            val onCarouselComplete = slot<() -> Unit>()
+            extensionOn(StandardTestDispatcher(testScheduler), onCarouselComplete)
+            runEducationHalf()
+
+            extension.onQrCodeRecognized(emptyMap())
+            advanceUntilIdle()
+            verify(exactly = 0) { extension.fragmentListener.onExtractionsAvailable(any()) }
+
+            onCarouselComplete.captured()
+            advanceUntilIdle()
+
+            verify(exactly = 1) { extension.fragmentListener.onExtractionsAvailable(any()) }
+        }
+
+    /**
+     * The acceptance criterion of PP-3937: a camera fragment destroyed while the carousel plays
+     * (back press) must not keep a coroutine suspended for the process lifetime. The carousel's
+     * callback never fires here, exactly like a disposed ComposeView; the fragment's teardown
+     * is what has to release the waiters — and it must not deliver anything to the dead screen.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `destroying the fragment releases every waiter parked on an interrupted carousel`() =
+        runTest {
+            extensionOn(StandardTestDispatcher(testScheduler), slot())
+            runEducationHalf()
+            var fallbackCalled = 0
+            extension.onQrCodeRecognized(emptyMap())
+            extension.onQrCodeFallbackToUnsupported { fallbackCalled += 1 }
+            advanceUntilIdle()
+            assertThat(extension.hasPendingQrStepWaiters()).isTrue()
+
+            extension.cancelQrStepWaiters()
+            advanceUntilIdle()
+
+            assertThat(extension.hasPendingQrStepWaiters()).isFalse()
+            assertThat(fallbackCalled).isEqualTo(0)
+            verify(exactly = 0) { extension.fragmentListener.onExtractionsAvailable(any()) }
+        }
+
+    /**
+     * Same interrupted carousel, but the fragment lives on (back from the no-results screen) and
+     * the next scan runs the plain retrieval half: its waiters must not be held up by the dead
+     * carousel's signal.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `a retrieval step after an interrupted education step does not wait for the dead carousel`() =
+        runTest {
+            extensionOn(StandardTestDispatcher(testScheduler), slot())
+            runEducationHalf()
+
+            runRetrievalHalf()
+            extension.onQrCodeRecognized(emptyMap())
+            advanceUntilIdle()
+
+            verify(exactly = 1) { extension.fragmentListener.onExtractionsAvailable(any()) }
+        }
+
+    /**
+     * Same surviving fragment, recreated view, but the next scan is an EPS code:
+     * `CameraFragmentImpl.handleEPSPaymentQRCode` calls [CameraFragmentExtension.onQrCodeRecognized]
+     * without going through `showQrCodePopup`, so nothing on that path replaces the dead
+     * carousel's signal. The view recreation (`CameraFragmentImpl.createPopups`) has to drop it.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `a waiter that skipped showQrCodePopup after an interrupted education step is released by the view recreation`() =
+        runTest {
+            extensionOn(StandardTestDispatcher(testScheduler), slot())
+            runEducationHalf()
+
+            extension.resetQrEducationStep()
+            extension.onQrCodeRecognized(emptyMap())
+            advanceUntilIdle()
+
+            assertThat(extension.hasPendingQrStepWaiters()).isFalse()
+            assertThat(extension.educationStepRunning()).isFalse()
+            verify(exactly = 1) { extension.fragmentListener.onExtractionsAvailable(any()) }
+        }
+
+    /**
+     * The failure mode the test above guards against, pinned so a future refactoring that routes
+     * the EPS path around the reset is caught: without the view recreation the waiter does hang
+     * on the interrupted carousel.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `a waiter that skipped showQrCodePopup after an interrupted education step stays parked without the view recreation`() =
+        runTest {
+            extensionOn(StandardTestDispatcher(testScheduler), slot())
+            runEducationHalf()
+
+            extension.onQrCodeRecognized(emptyMap())
+            advanceUntilIdle()
+
+            assertThat(extension.hasPendingQrStepWaiters()).isTrue()
+            verify(exactly = 0) { extension.fragmentListener.onExtractionsAvailable(any()) }
+            extension.cancelQrStepWaiters()
         }
 
     @Test
