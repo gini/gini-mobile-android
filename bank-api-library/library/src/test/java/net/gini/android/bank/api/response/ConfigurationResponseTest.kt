@@ -93,4 +93,22 @@ class ConfigurationResponseTest {
         assertThat(configuration.isSkontoEnabled).isFalse()
         assertThat(configuration.amplitudeApiKey).isNull()
     }
+
+    @Test
+    fun `weroQRCodeScanningEnabled is parsed and mapped`() {
+        val response = adapter.fromJson(
+            """{"clientID":"client","weroQRCodeScanningEnabled":true}"""
+        )!!
+
+        assertThat(response.weroQRCodeScanningEnabled).isTrue()
+        assertThat(response.toConfiguration().isWeroQRCodeScanningEnabled).isTrue()
+    }
+
+    @Test
+    fun `weroQRCodeScanningEnabled defaults to false when absent`() {
+        val response = adapter.fromJson("""{"clientID":"client"}""")!!
+
+        assertThat(response.weroQRCodeScanningEnabled).isNull()
+        assertThat(response.toConfiguration().isWeroQRCodeScanningEnabled).isFalse()
+    }
 }
