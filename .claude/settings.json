@@ -32,7 +32,14 @@
       "Read(./**/*.jks)",
       "Read(./**/*.keystore)",
       "Read(./**/.env*)",
-      "Read(./**/google-services.json)"
+      "Read(./**/google-services.json)",
+      "Edit(./local.properties)",
+      "Edit(./**/local.properties)",
+      "Edit(./**/test.properties)",
+      "Edit(./**/*.jks)",
+      "Edit(./**/*.keystore)",
+      "Edit(./**/.env*)",
+      "Edit(./**/google-services.json)"
     ]
   }
 }

@@ -88,6 +88,35 @@ $ open capture-sdk/sdk/build/docs/dokka/index.html
 
 Some SDKs have accompanying example apps. These can be found as sub-modules under the SDK's module. The example apps serve as a tool for us during development as well as an aid for our clients.
 
+# AI coding agents and credential files
+
+Local testing needs secrets inside the working copy: the `local.properties` files holding `clientId`/`clientSecret` (example apps) and `testClientId`/`testClientSecret` (SDK and API-library modules), the `test.properties` files that the `injectTestProperties` Gradle task generates under `src/androidTest/assets`, and the generated resources under `build/` into which the bank-sdk example app bakes its credentials. Gini's Secure Development Procedure (3.3.2 / 7.5) forbids sharing secrets with AI tools, so the checked-in `.claude/settings.json` denies Claude Code read and edit access to those files for everyone who clones this repo. Builds and tests are unaffected: Gradle reads the files outside the agent.
+
+Covered patterns (relative to the repo root, any depth):
+
+| Pattern | What it protects |
+| --- | --- |
+| `local.properties` | Client id/secret and API URIs for the example apps, SDK modules and API libraries |
+| `test.properties` | Generated copies of the test credentials under `src/androidTest/assets` |
+| `build/generated/res/resValues/**`, `build/intermediates/**/values/**` | Generated and merged resources containing the bank-sdk example app's credentials |
+| `*.jks`, `*.keystore` | Signing keystores |
+| `.env*`, `google-services.json` | Environment files and Firebase config, should they ever be added |
+
+When you add a new secret-bearing file, add a matching `Read(...)` and `Edit(...)` entry to the `permissions.deny` list in `.claude/settings.json` in the same PR.
+
+Recommended user-level denies for your own `~/.claude/settings.json` (not enforced by the repo). Denying broad folders such as `~/Downloads` or `~/Documents` also blocks files you drag into the chat from there, so this list is kept to paths that only ever hold secrets:
+
+```json
+{
+  "permissions": {
+    "deny": [
+      "Read(~/.ssh/**)",
+      "Read(**/.env*)"
+    ]
+  }
+}
+```
+
 # Publishing
 
 We are using git tags to mark published versions. These also trigger the release workflows on GitHub.
