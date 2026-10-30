@@ -28,6 +28,7 @@ set -e
 #   duedate     – Due Date Hint / Schedule Payment bottom sheets
 #   creditnote  – Credit Note warning bottom sheet
 #   import      – file upload: pdf/image import, file-import errors, open-with
+#   noresults   – No Result screen: import (real API) + camera / QR (mock backend)
 #
 # ── REUSING THIS SCRIPT FOR THE NEXT RELEASE ────────────────────────────────────
 # Two edits, both by hand — neither the version nor the scope is something a script can
@@ -185,6 +186,12 @@ run_group "import" \
   FileImportErrorDialogTests \
   ErrorScreenTests \
   OpenWithTest
+
+# No Result screen (PP-3920). NoResultsMockBackendTests#test6..test8 auto-skip on
+# BrowserStack (they need a real QR code in front of the camera); they still run locally.
+run_group "noresults" \
+  NoResultsTests \
+  NoResultsMockBackendTests
 
 # ══ END RELEASE SCOPE ═══════════════════════════════════════════════════════════
 

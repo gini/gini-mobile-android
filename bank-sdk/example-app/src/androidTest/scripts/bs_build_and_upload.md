@@ -69,6 +69,14 @@ All three media files are always uploaded. BrowserStack places them in the devic
 
 Both are also triggered by `bs_run_all_groups.sh`.
 
+### No Result screen shard (PP-3920)
+
+| Script | Classes | Notes |
+|---|---|---|
+| `bs_run_group_extraction.sh` | `NoResultsTests`, `NoResultsMockBackendTests` (alongside the other extraction classes) | `NoResultsTests` imports an image / a PDF against the real Gini API. `NoResultsMockBackendTests` takes camera photos on the mock backend (`NO_RESULTS` scenario, empty extractions) — the only way to reach the **Retake images** button, which exists for camera-sourced documents only. Its three QR tests (`test6`–`test8`) need a real QR code in front of the camera, so they always show as **skipped** on BrowserStack — expected; run them on a local device with `sepa_payment_qr_poster.png` in view. |
+
+Also triggered by `bs_run_all_groups.sh` (shard `extraction`) and, as its own `noresults` shard, by `bs_run_release.sh`.
+
 ---
 
 ## Output APKs

@@ -1,7 +1,6 @@
 package net.gini.android.bank.sdk.exampleapp.ui.testcases
 
 import net.gini.android.bank.sdk.exampleapp.ui.resources.LandscapeDarkModeRule
-import net.gini.android.bank.sdk.exampleapp.ui.screens.AnalysisScreen
 import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockScenario
 import org.junit.After
 import org.junit.Assert.assertFalse
@@ -25,7 +24,6 @@ class IngredientBrandLandscapeEducationTests : WarningBottomSheetTestBase() {
     @get:Rule(order = Int.MIN_VALUE + 1)
     val landscapeDarkMode = LandscapeDarkModeRule()
 
-    private val analysisScreen = AnalysisScreen()
 
     @Before
     fun checkDarkMode() {

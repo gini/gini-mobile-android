@@ -3,7 +3,6 @@ package net.gini.android.bank.sdk.exampleapp.ui.testcases
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso.pressBack
 import net.gini.android.bank.sdk.exampleapp.ui.resources.CreditNoteFixtures
-import net.gini.android.bank.sdk.exampleapp.ui.screens.AnalysisScreen
 import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockScenario
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -21,7 +20,6 @@ import org.junit.Test
  */
 class IngredientBrandConfigurationTests : WarningBottomSheetTestBase() {
 
-    private val analysisScreen = AnalysisScreen()
 
     /** R27: a known value next to an unknown one still switches the brand on. */
     @Test
