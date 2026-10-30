@@ -1,6 +1,7 @@
 package net.gini.android.capture.analysis
 
 import android.app.Activity
+import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -15,6 +16,7 @@ import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCaptureError
 import net.gini.android.capture.analysis.AnalysisInteractor.ResultHolder
 import net.gini.android.capture.analysis.AnalysisScreenContract.View
+import net.gini.android.capture.analysis.fraud.IbanMismatchSpike
 import net.gini.android.capture.analysis.transactiondoc.AttachedToTransactionDocumentProvider
 import net.gini.android.capture.analysis.warning.WarningType
 import net.gini.android.capture.di.getGiniCaptureKoin
@@ -37,6 +39,8 @@ import net.gini.android.capture.paymentHints.GetPaymentScheduleHintEnabledUseCas
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.EventTrackingHelper
 
+// PP-3941 spike: showIbanMismatchWarning tips the class over the threshold; it goes with the branch.
+@Suppress("TooManyFunctions")
 internal class AnalysisScreenPresenterExtension(
     private val view: View
 ) {
@@ -203,6 +207,42 @@ internal class AnalysisScreenPresenterExtension(
                     },
                     null
                 )
+            }
+        }
+    }
+
+    /**
+     * PP-3941 spike. Shows the IBAN mismatch modal with the sample IBANs; "Continue" runs the
+     * same steps as the already-paid warning's "Proceed anyway" CTA. The chosen IBAN is only
+     * logged — writing it into the extractions is out of the spike's scope.
+     */
+    fun showIbanMismatchWarning(
+        mIsInvoiceSavingEnabled: Boolean,
+        isSavingInvoicesInProgress: Boolean,
+        resultHolder: ResultHolder,
+        activity: Activity
+    ) {
+        if (isSavingInvoicesInProgress) {
+            handleSaveInvoicesLocally(
+                mIsInvoiceSavingEnabled,
+                true,
+                resultHolder,
+                activity
+            )
+        } else {
+            doWhenEducationFinished {
+                view.showIbanMismatch(
+                    IbanMismatchSpike.SAMPLE_QR_IBAN,
+                    IbanMismatchSpike.SAMPLE_PRINTED_IBAN
+                ) { selectedIban ->
+                    Log.d(IbanMismatchSpike.LOG_TAG, "Continuing with IBAN $selectedIban")
+                    handleSaveInvoicesLocally(
+                        mIsInvoiceSavingEnabled,
+                        false,
+                        resultHolder,
+                        activity
+                    )
+                }
             }
         }
     }

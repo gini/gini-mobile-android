@@ -7,6 +7,7 @@ import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.util.Consumer;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCaptureBasePresenter;
@@ -82,6 +83,17 @@ interface AnalysisScreenContract {
         abstract void showError(ErrorType errorType, Document document);
 
         abstract void showEducation(EducationCompleteListener listener);
+
+        /**
+         * PP-3941 spike. Shows the IBAN mismatch modal; "Cancel transfer" is wired by the view
+         * like the warning sheets' cancel CTA.
+         *
+         * @param qrIban      the IBAN read from the payment QR code
+         * @param printedIban the IBAN printed on the invoice
+         * @param onContinue  runs with the IBAN the user chose when they tap "Continue"
+         */
+        abstract void showIbanMismatch(@NonNull String qrIban, @NonNull String printedIban,
+                @NonNull Consumer<String> onContinue);
 
         /**
          * Starts the local invoice saving step.

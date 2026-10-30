@@ -183,6 +183,17 @@
     <string name="gc_gini_loading_indicator_content_description">Loading</string>
     <!--   endregion -->
 
+    <!--   region IBAN mismatch (PP-3941 spike) -->
+    <string name="gc_iban_mismatch_title">IBAN mismatch</string>
+    <string name="gc_iban_mismatch_description">The IBAN in the QR code differs from the IBAN printed on the invoice. Please check which IBAN you want to continue with.</string>
+    <string name="gc_iban_mismatch_qr_iban_label">IBAN from the QR code</string>
+    <string name="gc_iban_mismatch_printed_iban_label">IBAN on the invoice</string>
+    <string name="gc_iban_mismatch_selected_iban_label">Selected IBAN</string>
+    <string name="gc_iban_mismatch_choose_iban">Choose IBAN</string>
+    <string name="gc_iban_mismatch_sheet_title">Choose IBAN</string>
+    <string name="gc_iban_mismatch_continue">Continue</string>
+    <!--   endregion IBAN mismatch (PP-3941 spike) -->
+
     <!--   region Warning -->
     <string name="gc_cancel_transfer">Cancel transfer</string>
     <string name="gc_proceed_anyway">Proceed anyway</string>

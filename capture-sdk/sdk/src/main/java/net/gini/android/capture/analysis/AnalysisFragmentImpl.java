@@ -22,6 +22,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import androidx.core.util.Consumer;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentActivity;
 
@@ -33,6 +34,7 @@ import net.gini.android.capture.analysis.education.EducationCompleteListener;
 import net.gini.android.capture.analysis.warning.WarningType;
 import net.gini.android.capture.error.ErrorFragment;
 import net.gini.android.capture.error.ErrorType;
+import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.internal.util.CancelListener;
@@ -367,6 +369,22 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         }
         stopAndHideHints();
         mFragment.showWarning(warningType, titleFormatArg, onProceed, onSchedule);
+    }
+
+    @Override
+    void showIbanMismatch(@NonNull final String qrIban, @NonNull final String printedIban,
+                          @NonNull final Consumer<String> onContinue) {
+        stopAndHideHints();
+        fragmentExtension.showIbanMismatch(qrIban, printedIban, selectedIban -> {
+            onContinue.accept(selectedIban);
+            return Unit.INSTANCE;
+        }, () -> {
+            // Same steps as AnalysisFragment.cancelTransaction(), the warning sheets' cancel CTA.
+            final Activity activity = mFragment.getActivity();
+            if (activity != null) ImageDiskStore.clear(activity);
+            mCancelListener.onCancelFlow();
+            return Unit.INSTANCE;
+        });
     }
 
     // Keeps TalkBack focus on the warning bottom sheet by removing the rotating

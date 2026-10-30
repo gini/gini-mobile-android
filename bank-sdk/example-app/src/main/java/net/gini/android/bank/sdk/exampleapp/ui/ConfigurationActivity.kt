@@ -244,6 +244,10 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.layoutDebugDevelopmentOptionsToggles.switchDebugMode.isChecked =
             configuration.isDebugModeEnabled
 
+        // PP-3941 spike
+        binding.layoutDebugDevelopmentOptionsToggles.switchIbanMismatchSpike.isChecked =
+            configuration.isIbanMismatchSpikeEnabled
+
         // enable skonto
         binding.layoutFeatureToggle.switchSkontoFeature.isChecked = configuration.isSkontoEnabled
 
@@ -639,6 +643,12 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.layoutDebugDevelopmentOptionsToggles.switchDebugMode.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(isDebugModeEnabled = isChecked)
+            )
+        }
+        // PP-3941 spike
+        binding.layoutDebugDevelopmentOptionsToggles.switchIbanMismatchSpike.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(isIbanMismatchSpikeEnabled = isChecked)
             )
         }
         // Custom HTTP client

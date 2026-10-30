@@ -8,4 +8,6 @@
     <string name="start_gini_single_activity">Single Activity</string>
 
     <string name="no_camera_permission_message">Camera permission is required to use the Bank SDK. Go to the app settings to grant the camera permission.</string>
+
+    <string name="iban_mismatch_spike_switch_label">IBAN mismatch spike</string>
 </resources>

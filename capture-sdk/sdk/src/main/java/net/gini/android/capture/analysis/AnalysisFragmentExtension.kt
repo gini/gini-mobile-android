@@ -5,6 +5,8 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import net.gini.android.capture.R
+import net.gini.android.capture.analysis.fraud.IbanMismatchArgs
+import net.gini.android.capture.analysis.fraud.IbanMismatchModal
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.ingredientbrand.GetIngredientBrandVisibleUseCase
 import net.gini.android.capture.ingredientbrand.IngredientBrandLoadingIndicatorAdapter
@@ -17,6 +19,7 @@ import net.gini.android.capture.view.InjectedViewAdapterInstance
 class AnalysisFragmentExtension {
 
     private lateinit var educationView: ComposeView
+    private lateinit var ibanMismatchView: ComposeView
 
     private val ingredientBrandVisibleUseCase: GetIngredientBrandVisibleUseCase
             by getGiniCaptureKoin().inject()
@@ -32,6 +35,7 @@ class AnalysisFragmentExtension {
 
     fun bindViews(rootView: View) {
         educationView = rootView.findViewById(R.id.gc_education_container)
+        ibanMismatchView = rootView.findViewById(R.id.gc_iban_mismatch_container)
     }
 
     /**
@@ -80,5 +84,39 @@ class AnalysisFragmentExtension {
 
     fun hideEducation() {
         educationView.visibility = View.GONE
+    }
+
+    /**
+     * PP-3941 spike. Shows the IBAN mismatch modal over the Analysis screen. Both CTAs first
+     * remove the composition — which closes the modal and, if open, the selection sheet in the
+     * same frame — and only then run the presenter's action.
+     */
+    fun showIbanMismatch(
+        qrIban: String,
+        printedIban: String,
+        onContinue: (selectedIban: String) -> Unit,
+        onCancel: () -> Unit,
+    ) {
+        ibanMismatchView.visibility = View.VISIBLE
+        ibanMismatchView.setContent {
+            GiniTheme {
+                IbanMismatchModal(
+                    args = IbanMismatchArgs(qrIban = qrIban, printedIban = printedIban),
+                    onContinue = { selectedIban ->
+                        hideIbanMismatch()
+                        onContinue(selectedIban)
+                    },
+                    onCancel = {
+                        hideIbanMismatch()
+                        onCancel()
+                    },
+                )
+            }
+        }
+    }
+
+    fun hideIbanMismatch() {
+        ibanMismatchView.setContent {}
+        ibanMismatchView.visibility = View.GONE
     }
 }

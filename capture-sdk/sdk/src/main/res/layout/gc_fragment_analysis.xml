@@ -89,6 +89,18 @@
         app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar" />
 
     <!--
+      PP-3941 spike: hosts the IBAN mismatch modal (a full-height Compose bottom sheet) and the IBAN selection
+      sheet stacked on it. Zero-sized on purpose — both layers open their own windows.
+    -->
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/gc_iban_mismatch_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!--
       The Gini ingredient brand element. Declared before the hint container because that
       container constrains itself to this view's top. Hidden unless the client configuration
       lists the Analysis screen in ingredientBrandScreens; while it is gone, ConstraintLayout

@@ -160,6 +160,10 @@ data class ExampleAppBankConfiguration(
     // Debug mode
     val isDebugModeEnabled: Boolean = true,
 
+    // PP-3941 spike: force the IBAN mismatch modal after every successful analysis
+    // net.gini.android.capture.analysis.fraud.IbanMismatchSpike#enabled → on/off switch
+    val isIbanMismatchSpikeEnabled: Boolean = true,
+
     // Is Allow Screenshots
     val isAllowScreenshotsEnabled: Boolean = true,
 

@@ -28,6 +28,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.composables.CustomGiniComposableS
 import net.gini.android.bank.sdk.exampleapp.ui.data.ExampleAppBankConfiguration
 import net.gini.android.bank.sdk.exampleapp.ui.data.ExampleRuntimeColorsProvider
 import net.gini.android.capture.GiniCaptureDebug
+import net.gini.android.capture.analysis.fraud.IbanMismatchSpike
 import net.gini.android.capture.help.HelpItem
 import net.gini.android.capture.internal.util.FileImportValidator
 import net.gini.android.capture.logging.ErrorLog
@@ -117,6 +118,9 @@ class ConfigurationViewModel @Inject constructor(
             GiniCaptureDebug.enable()
             configureLogging()
         }
+
+        // PP-3941 spike
+        IbanMismatchSpike.enabled = configuration.isIbanMismatchSpikeEnabled
     }
 
     private fun buildBaseCaptureConfiguration(configuration: ExampleAppBankConfiguration): CaptureConfiguration {
