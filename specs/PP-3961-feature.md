@@ -1,6 +1,6 @@
 # PP-3961: [Android] Fraud warning screen: IBAN mismatch — phase 1, UI components
 
-Status: phase 1 implemented (UI only)
+Status: phase 1 implemented (UI only); development switch to be removed before merge, see "Before merge"
 Ticket: https://ginis.atlassian.net/browse/PP-3961
 Parent epic: PP-3518 "[Q4] Fraud prevention warnings – phase 1"
 Design: Figma "Gini Photo Payment (iOS & Android)", section "Android", node `38468-42451`
@@ -89,9 +89,10 @@ at block boundaries and screen readers read them in chunks.
 
 ## Review decisions (architecture / Compose specialists)
 
-- `IbanMismatchDebug` stays public: the example-app switch was an explicit requirement of this
-  phase, `@RestrictTo` does not hide it from `apiCheck` (no `nonPublicMarkers`; `WarningType` is
-  the precedent) and its KDoc no longer promises removal. It carries sample data by design.
+- `IbanMismatchDebug` is public only because the example-app switch has to reach into
+  capture-sdk's presenter and Kotlin `internal` stops at the module boundary; `@RestrictTo` does
+  not hide it from `apiCheck` (no `nonPublicMarkers`). It is branch scaffolding, not a feature:
+  see "Before merge" below.
 - `IbanMismatchArgs` is a plain `internal` data class, not `@Parcelize`: nothing persists it, and
   Parcelize would publish a `$Creator` class.
 - `hideIbanMismatch` is `internal` with `@JvmName`, like `showIbanMismatch`.
@@ -106,6 +107,35 @@ at block boundaries and screen readers read them in chunks.
 - Rotation with the sheet open: the composition dies with the Fragment view and the presenter
   re-shows the sheet from the cached analysis result (as in the spike); `rememberSaveable`
   restores the expanded row. Verify on device.
+
+## Before merge: remove the development switch
+
+The switch exists only so the sheet can be opened on a device before the fraud signals are read
+from the analysis result. It must not ship: it would put a debug toggle and a fake Polish IBAN
+into a public class on Maven Central. Remove it in one final commit on this branch, after the
+manual device checks below are done and before the PR is opened:
+
+- [ ] `capture-sdk/sdk/src/main/java/net/gini/android/capture/analysis/fraud/IbanMismatchDebug.kt`
+      (the object and `sampleArgs()`; move the preview data into the previews in
+      `IbanMismatchWarningScreen.kt`)
+- [ ] the `else if (IbanMismatchDebug.getEnabled())` branch in `AnalysisScreenPresenter.java` and
+      `showIbanMismatchWarning` in `AnalysisScreenPresenterExtension.kt`
+- [ ] the "IBAN mismatch warning" region of `AnalysisScreenPresenterTest.kt` (three tests; phase 2
+      brings them back driven by extractions)
+- [ ] bank-sdk example app: `isIbanMismatchDebugEnabled` in `ExampleAppBankConfiguration`,
+      `switchIbanMismatchDebug` in `ConfigurationActivity` and
+      `layout_debug_development_toggles.xml`, `applyIbanMismatchDebugSwitch` in
+      `ConfigurationViewModel`, the `iban_mismatch_debug_switch_label` string
+- [ ] `./gradlew capture-sdk:sdk:apiDump` so `IbanMismatchDebug` leaves `sdk.api`
+- [ ] this section and the "Manual" step under Verification
+
+What stays: the `ComposeView` container in the four `gc_fragment_analysis` layouts,
+`showIbanMismatch`/`hideIbanMismatch` in `AnalysisFragmentExtension.kt` and the
+`AnalysisScreenContract` method, the components, the screen and the strings. Phase 2 (PP-3965)
+calls `showIbanMismatch` from the extraction check that replaces the removed presenter branch.
+
+To make CI enforce the removal once the device checks are done, add a `// STOPSHIP:` comment to
+the object; Detekt's `ForbiddenComment` rule fails `capture-sdk:sdk:detekt` until the file is gone.
 
 ## Verification
 
