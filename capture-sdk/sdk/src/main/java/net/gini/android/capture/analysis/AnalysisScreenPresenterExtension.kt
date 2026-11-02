@@ -15,6 +15,7 @@ import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCaptureError
 import net.gini.android.capture.analysis.AnalysisInteractor.ResultHolder
 import net.gini.android.capture.analysis.AnalysisScreenContract.View
+import net.gini.android.capture.analysis.fraud.IbanMismatchDebug
 import net.gini.android.capture.analysis.transactiondoc.AttachedToTransactionDocumentProvider
 import net.gini.android.capture.analysis.warning.WarningType
 import net.gini.android.capture.di.getGiniCaptureKoin
@@ -37,6 +38,7 @@ import net.gini.android.capture.paymentHints.GetPaymentScheduleHintEnabledUseCas
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.EventTrackingHelper
 
+@Suppress("TooManyFunctions")
 internal class AnalysisScreenPresenterExtension(
     private val view: View
 ) {
@@ -203,6 +205,41 @@ internal class AnalysisScreenPresenterExtension(
                     },
                     null
                 )
+            }
+        }
+    }
+
+    /**
+     * Shows the IBAN mismatch warning once the education animation is done. "Proceed anyway"
+     * runs the same steps as the already-paid warning's "Proceed anyway" CTA and hands the
+     * extractions on unchanged.
+     *
+     * The warning is shown with [IbanMismatchDebug.sampleArgs] while the fraud signals are not
+     * read from the analysis result yet.
+     */
+    fun showIbanMismatchWarning(
+        mIsInvoiceSavingEnabled: Boolean,
+        isSavingInvoicesInProgress: Boolean,
+        resultHolder: ResultHolder,
+        activity: Activity
+    ) {
+        if (isSavingInvoicesInProgress) {
+            handleSaveInvoicesLocally(
+                mIsInvoiceSavingEnabled,
+                true,
+                resultHolder,
+                activity
+            )
+        } else {
+            doWhenEducationFinished {
+                view.showIbanMismatch(IbanMismatchDebug.sampleArgs()) {
+                    handleSaveInvoicesLocally(
+                        mIsInvoiceSavingEnabled,
+                        false,
+                        resultHolder,
+                        activity
+                    )
+                }
             }
         }
     }

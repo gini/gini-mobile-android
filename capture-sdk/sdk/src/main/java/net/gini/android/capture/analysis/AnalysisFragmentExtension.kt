@@ -2,9 +2,13 @@ package net.gini.android.capture.analysis
 
 import android.view.View
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
+import net.gini.android.capture.analysis.fraud.IbanMismatchArgs
+import net.gini.android.capture.analysis.fraud.IbanMismatchWarningScreen
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.ingredientbrand.GetIngredientBrandVisibleUseCase
 import net.gini.android.capture.ingredientbrand.IngredientBrandLoadingIndicatorAdapter
@@ -17,6 +21,7 @@ import net.gini.android.capture.view.InjectedViewAdapterInstance
 class AnalysisFragmentExtension {
 
     private lateinit var educationView: ComposeView
+    private lateinit var ibanMismatchView: ComposeView
 
     private val ingredientBrandVisibleUseCase: GetIngredientBrandVisibleUseCase
             by getGiniCaptureKoin().inject()
@@ -32,6 +37,10 @@ class AnalysisFragmentExtension {
 
     fun bindViews(rootView: View) {
         educationView = rootView.findViewById(R.id.gc_education_container)
+        ibanMismatchView = rootView.findViewById(R.id.gc_iban_mismatch_container)
+        ibanMismatchView.setViewCompositionStrategy(
+            ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
+        )
     }
 
     /**
@@ -80,5 +89,46 @@ class AnalysisFragmentExtension {
 
     fun hideEducation() {
         educationView.visibility = View.GONE
+    }
+
+    /**
+     * Shows the IBAN mismatch warning over the Analysis screen. Both CTAs first remove the
+     * composition, which closes the sheet's window, and only then run the presenter's action.
+     *
+     * Internal use only; `@JvmName` keeps the name unmangled so [AnalysisFragmentImpl] (Java)
+     * can call it while [IbanMismatchArgs] stays `internal`.
+     */
+    @JvmName("showIbanMismatch")
+    internal fun showIbanMismatch(
+        args: IbanMismatchArgs,
+        onProceed: () -> Unit,
+        onCancel: () -> Unit,
+    ) {
+        ibanMismatchView.visibility = View.VISIBLE
+        ibanMismatchView.setContent {
+            GiniTheme {
+                IbanMismatchWarningScreen(
+                    args = args,
+                    onCancel = {
+                        hideIbanMismatch()
+                        onCancel()
+                    },
+                    onProceed = {
+                        hideIbanMismatch()
+                        onProceed()
+                    },
+                    composableProviderConfig = GiniCapture.getInstance()
+                        .giniComposableStyleProvider
+                        ?.setGiniComposableStyleProviderConfig(),
+                )
+            }
+        }
+    }
+
+    /** Removes the warning. `@JvmName` keeps the name unmangled for the Java caller. */
+    @JvmName("hideIbanMismatch")
+    internal fun hideIbanMismatch() {
+        ibanMismatchView.setContent {}
+        ibanMismatchView.visibility = View.GONE
     }
 }
