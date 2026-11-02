@@ -24,6 +24,7 @@ data class Configuration(
      * client has no ingredient branding.
      */
     val ingredientBrandScreens: Set<String> = emptySet(),
+    val isWeroQRCodeScanningEnabled: Boolean = false,
     /**
      * Whether the backend delivers the `fraudSignals` compound extraction to this client.
      */

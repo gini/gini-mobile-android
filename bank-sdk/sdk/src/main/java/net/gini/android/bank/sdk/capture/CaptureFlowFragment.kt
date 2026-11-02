@@ -419,14 +419,20 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
                 CaptureSDKResult.Empty
             }
         }
-        return if (result.specificExtractions.isEmpty() ||
-            !pay5ExtractionsAvailable(result.specificExtractions) &&
-            !epsPaymentAvailable(result.specificExtractions)
-        ) {
-            CaptureSDKResult.Empty
-        } else {
+        return if (hasRecognisedExtractions(result.specificExtractions)) {
             result
+        } else {
+            CaptureSDKResult.Empty
         }
+    }
+
+    private fun hasRecognisedExtractions(
+        specificExtractions: Map<String, GiniCaptureSpecificExtraction>
+    ): Boolean {
+        if (specificExtractions.isEmpty()) return false
+        return pay5ExtractionsAvailable(specificExtractions) ||
+                epsPaymentAvailable(specificExtractions) ||
+                weroPaymentAvailable(specificExtractions)
     }
 
     private fun isPay5Extraction(extractionName: String): Boolean {
@@ -442,6 +448,9 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     private fun epsPaymentAvailable(specificExtractions: Map<String, GiniCaptureSpecificExtraction>) =
         specificExtractions.keys.contains("epsPaymentQRCodeUrl")
+
+    private fun weroPaymentAvailable(specificExtractions: Map<String, GiniCaptureSpecificExtraction>) =
+        specificExtractions.keys.contains("weroPaymentQRCodeUrl")
 
     override fun onPayInvoice(
         specificExtractions: Map<String, GiniCaptureSpecificExtraction>,

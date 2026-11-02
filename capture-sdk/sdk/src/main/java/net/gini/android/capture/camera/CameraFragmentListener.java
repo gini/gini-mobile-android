@@ -50,6 +50,22 @@ public interface CameraFragmentListener {
     /**
      * Called after a QRCode was successfully analyzed.
      *
+     * <p>Known extraction keys the SDK may deliver here:
+     * <ul>
+     *   <li>{@code epsPaymentQRCodeUrl} &mdash; a locally-parsed EPS QR Code. The value is the raw
+     *       EPS payload (also present as the single element in {@code candidates}).</li>
+     *   <li>{@code weroPaymentQRCodeUrl} &mdash; a Wero candidate the backend classified as Wero.
+     *       The value is the raw QR Code payload (also present as the single element in
+     *       {@code candidates}). Only delivered when
+     *       {@code isWeroQRCodeScanningEnabled} is on in the client configuration.</li>
+     *   <li>The Pay5 keys ({@code iban}, {@code bic}, {@code amountToPay},
+     *       {@code paymentRecipient}, {@code paymentReference}) for parseable payment QR codes.</li>
+     * </ul>
+     *
+     * <p>A Wero candidate that the backend does <b>not</b> classify as Wero is <b>not</b>
+     * delivered through this callback: the SDK keeps the user on the camera and shows the
+     * unsupported-QR popup instead.
+     *
      * @param extractions a map of the extractions with the extraction labels as keys
      */
     void onExtractionsAvailable(

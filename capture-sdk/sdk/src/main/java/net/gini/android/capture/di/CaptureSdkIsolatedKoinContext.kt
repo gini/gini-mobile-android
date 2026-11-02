@@ -16,7 +16,8 @@ object CaptureSdkIsolatedKoinContext {
             paymentHintsModule,
             fraudSignalsModule,
             clientConfigurationModule,
-            ingredientBrandModule
+            ingredientBrandModule,
+            weroModule
         )
     }
 

@@ -40,6 +40,8 @@ internal class ClientConfigurationStorage(private val context: Context) {
         booleanPreferencesKey("is_payment_schedule_hint_enabled")
     private val keyIsCreditNoteHintEnabled = booleanPreferencesKey("is_credit_note_hint_enabled")
     private val keyIngredientBrandScreens = stringSetPreferencesKey("ingredient_brand_screens")
+    private val keyIsWeroQRCodeScanningEnabled =
+        booleanPreferencesKey("is_wero_qr_code_scanning_enabled")
     private val keyIsFraudSignalsEnabled = booleanPreferencesKey("is_fraud_signals_enabled")
 
     fun getConfiguration(): Flow<Configuration?> = context.dataStore.data.map { prefs ->
@@ -61,6 +63,7 @@ internal class ClientConfigurationStorage(private val context: Context) {
             isPaymentScheduleHintEnabled = prefs.flag(keyIsPaymentScheduleHintEnabled),
             isCreditNoteHintEnabled = prefs.flag(keyIsCreditNoteHintEnabled),
             ingredientBrandScreens = prefs[keyIngredientBrandScreens] ?: emptySet(),
+            isWeroQRCodeScanningEnabled = prefs.flag(keyIsWeroQRCodeScanningEnabled),
             isFraudSignalsEnabled = prefs.flag(keyIsFraudSignalsEnabled),
         )
     }
@@ -89,6 +92,7 @@ internal class ClientConfigurationStorage(private val context: Context) {
             prefs[keyIsCreditNoteHintEnabled] =
                 configuration.isCreditNoteHintEnabled
             prefs[keyIngredientBrandScreens] = configuration.ingredientBrandScreens
+            prefs[keyIsWeroQRCodeScanningEnabled] = configuration.isWeroQRCodeScanningEnabled
             prefs[keyIsFraudSignalsEnabled] = configuration.isFraudSignalsEnabled
             prefs[keyIsCached] = true
         }

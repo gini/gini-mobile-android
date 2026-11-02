@@ -22,6 +22,7 @@ data class ConfigurationResponse(
     @Json(name = "paymentScheduleHintEnabled") val paymentScheduleHintEnabled: Boolean? = null,
     @Json(name = "creditNoteHintEnabled") val creditNoteHintEnabled: Boolean? = null,
     @Json(name = "ingredientBrandScreens") val ingredientBrandScreens: List<String>? = null,
+    @Json(name = "weroQRCodeScanningEnabled") val weroQRCodeScanningEnabled: Boolean? = null,
     @Json(name = "fraudSignalsEnabled") val fraudSignalsEnabled: Boolean? = null,
 )
 
@@ -46,6 +47,7 @@ internal fun ConfigurationResponse.toConfiguration() = Configuration(
     isPaymentScheduleHintEnabled = paymentScheduleHintEnabled ?: false,
     isCreditNoteHintEnabled = creditNoteHintEnabled ?: false,
     ingredientBrandScreens = ingredientBrandScreens ?: emptyList(),
+    isWeroQRCodeScanningEnabled = weroQRCodeScanningEnabled ?: false,
     isFraudSignalsEnabled = fraudSignalsEnabled ?: false,
 )
 
