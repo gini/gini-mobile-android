@@ -4301,9 +4301,11 @@ public final class net/gini/android/capture/ui/components/card/ComposableSinglet
 	public static final field INSTANCE Lnet/gini/android/capture/ui/components/card/ComposableSingletons$GiniInfoCardKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function3;
 	public static field lambda-2 Lkotlin/jvm/functions/Function2;
+	public static field lambda-3 Lkotlin/jvm/functions/Function2;
 	public fun <init> ()V
 	public final fun getLambda-1$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda-2$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-3$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class net/gini/android/capture/ui/components/card/GiniInfoCardColors {
@@ -4388,8 +4390,10 @@ public final class net/gini/android/capture/ui/components/checkbox/GiniCheckboxK
 public final class net/gini/android/capture/ui/components/expandable/ComposableSingletons$GiniExpandableInfoRowKt {
 	public static final field INSTANCE Lnet/gini/android/capture/ui/components/expandable/ComposableSingletons$GiniExpandableInfoRowKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public static field lambda-2 Lkotlin/jvm/functions/Function2;
 	public fun <init> ()V
 	public final fun getLambda-1$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-2$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class net/gini/android/capture/ui/components/expandable/GiniExpandableInfoRowColors {
@@ -4425,19 +4429,19 @@ public final class net/gini/android/capture/ui/components/expandable/GiniExpanda
 public final class net/gini/android/capture/ui/components/footer/ComposableSingletons$GiniActionFooterKt {
 	public static final field INSTANCE Lnet/gini/android/capture/ui/components/footer/ComposableSingletons$GiniActionFooterKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public static field lambda-2 Lkotlin/jvm/functions/Function2;
 	public fun <init> ()V
 	public final fun getLambda-1$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
-}
-
-public final class net/gini/android/capture/ui/components/footer/GiniActionFooterKt {
-	public static final fun GiniActionFooter (Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lnet/gini/android/capture/ui/components/GiniComposableStyleProviderConfig;Landroidx/compose/ui/Modifier;Ljava/lang/String;Lkotlin/jvm/functions/Function0;ZLnet/gini/android/capture/ui/components/button/filled/GiniButtonColors;Lnet/gini/android/capture/ui/components/button/outlined/GiniOutlinedButtonColors;Landroidx/compose/runtime/Composer;II)V
+	public final fun getLambda-2$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class net/gini/android/capture/ui/components/header/ComposableSingletons$GiniHeaderBlockKt {
 	public static final field INSTANCE Lnet/gini/android/capture/ui/components/header/ComposableSingletons$GiniHeaderBlockKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public static field lambda-2 Lkotlin/jvm/functions/Function2;
 	public fun <init> ()V
 	public final fun getLambda-1$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-2$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class net/gini/android/capture/ui/components/header/GiniHeaderBlockColors {
@@ -4471,15 +4475,19 @@ public final class net/gini/android/capture/ui/components/header/GiniHeaderBlock
 public final class net/gini/android/capture/ui/components/labeledvalue/ComposableSingletons$GiniLabeledValueKt {
 	public static final field INSTANCE Lnet/gini/android/capture/ui/components/labeledvalue/ComposableSingletons$GiniLabeledValueKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public static field lambda-2 Lkotlin/jvm/functions/Function2;
 	public fun <init> ()V
 	public final fun getLambda-1$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-2$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class net/gini/android/capture/ui/components/labeledvalue/ComposableSingletons$GiniLabeledValueListKt {
 	public static final field INSTANCE Lnet/gini/android/capture/ui/components/labeledvalue/ComposableSingletons$GiniLabeledValueListKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public static field lambda-2 Lkotlin/jvm/functions/Function2;
 	public fun <init> ()V
 	public final fun getLambda-1$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-2$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class net/gini/android/capture/ui/components/labeledvalue/GiniLabeledValueColors {
@@ -4688,8 +4696,10 @@ public final class net/gini/android/capture/ui/components/picker/date/GiniDatePi
 public final class net/gini/android/capture/ui/components/radio/ComposableSingletons$GiniRadioButtonKt {
 	public static final field INSTANCE Lnet/gini/android/capture/ui/components/radio/ComposableSingletons$GiniRadioButtonKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public static field lambda-2 Lkotlin/jvm/functions/Function2;
 	public fun <init> ()V
 	public final fun getLambda-1$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-2$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class net/gini/android/capture/ui/components/radio/GiniRadioButtonColors {
@@ -4725,10 +4735,12 @@ public final class net/gini/android/capture/ui/components/sheet/ComposableSingle
 	public static field lambda-1 Lkotlin/jvm/functions/Function3;
 	public static field lambda-2 Lkotlin/jvm/functions/Function3;
 	public static field lambda-3 Lkotlin/jvm/functions/Function2;
+	public static field lambda-4 Lkotlin/jvm/functions/Function2;
 	public fun <init> ()V
 	public final fun getLambda-1$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda-2$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda-3$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-4$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class net/gini/android/capture/ui/components/sheet/GiniBottomSheetScaffoldColors {

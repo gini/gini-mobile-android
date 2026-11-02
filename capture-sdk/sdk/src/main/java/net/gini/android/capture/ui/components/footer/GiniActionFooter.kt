@@ -41,7 +41,7 @@ import net.gini.android.capture.ui.theme.GiniTheme
  * @param secondaryColors colors of the outlined button
  */
 @Composable
-fun GiniActionFooter(
+internal fun GiniActionFooter(
     primaryText: String,
     onPrimaryClick: () -> Unit,
     composableProviderConfig: GiniComposableStyleProviderConfig?,
