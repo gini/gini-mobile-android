@@ -16,7 +16,8 @@ concurrency:
 
 jobs:
   build-docs:
-    runs-on: ubuntu-latest
+    # Pinned: ruby/setup-ruby v1.257.0 does not support ubuntu-26.04 (now ubuntu-latest).
+    runs-on: ubuntu-24.04
     steps:
       - name: checkout
         uses: actions/checkout@v4
