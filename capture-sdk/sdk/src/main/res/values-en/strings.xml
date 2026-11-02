@@ -183,6 +183,13 @@
     <string name="gc_gini_loading_indicator_content_description">Loading</string>
     <!--   endregion -->
 
+    <!--   region Accessibility states -->
+    <string name="gc_a11y_expanded">Expanded</string>
+    <string name="gc_a11y_collapsed">Collapsed</string>
+    <string name="gc_a11y_expand">Expand</string>
+    <string name="gc_a11y_collapse">Collapse</string>
+    <!--   endregion Accessibility states -->
+
     <!--   region Warning -->
     <string name="gc_cancel_transfer">Cancel transfer</string>
     <string name="gc_proceed_anyway">Proceed anyway</string>
