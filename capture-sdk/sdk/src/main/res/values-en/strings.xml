@@ -183,6 +183,22 @@
     <string name="gc_gini_loading_indicator_content_description">Loading</string>
     <!--   endregion -->
 
+    <!--   region Fraud warnings -->
+    <string name="gc_fraud_iban_mismatch_title">Different IBANs found on this document</string>
+    <string name="gc_fraud_iban_mismatch_description">The IBAN in the QR code is different from the printed one</string>
+    <string name="gc_fraud_country_mismatch_title">IBAN doesn’t match the sender’s country</string>
+    <string name="gc_fraud_country_mismatch_description">The country of the IBAN on the document differs from the sender’s country.</string>
+    <string name="gc_fraud_combined_mismatch_title">Different IBANs and countries found on this document</string>
+    <string name="gc_fraud_combined_mismatch_description">The IBAN in the QR code is different from the printed one. The IBAN country also doesn’t match the sender’s country.</string>
+    <string name="gc_fraud_protection_title">How do I protect myself?</string>
+    <string name="gc_fraud_protection_body">Documents are sometimes altered to redirect payments. If in doubt, ask the sender which IBAN is correct, using contact details you already know.</string>
+    <string name="gc_fraud_sender_label">Sender</string>
+    <string name="gc_fraud_detected_ibans_title">The following IBANs were detected</string>
+    <string name="gc_fraud_qr_iban_label">In the QR code</string>
+    <string name="gc_fraud_printed_iban_label">Printed on the document</string>
+    <string name="gc_fraud_document_iban_label">On the document</string>
+    <!--   endregion Fraud warnings -->
+
     <!--   region Accessibility states -->
     <string name="gc_a11y_expanded">Expanded</string>
     <string name="gc_a11y_collapsed">Collapsed</string>
