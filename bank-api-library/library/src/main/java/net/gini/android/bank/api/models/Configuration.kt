@@ -21,4 +21,8 @@ data class Configuration(
      * the client has no ingredient branding.
      */
     val ingredientBrandScreens: List<String> = emptyList(),
+    /**
+     * Whether the backend delivers the `fraudSignals` compound extraction to this client.
+     */
+    val isFraudSignalsEnabled: Boolean = false,
 )

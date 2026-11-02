@@ -1626,6 +1626,137 @@ class AnalysisScreenPresenterTest {
 
     // endregion
 
+    // region Fraud signals are never forwarded
+
+    @Test
+    fun `forwarded compound extractions do not contain fraudSignals when the flag is on`() {
+        // Given
+        configurationProvider.update { it.copy(isFraudSignalsEnabled = true) }
+        val extractions = mapOf("iban" to specificExtraction("iban", "DE89370400440532013000"))
+
+        // When
+        val listener = startPresenterForDueHint(extractions, compoundsWithFraudSignals())
+
+        // Then
+        assertForwardedWithoutFraudSignals(listener, extractions)
+    }
+
+    @Test
+    fun `forwarded compound extractions do not contain fraudSignals when the flag is off`() {
+        // Given the provider default (isFraudSignalsEnabled = false)
+        val extractions = mapOf("iban" to specificExtraction("iban", "AT611904300234573201"))
+
+        // When
+        val listener = startPresenterForDueHint(extractions, compoundsWithFraudSignals())
+
+        // Then the flow is unchanged apart from the removed fraudSignals
+        assertForwardedWithoutFraudSignals(listener, extractions)
+    }
+
+    @Test
+    fun `proceed continuation of payment due hint does not forward fraudSignals`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentDueHintEnabled = true) }
+        val extractions = dueHintExtractions(LocalDate.now().plusDays(10).toString())
+        val listener = startPresenterForDueHint(extractions, compoundsWithFraudSignals())
+        val onProceedCaptor = argumentCaptor<Runnable>()
+        idleMainLooperUntil {
+            verify(mView).showWarning(eq(WarningType.PAYMENT_DUE_DATE), any(), onProceedCaptor.capture(), anyOrNull())
+        }
+
+        // When the user taps "Proceed Anyway"
+        onProceedCaptor.lastValue.run()
+
+        // Then
+        assertForwardedWithoutFraudSignals(listener, extractions)
+    }
+
+    @Test
+    fun `proceed continuation of already paid warning does not forward fraudSignals`() {
+        // Given
+        configurationProvider.update { it.copy(isAlreadyPaidHintEnabled = true) }
+        val extractions = dueHintExtractions(dueDate = null, paymentState = "Paid")
+        val listener = startPresenterForDueHint(extractions, compoundsWithFraudSignals())
+        val onProceedCaptor = argumentCaptor<Runnable>()
+        idleMainLooperUntil {
+            verify(mView).showWarning(eq(WarningType.DOCUMENT_MARKED_AS_PAID), anyOrNull(), onProceedCaptor.capture(), anyOrNull())
+        }
+
+        // When the user taps "Proceed Anyway"
+        onProceedCaptor.lastValue.run()
+
+        // Then
+        assertForwardedWithoutFraudSignals(listener, extractions)
+    }
+
+    @Test
+    fun `schedule CTA does not hand over fraudSignals`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentScheduleHintEnabled = true) }
+        val extractions = dueHintExtractions(LocalDate.now().plusDays(10).toString())
+        val listener = startPresenterForDueHint(extractions, compoundsWithFraudSignals())
+        val onScheduleCaptor = argumentCaptor<Runnable>()
+        idleMainLooperUntil {
+            verify(mView).showWarning(eq(WarningType.SCHEDULE_PAYMENT), any(), any(), onScheduleCaptor.capture())
+        }
+
+        // When the user taps "Schedule Payment"
+        onScheduleCaptor.lastValue.run()
+
+        // Then
+        val compoundCaptor = argumentCaptor<Map<String, GiniCaptureCompoundExtraction>>()
+        verify(listener).onSchedulePayment(eq(extractions), compoundCaptor.capture(), any())
+        Truth.assertThat(compoundCaptor.lastValue.keys).containsExactly("lineItems")
+    }
+
+    /**
+     * Characterises the no-extractions routing when `fraudSignals` is the only compound
+     * extraction. The routing only looks at specific extractions, so this is not a regression
+     * test for the strip itself.
+     */
+    @Test
+    fun `only fraudSignals without specific extractions proceeds to the no-extractions screen`() {
+        // Given
+        configurationProvider.update { it.copy(isFraudSignalsEnabled = true) }
+
+        // When
+        val listener = startPresenterForDueHint(
+            emptyMap(),
+            compoundsWithFraudSignals() - "lineItems"
+        )
+
+        // Then
+        idleMainLooperUntil {
+            verify(listener).onProceedToNoExtractionsScreen(any())
+        }
+        verify(listener, never()).onExtractionsAvailable(any(), any(), any())
+    }
+
+    private fun compoundsWithFraudSignals(): Map<String, GiniCaptureCompoundExtraction> {
+        val signal = mapOf(
+            "signalCode" to specificExtraction("signalCode", "QR_PRINTED_IBAN_MISMATCH"),
+            "severity" to specificExtraction("severity", "STOP"),
+            "iban" to specificExtraction("iban", "LT601010012345678901"),
+        )
+        return mapOf(
+            "fraudSignals" to GiniCaptureCompoundExtraction("fraudSignals", listOf(signal)),
+            "lineItems" to GiniCaptureCompoundExtraction("lineItems", emptyList()),
+        )
+    }
+
+    private fun assertForwardedWithoutFraudSignals(
+        listener: AnalysisFragmentListener,
+        extractions: Map<String, GiniCaptureSpecificExtraction>
+    ) {
+        val compoundCaptor = argumentCaptor<Map<String, GiniCaptureCompoundExtraction>>()
+        idleMainLooperUntil {
+            verify(listener).onExtractionsAvailable(eq(extractions), compoundCaptor.capture(), any())
+        }
+        Truth.assertThat(compoundCaptor.lastValue.keys).containsExactly("lineItems")
+    }
+
+    // endregion
+
     // region Schedule payment bottom sheet
 
     @Test

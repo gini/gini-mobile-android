@@ -14,6 +14,7 @@ object CaptureSdkIsolatedKoinContext {
             EInvoiceModule,
             saveInvoicesLocallyModule,
             paymentHintsModule,
+            fraudSignalsModule,
             clientConfigurationModule,
             ingredientBrandModule
         )

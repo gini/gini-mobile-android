@@ -1,6 +1,7 @@
 package net.gini.android.capture.internal.storage
 
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
@@ -14,8 +15,9 @@ import net.gini.android.capture.internal.network.Configuration
 // DataStore per file in the process, regardless of how many ClientConfigurationStorage
 // instances are created. Declaring it as an instance member would open a new DataStore
 // for the same file per instance and throw "There are multiple DataStores active for the
-// same file".
-private val Context.dataStore by preferencesDataStore(name = ClientConfigurationStorage.DATA_STORE_NAME)
+// same file". Internal (not private) so tests can write a cache from an older SDK version.
+@VisibleForTesting
+internal val Context.dataStore by preferencesDataStore(name = ClientConfigurationStorage.DATA_STORE_NAME)
 
 internal class ClientConfigurationStorage(private val context: Context) {
 
@@ -38,6 +40,7 @@ internal class ClientConfigurationStorage(private val context: Context) {
         booleanPreferencesKey("is_payment_schedule_hint_enabled")
     private val keyIsCreditNoteHintEnabled = booleanPreferencesKey("is_credit_note_hint_enabled")
     private val keyIngredientBrandScreens = stringSetPreferencesKey("ingredient_brand_screens")
+    private val keyIsFraudSignalsEnabled = booleanPreferencesKey("is_fraud_signals_enabled")
 
     fun getConfiguration(): Flow<Configuration?> = context.dataStore.data.map { prefs ->
         if (prefs[keyIsCached] != true) return@map null
@@ -58,6 +61,7 @@ internal class ClientConfigurationStorage(private val context: Context) {
             isPaymentScheduleHintEnabled = prefs.flag(keyIsPaymentScheduleHintEnabled),
             isCreditNoteHintEnabled = prefs.flag(keyIsCreditNoteHintEnabled),
             ingredientBrandScreens = prefs[keyIngredientBrandScreens] ?: emptySet(),
+            isFraudSignalsEnabled = prefs.flag(keyIsFraudSignalsEnabled),
         )
     }
 
@@ -85,6 +89,7 @@ internal class ClientConfigurationStorage(private val context: Context) {
             prefs[keyIsCreditNoteHintEnabled] =
                 configuration.isCreditNoteHintEnabled
             prefs[keyIngredientBrandScreens] = configuration.ingredientBrandScreens
+            prefs[keyIsFraudSignalsEnabled] = configuration.isFraudSignalsEnabled
             prefs[keyIsCached] = true
         }
     }
