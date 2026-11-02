@@ -14,8 +14,8 @@ package net.gini.android.capture.analysis.fraud
  * @property qrIbanHint explanation below the QR IBAN, e.g. "From Poland, not the sender's country"
  * @property printedIbanHint explanation below the printed IBAN
  */
-internal data class IbanMismatchArgs(
-    val type: IbanMismatchType,
+internal data class IBANMismatchArgs(
+    val type: IBANMismatchType,
     val qrIban: String?,
     val printedIban: String,
     val sender: String? = null,

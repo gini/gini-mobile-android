@@ -13,15 +13,15 @@ import androidx.annotation.RestrictTo
  * have no reason to call it.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-object IbanMismatchDebug {
+object IBANMismatchDebug {
 
     /** When `true` the Analysis screen shows the warning before handing the extractions on. */
     @JvmStatic
     var enabled: Boolean = false
 
     /** The combined case, because it exercises every part of the screen. */
-    internal fun sampleArgs(): IbanMismatchArgs = IbanMismatchArgs(
-        type = IbanMismatchType.COMBINED,
+    internal fun sampleArgs(): IBANMismatchArgs = IBANMismatchArgs(
+        type = IBANMismatchType.COMBINED,
         qrIban = "PL12100001110100100012345678",
         printedIban = "DE89370400440532013000",
         sender = "Elektro Brandt GmbH · Germany",

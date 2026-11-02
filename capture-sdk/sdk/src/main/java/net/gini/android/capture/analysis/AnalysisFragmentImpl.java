@@ -30,7 +30,7 @@ import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.analysis.education.EducationCompleteListener;
-import net.gini.android.capture.analysis.fraud.IbanMismatchArgs;
+import net.gini.android.capture.analysis.fraud.IBANMismatchArgs;
 import net.gini.android.capture.analysis.warning.WarningType;
 import net.gini.android.capture.error.ErrorFragment;
 import net.gini.android.capture.error.ErrorType;
@@ -372,7 +372,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     @Override
-    void showIbanMismatch(@NonNull final IbanMismatchArgs args, @NonNull final Runnable onProceed) {
+    void showIbanMismatch(@NonNull final IBANMismatchArgs args, @NonNull final Runnable onProceed) {
         stopAndHideHints();
         fragmentExtension.showIbanMismatch(args, () -> {
             onProceed.run();

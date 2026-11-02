@@ -12,7 +12,7 @@ import net.gini.android.capture.BankSDKBridge;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
-import net.gini.android.capture.analysis.fraud.IbanMismatchDebug;
+import net.gini.android.capture.analysis.fraud.IBANMismatchDebug;
 import net.gini.android.capture.analysis.warning.BusinessDocType;
 import net.gini.android.capture.ProductTag;
 import net.gini.android.capture.analysis.warning.WarningPaymentState;
@@ -356,7 +356,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                                     proceedSuccessNoExtractions();
                                 } else if (isCxEmptyExtractions(resultHolder)) {
                                     proceedSuccessNoExtractions();
-                                } else if (IbanMismatchDebug.getEnabled()) {
+                                } else if (IBANMismatchDebug.getEnabled()) {
                                     // Development switch: the IBAN mismatch warning goes ahead
                                     // of every other warning until it is driven by the result.
                                     successResultHolder = resultHolder;

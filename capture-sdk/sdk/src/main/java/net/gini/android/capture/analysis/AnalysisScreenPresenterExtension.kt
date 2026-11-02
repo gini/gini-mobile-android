@@ -15,7 +15,7 @@ import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCaptureError
 import net.gini.android.capture.analysis.AnalysisInteractor.ResultHolder
 import net.gini.android.capture.analysis.AnalysisScreenContract.View
-import net.gini.android.capture.analysis.fraud.IbanMismatchDebug
+import net.gini.android.capture.analysis.fraud.IBANMismatchDebug
 import net.gini.android.capture.analysis.transactiondoc.AttachedToTransactionDocumentProvider
 import net.gini.android.capture.analysis.warning.WarningType
 import net.gini.android.capture.di.getGiniCaptureKoin
@@ -214,7 +214,7 @@ internal class AnalysisScreenPresenterExtension(
      * runs the same steps as the already-paid warning's "Proceed anyway" CTA and hands the
      * extractions on unchanged.
      *
-     * The warning is shown with [IbanMismatchDebug.sampleArgs] while the fraud signals are not
+     * The warning is shown with [IBANMismatchDebug.sampleArgs] while the fraud signals are not
      * read from the analysis result yet.
      */
     fun showIbanMismatchWarning(
@@ -232,7 +232,7 @@ internal class AnalysisScreenPresenterExtension(
             )
         } else {
             doWhenEducationFinished {
-                view.showIbanMismatch(IbanMismatchDebug.sampleArgs()) {
+                view.showIbanMismatch(IBANMismatchDebug.sampleArgs()) {
                     handleSaveInvoicesLocally(
                         mIsInvoiceSavingEnabled,
                         false,

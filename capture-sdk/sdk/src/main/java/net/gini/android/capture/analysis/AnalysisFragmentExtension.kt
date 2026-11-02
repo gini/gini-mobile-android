@@ -7,8 +7,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
-import net.gini.android.capture.analysis.fraud.IbanMismatchArgs
-import net.gini.android.capture.analysis.fraud.IbanMismatchWarningScreen
+import net.gini.android.capture.analysis.fraud.IBANMismatchArgs
+import net.gini.android.capture.analysis.fraud.IBANMismatchWarningScreen
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.ingredientbrand.GetIngredientBrandVisibleUseCase
 import net.gini.android.capture.ingredientbrand.IngredientBrandLoadingIndicatorAdapter
@@ -96,18 +96,18 @@ class AnalysisFragmentExtension {
      * composition, which closes the sheet's window, and only then run the presenter's action.
      *
      * Internal use only; `@JvmName` keeps the name unmangled so [AnalysisFragmentImpl] (Java)
-     * can call it while [IbanMismatchArgs] stays `internal`.
+     * can call it while [IBANMismatchArgs] stays `internal`.
      */
     @JvmName("showIbanMismatch")
     internal fun showIbanMismatch(
-        args: IbanMismatchArgs,
+        args: IBANMismatchArgs,
         onProceed: () -> Unit,
         onCancel: () -> Unit,
     ) {
         ibanMismatchView.visibility = View.VISIBLE
         ibanMismatchView.setContent {
             GiniTheme {
-                IbanMismatchWarningScreen(
+                IBANMismatchWarningScreen(
                     args = args,
                     onCancel = {
                         hideIbanMismatch()

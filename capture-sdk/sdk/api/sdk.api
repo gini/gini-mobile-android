@@ -793,9 +793,9 @@ public abstract interface class net/gini/android/capture/analysis/education/Educ
 	public abstract fun onComplete ()V
 }
 
-public final class net/gini/android/capture/analysis/fraud/IbanMismatchDebug {
+public final class net/gini/android/capture/analysis/fraud/IBANMismatchDebug {
 	public static final field $stable I
-	public static final field INSTANCE Lnet/gini/android/capture/analysis/fraud/IbanMismatchDebug;
+	public static final field INSTANCE Lnet/gini/android/capture/analysis/fraud/IBANMismatchDebug;
 	public static final fun getEnabled ()Z
 	public static final fun setEnabled (Z)V
 }

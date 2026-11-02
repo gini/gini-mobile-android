@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCaptureBasePresenter;
-import net.gini.android.capture.analysis.fraud.IbanMismatchArgs;
+import net.gini.android.capture.analysis.fraud.IBANMismatchArgs;
 import net.gini.android.capture.GiniCaptureBaseView;
 import net.gini.android.capture.analysis.education.EducationCompleteListener;
 import net.gini.android.capture.analysis.warning.WarningType;
@@ -91,7 +91,7 @@ interface AnalysisScreenContract {
          * @param args      what the warning shows
          * @param onProceed runs when the user taps "Proceed anyway"
          */
-        abstract void showIbanMismatch(@NonNull IbanMismatchArgs args, @NonNull Runnable onProceed);
+        abstract void showIbanMismatch(@NonNull IBANMismatchArgs args, @NonNull Runnable onProceed);
 
         /**
          * Starts the local invoice saving step.

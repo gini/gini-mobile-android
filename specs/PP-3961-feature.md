@@ -17,10 +17,10 @@ In:
 - Reusable Jetpack Compose components in `capture-sdk:sdk`, package
   `net.gini.android.capture.ui.components`, each public with KDoc, a `*Colors` data class with a
   `@Composable colors()` factory, and light/dark + font-scale previews.
-- One screen, `analysis/fraud/IbanMismatchWarningScreen`, composed only from those components.
-  Its content is `IbanMismatchArgs`; the same screen renders the QR-vs-printed, country-only and
+- One screen, `analysis/fraud/IBANMismatchWarningScreen`, composed only from those components.
+  Its content is `IBANMismatchArgs`; the same screen renders the QR-vs-printed, country-only and
   combined cases.
-- The Analysis-screen hooks taken over from the spike: `IbanMismatchDebug` (restricted-visibility
+- The Analysis-screen hooks taken over from the spike: `IBANMismatchDebug` (restricted-visibility
   development switch, **off by default**), the presenter check ahead of the existing warning
   checks, `showIbanMismatch`/`hideIbanMismatch` in `AnalysisFragmentExtension`, the
   `gc_iban_mismatch_container` `ComposeView` in the four `gc_fragment_analysis` layouts, and a
@@ -33,7 +33,7 @@ In:
 Out (later phases):
 
 - Reading `QR_PRINTED_IBAN_MISMATCH` / `IBAN_COUNTRY_MISMATCH` from the analysis result
-  (PP-3965) and building `IbanMismatchArgs` from it — the hints ("From Poland, not the sender's
+  (PP-3965) and building `IBANMismatchArgs` from it — the hints ("From Poland, not the sender's
   country") and the sender line are display strings resolved by that phase.
 - The IBAN selection sheet as a screen (the spike's `IbanSelectionSheet`); `GiniRadioButton` is
   already here for it.
@@ -58,7 +58,7 @@ Per-case layout (from the Figma frames 1.2.1 / 1.3.1 / 1.2.1-Mix):
 - **Country only**: header, protect row, untitled list [Sender, "On the document" IBAN + hint].
 - **Combined**: header, protect row, sender card, titled list [QR IBAN + hint, printed IBAN (+ hint)].
 
-IBANs are grouped in blocks of four for display (`internal/iban/IbanDisplayFormat.kt`) so they wrap
+IBANs are grouped in blocks of four for display (`internal/iban/IBANDisplayFormat.kt`) so they wrap
 at block boundaries and screen readers read them in chunks.
 
 ## Theme additions
@@ -89,11 +89,11 @@ at block boundaries and screen readers read them in chunks.
 
 ## Review decisions (architecture / Compose specialists)
 
-- `IbanMismatchDebug` is public only because the example-app switch has to reach into
+- `IBANMismatchDebug` is public only because the example-app switch has to reach into
   capture-sdk's presenter and Kotlin `internal` stops at the module boundary; `@RestrictTo` does
   not hide it from `apiCheck` (no `nonPublicMarkers`). It is branch scaffolding, not a feature:
   see "Before merge" below.
-- `IbanMismatchArgs` is a plain `internal` data class, not `@Parcelize`: nothing persists it, and
+- `IBANMismatchArgs` is a plain `internal` data class, not `@Parcelize`: nothing persists it, and
   Parcelize would publish a `$Creator` class.
 - `hideIbanMismatch` is `internal` with `@JvmName`, like `showIbanMismatch`.
 - `GiniHeaderBlock` defaults are neutral (placeholder background, accent tint); the warning passes
@@ -115,10 +115,10 @@ from the analysis result. It must not ship: it would put a debug toggle and a fa
 into a public class on Maven Central. Remove it in one final commit on this branch, after the
 manual device checks below are done and before the PR is opened:
 
-- [ ] `capture-sdk/sdk/src/main/java/net/gini/android/capture/analysis/fraud/IbanMismatchDebug.kt`
+- [ ] `capture-sdk/sdk/src/main/java/net/gini/android/capture/analysis/fraud/IBANMismatchDebug.kt`
       (the object and `sampleArgs()`; move the preview data into the previews in
-      `IbanMismatchWarningScreen.kt`)
-- [ ] the `else if (IbanMismatchDebug.getEnabled())` branch in `AnalysisScreenPresenter.java` and
+      `IBANMismatchWarningScreen.kt`)
+- [ ] the `else if (IBANMismatchDebug.getEnabled())` branch in `AnalysisScreenPresenter.java` and
       `showIbanMismatchWarning` in `AnalysisScreenPresenterExtension.kt`
 - [ ] the "IBAN mismatch warning" region of `AnalysisScreenPresenterTest.kt` (three tests; phase 2
       brings them back driven by extractions)
@@ -126,7 +126,7 @@ manual device checks below are done and before the PR is opened:
       `switchIbanMismatchDebug` in `ConfigurationActivity` and
       `layout_debug_development_toggles.xml`, `applyIbanMismatchDebugSwitch` in
       `ConfigurationViewModel`, the `iban_mismatch_debug_switch_label` string
-- [ ] `./gradlew capture-sdk:sdk:apiDump` so `IbanMismatchDebug` leaves `sdk.api`
+- [ ] `./gradlew capture-sdk:sdk:apiDump` so `IBANMismatchDebug` leaves `sdk.api`
 - [ ] this section and the "Manual" step under Verification
 
 What stays: the `ComposeView` container in the four `gc_fragment_analysis` layouts,
@@ -141,7 +141,7 @@ the object; Detekt's `ForbiddenComment` rule fails `capture-sdk:sdk:detekt` unti
 
 - `./gradlew capture-sdk:sdk:testDebugUnitTest` — `AnalysisScreenPresenterTest` (switch on → warning
   ahead of other warnings; proceed → extractions unchanged; switch off → no warning),
-  `IbanDisplayFormatTest`.
+  `IBANDisplayFormatTest`.
 - `/gini-check` on `capture-sdk:sdk` and `bank-sdk:example-app`; `apiDump` for `capture-sdk:sdk`.
 - Manual: example app → Configuration → Debug / development → "IBAN mismatch warning
   (development)" → scan any invoice → the combined warning appears over the Analysis screen;

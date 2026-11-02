@@ -3,7 +3,7 @@ package net.gini.android.capture.internal.iban
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
-class IbanDisplayFormatTest {
+class IBANDisplayFormatTest {
 
     @Test
     fun `groups a compact IBAN in blocks of four`() {

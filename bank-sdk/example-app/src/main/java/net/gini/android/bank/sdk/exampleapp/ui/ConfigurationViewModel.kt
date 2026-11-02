@@ -29,7 +29,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.composables.CustomGiniComposableS
 import net.gini.android.bank.sdk.exampleapp.ui.data.ExampleAppBankConfiguration
 import net.gini.android.bank.sdk.exampleapp.ui.data.ExampleRuntimeColorsProvider
 import net.gini.android.capture.GiniCaptureDebug
-import net.gini.android.capture.analysis.fraud.IbanMismatchDebug
+import net.gini.android.capture.analysis.fraud.IBANMismatchDebug
 import net.gini.android.capture.help.HelpItem
 import net.gini.android.capture.internal.util.FileImportValidator
 import net.gini.android.capture.logging.ErrorLog
@@ -344,7 +344,7 @@ class ConfigurationViewModel @Inject constructor(
      */
     @SuppressLint("RestrictedApi")
     private fun applyIbanMismatchDebugSwitch(enabled: Boolean) {
-        IbanMismatchDebug.enabled = enabled
+        IBANMismatchDebug.enabled = enabled
     }
 
     private fun configureLogging() {

@@ -161,7 +161,7 @@ data class ExampleAppBankConfiguration(
     val isDebugModeEnabled: Boolean = true,
 
     // Development: show the IBAN mismatch warning after every successful analysis
-    // net.gini.android.capture.analysis.fraud.IbanMismatchDebug#enabled → on/off switch
+    // net.gini.android.capture.analysis.fraud.IBANMismatchDebug#enabled → on/off switch
     val isIbanMismatchDebugEnabled: Boolean = false,
 
     // Is Allow Screenshots

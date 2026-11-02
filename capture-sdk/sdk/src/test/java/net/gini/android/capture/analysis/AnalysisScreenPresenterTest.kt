@@ -41,7 +41,7 @@ import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureHelper
 import net.gini.android.capture.ProductTag
 import net.gini.android.capture.analysis.AnalysisScreenPresenter.CROSS_BORDER_PAYMENT_KEY
-import net.gini.android.capture.analysis.fraud.IbanMismatchDebug
+import net.gini.android.capture.analysis.fraud.IBANMismatchDebug
 import net.gini.android.capture.analysis.warning.WarningType
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.di.providerModule
@@ -1632,7 +1632,7 @@ class AnalysisScreenPresenterTest {
     @Test
     fun `should show IBAN mismatch warning ahead of other warnings when the development switch is on`() {
         // Given
-        IbanMismatchDebug.enabled = true
+        IBANMismatchDebug.enabled = true
         configurationProvider.update { it.copy(isCreditNoteHintEnabled = true) }
         try {
             // When
@@ -1645,14 +1645,14 @@ class AnalysisScreenPresenterTest {
             verify(mView, never()).showWarning(any(), anyOrNull(), any(), anyOrNull())
             verify(listener, never()).onExtractionsAvailable(any(), any(), any())
         } finally {
-            IbanMismatchDebug.enabled = false
+            IBANMismatchDebug.enabled = false
         }
     }
 
     @Test
     fun `proceed continuation of IBAN mismatch warning hands the extractions on unchanged`() {
         // Given
-        IbanMismatchDebug.enabled = true
+        IBANMismatchDebug.enabled = true
         try {
             val listener = startPresenterForDueHint(creditNoteExtractions())
             val onProceedCaptor = argumentCaptor<Runnable>()
@@ -1671,14 +1671,14 @@ class AnalysisScreenPresenterTest {
             Truth.assertThat(extractionsCaptor.lastValue.keys)
                 .containsExactlyElementsIn(creditNoteExtractions().keys)
         } finally {
-            IbanMismatchDebug.enabled = false
+            IBANMismatchDebug.enabled = false
         }
     }
 
     @Test
     fun `should not show IBAN mismatch warning when the development switch is off`() {
         // Given
-        IbanMismatchDebug.enabled = false
+        IBANMismatchDebug.enabled = false
 
         // When
         val listener = startPresenterForDueHint(creditNoteExtractions(businessDocType = null))
