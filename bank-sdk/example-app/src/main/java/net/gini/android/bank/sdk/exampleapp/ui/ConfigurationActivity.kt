@@ -244,6 +244,10 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.layoutDebugDevelopmentOptionsToggles.switchDebugMode.isChecked =
             configuration.isDebugModeEnabled
 
+        // IBAN mismatch warning (development)
+        binding.layoutDebugDevelopmentOptionsToggles.switchIbanMismatchDebug.isChecked =
+            configuration.isIbanMismatchDebugEnabled
+
         // enable skonto
         binding.layoutFeatureToggle.switchSkontoFeature.isChecked = configuration.isSkontoEnabled
 
@@ -639,6 +643,12 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.layoutDebugDevelopmentOptionsToggles.switchDebugMode.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(isDebugModeEnabled = isChecked)
+            )
+        }
+        // IBAN mismatch warning (development)
+        binding.layoutDebugDevelopmentOptionsToggles.switchIbanMismatchDebug.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(isIbanMismatchDebugEnabled = isChecked)
             )
         }
         // Custom HTTP client
