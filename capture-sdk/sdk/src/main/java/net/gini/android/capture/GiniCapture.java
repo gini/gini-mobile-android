@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import net.gini.android.capture.camera.CameraActivity;
+import net.gini.android.capture.fraudSignals.FraudSignalsExtractions;
 import net.gini.android.capture.help.HelpItem;
 import net.gini.android.capture.internal.cache.DocumentDataMemoryCache;
 import net.gini.android.capture.internal.cache.PhotoMemoryCache;
@@ -244,6 +245,8 @@ public class GiniCapture {
         }
         // We should remove skonto from compound extractions as we don't want to override them by clients when sending normal feedback!
         sInstance.mInternal.getCompoundExtractions().remove("skontoDiscounts");
+        // fraudSignals is for the SDK's own fraud warning only and is never sent as feedback.
+        sInstance.mInternal.getCompoundExtractions().remove(FraudSignalsExtractions.FRAUD_SIGNALS_KEY);
 
         // Test fails here if for some reason mGiniCaptureNetworkService is null
         // Added null checking to fix test fail -> or figure out something else
@@ -351,6 +354,7 @@ public class GiniCapture {
             }
             // Remove skonto so it isn't overridden when sending normal feedback.
             oldInstance.mInternal.getCompoundExtractions().remove("skontoDiscounts");
+            oldInstance.mInternal.getCompoundExtractions().remove(FraudSignalsExtractions.FRAUD_SIGNALS_KEY);
 
             if (oldInstance.mGiniCaptureNetworkService != null) {
                 oldInstance.mGiniCaptureNetworkService.sendFeedback(

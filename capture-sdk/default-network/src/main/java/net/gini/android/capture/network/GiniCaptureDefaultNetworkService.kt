@@ -215,6 +215,7 @@ internal constructor(
             isCreditNoteHintEnabled = configuration.isCreditNoteHintEnabled,
             ingredientBrandScreens = configuration.ingredientBrandScreens.toSet(),
             isWeroQRCodeScanningEnabled = configuration.isWeroQRCodeScanningEnabled,
+            isFraudSignalsEnabled = configuration.isFraudSignalsEnabled,
         )
 
     @Suppress("LongMethod")
