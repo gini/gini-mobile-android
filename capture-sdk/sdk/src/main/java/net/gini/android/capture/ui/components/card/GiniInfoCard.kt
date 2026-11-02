@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -45,8 +46,10 @@ private val CONTENT_PADDING = 12.dp
 @Composable
 private fun GiniInfoCardPreview() {
     GiniTheme {
-        GiniInfoCard(modifier = Modifier.padding(24.dp)) {
-            GiniLabeledValue(label = "Sender", value = "Elektro Brandt GmbH · Germany")
+        Surface(color = GiniTheme.colorScheme.dialogs.container) {
+            GiniInfoCard(modifier = Modifier.padding(24.dp)) {
+                GiniLabeledValue(label = "Sender", value = "Elektro Brandt GmbH · Germany")
+            }
         }
     }
 }

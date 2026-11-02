@@ -20,6 +20,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -163,16 +164,18 @@ private val FOOTER_BOTTOM_PADDING = 16.dp
 @Composable
 private fun GiniBottomSheetScaffoldBodyPreview() {
     GiniTheme {
-        Column(modifier = Modifier.width(360.dp)) {
-            GiniBottomSheetScaffoldBody(
-                topPadding = SHEET_TOP_PADDING,
-                footer = {
-                    Text(text = "Footer", color = GiniTheme.colorScheme.text.primary)
-                },
-            ) {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(text = "Content line 1", color = GiniTheme.colorScheme.text.primary)
-                    Text(text = "Content line 2", color = GiniTheme.colorScheme.text.primary)
+        Surface(color = GiniTheme.colorScheme.dialogs.container) {
+            Column(modifier = Modifier.width(360.dp)) {
+                GiniBottomSheetScaffoldBody(
+                    topPadding = SHEET_TOP_PADDING,
+                    footer = {
+                        Text(text = "Footer", color = GiniTheme.colorScheme.text.primary)
+                    },
+                ) {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(text = "Content line 1", color = GiniTheme.colorScheme.text.primary)
+                        Text(text = "Content line 2", color = GiniTheme.colorScheme.text.primary)
+                    }
                 }
             }
         }

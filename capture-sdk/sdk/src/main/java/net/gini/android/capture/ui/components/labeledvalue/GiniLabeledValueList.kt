@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -71,20 +72,22 @@ private val ITEM_VERTICAL_PADDING = 12.dp
 @Composable
 private fun GiniLabeledValueListPreview() {
     GiniTheme {
-        GiniLabeledValueList(
-            modifier = Modifier.padding(24.dp),
-            title = "The following IBANs were detected",
-            items = listOf(
-                GiniLabeledValueItem(
-                    label = "In the QR code",
-                    value = "PL12 1000 0111 0100 1000",
-                    hint = "From Poland, not the sender's country",
+        Surface(color = GiniTheme.colorScheme.dialogs.container) {
+            GiniLabeledValueList(
+                modifier = Modifier.padding(24.dp),
+                title = "The following IBANs were detected",
+                items = listOf(
+                    GiniLabeledValueItem(
+                        label = "In the QR code",
+                        value = "PL12 1000 0111 0100 1000",
+                        hint = "From Poland, not the sender's country",
+                    ),
+                    GiniLabeledValueItem(
+                        label = "Printed on the document",
+                        value = "DE89 3704 0044 0532 0130 00",
+                    ),
                 ),
-                GiniLabeledValueItem(
-                    label = "Printed on the document",
-                    value = "DE89 3704 0044 0532 0130 00",
-                ),
-            ),
-        )
+            )
+        }
     }
 }

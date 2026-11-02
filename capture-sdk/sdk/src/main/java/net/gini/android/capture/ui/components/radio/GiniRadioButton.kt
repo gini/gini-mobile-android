@@ -4,6 +4,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -51,11 +52,13 @@ fun GiniRadioButton(
 @Composable
 private fun GiniRadioButtonPreview() {
     GiniTheme {
-        Column(modifier = Modifier.padding(8.dp)) {
-            GiniRadioButton(selected = true, onClick = {})
-            GiniRadioButton(selected = false, onClick = {})
-            GiniRadioButton(selected = false, onClick = {}, isError = true)
-            GiniRadioButton(selected = true, onClick = {}, enabled = false)
+        Surface(color = GiniTheme.colorScheme.dialogs.container) {
+            Column(modifier = Modifier.padding(8.dp)) {
+                GiniRadioButton(selected = true, onClick = {})
+                GiniRadioButton(selected = false, onClick = {})
+                GiniRadioButton(selected = false, onClick = {}, isError = true)
+                GiniRadioButton(selected = true, onClick = {}, enabled = false)
+            }
         }
     }
 }

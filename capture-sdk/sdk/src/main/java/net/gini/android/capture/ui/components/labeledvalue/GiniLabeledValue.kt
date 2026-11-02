@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -93,20 +94,22 @@ private val TEXT_SPACING = 4.dp
 @Composable
 private fun GiniLabeledValuePreview() {
     GiniTheme {
-        Column(
-            modifier = Modifier.padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            GiniLabeledValue(
-                label = "In the QR code",
-                value = "PL12 1000 0111 0100 1000",
-            )
-            GiniLabeledValue(
-                label = "Printed on the document",
-                value = "DE89 3704 0044 0532 0130 00",
-                hint = "From Germany, not the sender's country",
-                valueContentDescription = "D E 8 9, 3 7 0 4, 0 0 4 4, 0 5 3 2, 0 1 3 0, 0 0",
-            )
+        Surface(color = GiniTheme.colorScheme.dialogs.container) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                GiniLabeledValue(
+                    label = "In the QR code",
+                    value = "PL12 1000 0111 0100 1000",
+                )
+                GiniLabeledValue(
+                    label = "Printed on the document",
+                    value = "DE89 3704 0044 0532 0130 00",
+                    hint = "From Germany, not the sender's country",
+                    valueContentDescription = "D E 8 9, 3 7 0 4, 0 0 4 4, 0 5 3 2, 0 1 3 0, 0 0",
+                )
+            }
         }
     }
 }

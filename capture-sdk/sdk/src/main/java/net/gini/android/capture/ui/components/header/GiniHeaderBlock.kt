@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -93,15 +94,17 @@ private val TITLE_DESCRIPTION_SPACING = 12.dp
 @Composable
 private fun GiniHeaderBlockPreview() {
     GiniTheme {
-        GiniHeaderBlock(
-            modifier = Modifier.padding(24.dp),
-            title = "Different IBANs found on this document",
-            description = "The IBAN in the QR code is different from the printed one",
-            icon = painterResource(R.drawable.gc_fraud_alert_icon),
-            colors = GiniHeaderBlockColors.colors(
-                iconContainerColor = GiniTheme.colorScheme.errorHint.container,
-                iconTint = GiniTheme.colorScheme.errorHint.content,
-            ),
-        )
+        Surface(color = GiniTheme.colorScheme.dialogs.container) {
+            GiniHeaderBlock(
+                modifier = Modifier.padding(24.dp),
+                title = "Different IBANs found on this document",
+                description = "The IBAN in the QR code is different from the printed one",
+                icon = painterResource(R.drawable.gc_fraud_alert_icon),
+                colors = GiniHeaderBlockColors.colors(
+                    iconContainerColor = GiniTheme.colorScheme.errorHint.container,
+                    iconTint = GiniTheme.colorScheme.errorHint.content,
+                ),
+            )
+        }
     }
 }

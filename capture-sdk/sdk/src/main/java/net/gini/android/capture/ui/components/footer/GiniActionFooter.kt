@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -113,31 +114,33 @@ private val BUTTON_SPACING = 16.dp
 @Composable
 private fun GiniActionFooterPreview() {
     GiniTheme {
-        Column(
-            modifier = Modifier.padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-        ) {
-            GiniActionFooter(
-                primaryText = "Cancel transfer",
-                onPrimaryClick = {},
-                secondaryText = "Proceed anyway",
-                onSecondaryClick = {},
-                composableProviderConfig = null,
-                horizontal = false,
-            )
-            GiniActionFooter(
-                primaryText = "Cancel transfer",
-                onPrimaryClick = {},
-                secondaryText = "Proceed anyway",
-                onSecondaryClick = {},
-                composableProviderConfig = null,
-                horizontal = true,
-            )
-            GiniActionFooter(
-                primaryText = "Continue",
-                onPrimaryClick = {},
-                composableProviderConfig = null,
-            )
+        Surface(color = GiniTheme.colorScheme.dialogs.container) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+            ) {
+                GiniActionFooter(
+                    primaryText = "Cancel transfer",
+                    onPrimaryClick = {},
+                    secondaryText = "Proceed anyway",
+                    onSecondaryClick = {},
+                    composableProviderConfig = null,
+                    horizontal = false,
+                )
+                GiniActionFooter(
+                    primaryText = "Cancel transfer",
+                    onPrimaryClick = {},
+                    secondaryText = "Proceed anyway",
+                    onSecondaryClick = {},
+                    composableProviderConfig = null,
+                    horizontal = true,
+                )
+                GiniActionFooter(
+                    primaryText = "Continue",
+                    onPrimaryClick = {},
+                    composableProviderConfig = null,
+                )
+            }
         }
     }
 }

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -134,26 +135,28 @@ private val MIN_TOUCH_TARGET = 48.dp
 @Composable
 private fun GiniExpandableInfoRowPreview() {
     GiniTheme {
-        var expanded by rememberSaveable { mutableStateOf(false) }
-        Column(
-            modifier = Modifier.padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            GiniExpandableInfoRow(
-                title = "How do I protect myself?",
-                body = "Documents are sometimes altered to redirect payments.",
-                expanded = expanded,
-                onExpandedChange = { expanded = it },
-                icon = painterResource(R.drawable.gc_shield_icon),
-            )
-            GiniExpandableInfoRow(
-                title = "How do I protect myself?",
-                body = "Documents are sometimes altered to redirect payments. If in doubt, ask " +
-                    "the sender which IBAN is correct, using contact details you already know.",
-                expanded = true,
-                onExpandedChange = {},
-                icon = painterResource(R.drawable.gc_shield_icon),
-            )
+        Surface(color = GiniTheme.colorScheme.dialogs.container) {
+            var expanded by rememberSaveable { mutableStateOf(false) }
+            Column(
+                modifier = Modifier.padding(24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                GiniExpandableInfoRow(
+                    title = "How do I protect myself?",
+                    body = "Documents are sometimes altered to redirect payments.",
+                    expanded = expanded,
+                    onExpandedChange = { expanded = it },
+                    icon = painterResource(R.drawable.gc_shield_icon),
+                )
+                GiniExpandableInfoRow(
+                    title = "How do I protect myself?",
+                    body = "Documents are sometimes altered to redirect payments. If in doubt, ask " +
+                        "the sender which IBAN is correct, using contact details you already know.",
+                    expanded = true,
+                    onExpandedChange = {},
+                    icon = painterResource(R.drawable.gc_shield_icon),
+                )
+            }
         }
     }
 }
