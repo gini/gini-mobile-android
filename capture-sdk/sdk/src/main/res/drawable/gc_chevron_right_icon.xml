@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Chevron pointing right, centred in a 16x16 box; rotate it in code for other directions. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="16dp"
+    android:height="16dp"
+    android:viewportWidth="16"
+    android:viewportHeight="16">
+  <group
+      android:translateX="4"
+      android:translateY="1">
+    <path
+        android:fillColor="#161616"
+        android:pathData="M8,7C8,6.7984 7.9182,6.6129 7.7628,6.4677L1.2843,0.2097C1.137,0.0726 0.9571,0 0.7444,0C0.3272,0 0,0.3145 0,0.7339C0,0.9355 0.0818,1.121 0.2127,1.2581L6.1677,7L0.2127,12.7419C0.0818,12.879 0,13.0565 0,13.2661C0,13.6855 0.3272,14 0.7444,14C0.9571,14 1.137,13.9274 1.2843,13.7823L7.7628,7.5323C7.9182,7.379 8,7.2016 8,7Z" />
+  </group>
+</vector>
