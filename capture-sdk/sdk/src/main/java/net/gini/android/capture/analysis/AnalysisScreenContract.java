@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCaptureBasePresenter;
+import net.gini.android.capture.analysis.fraud.IBANMismatchArgs;
 import net.gini.android.capture.GiniCaptureBaseView;
 import net.gini.android.capture.analysis.education.EducationCompleteListener;
 import net.gini.android.capture.analysis.warning.WarningType;
@@ -82,6 +83,15 @@ interface AnalysisScreenContract {
         abstract void showError(ErrorType errorType, Document document);
 
         abstract void showEducation(EducationCompleteListener listener);
+
+        /**
+         * Shows the IBAN mismatch warning over the Analysis screen. "Cancel transfer" is wired
+         * by the view like the warning sheets' cancel CTA.
+         *
+         * @param args      what the warning shows
+         * @param onProceed runs when the user taps "Proceed anyway"
+         */
+        abstract void showIbanMismatch(@NonNull IBANMismatchArgs args, @NonNull Runnable onProceed);
 
         /**
          * Starts the local invoice saving step.

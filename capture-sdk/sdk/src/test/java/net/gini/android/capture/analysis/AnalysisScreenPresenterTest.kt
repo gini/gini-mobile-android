@@ -41,6 +41,7 @@ import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureHelper
 import net.gini.android.capture.ProductTag
 import net.gini.android.capture.analysis.AnalysisScreenPresenter.CROSS_BORDER_PAYMENT_KEY
+import net.gini.android.capture.analysis.fraud.IBANMismatchDebug
 import net.gini.android.capture.analysis.warning.WarningType
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.di.providerModule
@@ -1622,6 +1623,71 @@ class AnalysisScreenPresenterTest {
             verify(listener).onExtractionsAvailable(any(), any(), any())
         }
         verify(mView, never()).showWarning(eq(WarningType.DOCUMENT_MARKED_AS_CREDIT_NOTE), anyOrNull(), any(), anyOrNull())
+    }
+
+    // endregion
+
+    // region IBAN mismatch warning
+
+    @Test
+    fun `should show IBAN mismatch warning ahead of other warnings when the development switch is on`() {
+        // Given
+        IBANMismatchDebug.enabled = true
+        configurationProvider.update { it.copy(isCreditNoteHintEnabled = true) }
+        try {
+            // When
+            val listener = startPresenterForDueHint(creditNoteExtractions())
+
+            // Then
+            idleMainLooperUntil {
+                verify(mView).showIbanMismatch(any(), any())
+            }
+            verify(mView, never()).showWarning(any(), anyOrNull(), any(), anyOrNull())
+            verify(listener, never()).onExtractionsAvailable(any(), any(), any())
+        } finally {
+            IBANMismatchDebug.enabled = false
+        }
+    }
+
+    @Test
+    fun `proceed continuation of IBAN mismatch warning hands the extractions on unchanged`() {
+        // Given
+        IBANMismatchDebug.enabled = true
+        try {
+            val listener = startPresenterForDueHint(creditNoteExtractions())
+            val onProceedCaptor = argumentCaptor<Runnable>()
+            idleMainLooperUntil {
+                verify(mView).showIbanMismatch(any(), onProceedCaptor.capture())
+            }
+
+            // When the user taps "Proceed anyway"
+            onProceedCaptor.lastValue.run()
+
+            // Then
+            val extractionsCaptor = argumentCaptor<Map<String, GiniCaptureSpecificExtraction>>()
+            idleMainLooperUntil {
+                verify(listener).onExtractionsAvailable(extractionsCaptor.capture(), any(), any())
+            }
+            Truth.assertThat(extractionsCaptor.lastValue.keys)
+                .containsExactlyElementsIn(creditNoteExtractions().keys)
+        } finally {
+            IBANMismatchDebug.enabled = false
+        }
+    }
+
+    @Test
+    fun `should not show IBAN mismatch warning when the development switch is off`() {
+        // Given
+        IBANMismatchDebug.enabled = false
+
+        // When
+        val listener = startPresenterForDueHint(creditNoteExtractions(businessDocType = null))
+
+        // Then
+        idleMainLooperUntil {
+            verify(listener).onExtractionsAvailable(any(), any(), any())
+        }
+        verify(mView, never()).showIbanMismatch(any(), any())
     }
 
     // endregion
