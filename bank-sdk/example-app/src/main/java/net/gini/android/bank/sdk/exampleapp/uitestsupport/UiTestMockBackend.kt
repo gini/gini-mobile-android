@@ -58,6 +58,13 @@ object UiTestMockBackend {
     @Volatile
     var configurationFails: Boolean = false
 
+    /**
+     * How `analyze` fails under [UiTestMockScenario.ANALYSIS_ERROR]. Each value makes the SDK show
+     * a different error screen; ignored by every other scenario.
+     */
+    @Volatile
+    var analysisFailure: UiTestMockAnalysisFailure = UiTestMockAnalysisFailure.GENERIC
+
     val isArmed: Boolean
         get() = scenario != null
 
@@ -66,12 +73,14 @@ object UiTestMockBackend {
         scenario: UiTestMockScenario,
         clientConfiguration: UiTestMockClientConfiguration = UiTestMockClientConfiguration(),
         analysisDelayMillis: Long = 0,
-        configurationFails: Boolean = false
+        configurationFails: Boolean = false,
+        analysisFailure: UiTestMockAnalysisFailure = UiTestMockAnalysisFailure.GENERIC
     ) {
         this.scenario = scenario
         this.clientConfiguration = clientConfiguration
         this.analysisDelayMillis = analysisDelayMillis
         this.configurationFails = configurationFails
+        this.analysisFailure = analysisFailure
     }
 
     /**
@@ -83,6 +92,7 @@ object UiTestMockBackend {
         clientConfiguration = UiTestMockClientConfiguration()
         analysisDelayMillis = 0
         configurationFails = false
+        analysisFailure = UiTestMockAnalysisFailure.GENERIC
     }
 
     /**
@@ -94,7 +104,8 @@ object UiTestMockBackend {
             scenario = requireNotNull(scenario) { "UiTestMockBackend is not armed" },
             clientConfiguration = clientConfiguration,
             analysisDelayMillis = analysisDelayMillis,
-            configurationFails = configurationFails
+            configurationFails = configurationFails,
+            analysisFailure = analysisFailure
         )
 }
 
@@ -122,8 +133,44 @@ enum class UiTestMockScenario {
     /** The analysis succeeds but finds nothing, so the SDK opens its No Results screen. */
     NO_RESULTS,
 
-    /** The analysis request fails, so the SDK opens its Error screen. */
+    /**
+     * The analysis request fails, so the SDK opens its Error screen. Which one depends on
+     * [UiTestMockBackend.analysisFailure].
+     */
     ANALYSIS_ERROR,
+}
+
+/**
+ * The failure `analyze` reports under [UiTestMockScenario.ANALYSIS_ERROR]. The SDK picks the error
+ * screen from it in `ErrorType.typeFromError`: a status code wins, then the cause.
+ *
+ * Only the analysis call fails — upload has already succeeded — because an upload failure on the
+ * review screen always shows the Upload error, whatever its status code.
+ */
+// The numbers are the HTTP status codes themselves, like in ErrorType.typeFromError.
+@Suppress("MagicNumber")
+enum class UiTestMockAnalysisFailure(val statusCode: Int?) {
+
+    /** No status code and no cause: `ErrorType.GENERAL`. */
+    GENERIC(null),
+
+    /** An `UnknownHostException` cause, like a device that is offline: `ErrorType.NO_CONNECTION`. */
+    NO_CONNECTION(null),
+
+    /** `ErrorType.UPLOAD`. */
+    UPLOAD(400),
+
+    /** `ErrorType.AUTH`. */
+    AUTH(401),
+
+    /** `ErrorType.OUTAGE` — "Service is unavailable". */
+    OUTAGE(500),
+
+    /** `ErrorType.SERVER`, like any status above 500 other than 503. */
+    SERVER(502),
+
+    /** `ErrorType.MAINTENANCE`. */
+    MAINTENANCE(503),
 }
 
 /**

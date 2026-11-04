@@ -12,10 +12,11 @@ class NoResultScreen {
     // The no-result screen only appears after the Gini API returns, which can take
     // noticeably longer on remote/BrowserStack devices than the fixed IdlingResource
     // sleep. Wait for the given text to actually exist before asserting on the screen.
-    fun waitForNoResultScreen(resourceId: Int) {
+    // Returns false when the text never appeared within the timeout.
+    fun waitForNoResultScreen(resourceId: Int): Boolean {
         val text = InstrumentationRegistry.getInstrumentation().targetContext.getString(resourceId)
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        device.findObject(UiSelector().text(text)).waitForExists(NO_RESULT_TIMEOUT)
+        return device.findObject(UiSelector().text(text)).waitForExists(NO_RESULT_TIMEOUT)
     }
 
     fun checkElementWithTextIsDisplayed(resourceId: Int) : Boolean {

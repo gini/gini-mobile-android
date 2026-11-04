@@ -89,6 +89,7 @@ class ErrorScreenTests {
         idlingResource.waitForIdle()
     }
 
+    /** PP-2896 — upload error from the real backend. The mock variant is in [ErrorAndNoResultScreenMockBackendTests]. */
     @Test
     fun test1_verifyUploadErrorScreen() {
         imageUploader.copyImageToDownloads(getApplicationContext(), "blank_test_image.png")
@@ -108,6 +109,10 @@ class ErrorScreenTests {
         assertEquals(true, errorTextViewVisible)
     }
 
+    /**
+     * PP-2895, PP-2903 and TC-022 / PP-3437 (smoke) — a really offline device. Local only; the
+     * BrowserStack variant is [ErrorAndNoResultScreenMockBackendTests.test1_noConnection_showsConnectionErrorScreen].
+     */
     @Test
     fun test2_verifyNetworkErrorScreen() {
         ErrorScreen().disconnectTheInternetConnection()
@@ -135,6 +140,10 @@ class ErrorScreenTests {
         assertEquals(true, isDescriptionTitleVisible)
     }
 
+    /**
+     * PP-2902 — "Back To Camera". Local only; the BrowserStack variant is
+     * [ErrorAndNoResultScreenMockBackendTests.test8_backToCamera_returnsToCameraScreen].
+     */
     @Test
     fun test4_navigateToCameraScreenByClickingBackToCameraButton() {
         ErrorScreen().disconnectTheInternetConnection()
