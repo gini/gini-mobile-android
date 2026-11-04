@@ -72,6 +72,7 @@ import net.gini.android.capture.internal.qrcode.PaymentQRCodeData;
 import net.gini.android.capture.internal.qrcode.PaymentQRCodeReader;
 import net.gini.android.capture.internal.qrcode.QRCodeDetectorTask;
 import net.gini.android.capture.internal.qrcode.QRCodeDetectorTaskMLKit;
+import net.gini.android.capture.internal.qrcode.WeroExtractionsMapper;
 import net.gini.android.capture.internal.qreducation.model.FlowType;
 import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.internal.textrecognition.CropToCameraFrameTextRecognizer;
@@ -123,6 +124,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
+import kotlinx.coroutines.CoroutineDispatcher;
+import kotlinx.coroutines.Dispatchers;
 import net.gini.android.capture.internal.ui.runtimecolors.RuntimeColors;
 
 import static net.gini.android.capture.camera.CameraFragment.REQUEST_KEY;
@@ -276,6 +279,21 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private View mDetectionErrorDismissButton;
 
     CameraFragmentImpl(@NonNull final FragmentImplCallback fragment, @NonNull final CancelListener cancelListener, final boolean addPages) {
+        this(fragment, cancelListener, addPages, Dispatchers.getIO(), Dispatchers.getMain());
+    }
+
+    /**
+     * Test seam: runs the QR-code step's waiters (see {@code CameraFragmentExtension}) on the given
+     * dispatchers instead of IO/Main, so a JVM test can drive them deterministically. The
+     * production constructor above passes the same defaults the Kotlin parent declares.
+     */
+    @VisibleForTesting
+    CameraFragmentImpl(@NonNull final FragmentImplCallback fragment,
+                       @NonNull final CancelListener cancelListener,
+                       final boolean addPages,
+                       @NonNull final CoroutineDispatcher qrStepDispatcher,
+                       @NonNull final CoroutineDispatcher qrStepMainDispatcher) {
+        super(qrStepDispatcher, qrStepMainDispatcher);
         mFragment = fragment;
         mCancelListener = cancelListener;
         fragmentListener = NO_OP_LISTENER;
@@ -295,7 +313,15 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             return;
         }
         if (isQRCodeScanningEnabled()) {
-            handleQRCodeDetected(null, qrCodeContent);
+            // When Wero QR scanning is enabled the backend decides whether the raw payload is a
+            // Wero QR code, so a locally unparseable QR is routed through the same pipeline as a
+            // parsed one (showQrCodePopup -> handlePaymentQRCodeData -> analyzeQRCode). A
+            // non-Wero result then falls back to the unsupported-QR popup via the gate in
+            // analyzeQRCode's /analysis-success callback.
+            final PaymentQRCodeData weroCandidate = isWeroQRCodeScanningEnabled()
+                    ? PaymentQRCodeData.fromWeroCandidate(qrCodeContent)
+                    : null;
+            handleQRCodeDetected(weroCandidate, qrCodeContent);
         }
     }
 
@@ -619,6 +645,10 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         // alone — see setPoweredByGiniVisible.
         qrCodeEducationPopup = new QRCodeEducationPopup<>(
                 view.findViewById(R.id.gc_qr_code_education_compose_view));
+        // The previous view's carousel went away with that view, and an EPS code reaches
+        // onQrCodeRecognized without passing through showQrCodePopup, which is where the other
+        // steps drop a signal left behind by an interrupted carousel (PP-3937).
+        resetQrEducationStep();
     }
 
     /**
@@ -975,6 +1005,10 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         if (mImportUrisAsyncTask != null) {
             mImportUrisAsyncTask.cancel(true);
         }
+        // A coroutine still waiting for an education carousel that will never complete (the view
+        // was destroyed mid-animation) must not outlive the fragment — it would pin this instance,
+        // the fragment, its views and the Activity for the rest of the process (PP-3937).
+        cancelQrStepWaiters();
     }
 
     private void closeCamera() {
@@ -1296,12 +1330,15 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
     // Only the formats that go through analyzeQRCode raise the Gini ingredient brand element,
     // because that is where the preview is dimmed and interaction is disabled. EPS_PAYMENT and the
-    // unknown-format default deliberately do not: EPS has no analysis step at all (it builds the
+    // defensive default deliberately do not: EPS has no analysis step at all (it builds the
     // extraction locally and goes straight to onQrCodeRecognized), so per R12 there is no analysis
-    // state to brand, and an unknown format is only logged. Before the badge had a single owner it
-    // flashed for one frame on the EPS path via QRCodePopup.progressViews(); that was incidental,
-    // not the requirement — please do not "restore" it.
-    private void handlePaymentQRCodeData(@NonNull final PaymentQRCodeData paymentQRCodeData) {
+    // state to brand, and the default is only reached if a new Format value is added without a
+    // branch — it is only logged. Before the badge had a single owner it flashed for one frame on
+    // the EPS path via QRCodePopup.progressViews(); that was incidental, not the requirement —
+    // please do not "restore" it. UNKNOWN is a Wero candidate and goes through analyzeQRCode like
+    // the parsed formats, so it does raise the badge.
+    @VisibleForTesting
+    void handlePaymentQRCodeData(@NonNull final PaymentQRCodeData paymentQRCodeData) {
         switch (paymentQRCodeData.getFormat()) {
             case EPC069_12:
             case BEZAHL_CODE:
@@ -1314,7 +1351,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 QRCodeDocument mQRCodeDocument = QRCodeDocument.fromPaymentQRCodeData(
                         paymentQRCodeData);
                 sendQRCodeScannedEventToUserAnalytics(true);
-                analyzeQRCode(mQRCodeDocument);
+                analyzeQRCode(mQRCodeDocument, null);
                 break;
             case EPS_PAYMENT:
                 // No analysis step at all, so no ingredient brand — stated explicitly rather than
@@ -1322,6 +1359,19 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 setQrInvoiceRetrievalRunning(false);
                 sendQRCodeScannedEventToUserAnalytics(true);
                 handleEPSPaymentQRCode(paymentQRCodeData);
+                break;
+            case UNKNOWN:
+                // Wero candidate: raw QR payload forwarded to the backend for classification.
+                // Same analysis path as the parsed formats above; the payload is passed through
+                // so analyzeQRCode's /analysis-success callback can collapse the Wero extractions
+                // or fall back to the unsupported-QR popup when the backend did not classify the
+                // payload as Wero.
+                // Analytics are deliberately not sent here: validity is only known after
+                // classification, so the QR_CODE_SCANNED event fires in the /analysis-success
+                // callback (true on the Wero-confirmed branch, false via showUnsupportedQRCodePopup
+                // on the fallback branch).
+                QRCodeDocument weroDoc = QRCodeDocument.fromPaymentQRCodeData(paymentQRCodeData);
+                analyzeQRCode(weroDoc, paymentQRCodeData.getUnparsedContent());
                 break;
             default:
                 setQrInvoiceRetrievalRunning(false);
@@ -1384,8 +1434,13 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         mButtonCameraFlashTrigger.setContentDescription(activity.getString(flashButtonContentDescription));
     }
 
+    // Nesting comes from the jsr166e CompletableFuture BiFun chain (upload → thenCompose →
+    // analyze), not from branch sprawl we can flatten. Extracting the inner handlers would
+    // duplicate the generic type parameters across private methods without improving readability.
+    @SuppressWarnings("java:S3776")
     @VisibleForTesting
-    void analyzeQRCode(final QRCodeDocument qrCodeDocument) {
+    void analyzeQRCode(final QRCodeDocument qrCodeDocument,
+                       @Nullable final String weroCandidatePayload) {
         final Activity activity = mFragment.getActivity();
         if (activity == null) {
             return;
@@ -1441,8 +1496,12 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                             // hideActivityIndicatorAndEnableInteraction() for the full contract.
                             // Waiting for onStop() instead would be too late anyway: navigation is
                             // asynchronous (onQrCodeRecognized hops to another dispatcher and waits
-                            // on the education mutex).
+                            // for the education carousel to complete).
                             hideActivityIndicatorAndEnableInteraction();
+                            // Local to this analyzeQRCode call: dies with the handler, so an
+                            // early return of a later call can never leave stale residue that a
+                            // following non-Wero scan would misinterpret as its own payload.
+                            final String scannedPayload = weroCandidatePayload;
                             if (throwable != null
                                     && !isCancellation(throwable)) {
                                 handleAnalysisError(throwable, qrCodeDocument);
@@ -1450,7 +1509,40 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                                 // Restores the live preview. The badge that used to be taken down
                                 // next is already gone, hidden with the dim above.
                                 mPaymentQRCodePopup.hide();
-                                if (requestResult.getAnalysisResult().getExtractions().isEmpty()) {
+                                // Wero fallback gate: if we uploaded a locally unparseable QR as a
+                                // Wero candidate and the backend did not classify it as Wero,
+                                // stay on the camera and show the unsupported-QR popup instead of
+                                // navigating into the result flow with the backend's non-Wero
+                                // extractions.
+                                final Map<String, GiniCaptureSpecificExtraction> originalExtractions =
+                                        requestResult.getAnalysisResult().getExtractions();
+                                final boolean flagEnabled = isWeroQRCodeScanningEnabled();
+                                if (WeroExtractionsMapper.INSTANCE.shouldRouteBackToCameraForWeroFallback(
+                                        originalExtractions, scannedPayload, flagEnabled)) {
+                                    // Wait for the education carousel (iOS parity), then tear
+                                    // down the Compose overlay the Wero flow stranded on screen
+                                    // and show the unsupported-QR popup.
+                                    onQrCodeFallbackToUnsupported(() -> {
+                                        if (mFragment.getActivity() != null
+                                                && mFragment.getView() != null) {
+                                            getQrCodeEducationPopup().hide();
+                                            setPoweredByGiniVisible(false);
+                                            // The IBAN recognizer stays active during the
+                                            // upload+classify window. If it detected an IBAN
+                                            // meanwhile, showUnsupportedQRCodePopup's guard would
+                                            // skip the popup silently and leave mInterfaceHidden
+                                            // stuck true, blocking every later QR scan.
+                                            hideIBANsDetectedOnScreen();
+                                            showUnsupportedQRCodePopup(true);
+                                        }
+                                        return kotlin.Unit.INSTANCE;
+                                    });
+                                    return null;
+                                }
+                                final Map<String, GiniCaptureSpecificExtraction> mappedExtractions =
+                                        WeroExtractionsMapper.INSTANCE.mapWeroExtractions(
+                                                originalExtractions, scannedPayload, flagEnabled);
+                                if (mappedExtractions.isEmpty()) {
                                     //mListener.noExtractionsFromQRCode(qrCodeDocument);
                                     // The whole QR-code analysis step ends here without a result
                                     // and we navigate away, so the brand element comes down for
@@ -1468,7 +1560,11 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                                 // triggered below stops this fragment (onStop).
                                 // onQrCodeRecognized runs on Dispatchers.IO and must not touch
                                 // views at all.
-                                onQrCodeRecognized(requestResult.getAnalysisResult().getExtractions());
+                                // For Wero candidates this is also where valid=true is reported —
+                                // the UNKNOWN branch of handlePaymentQRCodeData defers the event
+                                // because validity is only known after classification.
+                                sendQRCodeScannedEventToUserAnalytics(true);
+                                onQrCodeRecognized(mappedExtractions);
                             }
                             return null;
                         });

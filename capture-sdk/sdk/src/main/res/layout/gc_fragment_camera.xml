@@ -279,6 +279,7 @@
             android:layout_marginStart="@dimen/gc_large"
             android:layout_marginTop="@dimen/gc_medium"
             android:layout_marginEnd="@dimen/gc_large"
+            android:accessibilityLiveRegion="polite"
             android:background="@drawable/gc_qr_code_warning_background"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@+id/gc_camera_frame"

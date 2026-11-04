@@ -114,6 +114,7 @@
     <string name="gc_supported_format_qr_type_pay_by_square" translatable="false">Pay by Square (SK)</string>
     <string name="gc_supported_format_qr_type_upnqr" translatable="false">UPN QR (SI)</string>
     <string name="gc_supported_format_qr_type_hub3" translatable="false">HUB3 (HR)</string>
+    <string name="gc_supported_format_qr_type_wero" translatable="false">Wero QR code</string>
     <string name="gc_supported_format_e_invoices">E-Rechnungen: XRechnung (XML), ZUGFeRD (PDF)</string>
     <string name="gc_unsupported_format_handwriting">Handschrift</string>
     <string name="gc_unsupported_format_photos_of_screens">Fotos von Bildschirmen</string>
