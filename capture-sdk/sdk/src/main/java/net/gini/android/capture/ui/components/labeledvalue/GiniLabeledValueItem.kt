@@ -3,7 +3,7 @@ package net.gini.android.capture.ui.components.labeledvalue
 import androidx.compose.runtime.Immutable
 
 /**
- * One entry of a [GiniLabeledValueList].
+ * The texts of one [GiniLabeledValue], for screens that build their rows as data first.
  *
  * @property label the caption above the value
  * @property value the value itself
