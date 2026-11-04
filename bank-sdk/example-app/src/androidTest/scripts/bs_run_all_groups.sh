@@ -80,8 +80,11 @@ run_group "ui" \
 run_group "digitalinvoice" \
   DigitalInvoiceScreenTests DigitalInvoiceEditButtonTests
 
+# NoResultsMockBackendTests' three QR tests always skip on BrowserStack (no QR code in
+# front of the camera) — expected, see bs_run_group_extraction.sh.
 run_group "extraction" \
-  ExtractionScreenTests ReviewScreenTests NoResultsTests ProductTagConfigurationTests
+  ExtractionScreenTests ReviewScreenTests NoResultsTests NoResultsMockBackendTests \
+  ProductTagConfigurationTests
 
 run_group "import" \
   ImportPdfImageTests FileImportErrorDialogTests ErrorScreenTests OpenWithTest

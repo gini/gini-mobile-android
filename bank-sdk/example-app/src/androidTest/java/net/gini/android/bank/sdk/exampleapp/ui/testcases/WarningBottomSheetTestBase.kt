@@ -19,6 +19,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.resources.ReturnAssistantSkontoCo
 import net.gini.android.bank.sdk.exampleapp.ui.resources.TransactionDocsConfigurator
 import net.gini.android.bank.sdk.exampleapp.ui.resources.RetryRule
 import net.gini.android.bank.sdk.exampleapp.ui.resources.SimpleIdlingResource
+import net.gini.android.bank.sdk.exampleapp.ui.screens.AnalysisScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.CaptureScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.ConfigurationScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.DigitalInvoiceScreen
@@ -72,6 +73,7 @@ abstract class WarningBottomSheetTestBase {
     protected val extractionScreen = ExtractionScreen()
     protected val warningBottomSheet = WarningBottomSheetScreen()
     protected val digitalInvoiceScreen = DigitalInvoiceScreen()
+    protected val analysisScreen = AnalysisScreen()
     protected lateinit var idlingResource: SimpleIdlingResource
 
     private val testProperties = Properties().apply {
@@ -202,6 +204,28 @@ abstract class WarningBottomSheetTestBase {
         reviewScreen.clickProcessButton()
     }
 
+    /**
+     * Opens the camera and waits for it to detect a SEPA payment QR code. Camera image injection
+     * is not available for Espresso (BrowserStack rejects it), so the camera must really see one:
+     * on a local device hold the back camera in front of `src/androidTest/assets/sepa_payment_qr_poster.png`.
+     * When nothing is detected within [QR_DETECTION_TIMEOUT_MS] the test is SKIPPED (an
+     * `Assume`, never retried by [RetryRule]) — never passed, never failed. On BrowserStack the
+     * camera only sees the device rack, so every caller always skips there.
+     *
+     * Shared by the QR-driven suites ([IngredientBrandQrOverlayTests], [NoResultsMockBackendTests])
+     * so the skip rule has one definition. [IngredientBrandLandscapeTests] has its own `openCameraInLandscapeAndScanQrCode`
+     * because it turns the device between two scans.
+     */
+    protected fun openCameraAndScanQrCode() {
+        mainScreen.clickPhotoPaymentButton()
+        onboardingScreen.clickSkipButtonIfPresent()
+        Assume.assumeTrue(
+            "No SEPA payment QR code in front of the camera — hold the device in front of " +
+                "sepa_payment_qr_poster.png. Always skipped on BrowserStack.",
+            analysisScreen.waitForQrCodeDetected(QR_DETECTION_TIMEOUT_MS)
+        )
+    }
+
     protected fun uploadFixtureInvoiceAndProcess(assetName: String) {
         imageUploader.copyImageToDownloads(getApplicationContext(), assetName)
         mainScreen.clickPhotoPaymentButton()
@@ -258,5 +282,10 @@ abstract class WarningBottomSheetTestBase {
     private fun cancelTestIfRunOnCi() {
         val ignoreTests = testProperties["ignoreLocalTests"] as? String
         Assume.assumeTrue(ignoreTests != "true")
+    }
+
+    companion object {
+        /** How long [openCameraAndScanQrCode] gives the camera to detect a QR code before skipping. */
+        const val QR_DETECTION_TIMEOUT_MS = 20_000L
     }
 }

@@ -1,7 +1,6 @@
 package net.gini.android.bank.sdk.exampleapp.ui.testcases
 
 import androidx.test.espresso.Espresso.pressBack
-import net.gini.android.bank.sdk.exampleapp.ui.screens.AnalysisScreen
 import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockScenario
 import org.junit.Assert.assertFalse
 import org.junit.After
@@ -31,7 +30,6 @@ import org.junit.Test
  */
 class IngredientBrandEducationTests : WarningBottomSheetTestBase() {
 
-    private val analysisScreen = AnalysisScreen()
 
     /**
      * Lets a running education finish before the activity rule closes the app.

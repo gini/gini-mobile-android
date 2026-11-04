@@ -1,11 +1,9 @@
 package net.gini.android.bank.sdk.exampleapp.ui.testcases
 
-import net.gini.android.bank.sdk.exampleapp.ui.screens.AnalysisScreen
 import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockScenario
 import org.junit.After
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.Assume
 import org.junit.Test
 
 /**
@@ -19,14 +17,13 @@ import org.junit.Test
  * Camera image injection is not available for Espresso (BrowserStack rejects it), so the camera
  * must really see a SEPA payment QR code. Run them on a local device and hold the back camera in
  * front of `src/androidTest/assets/sepa_payment_qr_poster.png` (for example opened full screen on
- * a laptop). When no QR code is detected within [QR_DETECTION_TIMEOUT_MS], each test is SKIPPED —
+ * a laptop). When no QR code is detected within [WarningBottomSheetTestBase.QR_DETECTION_TIMEOUT_MS],
+ * each test is SKIPPED ([WarningBottomSheetTestBase.openCameraAndScanQrCode]) —
  * never passed. On BrowserStack the camera only sees the device rack, so the tests always skip.
  *
  * The mock ignores what the QR code says; any readable SEPA payment QR code works.
  */
 class IngredientBrandQrOverlayTests : WarningBottomSheetTestBase() {
-
-    private val analysisScreen = AnalysisScreen()
 
     /** Lets a running QR education finish before the activity rule closes the app. */
     @After
@@ -100,22 +97,9 @@ class IngredientBrandQrOverlayTests : WarningBottomSheetTestBase() {
         )
     }
 
-    /** R18: skipped, not failed, when the camera cannot see a QR code. */
-    private fun openCameraAndScanQrCode() {
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButtonIfPresent()
-        Assume.assumeTrue(
-            "No SEPA payment QR code in front of the camera — hold the device in front of " +
-                "sepa_payment_qr_poster.png. Always skipped on BrowserStack.",
-            analysisScreen.waitForQrCodeDetected(QR_DETECTION_TIMEOUT_MS)
-        )
-    }
-
     private companion object {
         val BRAND_ON = setOf("Analysis")
         val BRAND_OFF = emptySet<String>()
-
-        const val QR_DETECTION_TIMEOUT_MS = 20_000L
 
         /** Keeps the invoice retrieval state up long enough to be checked. */
         const val ANALYSIS_DELAY_MS = 8_000L
