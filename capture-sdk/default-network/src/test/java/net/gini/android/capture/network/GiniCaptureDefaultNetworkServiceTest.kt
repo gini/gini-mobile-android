@@ -134,7 +134,8 @@ class GiniCaptureDefaultNetworkServiceTest {
             isPaymentDueHintEnabled = true,
             isPaymentScheduleHintEnabled = true,
             isCreditNoteHintEnabled = true,
-            ingredientBrandScreens = listOf("Analysis")
+            ingredientBrandScreens = listOf("Analysis"),
+            isFraudSignalsEnabled = true,
         )
 
         // Add more stubs if mapBankConfigurationToConfiguration uses other properties
@@ -175,6 +176,7 @@ class GiniCaptureDefaultNetworkServiceTest {
         // mapBankConfigurationToConfiguration and this assertion fails, instead of the default
         // network silently discarding the backend flag.
         assertThat(captured!!.ingredientBrandScreens).containsExactly("Analysis")
+        assertThat(captured!!.isFraudSignalsEnabled).isTrue()
     }
 
     @Test

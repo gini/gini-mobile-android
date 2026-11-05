@@ -23,6 +23,7 @@ import net.gini.android.capture.document.GiniCaptureDocumentError;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 import net.gini.android.capture.document.PdfDocument;
 import net.gini.android.capture.error.ErrorType;
+import net.gini.android.capture.fraudSignals.FraudSignalsExtractions;
 import net.gini.android.capture.ingredientbrand.IngredientBrandScreen;
 import net.gini.android.capture.internal.camera.photo.ParcelableMemoryCache;
 import net.gini.android.capture.internal.document.DocumentRenderer;
@@ -309,8 +310,12 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                 .handle(new CompletableFuture.BiFun<
                         AnalysisInteractor.ResultHolder, Throwable, Void>() {
                     @Override
-                    public Void apply(final AnalysisInteractor.ResultHolder resultHolder,
+                    public Void apply(final AnalysisInteractor.ResultHolder analysisResult,
                                       final Throwable throwable) {
+                        // fraudSignals is for the SDK's own fraud warning only and must never
+                        // reach the integrator or the feedback.
+                        final AnalysisInteractor.ResultHolder resultHolder =
+                                withoutFraudSignals(analysisResult);
 
                         stopScanAnimation();
                         if (isStopped()) {
@@ -761,6 +766,20 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         final GiniCaptureSpecificExtraction businessDocTypeExtraction = extractions.get(EXTRACTION_BUSINESS_DOC_TYPE);
         final String paymentStateValue = businessDocTypeExtraction != null ? businessDocTypeExtraction.getValue() : null;
         return BusinessDocType.from(paymentStateValue);
+    }
+
+    @Nullable
+    private AnalysisInteractor.ResultHolder withoutFraudSignals(@Nullable final AnalysisInteractor.ResultHolder resultHolder) {
+        if (resultHolder == null) {
+            return null;
+        }
+        return new AnalysisInteractor.ResultHolder(
+                resultHolder.getResult(),
+                resultHolder.getExtractions(),
+                FraudSignalsExtractions.withoutFraudSignals(resultHolder.getCompoundExtractions()),
+                resultHolder.getDocumentId(),
+                resultHolder.getDocumentFileName()
+        );
     }
 
     private AnalysisInteractor.ResultHolder removeAmountToPay(@NonNull final AnalysisInteractor.ResultHolder resultHolder) {

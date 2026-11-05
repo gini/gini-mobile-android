@@ -35,6 +35,15 @@ To run a single test class while iterating:
 
 Gradle must run on JDK 17 (newer JDKs fail with IllegalAccessError).
 
+## Agent files (`.claude/agents/`)
+
+- A new agent file cannot be used as `subagent_type` in the session that
+  wrote it ("Agent type not found"). For dry runs, give a `general-purpose`
+  agent the file to read and follow, or start a new session.
+- When a new specialist takes over a topic, also remove that topic from the
+  old owner in `gini-orchestrator.md` — its team-table row and every
+  delegation rule that still names it — not only add the new rule.
+
 ## Verification (step 5 of the workflow)
 
 Run the `/gini-check` skill — it runs the CI gate (testDebugUnitTest, lint,
