@@ -12,7 +12,7 @@ import net.gini.android.capture.BankSDKBridge;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
-import net.gini.android.capture.analysis.fraud.IBANMismatchDebug;
+import net.gini.android.capture.analysis.fraud.IBANMismatchArgs;
 import net.gini.android.capture.analysis.warning.BusinessDocType;
 import net.gini.android.capture.ProductTag;
 import net.gini.android.capture.analysis.warning.WarningPaymentState;
@@ -357,16 +357,19 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
 
                                 }
 
+                                // Read from the unstripped result: resultHolder has no fraudSignals.
+                                final IBANMismatchArgs ibanMismatchArgs =
+                                        extension.ibanMismatchArgs(analysisResult);
                                 if (resultHolder.getExtractions().isEmpty() && !isCxMode()) {
                                     proceedSuccessNoExtractions();
                                 } else if (isCxEmptyExtractions(resultHolder)) {
                                     proceedSuccessNoExtractions();
-                                } else if (IBANMismatchDebug.getEnabled()) {
-                                    // Development switch: the IBAN mismatch warning goes ahead
-                                    // of every other warning until it is driven by the result.
+                                } else if (ibanMismatchArgs != null) {
+                                    // The fraud warning goes ahead of every other warning.
                                     successResultHolder = resultHolder;
                                     shouldClearImageCaches = false;
                                     extension.showIbanMismatchWarning(
+                                            ibanMismatchArgs,
                                             mIsInvoiceSavingEnabled,
                                             isSavingInvoicesInProgress,
                                             successResultHolder,

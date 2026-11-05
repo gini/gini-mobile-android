@@ -221,6 +221,11 @@
     <string name="gc_fraud_qr_iban_label">Im QR-Code</string>
     <string name="gc_fraud_printed_iban_label">Auf dem Dokument gedruckt</string>
     <string name="gc_fraud_document_iban_label">Auf dem Dokument</string>
+    <string name="gc_fraud_iban_country_hint">Aus %1$s, nicht aus dem Land des Absenders</string>
+    <string name="gc_fraud_sender_value">%1$s · %2$s</string>
+    <!-- Language tag of the country names in gc_fraud_iban_country_hint and gc_fraud_sender_value.
+         Override it together with those strings when adding a translation, e.g. "fr". -->
+    <string name="gc_fraud_country_name_locale">de</string>
     <!--   endregion Fraud warnings -->
 
     <!--   region Accessibility states -->

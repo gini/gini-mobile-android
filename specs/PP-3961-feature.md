@@ -1,6 +1,6 @@
 # PP-3961: [Android] Fraud warning screen: IBAN mismatch — phase 1, UI components
 
-Status: phase 1 implemented (UI only); development switch to be removed before merge, see "Before merge"
+Status: phase 1 implemented (UI only); phase 2 (wiring, end of this file) draft
 Ticket: https://ginis.atlassian.net/browse/PP-3961
 Parent epic: PP-3518 "[Q4] Fraud prevention warnings – phase 1"
 Design: Figma "Gini Photo Payment (iOS & Android)", section "Android", node `38468-42451`
@@ -147,3 +147,349 @@ the object; Detekt's `ForbiddenComment` rule fails `capture-sdk:sdk:detekt` unti
   (development)" → scan any invoice → the combined warning appears over the Analysis screen;
   back/scrim/swipe do nothing; rotation keeps the sheet and the expanded protect row; "Cancel
   transfer" ends the flow; "Proceed anyway" continues to the extractions.
+
+---
+
+# PP-3961 phase 2: Show the IBAN mismatch warning from the fraud signals
+
+Status: draft
+Ticket: https://ginis.atlassian.net/browse/PP-3961
+Branch: `PP-3961-wire-fraud-signals` (from `PP-3961-Fraud-warning-screen-IBAN-mismatch`; PR base is that
+branch, which is stacked on `PP-3965-read-fraud-signals`, PR #1028)
+Builds on: PP-3965 (`FraudSignalsParser`, `FraudSignal`, `FraudSignalsExtractions`, the strip in
+`AnalysisScreenPresenter`) and phase 1 above (components, `IBANMismatchWarningScreen`,
+`showIbanMismatch`).
+API shape: [Fraud signals in the Pay API](https://ginis.atlassian.net/wiki/spaces/bank/pages/2086897236) §4–§6.
+Copy: [QR vs printed](https://ginis.atlassian.net/wiki/spaces/bank/pages/2065203277),
+[country](https://ginis.atlassian.net/wiki/spaces/bank/pages/2065006657),
+[combined](https://ginis.atlassian.net/wiki/spaces/bank/pages/2067169281).
+
+**Build prerequisite:** this branch does not contain the PP-3965 code yet. Before `/gini-build`, merge
+`origin/PP-3961-Fraud-warning-screen-IBAN-mismatch` again once PP-3965 has been merged into it (a
+colleague resolves the one conflict in `AnalysisScreenPresenterTest.kt`). Check with
+`git merge-base --is-ancestor origin/PP-3965-read-fraud-signals HEAD`.
+
+**Phase 1 is still in progress** (as of 2026-11-05). This spec was written against
+`origin/PP-3961-Fraud-warning-screen-IBAN-mismatch` at `08e0df987`. After merging its latest state,
+re-check the names this spec relies on before building: `IBANMismatchArgs` fields,
+`ibanMismatchContent` in `IBANMismatchWarningScreen.kt`, `showIbanMismatch`/`showIbanMismatchWarning`,
+the `IBANMismatchDebug` branch and tests, and the example-app switch. Update the Design section if
+they moved.
+
+## Problem
+
+Phase 1 shows the warning only behind a development switch, with fake data. PP-3965 reads the real
+signals but nothing uses them. Phase 2 connects the two: after a successful analysis, when the
+backend sent `QR_PRINTED_IBAN_MISMATCH` and/or `IBAN_COUNTRY_MISMATCH` and the client's
+`fraudSignalsEnabled` flag is on, the warning shows the real IBANs, sender and country. The
+development switch goes away.
+
+Gating is two flags by design: the server-side profile flag `feature-fraud-signals` (PP-3950, wiki
+§5) decides which signals the backend sends; the client flag `fraudSignalsEnabled` in
+`/configurations` (PP-3951) decides whether the SDK reads them. The SDK keeps no per-client list of
+codes: it shows the codes that arrive and ignores unknown ones (already done by the parser).
+
+## Requirements
+
+Common setup for R1–R13: `fraudSignalsEnabled = true` in `/configurations`, the analysis returns
+`SUCCESS_WITH_EXTRACTIONS` with non-empty specific extractions. "QR IBAN" = `fraudSignals[].iban`.
+"Candidates" = `extractions["iban"].candidates` values. IBANs are compared after removing spaces and
+upper-casing ("normalised").
+
+### Choosing the screen
+
+- **R1 (MUST, entry):** Given `fraudSignals` = [`QR_PRINTED_IBAN_MISMATCH`, iban `<Q>`] and
+  candidates [`<Q>`, `<P1>`], when the analysis finishes, then `AnalysisScreenContract.View.showIbanMismatch`
+  is called once with `type = QR_VS_PRINTED`, `qrIban.iban = <Q>`, printed IBANs [`<P1>`], `sender = null`,
+  and no hint on any row; `AnalysisFragmentListener.onExtractionsAvailable` is not called yet.
+- **R2 (MUST, happy):** Given only `IBAN_COUNTRY_MISMATCH` with iban `<I>` (country prefix `PL`),
+  `creditorCountry = DE` and `paymentRecipient = <N>`, when the analysis finishes, then the args are
+  `type = COUNTRY`, `qrIban = null`, printed IBANs [`<I>` with hint country `PL`], sender name `<N>`,
+  sender country `DE`.
+- **R3 (MUST, happy):** Given both signals (iban `<Q>` = `PL…`, `creditorCountry = DE`) and candidates
+  [`<P1>` = `DE…`, `<P2>` = `LT…`], when the analysis finishes, then one call with `type = COMBINED`:
+  `qrIban = <Q>` with hint country `PL`; printed IBANs [`<P1>` without hint, `<P2>` with hint country
+  `LT`]; sender `<N>` / `DE`. Never two screens in a row.
+- **R4 (MUST, happy):** Given the QR signal and candidates [`<P1>`, `<Q>`, `<P2>`, `<P1>` with spaces],
+  when the args are built, then the printed IBANs are [`<P1>`, `<P2>`]: candidate order kept, the QR
+  IBAN and duplicates removed by normalised value. Each printed IBAN is one row on the screen.
+- **R5 (MUST, happy):** A row's hint is set only when the country signal is present and that IBAN's
+  first two letters (upper-cased) differ from `creditorCountry` (upper-cased). In the QR-only case no
+  row has a hint. The hint text is `gc_fraud_iban_country_hint` with the country name of that IBAN.
+- **R6 (MUST, happy):** The sender line is shown only when the country signal is present. Its text is
+  `gc_fraud_sender_value` = "<name> · <country name>". If `paymentRecipient` is missing or blank, the
+  line is the country name alone.
+
+### Missing data and no warning
+
+- **R7 (MUST, error):** Given the QR signal but no candidate that differs from the QR IBAN (no
+  `iban` extraction, no candidates, or only the QR IBAN), when the args are built, then the QR part is
+  dropped: with the country signal present the screen is `COUNTRY` (R2 shape, using the QR IBAN as the
+  document IBAN); without it there is no warning and the flow is the same as R8.
+- **R8 (MUST, error):** Given the flag is off, or `fraudSignals` is missing, or it holds only unknown or
+  malformed elements, when the analysis finishes, then `showIbanMismatch` is never called and the flow
+  is exactly as today (same warning or hint, or `onExtractionsAvailable` with the same extractions).
+- **R9 (MUST, error):** Building the args never throws for any extraction map (missing members,
+  blank values, IBANs shorter than two characters → treated as "country unknown": no hint).
+
+### Flow
+
+- **R10 (MUST, happy):** The fraud warning is checked after the two "no extractions" checks and before
+  the already-paid, credit note, schedule payment and payment due checks, replacing the phase 1
+  `IBANMismatchDebug.getEnabled()` branch. When it shows, none of the other warnings show.
+- **R11 (MUST, happy):** Given the warning is shown, when the user taps "Proceed anyway", then
+  `onExtractionsAvailable` receives the same specific extractions as the analysis returned and compound
+  extractions without `fraudSignals` (the PP-3965 stripped holder). Same for all three types (the IBAN
+  selection sheet for QR / combined is PP-3966).
+- **R12 (MUST, happy):** "Cancel transfer" ends the flow through `AnalysisFragmentImpl.showIbanMismatch`'s
+  cancel action (phase 1, unchanged).
+- **R13 (MUST, happy):** The warning is shown in every `ProductTag`, CX mode included, as long as the CX
+  "no extractions" check (`isCxEmptyExtractions`) did not already end the flow.
+- **R14 (MUST, happy):** Country names are shown in the language of the SDK's strings: German with the
+  default `values` strings ("Aus Polen, nicht aus dem Land des Absenders"), English with `values-en`
+  ("From Poland, not the sender’s country"). An unknown country code is shown as the code itself.
+
+### Cleanup
+
+- **R15 (MUST, entry):** `IBANMismatchDebug` no longer exists; `capture-sdk/sdk/api/sdk.api` has no
+  `IBANMismatchDebug` entry; the bank-sdk example app has no "IBAN mismatch warning (development)" switch.
+
+## Affected modules
+
+| Module | Change |
+|---|---|
+| `capture-sdk:sdk` | New args mapper and country-name helper in `analysis/fraud/`; `IBANMismatchArgs` reshaped; screen rows built from the list; presenter branch; extension injects `FraudSignalsParser`; new strings; debug switch deleted; dump re-pinned. |
+| `bank-sdk:example-app` | Remove the development switch (phase 1 "Before merge" list). |
+| `bank-sdk:sdk` | No code change. Rebuild and run its tests (depends on `capture-sdk:sdk`). |
+
+`bank-api-library:library` and `capture-sdk:default-network` are unchanged here (PP-3965 did the flag).
+
+## Public API impact
+
+- `capture-sdk:sdk`: `net.gini.android.capture.analysis.fraud.IBANMismatchDebug` is removed from
+  `api/sdk.api`. It was added on this unreleased branch stack, so nothing released breaks. Re-pin with
+  `./gradlew capture-sdk:sdk:apiDump`; the diff must only remove `IBANMismatchDebug`.
+- Everything new is `internal` and must not appear in the dump: `IBANMismatchArgs`,
+  `IBANMismatchIban`, `IBANMismatchArgsMapper`, the country-name helper. `AnalysisScreenContract` is
+  package-private Java.
+- Integrator-visible behaviour: a new screen can appear after analysis for clients with both flags on.
+  The result given to the bank is unchanged (PP-3965 strip). No new integrator toggle.
+- New string resources (`gc_fraud_iban_country_hint`, `gc_fraud_sender_value`,
+  `gc_fraud_country_name_locale`) are overridable by banks like the phase 1 strings.
+
+## Technical conventions
+
+1. **Language.** New code is Kotlin, `internal`, under `capture-sdk/sdk/src/main/java/`. Legacy Java
+   touched: `analysis/AnalysisScreenPresenter.java` only — replace the `IBANMismatchDebug` branch
+   (currently lines ~359–368) and nothing else. `AnalysisScreenContract.java` and
+   `AnalysisFragmentImpl.java` need no change (the `showIbanMismatch(IBANMismatchArgs, Runnable)`
+   contract stays). Java reads the Kotlin `internal` classes the same way phase 1 does.
+2. **UI.** Compose (Material 3) in `GiniTheme`, existing light/dark + size previews updated to the new
+   args shape (add one preview with two printed IBANs). No XML layout change. The rows keep phase 1's
+   accessibility (merged rows, IBAN spelled for TalkBack, heading on the list title).
+3. **Architecture.** Legacy Java MVP stays: the presenter decides, the view shows. New logic is a pure,
+   stateless Kotlin mapper (`IBANMismatchArgsMapper`) — no ViewModel, no state/intent/effect classes
+   (same decision as PP-3965). Texts are resolved in the Composable with `stringResource`, so the
+   mapper stays JVM-testable and the args carry country **codes**, not display strings.
+4. **DI / async.** `FraudSignalsParser` is injected into `AnalysisScreenPresenterExtension` from the
+   isolated Koin context (`getGiniCaptureKoin().inject()`, like the hint use cases). The mapper is an
+   `internal object` (no binding needed). Everything runs synchronously in the existing analysis
+   callback; no new coroutines.
+5. **Strings.** `capture-sdk/sdk/src/main/res/values/strings.xml` (German, default) and
+   `values-en/strings.xml`:
+   - `gc_fraud_iban_country_hint` — DE `Aus %1$s, nicht aus dem Land des Absenders`, EN
+     `From %1$s, not the sender’s country` (`%1$s` = country name).
+   - `gc_fraud_sender_value` — `%1$s · %2$s` in both (`%1$s` name, `%2$s` country name).
+   - `gc_fraud_country_name_locale` — `translatable="false"`, `de` in `values`, `en` in `values-en`.
+     The country name is built with `Locale("", code).getDisplayCountry(Locale.forLanguageTag(<this>))`,
+     so it matches the language of the hint even on a device in a third language. KDoc on the
+     resource tells banks that add a translation to override it too.
+6. **Quality gates.** `ktlintCheck`, `detekt`, `lint`, `apiCheck` clean on `capture-sdk:sdk` and
+   `bank-sdk:example-app`. Every new Kotlin class has a unit test; the mapper and the country-name
+   helper should reach full line coverage in Jacoco (pure logic).
+
+## Design
+
+### Args shape (`analysis/fraud/IBANMismatchArgs.kt`)
+
+```kotlin
+internal data class IBANMismatchIban(
+    val iban: String,
+    val hintCountryCode: String? = null,   // non-null → show gc_fraud_iban_country_hint
+)
+
+internal data class IBANMismatchArgs(
+    val type: IBANMismatchType,
+    val qrIban: IBANMismatchIban?,          // null for COUNTRY
+    val printedIbans: List<IBANMismatchIban>, // COUNTRY: exactly the document IBAN
+    val senderName: String? = null,
+    val senderCountryCode: String? = null,  // non-null → sender line shown
+)
+```
+
+`printedIban`, `printedIbanHint`, `qrIbanHint` and `sender` from phase 1 are replaced. KDoc is updated
+(texts are resolved by the screen, not by the caller).
+
+### Mapper (`analysis/fraud/IBANMismatchArgsMapper.kt`, new)
+
+```kotlin
+internal object IBANMismatchArgsMapper {
+    fun map(
+        signals: List<FraudSignal>,
+        extractions: Map<String, GiniCaptureSpecificExtraction>,
+    ): IBANMismatchArgs?
+}
+```
+
+1. `qr = signals.firstOrNull { code == QR_PRINTED_IBAN_MISMATCH }`,
+   `country = signals.firstOrNull { code == IBAN_COUNTRY_MISMATCH }`.
+2. `printed = extractions["iban"]?.candidates` values → drop blank → `distinctBy(normalise)` →
+   drop those equal to `normalise(qr.iban)` (R4).
+3. `qrUsable = qr != null && printed.isNotEmpty()` (R7).
+4. Type: `qrUsable && country != null` → COMBINED; `qrUsable` → QR_VS_PRINTED; `country != null` →
+   COUNTRY; else `null`.
+5. Hints per R5 using `country.creditorCountry`; sender per R6 from `extractions["paymentRecipient"]`.
+6. COUNTRY: `printedIbans = [country.iban]` (falls back to `qr.iban` per R7 — same value per the API).
+
+Wrap nothing in try/catch: every step is null-safe by construction (R9), proven by tests.
+
+### Country name helper (`analysis/fraud/CountryName.kt`, new)
+
+`internal fun countryDisplayName(code: String, locale: Locale): String` — returns
+`Locale("", code.uppercase()).getDisplayCountry(locale)`, or `code` when that is blank or equal to the
+code (unknown). The screen calls it with `Locale.forLanguageTag(stringResource(R.string.gc_fraud_country_name_locale))`.
+
+### Screen (`analysis/fraud/IBANMismatchWarningScreen.kt`)
+
+`ibanMismatchContent(args)` builds: QR row (hint from `hintCountryCode`), one row per `printedIbans`
+entry (label `gc_fraud_document_iban_label` for COUNTRY, `gc_fraud_printed_iban_label` otherwise), the
+sender item from `senderName`/`senderCountryCode` (card in COMBINED, first row in COUNTRY, absent in
+QR_VS_PRINTED — as phase 1). The layout still follows `type` alone.
+
+### Presenter (`analysis/AnalysisScreenPresenter.java`) and extension
+
+- Extension gets `val fraudSignalsParser: FraudSignalsParser by getGiniCaptureKoin().inject()` and
+  ```kotlin
+  fun ibanMismatchArgs(analysisResult: ResultHolder): IBANMismatchArgs? =
+      IBANMismatchArgsMapper.map(
+          fraudSignalsParser.parse(getMapOrEmpty(analysisResult.compoundExtractions)),
+          getMapOrEmpty(analysisResult.extractions),
+      )
+  ```
+  It reads the **original** `analysisResult` (PP-3965 renamed the callback parameter; `resultHolder`
+  is the stripped one).
+- In `SUCCESS_WITH_EXTRACTIONS`, compute `final IBANMismatchArgs ibanMismatchArgs =
+  extension.ibanMismatchArgs(analysisResult);` before the if-chain, and replace the debug branch with
+  `else if (ibanMismatchArgs != null)` → `successResultHolder = resultHolder; shouldClearImageCaches =
+  false; extension.showIbanMismatchWarning(ibanMismatchArgs, …, successResultHolder, getActivity())`.
+- `showIbanMismatchWarning` takes the args as its first parameter instead of calling
+  `IBANMismatchDebug.sampleArgs()`. The invoice-saving and education handling stay as they are.
+
+### Delete the development switch
+
+Everything in phase 1's "Before merge" list: `IBANMismatchDebug.kt` (sample data moves into the
+previews), the presenter branch, the three debug tests, the example-app switch
+(`ExampleAppBankConfiguration.isIbanMismatchDebugEnabled`, `ConfigurationActivity.switchIbanMismatchDebug`,
+`layout_debug_development_toggles.xml`, `ConfigurationViewModel.applyIbanMismatchDebugSwitch`,
+`iban_mismatch_debug_switch_label` in the example app's `values` and `values-en`), then `apiDump`.
+
+## Test plan
+
+Stacks match the neighbours: JUnit4 + Google Truth; `AnalysisScreenPresenterTest` keeps its
+Robolectric + Mockito-Kotlin/MockK mix and helpers (`startPresenterForDueHint`, `idleMainLooperUntil`,
+`configurationProvider.update`).
+
+| # | Test class | New / extend | Tests | Covers |
+|---|---|---|---|---|
+| 1 | `capture-sdk/sdk/src/test/java/net/gini/android/capture/analysis/fraud/IBANMismatchArgsMapperTest.kt` | **new**, plain JUnit | 10 (below) | R1–R7, R9 |
+| 2 | `capture-sdk/sdk/src/test/java/net/gini/android/capture/analysis/fraud/CountryNameTest.kt` | **new**, plain JUnit | 3: `PL` in `de` → "Polen"; `PL` in `en` → "Poland"; unknown `XX` → "XX" | R14 |
+| 3 | `capture-sdk/sdk/src/test/java/net/gini/android/capture/analysis/AnalysisScreenPresenterTest.kt` | extend; replace the 3 debug tests in "IBAN mismatch warning" | 5 (below) | R1, R8, R10, R11, R13 |
+
+`IBANMismatchArgsMapperTest` (10 — one per screen case and per fallback; all pure and fast):
+1. QR only → QR_VS_PRINTED, QR row and one printed row, no hints, no sender (R1, R5)
+2. Country only → COUNTRY with document IBAN, hint country, sender name + country (R2, R6)
+3. Both → COMBINED, hint only on IBANs whose country differs (R3, R5)
+4. Several candidates with the QR IBAN and a spaced/lower-case duplicate → order kept, QR and duplicate removed (R4)
+5. QR signal, no `iban` extraction → `null` (R7)
+6. QR signal, candidates only the QR IBAN, plus country signal → COUNTRY (R7)
+7. Country signal, no `paymentRecipient` → sender name `null`, country kept (R6)
+8. No signals → `null` (R8 support)
+9. Lower-case `creditorCountry` and IBAN prefix → compared case-insensitively (R5)
+10. One-character / blank candidate and IBAN → no crash, no hint for it (R9)
+
+Use different IBANs and countries in every fixture so a hardcoded result cannot pass.
+
+`AnalysisScreenPresenterTest` "IBAN mismatch warning" region (5):
+1. Flag on + QR signal + candidates → `showIbanMismatch` with captured args (`type`, QR and printed
+   IBANs from the fixture), and no `showWarning` although the credit-note hint would apply (R1, R10)
+2. "Proceed anyway" → `onExtractionsAvailable` with the fixture's specific extraction keys, and compound
+   extractions without `fraudSignals` (R11)
+3. Flag off with valid signals → no `showIbanMismatch`, `onExtractionsAvailable` as today (R8)
+4. Flag on, no `fraudSignals` → no `showIbanMismatch` (R8)
+5. CX mode (`ProductTag.CxExtractions`) with `crossBorderPayment` + signals → `showIbanMismatch` called (R13)
+
+Commands: `./gradlew capture-sdk:sdk:testDebugUnitTest bank-sdk:sdk:testDebugUnitTest`, then
+`/gini-check` (lint, detekt, ktlint) and `./gradlew capture-sdk:sdk:apiCheck`.
+
+### Not tested
+
+- The Compose screen rendering per args (no Compose UI test setup in `capture-sdk:sdk` unit tests):
+  covered by the updated previews and manual QA. R6's string format and R12's cancel are UI wiring
+  from phase 1.
+- R15 (switch removed) is checked by `apiCheck` and by the build, not by a unit test.
+- Rotation with the sheet open: same path as the other analysis warnings; manual check on device.
+- End-to-end with the real backend: PP-3952 is In Review. Manual QA with the IBAN-mismatch documents
+  from the epic's Drive folder once it ships; country-mismatch documents are still TBA.
+
+## Out of scope
+
+- The IBAN selection sheet after "Proceed anyway" for QR / combined (PP-3966).
+- Using `severity` (wiki §4: v1 does not use it).
+- Analytics for the warnings (no ticket yet).
+- Public docs (PP-3968), Figma guide (PP-3967), UI automation (PP-3970).
+- Any change to the PP-3965 parser, the flag, or the strip.
+- Copy differences between phase 1 strings and the copy pages (e.g. combined list title "The following
+  IBANs were detected" vs "Found on the document"; "Proceed anyway" vs "Continue anyway"): report to
+  the phase 1 author, do not change here.
+
+## Open questions
+
+- **Label of several printed IBANs (layout only):** showing every printed IBAN is decided (R4). Only
+  the label is open: the design for this case is "TBA" in PP-3518/PP-3966, so each row repeats
+  "Printed on the document" for now. If design asks for one shared label or numbered labels, only
+  `ibanMismatchContent` in `IBANMismatchWarningScreen.kt` changes; the mapper and R4 stay.
+- **CX mode data (confidence: LOW — confirm with backend / a CX test document):** decided to show the
+  warning in CX mode. Whether CX responses carry `fraudSignals` and `extractions.iban` candidates is
+  unverified; without candidates the QR part is dropped by R7.
+
+## Build notes (phase 2)
+
+- PP-3965 is merged into this branch locally (merge commit `ef5de3ca0`, not pushed); the one conflict
+  in `AnalysisScreenPresenterTest.kt` was solved by keeping both regions.
+- The development switch is kept for now, but it no longer shows fixed args: while
+  `IBANMismatchDebug.enabled` it adds a sample `fraudSignals` compound (both signals, QR IBAN
+  `PL12…`, sender country `DE`) and sample printed IBANs (`DE89…`, the QR IBAN, `AT61…`), and the
+  **real** `FraudSignalsParser` (flag forced on) and `IBANMismatchArgsMapper` build the warning. The
+  scanned document's `paymentRecipient` is kept. The example-app switch is unchanged. Remove it with
+  the rest of "Before merge" once the backend delivers fraud signals.
+- The parser for the real path reads `fraudSignalsEnabled`; the debug path ignores it on purpose.
+
+## Temporary UI changes to reconcile with phase 1
+
+Phase 1 was still in progress when phase 2 was built (base `08e0df987`). These phase 1 files were
+changed here and must be checked against the colleague's final version when PP-3961 is merged in
+again:
+
+| File | What phase 2 changed |
+|---|---|
+| `analysis/fraud/IBANMismatchArgs.kt` | Reshaped: `qrIban: IBANMismatchIban?`, `printedIbans: List<IBANMismatchIban>`, `senderName`, `senderCountryCode`; new `IBANMismatchIban(iban, hintCountryCode)`. Phase 1's `printedIban`, `printedIbanHint`, `qrIbanHint`, `sender` are gone. |
+| `analysis/fraud/IBANMismatchWarningScreen.kt` | `ibanMismatchContent` resolves sender and hint texts, one row per printed IBAN; new `ibanRow` helper; previews use the new args (combined preview with two printed IBANs). Layout composables untouched. |
+| `analysis/fraud/IBANMismatchDebug.kt` | `sampleArgs()` replaced by `parser`, `withSampleSignals`, `withSamplePrintedIbans`. |
+| `analysis/AnalysisScreenPresenterExtension.kt` | New `ibanMismatchArgs(analysisResult)`; `showIbanMismatchWarning` takes the args first. |
+| `analysis/AnalysisScreenPresenter.java` | Debug branch replaced by `ibanMismatchArgs != null`, args computed before the if-chain. |
+| `res/values{,-en}/strings.xml` | Added `gc_fraud_iban_country_hint`, `gc_fraud_sender_value`, `gc_fraud_country_name_locale` after `gc_fraud_document_iban_label`. |
+
+Reconcile rule: keep the colleague's layout, components and copy; keep phase 2's args shape,
+mapper and text resolution. If phase 1 renamed or moved a piece listed above, move the phase 2
+change with it, then re-run `IBANMismatchArgsMapperTest`, `CountryNameTest` and the "IBAN mismatch
+warning" region of `AnalysisScreenPresenterTest`.

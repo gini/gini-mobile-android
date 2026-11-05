@@ -15,6 +15,8 @@ import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCaptureError
 import net.gini.android.capture.analysis.AnalysisInteractor.ResultHolder
 import net.gini.android.capture.analysis.AnalysisScreenContract.View
+import net.gini.android.capture.analysis.fraud.IBANMismatchArgs
+import net.gini.android.capture.analysis.fraud.IBANMismatchArgsMapper
 import net.gini.android.capture.analysis.fraud.IBANMismatchDebug
 import net.gini.android.capture.analysis.transactiondoc.AttachedToTransactionDocumentProvider
 import net.gini.android.capture.analysis.warning.WarningType
@@ -22,6 +24,7 @@ import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.document.GiniCaptureDocument
 import net.gini.android.capture.document.GiniCaptureDocumentError
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument
+import net.gini.android.capture.fraudSignals.FraudSignalsParser
 import net.gini.android.capture.ingredientbrand.GetIngredientBrandVisibleUseCase
 import net.gini.android.capture.internal.qreducation.GetInvoiceEducationTypeUseCase
 import net.gini.android.capture.internal.qreducation.IncrementInvoiceRecognizedCounterUseCase
@@ -58,6 +61,8 @@ internal class AnalysisScreenPresenterExtension(
 
     val paymentScheduleHintEnabledUseCase:
             GetPaymentScheduleHintEnabledUseCase by getGiniCaptureKoin().inject()
+
+    private val fraudSignalsParser: FraudSignalsParser by getGiniCaptureKoin().inject()
 
     val ingredientBrandVisibleUseCase:
             GetIngredientBrandVisibleUseCase by getGiniCaptureKoin().inject()
@@ -210,14 +215,33 @@ internal class AnalysisScreenPresenterExtension(
     }
 
     /**
-     * Shows the IBAN mismatch warning once the education animation is done. "Proceed anyway"
-     * runs the same steps as the already-paid warning's "Proceed anyway" CTA and hands the
-     * extractions on unchanged.
+     * Builds the IBAN mismatch warning from the fraud signals of [analysisResult], or returns
+     * `null` when no warning should be shown.
      *
-     * The warning is shown with [IBANMismatchDebug.sampleArgs] while the fraud signals are not
-     * read from the analysis result yet.
+     * [analysisResult] must be the holder as the analysis delivered it: the one forwarded to the
+     * integrator has `fraudSignals` stripped. While [IBANMismatchDebug.enabled] the signals and
+     * printed IBANs come from the debug samples instead.
+     */
+    fun ibanMismatchArgs(analysisResult: ResultHolder): IBANMismatchArgs? {
+        val compoundExtractions = getMapOrEmpty(analysisResult.compoundExtractions)
+        val extractions = getMapOrEmpty(analysisResult.extractions)
+        return if (IBANMismatchDebug.enabled) {
+            IBANMismatchArgsMapper.map(
+                IBANMismatchDebug.parser.parse(IBANMismatchDebug.withSampleSignals(compoundExtractions)),
+                IBANMismatchDebug.withSamplePrintedIbans(extractions),
+            )
+        } else {
+            IBANMismatchArgsMapper.map(fraudSignalsParser.parse(compoundExtractions), extractions)
+        }
+    }
+
+    /**
+     * Shows the IBAN mismatch warning with [args] once the education animation is done.
+     * "Proceed anyway" runs the same steps as the already-paid warning's "Proceed anyway" CTA and
+     * hands the extractions on unchanged.
      */
     fun showIbanMismatchWarning(
+        args: IBANMismatchArgs,
         mIsInvoiceSavingEnabled: Boolean,
         isSavingInvoicesInProgress: Boolean,
         resultHolder: ResultHolder,
@@ -232,7 +256,7 @@ internal class AnalysisScreenPresenterExtension(
             )
         } else {
             doWhenEducationFinished {
-                view.showIbanMismatch(IBANMismatchDebug.sampleArgs()) {
+                view.showIbanMismatch(args) {
                     handleSaveInvoicesLocally(
                         mIsInvoiceSavingEnabled,
                         false,
