@@ -1,8 +1,8 @@
 # PP-3961: [Android] Fraud warning screen: IBAN mismatch — screens without business logic
 
-Status: warning screen, components, the case selector (step 1) and the IBAN selection sheet
-screen (step 2) implemented; stacking the sheet over the warning (step 3) and device
-verification (step 4) pending — see "Build plan". Development switch to be removed before merge,
+Status: warning screen, components, the case selector (step 1), the IBAN selection sheet
+(step 2) and its stacking over the warning (step 3) implemented; device verification (step 4)
+and tests (step 5) pending — see "Build plan". Development switch to be removed before merge,
 see "Before merge".
 Ticket: https://ginis.atlassian.net/browse/PP-3961
 Parent epic: PP-3518 "[Q4] Fraud prevention warnings – phase 1"
@@ -197,7 +197,12 @@ at block boundaries and screen readers read them in chunks.
   device (step 4).
 - The selection sheet is composed inside the warning screen (second `ModalBottomSheet` in the
   same composition), not through a second `ComposeView`: the spike proved the stacking and it
-  keeps `AnalysisFragmentExtension` at one show/hide pair.
+  keeps `AnalysisFragmentExtension` at one show/hide pair. The warning decides with
+  `IBANMismatchArgs.toSelectionArgs()`: `null` for the country case (or a QR case without a QR
+  IBAN) proceeds directly, otherwise the sheet opens.
+- The chosen IBAN travels as `androidx.core.util.Consumer<String>` through
+  `AnalysisScreenContract.View.showIbanMismatch` (Java-friendly, `null` when the warning offered
+  no choice) and is ignored by the presenter until PP-3966.
 
 ## Before merge: remove the development switch
 

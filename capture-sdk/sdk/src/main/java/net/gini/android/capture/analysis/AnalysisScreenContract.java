@@ -7,6 +7,7 @@ import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.util.Consumer;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCaptureBasePresenter;
@@ -89,9 +90,11 @@ interface AnalysisScreenContract {
          * by the view like the warning sheets' cancel CTA.
          *
          * @param args      what the warning shows
-         * @param onProceed runs when the user taps "Proceed anyway"
+         * @param onProceed runs when the user proceeds, with the IBAN chosen on the selection
+         *                  sheet or {@code null} when the warning offered no choice
          */
-        abstract void showIbanMismatch(@NonNull IBANMismatchArgs args, @NonNull Runnable onProceed);
+        abstract void showIbanMismatch(@NonNull IBANMismatchArgs args,
+                                       @NonNull Consumer<String> onProceed);
 
         /**
          * Starts the local invoice saving step.

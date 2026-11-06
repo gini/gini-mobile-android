@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -42,21 +43,27 @@ import net.gini.android.capture.ui.theme.GiniTheme
 /**
  * The IBAN mismatch warning: a non-dismissable sheet over the Analysis screen that explains
  * which fraud signals were found and shows the IBANs involved. The user leaves it only through
- * "Cancel transfer" ([onCancel]) or "Proceed anyway" ([onProceed]); the host removes the
- * composable afterwards.
+ * "Cancel transfer" ([onCancel]) or "Proceed anyway"; the host removes the composable afterwards.
  *
- * The only state the screen owns is whether the "How do I protect myself?" row is expanded,
- * kept in `rememberSaveable` so it survives rotation.
+ * "Proceed anyway" opens the [IBANSelectionSheet] on top of the warning when there are two
+ * IBANs to choose from (the QR-vs-printed and combined cases) and reports the choice through
+ * [onProceed]; dismissing the sheet returns to the warning. In the country-only case there is
+ * nothing to choose and [onProceed] is called at once with `null`.
+ *
+ * The state the screen owns, whether the "How do I protect myself?" row is expanded and
+ * whether the selection sheet is open, lives in `rememberSaveable` so it survives rotation.
  */
 @Composable
 internal fun IBANMismatchWarningScreen(
     args: IBANMismatchArgs,
     onCancel: () -> Unit,
-    onProceed: () -> Unit,
+    onProceed: (selectedIban: String?) -> Unit,
     composableProviderConfig: GiniComposableStyleProviderConfig?,
 ) {
     var protectionExpanded by rememberSaveable { mutableStateOf(false) }
+    var selectionOpen by rememberSaveable { mutableStateOf(false) }
     val content = ibanMismatchContent(args)
+    val selectionArgs = remember(args) { args.toSelectionArgs() }
 
     GiniBottomSheetScaffold(
         paneTitle = content.title,
@@ -65,7 +72,13 @@ internal fun IBANMismatchWarningScreen(
                 primaryText = stringResource(R.string.gc_cancel_transfer),
                 onPrimaryClick = onCancel,
                 secondaryText = stringResource(R.string.gc_proceed_anyway),
-                onSecondaryClick = onProceed,
+                onSecondaryClick = {
+                    if (selectionArgs == null) {
+                        onProceed(null)
+                    } else {
+                        selectionOpen = true
+                    }
+                },
                 composableProviderConfig = composableProviderConfig,
             )
         },
@@ -75,6 +88,18 @@ internal fun IBANMismatchWarningScreen(
             protectionExpanded = protectionExpanded,
             onProtectionExpandedChange = { protectionExpanded = it },
         )
+        // A second ModalBottomSheet opens its own window on top of the warning's.
+        if (selectionOpen && selectionArgs != null) {
+            IBANSelectionSheet(
+                args = selectionArgs,
+                onDismiss = { selectionOpen = false },
+                onContinue = { selectedIban ->
+                    selectionOpen = false
+                    onProceed(selectedIban)
+                },
+                composableProviderConfig = composableProviderConfig,
+            )
+        }
     }
 }
 

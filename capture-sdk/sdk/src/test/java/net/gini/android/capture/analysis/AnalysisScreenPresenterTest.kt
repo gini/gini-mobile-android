@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.os.Looper
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.core.util.Consumer
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.anyOrNull
@@ -1671,18 +1672,44 @@ class AnalysisScreenPresenterTest {
     }
 
     @Test
-    fun `proceed continuation of IBAN mismatch warning hands the extractions on unchanged`() {
-        // Given
-        IBANMismatchDebug.case = IBANMismatchDebug.Case.COMBINED
+    fun `proceed continuation without a chosen IBAN hands the extractions on unchanged`() {
+        // Given the country case, which offers no IBAN choice
+        IBANMismatchDebug.case = IBANMismatchDebug.Case.COUNTRY
         try {
             val listener = startPresenterForDueHint(creditNoteExtractions())
-            val onProceedCaptor = argumentCaptor<Runnable>()
+            val onProceedCaptor = argumentCaptor<Consumer<String?>>()
             idleMainLooperUntil {
                 verify(mView).showIbanMismatch(any(), onProceedCaptor.capture())
             }
 
             // When the user taps "Proceed anyway"
-            onProceedCaptor.lastValue.run()
+            onProceedCaptor.lastValue.accept(null)
+
+            // Then
+            val extractionsCaptor = argumentCaptor<Map<String, GiniCaptureSpecificExtraction>>()
+            idleMainLooperUntil {
+                verify(listener).onExtractionsAvailable(extractionsCaptor.capture(), any(), any())
+            }
+            Truth.assertThat(extractionsCaptor.lastValue.keys)
+                .containsExactlyElementsIn(creditNoteExtractions().keys)
+        } finally {
+            IBANMismatchDebug.case = null
+        }
+    }
+
+    @Test
+    fun `proceed continuation of IBAN mismatch warning hands the extractions on unchanged`() {
+        // Given
+        IBANMismatchDebug.case = IBANMismatchDebug.Case.COMBINED
+        try {
+            val listener = startPresenterForDueHint(creditNoteExtractions())
+            val onProceedCaptor = argumentCaptor<Consumer<String?>>()
+            idleMainLooperUntil {
+                verify(mView).showIbanMismatch(any(), onProceedCaptor.capture())
+            }
+
+            // When the user proceeds with an IBAN chosen on the selection sheet
+            onProceedCaptor.lastValue.accept("DE89370400440532013000")
 
             // Then
             val extractionsCaptor = argumentCaptor<Map<String, GiniCaptureSpecificExtraction>>()

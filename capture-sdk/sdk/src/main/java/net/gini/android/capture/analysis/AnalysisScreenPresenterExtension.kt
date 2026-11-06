@@ -233,7 +233,9 @@ internal class AnalysisScreenPresenterExtension(
             )
         } else {
             doWhenEducationFinished {
-                view.showIbanMismatch(IBANMismatchDebug.sampleArgs(case)) {
+                // The chosen IBAN (null when the warning offered no choice) is not used until
+                // the fraud signals come from the result.
+                view.showIbanMismatch(IBANMismatchDebug.sampleArgs(case)) { _: String? ->
                     handleSaveInvoicesLocally(
                         mIsInvoiceSavingEnabled,
                         false,

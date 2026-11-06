@@ -16,3 +16,19 @@ internal data class IBANSelectionArgs(
     val qrIbanHint: String? = null,
     val printedIbanHint: String? = null,
 )
+
+/**
+ * The selection the warning offers after "Proceed anyway", or `null` when there is nothing to
+ * choose: the country-only case has a single IBAN and continues with it directly.
+ */
+internal fun IBANMismatchArgs.toSelectionArgs(): IBANSelectionArgs? =
+    qrIban
+        ?.takeIf { type != IBANMismatchType.COUNTRY }
+        ?.let { qrIban ->
+            IBANSelectionArgs(
+                qrIban = qrIban,
+                printedIban = printedIban,
+                qrIbanHint = qrIbanHint,
+                printedIbanHint = printedIbanHint,
+            )
+        }
