@@ -59,8 +59,6 @@ internal fun IBANMismatchWarningScreen(
     val content = ibanMismatchContent(args)
 
     GiniBottomSheetScaffold(
-        onDismissRequest = {},
-        dismissable = false,
         paneTitle = content.title,
         footer = {
             GiniActionFooter(

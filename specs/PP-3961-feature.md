@@ -1,7 +1,8 @@
 # PP-3961: [Android] Fraud warning screen: IBAN mismatch — screens without business logic
 
-Status: warning screen, components and the case selector (step 1) implemented; IBAN selection
-sheet (steps 2–3) and device verification (step 4) pending — see "Build plan". Development switch to be removed before merge,
+Status: warning screen, components, the case selector (step 1) and the IBAN selection sheet
+screen (step 2) implemented; stacking the sheet over the warning (step 3) and device
+verification (step 4) pending — see "Build plan". Development switch to be removed before merge,
 see "Before merge".
 Ticket: https://ginis.atlassian.net/browse/PP-3961
 Parent epic: PP-3518 "[Q4] Fraud prevention warnings – phase 1"
@@ -81,11 +82,14 @@ before the next one starts. The user starts each step explicitly.
 4. **Device verification.** Example app, each case of the selector: all three warning layouts,
    the three sheet states, light/dark, portrait/landscape, phone/tablet, 200 % font size
    (the design's `200%` and `1.4.1 Scroll` frames), rotation with the warning and with the
-   sheet open, TalkBack (pane titles, headings, radio group, error announced), external keyboard
-   (Tab order rows → Next, focus stays inside the open sheet). Fix what the pass finds.
+   sheet open, TalkBack (pane titles, headings, radio group with "1 of 2", the error announced
+   after "Next" with no choice and read again on the rows), external keyboard (Tab order rows →
+   Next, focus stays inside the open sheet, focus visible). Fix what the pass finds.
 5. **Tests and checks.** `AnalysisScreenPresenterTest` updated for the case selector. Compose
    tests under Robolectric for the selection sheet's state transitions (initial → error on
-   "Next" → selected clears the error → `onProceed` with the chosen IBAN), modelled on bank-sdk's
+   "Next" → selected clears the error → `onProceed` with the chosen IBAN), asserting the
+   semantics too (`Selected`, `Role.RadioButton`, `Error` present on both rows after "Next" with
+   no choice and absent after a selection, row height at least 48 dp), modelled on bank-sdk's
    `SkontoScreenContentTest`. capture-sdk has Robolectric but not the Compose test rule yet:
    add `libs.compose.ui.test.junit4` and `libs.compose.ui.test.manifest` as `testImplementation`
    to `capture-sdk/sdk/build.gradle.kts`, exactly as `bank-sdk/sdk/build.gradle.kts` does. Then `/gini-check` for `capture-sdk:sdk` and `bank-sdk:example-app`,
@@ -98,7 +102,8 @@ before the next one starts. The user starts each step explicitly.
 
 | Design element | Component | Notes |
 |---|---|---|
-| Scrim + 28 dp-top-cornered sheet below the status bar, full width on all devices, no grabber, no dismissal | `sheet/GiniBottomSheetScaffold` | Wraps `ModalBottomSheet` with the spike's non-dismissal configuration (`confirmValueChange` refuses `Hidden`, back/scrim disabled, gestures off, `sheetMaxWidth = Dp.Unspecified`). `dismissable = true` turns it into a regular sheet with a drag handle for the selection sheet. Content column capped with `tabletMaxWidth()`; footer pinned to the bottom while content fits, scrolls with it otherwise (`heightIn(min = maxHeight)` + weighted spacer in a scrolling column). |
+| Scrim + 28 dp-top-cornered sheet below the status bar, full width on all devices, no grabber, no dismissal | `sheet/GiniBottomSheetScaffold` | Wraps `ModalBottomSheet` with the spike's non-dismissal configuration (`confirmValueChange` refuses `Hidden`, back/scrim disabled, gestures off, no drag handle, `sheetMaxWidth = Dp.Unspecified`). Content column capped with `tabletMaxWidth()`; footer pinned to the bottom while content fits, scrolls with it otherwise (`heightIn(min = maxHeight)` + weighted spacer in a scrolling column). Only for full-height screens the user must answer. |
+| Content-height dismissable sheet with grabber (selection sheet) | Material `ModalBottomSheet` directly, inside `IBANSelectionSheet` | Gini container and grabber colors, `tabletMaxWidth()`, the same 24 dp gutters and pane title. Not the scaffold: its footer-pinning logic and non-dismissal are the opposite of what this sheet needs, and flags for both shapes made the scaffold a config bag. |
 | Red alert icon on an error-tinted rounded square, centred headline + description | `header/GiniHeaderBlock` | Title has `heading()` semantics; icon decorative. |
 | "How do I protect myself?" row with shield, chevron, revealed body | `expandable/GiniExpandableInfoRow` | State hoisted (`expanded`/`onExpandedChange`), `Role.Button`, `stateDescription` expanded/collapsed, chevron rotates. |
 | "Sender" on a grey card (combined case) | `card/GiniInfoCard` | Placeholder background, 8 dp corners. |
@@ -141,17 +146,27 @@ at block boundaries and screen readers read them in chunks.
 - Material 3's scrim adds its "Close sheet" semantics only when `shouldDismissOnClickOutside`
   is true (verified in material3 1.4.0 `ModalBottomSheet.kt`), so the non-dismissable sheet
   exposes no dead control.
-- Selection sheet (to be reviewed in step 2): `selectableGroup` on the rows, `Role.RadioButton`
-  on each row with the radio itself non-clickable (`onClick = null`), the error line as a
-  `liveRegion` so it is announced when it appears, `error()` semantics on the group, pane title
-  on the sheet, the dismissable sheet keeps Material's "Close sheet" scrim action.
+- Selection sheet (a11y-specialist review of step 2): `selectableGroup` on the rows,
+  `Role.RadioButton` on each row with the radio itself non-clickable (`onClick = null`), so
+  TalkBack reads one stop per row with "1 of 2"; `error(message)` semantics on each row while
+  the error is shown, so the invalid state is not conveyed by the red ring alone; the error is
+  announced with `announceForAccessibility` from a `LaunchedEffect` on every "Next" without a
+  choice (a `liveRegion` on a node that enters the composition is not announced by Compose; the
+  education messages use the same precedent) and not re-announced after rotation; pane title on
+  the sheet; the dismissable sheet keeps Material's "Close sheet" scrim action and the drag
+  handle's "Dismiss" action. Error text and ring use `errorHint.content`, about 5:1 in both
+  modes.
+- Keyboard focus on custom `selectable`/`clickable` rows is indicated only by Material's 10 %
+  focused state layer, below WCAG 2.4.11's 3:1. Theme-wide, not this sheet: judge in the step-4
+  keyboard pass and, if confirmed, add a reusable focus-outline modifier under
+  `ui/theme/modifier` for all custom targets in a follow-up.
 - Dark-mode hint red: the `error02` primitive is resolved from resources and `values-night`
   overrides `gc_error_02` to `#FF3B30`, about 5:1 on `dialogs.container` (`#161616`); the
   `#DD0000` default in `GiniColorPrimitives` is only the fallback. `errorHint.container` keeps
   `error04` in both modes like `card.containerError`; whether dark mode wants a darker container
   is a design question.
-- Still open (theme-level, not this screen): dark-mode `text.secondary` (`#626262`) on
-  `dialogs.container` is roughly 3:1. Track as a token ticket.
+- Dark-mode `text.secondary`: `values-night` overrides `gc_dark_05` to `#CCCCCC`, about 10:1 on
+  `dialogs.container`, so the earlier 3:1 concern looks resolved; re-verify on device in step 4.
 
 ## Review decisions (architecture / Compose specialists)
 
@@ -165,7 +180,13 @@ at block boundaries and screen readers read them in chunks.
 - `GiniHeaderBlock` defaults are neutral (placeholder background, accent tint); the warning passes
   the error tint. `GiniExpandableInfoRow` requires its icon.
 - `GiniRadioButton` and the `leadingContent` slot of `GiniLabeledValue` were added ahead of
-  their consumer, the selection sheet (step 2).
+  their consumer, the selection sheet (step 2), which now uses both.
+- `GiniBottomSheetScaffold` lost its `dismissable`/`showDragHandle` flags and
+  `GiniBottomSheetScaffoldColors.dragHandleColor`: the selection sheet, their only intended
+  consumer, uses `ModalBottomSheet` directly (see the design mapping), so the scaffold is the
+  full-height non-dismissable sheet and nothing else. Safe because it has not shipped yet.
+- The selection sheet derives its rows once per `args` outside the scaffold's content lambda,
+  so a tap only recomposes the rows, not the string lookups and IBAN formatting.
 - `GiniColorScheme.errorHint`: `logo` and `contextMenu` were appended the same way and shipped
   in minor releases (`capture-sdk;3.14.0`), so this follows precedent; call it out in the PR.
 - `GiniActionFooter` splits on orientation, not width class, because the design stacks the

@@ -197,6 +197,9 @@
     <string name="gc_fraud_qr_iban_label">In the QR code</string>
     <string name="gc_fraud_printed_iban_label">Printed on the document</string>
     <string name="gc_fraud_document_iban_label">On the document</string>
+    <string name="gc_fraud_select_iban_title">Select an IBAN to continue</string>
+    <string name="gc_fraud_select_iban_error">Select an IBAN to continue</string>
+    <string name="gc_fraud_select_iban_footnote">You can still check the IBAN on the next screen.</string>
     <!--   endregion Fraud warnings -->
 
     <!--   region Accessibility states -->

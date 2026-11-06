@@ -793,6 +793,13 @@ public abstract interface class net/gini/android/capture/analysis/education/Educ
 	public abstract fun onComplete ()V
 }
 
+public final class net/gini/android/capture/analysis/fraud/ComposableSingletons$IBANSelectionSheetKt {
+	public static final field INSTANCE Lnet/gini/android/capture/analysis/fraud/ComposableSingletons$IBANSelectionSheetKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
+}
+
 public final class net/gini/android/capture/analysis/fraud/IBANMismatchDebug {
 	public static final field $stable I
 	public static final field INSTANCE Lnet/gini/android/capture/analysis/fraud/IBANMismatchDebug;
@@ -4738,25 +4745,23 @@ public final class net/gini/android/capture/ui/components/sheet/ComposableSingle
 public final class net/gini/android/capture/ui/components/sheet/GiniBottomSheetScaffoldColors {
 	public static final field $stable I
 	public static final field Companion Lnet/gini/android/capture/ui/components/sheet/GiniBottomSheetScaffoldColors$Companion;
-	public synthetic fun <init> (JJILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (JJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1-0d7_KjU ()J
-	public final fun component2-0d7_KjU ()J
-	public final fun copy--OWjLjI (JJ)Lnet/gini/android/capture/ui/components/sheet/GiniBottomSheetScaffoldColors;
-	public static synthetic fun copy--OWjLjI$default (Lnet/gini/android/capture/ui/components/sheet/GiniBottomSheetScaffoldColors;JJILjava/lang/Object;)Lnet/gini/android/capture/ui/components/sheet/GiniBottomSheetScaffoldColors;
+	public final fun copy-8_81llA (J)Lnet/gini/android/capture/ui/components/sheet/GiniBottomSheetScaffoldColors;
+	public static synthetic fun copy-8_81llA$default (Lnet/gini/android/capture/ui/components/sheet/GiniBottomSheetScaffoldColors;JILjava/lang/Object;)Lnet/gini/android/capture/ui/components/sheet/GiniBottomSheetScaffoldColors;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getContainerColor-0d7_KjU ()J
-	public final fun getDragHandleColor-0d7_KjU ()J
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class net/gini/android/capture/ui/components/sheet/GiniBottomSheetScaffoldColors$Companion {
-	public final fun colors-dgg9oW8 (JJLandroidx/compose/runtime/Composer;II)Lnet/gini/android/capture/ui/components/sheet/GiniBottomSheetScaffoldColors;
+	public final fun colors-Iv8Zu3U (JLandroidx/compose/runtime/Composer;II)Lnet/gini/android/capture/ui/components/sheet/GiniBottomSheetScaffoldColors;
 }
 
 public final class net/gini/android/capture/ui/components/sheet/GiniBottomSheetScaffoldKt {
-	public static final fun GiniBottomSheetScaffold (Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZZLjava/lang/String;Lnet/gini/android/capture/ui/components/sheet/GiniBottomSheetScaffoldColors;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun GiniBottomSheetScaffold (Landroidx/compose/ui/Modifier;Ljava/lang/String;Lnet/gini/android/capture/ui/components/sheet/GiniBottomSheetScaffoldColors;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class net/gini/android/capture/ui/components/switcher/GiniSwitchColors {
