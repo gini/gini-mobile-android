@@ -1,8 +1,8 @@
 # PP-3961: [Android] Fraud warning screen: IBAN mismatch — screens without business logic
 
 Status: warning screen, components, the case selector (step 1), the IBAN selection sheet
-(step 2) and its stacking over the warning (step 3) implemented; device verification (step 4)
-and tests (step 5) pending — see "Build plan". Development switch to be removed before merge,
+(step 2), its stacking over the warning (step 3) and the phone device pass (step 4, see
+"Device verification") done; tablet/landscape and TalkBack still open; tests (step 5) pending. Development switch to be removed before merge,
 see "Before merge".
 Ticket: https://ginis.atlassian.net/browse/PP-3961
 Parent epic: PP-3518 "[Q4] Fraud prevention warnings – phase 1"
@@ -232,6 +232,45 @@ What stays: the `ComposeView` container in the four `gc_fragment_analysis` layou
 
 To make CI enforce the removal once the device checks are done, add a `// STOPSHIP:` comment to
 the object; Detekt's `ForbiddenComment` rule fails `capture-sdk:sdk:detekt` until the file is gone.
+
+## Device verification (step 4, 2026-11-06, Samsung SM-S928B, Android 17, phone)
+
+Driven through the example app's development case selector with an invoice photo imported from
+the gallery. Passed:
+
+- All three warning layouts match the Figma frames 1.2.1 / 1.3.1 / 1.2.1-Mix in light mode.
+- Warning: back, scrim tap and swipe do nothing; the protect row expands; "Cancel transfer"
+  ends the flow and returns to the host app; "Proceed anyway" continues to the extractions in
+  the country case and opens the selection sheet in the other two.
+- Selection sheet: initial, error ("Next" without a choice: red rings + error line) and selected
+  states match frames 1.2.2–1.2.4; back, scrim and swipe close it back to the warning; a
+  reopened sheet starts clean; "Next" with a choice continues to the extractions.
+- Recreation: a font-scale change with the warning open and a dark-mode change with the sheet
+  open both restored the expanded protect row, the open sheet and its selection. Rotation itself
+  cannot be tested on a phone: `ActivityHelper` forces portrait there.
+- 200 % font: IBANs wrap at block boundaries, the warning scrolls with the footer, the sheet
+  scrolls, nothing clips.
+- Accessibility tree: one merged stop per IBAN row with the IBAN spelled digit by digit, pane
+  titles on both sheets, the sheet's scrim exposes Material's "Close sheet".
+- External keyboard (adb key events): Tab order drag handle → QR row → printed row → Next,
+  Space activates, focus stays inside the open sheet.
+
+Open:
+
+- **Dark mode: the warning's alert icon sits on a flat light square.** `errorHint.container`
+  is `error04` = `gc_error_04` `#F6EEEE`, which has no `values-night` override, so the pale pink
+  stays pale on the dark sheet. `card.containerError` has the same token, so existing error cards
+  behave the same; a night value for `gc_error_04` (a dark red tint) fixes both — design
+  decision.
+- Tablet and landscape layouts (`GiniActionFooter` side by side, `tabletMaxWidth`) need a
+  tablet; not covered.
+- TalkBack speech (the error announcement after "Next", the error read on the rows) was not
+  verified with TalkBack running; the semantics are in the tree, the step-5 Robolectric tests
+  assert them, a manual TalkBack pass is still owed.
+- Keyboard focus is visible only as Material's faint state layer on the rows (theme-wide, see
+  Accessibility).
+- Example-app only: the four case buttons truncated on a phone; labels shortened to
+  "Off / QR / Country / Both".
 
 ## Verification
 

@@ -184,20 +184,20 @@
     <!--   endregion -->
 
     <!--   region Fraud warnings -->
-    <string name="gc_fraud_iban_mismatch_title">Different IBANs found on this document</string>
-    <string name="gc_fraud_iban_mismatch_description">The IBAN in the QR code is different from the printed one</string>
+    <string name="gc_fraud_iban_mismatch_title">Different IBANs in this document</string>
+    <string name="gc_fraud_iban_mismatch_description">The IBAN in the QR code doesn’t match the printed IBAN</string>
     <string name="gc_fraud_country_mismatch_title">IBAN doesn’t match the sender’s country</string>
-    <string name="gc_fraud_country_mismatch_description">The country of the IBAN on the document differs from the sender’s country.</string>
+    <string name="gc_fraud_country_mismatch_description">The country of the IBAN on the document is different from the sender’s country.</string>
     <string name="gc_fraud_combined_mismatch_title">Different IBANs and countries found on this document</string>
     <string name="gc_fraud_combined_mismatch_description">The IBAN in the QR code is different from the printed one. The IBAN country also doesn’t match the sender’s country.</string>
     <string name="gc_fraud_protection_title">How do I protect myself?</string>
-    <string name="gc_fraud_protection_body">Documents are sometimes altered to redirect payments. If in doubt, ask the sender which IBAN is correct, using contact details you already know.</string>
+    <string name="gc_fraud_protection_body">Documents are sometimes changed to redirect payments. If you’re unsure which IBAN is right, ask the sender using contact details you already know.</string>
     <string name="gc_fraud_sender_label">Sender</string>
     <string name="gc_fraud_detected_ibans_title">The following IBANs were detected</string>
     <string name="gc_fraud_qr_iban_label">In the QR code</string>
     <string name="gc_fraud_printed_iban_label">Printed on the document</string>
     <string name="gc_fraud_document_iban_label">On the document</string>
-    <string name="gc_fraud_select_iban_title">Select an IBAN to continue</string>
+    <string name="gc_fraud_select_iban_title">To continue, select one of the IBANs</string>
     <string name="gc_fraud_select_iban_error">Select an IBAN to continue</string>
     <string name="gc_fraud_select_iban_footnote">You can still check the IBAN on the next screen.</string>
     <!--   endregion Fraud warnings -->
