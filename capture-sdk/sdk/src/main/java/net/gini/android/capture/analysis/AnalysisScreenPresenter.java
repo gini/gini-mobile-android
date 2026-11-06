@@ -356,12 +356,13 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                                     proceedSuccessNoExtractions();
                                 } else if (isCxEmptyExtractions(resultHolder)) {
                                     proceedSuccessNoExtractions();
-                                } else if (IBANMismatchDebug.getEnabled()) {
+                                } else if (IBANMismatchDebug.getCase() != null) {
                                     // Development switch: the IBAN mismatch warning goes ahead
                                     // of every other warning until it is driven by the result.
                                     successResultHolder = resultHolder;
                                     shouldClearImageCaches = false;
                                     extension.showIbanMismatchWarning(
+                                            IBANMismatchDebug.getCase(),
                                             mIsInvoiceSavingEnabled,
                                             isSavingInvoicesInProgress,
                                             successResultHolder,

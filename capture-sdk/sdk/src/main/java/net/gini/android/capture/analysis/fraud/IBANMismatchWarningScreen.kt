@@ -273,7 +273,7 @@ private fun IBANMismatchCountryPreview() {
 @GiniScreenPreviewSizes
 @Composable
 private fun IBANMismatchCombinedPreview() {
-    IBANMismatchContentPreview(IBANMismatchDebug.sampleArgs())
+    IBANMismatchContentPreview(IBANMismatchDebug.sampleArgs(IBANMismatchDebug.Case.COMBINED))
 }
 
 @Preview(
@@ -284,7 +284,7 @@ private fun IBANMismatchCombinedPreview() {
 @Composable
 private fun IBANMismatchCombinedBothHintsPreview() {
     IBANMismatchContentPreview(
-        args = IBANMismatchDebug.sampleArgs().copy(
+        args = IBANMismatchDebug.sampleArgs(IBANMismatchDebug.Case.COMBINED).copy(
             printedIban = "AT611904300234573201",
             printedIbanHint = "From Austria, not the sender's country",
         ),

@@ -796,8 +796,17 @@ public abstract interface class net/gini/android/capture/analysis/education/Educ
 public final class net/gini/android/capture/analysis/fraud/IBANMismatchDebug {
 	public static final field $stable I
 	public static final field INSTANCE Lnet/gini/android/capture/analysis/fraud/IBANMismatchDebug;
-	public static final fun getEnabled ()Z
-	public static final fun setEnabled (Z)V
+	public static final fun getCase ()Lnet/gini/android/capture/analysis/fraud/IBANMismatchDebug$Case;
+	public static final fun setCase (Lnet/gini/android/capture/analysis/fraud/IBANMismatchDebug$Case;)V
+}
+
+public final class net/gini/android/capture/analysis/fraud/IBANMismatchDebug$Case : java/lang/Enum {
+	public static final field COMBINED Lnet/gini/android/capture/analysis/fraud/IBANMismatchDebug$Case;
+	public static final field COUNTRY Lnet/gini/android/capture/analysis/fraud/IBANMismatchDebug$Case;
+	public static final field QR_VS_PRINTED Lnet/gini/android/capture/analysis/fraud/IBANMismatchDebug$Case;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lnet/gini/android/capture/analysis/fraud/IBANMismatchDebug$Case;
+	public static fun values ()[Lnet/gini/android/capture/analysis/fraud/IBANMismatchDebug$Case;
 }
 
 public abstract interface class net/gini/android/capture/analysis/transactiondoc/AttachedToTransactionDocumentProvider {

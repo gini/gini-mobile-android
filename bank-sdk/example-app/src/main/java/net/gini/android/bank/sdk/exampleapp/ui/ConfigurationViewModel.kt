@@ -120,7 +120,7 @@ class ConfigurationViewModel @Inject constructor(
             configureLogging()
         }
 
-        applyIbanMismatchDebugSwitch(configuration.isIbanMismatchDebugEnabled)
+        applyIbanMismatchDebugCase(configuration.ibanMismatchDebugCase)
     }
 
     private fun buildBaseCaptureConfiguration(configuration: ExampleAppBankConfiguration): CaptureConfiguration {
@@ -338,13 +338,13 @@ class ConfigurationViewModel @Inject constructor(
     }
 
     /**
-     * Development switch: show the IBAN mismatch warning after every successful analysis.
-     * The switch is restricted to Gini's own modules; the example app is one of them, but it
-     * lives in a different Gradle group, so Lint has to be told.
+     * Development switch: show the IBAN mismatch warning for [case] after every successful
+     * analysis, or none when `null`. The switch is restricted to Gini's own modules; the example
+     * app is one of them, but it lives in a different Gradle group, so Lint has to be told.
      */
     @SuppressLint("RestrictedApi")
-    private fun applyIbanMismatchDebugSwitch(enabled: Boolean) {
-        IBANMismatchDebug.enabled = enabled
+    private fun applyIbanMismatchDebugCase(case: IBANMismatchDebug.Case?) {
+        IBANMismatchDebug.case = case
     }
 
     private fun configureLogging() {

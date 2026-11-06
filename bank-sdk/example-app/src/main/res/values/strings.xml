@@ -119,6 +119,10 @@
     <string name="file_import_feature_is_disabled_dialog_message">`File import` feature is currently disabled. If you want to test this, please enable it in Gini configuration.</string>
     <string name="debug_mode_switch_label">Debug mode</string>
     <string name="iban_mismatch_debug_switch_label">IBAN mismatch warning (development)</string>
+    <string name="iban_mismatch_debug_off_button_label">Off</string>
+    <string name="iban_mismatch_debug_qr_vs_printed_button_label">QR vs printed</string>
+    <string name="iban_mismatch_debug_country_button_label">Country</string>
+    <string name="iban_mismatch_debug_combined_button_label">Both</string>
     <string name="allow_screenshots_label">Allow screenshots</string>
 
     <string name="recipient_hint">recipient</string>

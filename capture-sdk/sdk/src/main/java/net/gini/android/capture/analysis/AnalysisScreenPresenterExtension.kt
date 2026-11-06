@@ -214,10 +214,11 @@ internal class AnalysisScreenPresenterExtension(
      * runs the same steps as the already-paid warning's "Proceed anyway" CTA and hands the
      * extractions on unchanged.
      *
-     * The warning is shown with [IBANMismatchDebug.sampleArgs] while the fraud signals are not
-     * read from the analysis result yet.
+     * The warning is shown with [IBANMismatchDebug.sampleArgs] for [case] while the fraud
+     * signals are not read from the analysis result yet.
      */
     fun showIbanMismatchWarning(
+        case: IBANMismatchDebug.Case,
         mIsInvoiceSavingEnabled: Boolean,
         isSavingInvoicesInProgress: Boolean,
         resultHolder: ResultHolder,
@@ -232,7 +233,7 @@ internal class AnalysisScreenPresenterExtension(
             )
         } else {
             doWhenEducationFinished {
-                view.showIbanMismatch(IBANMismatchDebug.sampleArgs()) {
+                view.showIbanMismatch(IBANMismatchDebug.sampleArgs(case)) {
                     handleSaveInvoicesLocally(
                         mIsInvoiceSavingEnabled,
                         false,
