@@ -48,8 +48,9 @@ In:
 Out (later tickets):
 
 - Reading `QR_PRINTED_IBAN_MISMATCH` / `IBAN_COUNTRY_MISMATCH` from the analysis result
-  (PP-3965) and building `IBANMismatchArgs` from it — the hints ("From Poland, not the sender's
-  country") and the sender line are display strings resolved by that ticket.
+  (PP-3965) and building `IBANMismatchArgs` from it. The sentences are resolved here from
+  placeholder strings (`gc_fraud_iban_country_hint`, `gc_fraud_sender_with_country`); that
+  ticket supplies only the values — sender name, and the countries as localised display names.
 - Writing the chosen IBAN into the extractions (PP-3966 keeps the behaviour; the screen is here).
 - Public documentation (PP-3968) and UI automation (PP-3970).
 
@@ -176,6 +177,12 @@ at block boundaries and screen readers read them in chunks.
   see "Before merge" below.
 - `IBANMismatchArgs` is a plain `internal` data class, not `@Parcelize`: nothing persists it, and
   Parcelize would publish a `$Creator` class. The same applies to `IBANSelectionArgs`.
+- The args carry values, not sentences: `senderName`, `senderCountry`, `qrIbanCountry`,
+  `printedIbanCountry`. The screens build "From Poland, not the sender's country" and
+  "Elektro Brandt GmbH · Germany" from `gc_fraud_iban_country_hint` and
+  `gc_fraud_sender_with_country` (the latter `translatable="false"`, overridable all the same),
+  so banks can reword them and the business logic never formats UI text. The development
+  switch derives its sample countries with `Locale.getDisplayCountry`, the way PP-3965 should.
 - `hideIbanMismatch` is `internal` with `@JvmName`, like `showIbanMismatch`.
 - `GiniHeaderBlock` defaults are neutral (placeholder background, accent tint); the warning passes
   the error tint. `GiniExpandableInfoRow` requires its icon.

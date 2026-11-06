@@ -138,14 +138,19 @@ private fun ibanMismatchContent(args: IBANMismatchArgs): IBANMismatchContent {
             IBANMismatchType.COMBINED -> R.string.gc_fraud_combined_mismatch_description
         }
     )
-    val sender = args.sender?.let {
-        GiniLabeledValueItem(label = stringResource(R.string.gc_fraud_sender_label), value = it)
+    val sender = args.senderName?.let { name ->
+        GiniLabeledValueItem(
+            label = stringResource(R.string.gc_fraud_sender_label),
+            value = args.senderCountry?.let { country ->
+                stringResource(R.string.gc_fraud_sender_with_country, name, country)
+            } ?: name,
+        )
     }
     val qrIban = args.qrIban?.let {
         GiniLabeledValueItem(
             label = stringResource(R.string.gc_fraud_qr_iban_label),
             value = formatIbanForDisplay(it),
-            hint = args.qrIbanHint,
+            hint = countryHint(args.qrIbanCountry),
             valueContentDescription = formatIbanForSpeech(it),
         )
     }
@@ -161,7 +166,7 @@ private fun ibanMismatchContent(args: IBANMismatchArgs): IBANMismatchContent {
             }
         ),
         value = formatIbanForDisplay(args.printedIban),
-        hint = args.printedIbanHint,
+        hint = countryHint(args.printedIbanCountry),
         valueContentDescription = formatIbanForSpeech(args.printedIban),
     )
     return IBANMismatchContent(
@@ -176,6 +181,11 @@ private fun ibanMismatchContent(args: IBANMismatchArgs): IBANMismatchContent {
         rows = listOfNotNull(sender.takeIf { countryOnly }, qrIban, printedIban),
     )
 }
+
+/** The red hint below an IBAN whose [country] differs from the sender's; `null` without one. */
+@Composable
+internal fun countryHint(country: String?): String? =
+    country?.let { stringResource(R.string.gc_fraud_iban_country_hint, it) }
 
 @Composable
 private fun IBANMismatchWarningContent(
@@ -286,8 +296,9 @@ private fun IBANMismatchCountryPreview() {
             type = IBANMismatchType.COUNTRY,
             qrIban = null,
             printedIban = "PL12100001110100100012345678",
-            sender = "Elektro Brandt GmbH · Germany",
-            printedIbanHint = "From Poland, not the sender's country",
+            senderName = "Elektro Brandt GmbH",
+            senderCountry = "Germany",
+            printedIbanCountry = "Poland",
         )
     )
 }
@@ -309,7 +320,7 @@ private fun IBANMismatchCombinedBothHintsPreview() {
     IBANMismatchContentPreview(
         args = IBANMismatchDebug.sampleArgs(IBANMismatchDebug.Case.COMBINED).copy(
             printedIban = "AT611904300234573201",
-            printedIbanHint = "From Austria, not the sender's country",
+            printedIbanCountry = "Austria",
         ),
         protectionExpanded = true,
     )

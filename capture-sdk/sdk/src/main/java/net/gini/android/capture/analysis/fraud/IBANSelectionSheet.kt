@@ -157,7 +157,7 @@ private fun ibanSelectionOptions(args: IBANSelectionArgs): List<IBANSelectionOpt
         item = GiniLabeledValueItem(
             label = stringResource(R.string.gc_fraud_qr_iban_label),
             value = formatIbanForDisplay(args.qrIban),
-            hint = args.qrIbanHint,
+            hint = countryHint(args.qrIbanCountry),
             valueContentDescription = formatIbanForSpeech(args.qrIban),
         ),
     ),
@@ -166,7 +166,7 @@ private fun ibanSelectionOptions(args: IBANSelectionArgs): List<IBANSelectionOpt
         item = GiniLabeledValueItem(
             label = stringResource(R.string.gc_fraud_printed_iban_label),
             value = formatIbanForDisplay(args.printedIban),
-            hint = args.printedIbanHint,
+            hint = countryHint(args.printedIbanCountry),
             valueContentDescription = formatIbanForSpeech(args.printedIban),
         ),
     ),
@@ -320,7 +320,7 @@ private fun IBANSelectionCombinedSelectedPreview() {
         args = IBANSelectionArgs(
             qrIban = PREVIEW_QR_IBAN,
             printedIban = PREVIEW_PRINTED_IBAN,
-            qrIbanHint = "From Poland, not the sender's country",
+            qrIbanCountry = "Poland",
         ),
         selectedIban = PREVIEW_QR_IBAN,
     )
@@ -333,7 +333,7 @@ private fun IBANSelectionCombinedErrorPreview() {
         args = IBANSelectionArgs(
             qrIban = PREVIEW_QR_IBAN,
             printedIban = PREVIEW_PRINTED_IBAN,
-            qrIbanHint = "From Poland, not the sender's country",
+            qrIbanCountry = "Poland",
         ),
         showError = true,
     )

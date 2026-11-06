@@ -221,6 +221,8 @@
     <string name="gc_fraud_qr_iban_label">Im QR-Code</string>
     <string name="gc_fraud_printed_iban_label">Auf dem Dokument gedruckt</string>
     <string name="gc_fraud_document_iban_label">Auf dem Dokument</string>
+    <string name="gc_fraud_iban_country_hint">Aus %1$s, nicht aus dem Land des Absenders</string>
+    <string name="gc_fraud_sender_with_country" translatable="false">%1$s · %2$s</string>
     <string name="gc_fraud_select_iban_title">Wählen Sie eine IBAN aus, um fortzufahren</string>
     <string name="gc_fraud_select_iban_error">Wählen Sie eine IBAN, um fortzufahren</string>
     <string name="gc_fraud_select_iban_footnote">Sie können die IBAN im nächsten Schritt noch prüfen.</string>

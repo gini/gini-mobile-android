@@ -1,6 +1,7 @@
 package net.gini.android.capture.analysis.fraud
 
 import androidx.annotation.RestrictTo
+import java.util.Locale
 
 /**
  * Development switch for the IBAN mismatch warning, in the spirit of
@@ -38,21 +39,28 @@ object IBANMismatchDebug {
             type = IBANMismatchType.COUNTRY,
             qrIban = null,
             printedIban = SAMPLE_QR_IBAN,
-            sender = SAMPLE_SENDER,
-            printedIbanHint = SAMPLE_COUNTRY_HINT,
+            senderName = SAMPLE_SENDER_NAME,
+            senderCountry = displayCountry(SAMPLE_SENDER_COUNTRY_CODE),
+            printedIbanCountry = displayCountry(SAMPLE_QR_IBAN_COUNTRY_CODE),
         )
 
         Case.COMBINED -> IBANMismatchArgs(
             type = IBANMismatchType.COMBINED,
             qrIban = SAMPLE_QR_IBAN,
             printedIban = SAMPLE_PRINTED_IBAN,
-            sender = SAMPLE_SENDER,
-            qrIbanHint = SAMPLE_COUNTRY_HINT,
+            senderName = SAMPLE_SENDER_NAME,
+            senderCountry = displayCountry(SAMPLE_SENDER_COUNTRY_CODE),
+            qrIbanCountry = displayCountry(SAMPLE_QR_IBAN_COUNTRY_CODE),
         )
     }
 
+    /** The localised country name for an ISO 3166 code, as the fraud signals will provide it. */
+    private fun displayCountry(isoCode: String): String =
+        Locale.Builder().setRegion(isoCode).build().displayCountry
+
     private const val SAMPLE_QR_IBAN = "PL12100001110100100012345678"
+    private const val SAMPLE_QR_IBAN_COUNTRY_CODE = "PL"
     private const val SAMPLE_PRINTED_IBAN = "DE89370400440532013000"
-    private const val SAMPLE_SENDER = "Elektro Brandt GmbH · Germany"
-    private const val SAMPLE_COUNTRY_HINT = "From Poland, not the sender's country"
+    private const val SAMPLE_SENDER_NAME = "Elektro Brandt GmbH"
+    private const val SAMPLE_SENDER_COUNTRY_CODE = "DE"
 }

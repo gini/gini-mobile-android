@@ -7,14 +7,15 @@ package net.gini.android.capture.analysis.fraud
  *
  * @property qrIban the IBAN read from the payment QR code
  * @property printedIban the IBAN printed on the document
- * @property qrIbanHint explanation below the QR IBAN, e.g. "From Poland, not the sender's country"
- * @property printedIbanHint explanation below the printed IBAN
+ * @property qrIbanCountry the QR IBAN's country when it differs from the sender's; shown as the
+ * red hint below that IBAN
+ * @property printedIbanCountry the printed IBAN's country when it differs from the sender's
  */
 internal data class IBANSelectionArgs(
     val qrIban: String,
     val printedIban: String,
-    val qrIbanHint: String? = null,
-    val printedIbanHint: String? = null,
+    val qrIbanCountry: String? = null,
+    val printedIbanCountry: String? = null,
 )
 
 /**
@@ -28,7 +29,7 @@ internal fun IBANMismatchArgs.toSelectionArgs(): IBANSelectionArgs? =
             IBANSelectionArgs(
                 qrIban = qrIban,
                 printedIban = printedIban,
-                qrIbanHint = qrIbanHint,
-                printedIbanHint = printedIbanHint,
+                qrIbanCountry = qrIbanCountry,
+                printedIbanCountry = printedIbanCountry,
             )
         }
