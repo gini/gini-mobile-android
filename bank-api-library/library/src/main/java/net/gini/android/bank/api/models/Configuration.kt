@@ -22,4 +22,8 @@ data class Configuration(
      */
     val ingredientBrandScreens: List<String> = emptyList(),
     val isWeroQRCodeScanningEnabled: Boolean = false,
+    /**
+     * Whether the backend delivers the `fraudSignals` compound extraction to this client.
+     */
+    val isFraudSignalsEnabled: Boolean = false,
 )

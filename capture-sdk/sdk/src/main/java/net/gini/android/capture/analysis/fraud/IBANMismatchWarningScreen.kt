@@ -38,6 +38,7 @@ import net.gini.android.capture.ui.components.sheet.GiniBottomSheetScaffold
 import net.gini.android.capture.ui.compose.GiniScreenPreviewSizes
 import net.gini.android.capture.ui.compose.GiniScreenPreviewUiModes
 import net.gini.android.capture.ui.theme.GiniTheme
+import java.util.Locale
 
 /**
  * The IBAN mismatch warning: a non-dismissable sheet over the Analysis screen that explains
@@ -115,32 +116,32 @@ private fun ibanMismatchContent(args: IBANMismatchArgs): IBANMismatchContent {
             IBANMismatchType.COMBINED -> R.string.gc_fraud_combined_mismatch_description
         }
     )
-    val sender = args.sender?.let {
-        GiniLabeledValueItem(label = stringResource(R.string.gc_fraud_sender_label), value = it)
+    // Country names follow the language of the SDK's strings, not the device, so the hint never
+    // mixes two languages.
+    val countryLocale = Locale.forLanguageTag(stringResource(R.string.gc_fraud_country_name_locale))
+    val sender = args.senderCountryCode?.let { countryCode ->
+        val country = countryDisplayName(countryCode, countryLocale)
+        GiniLabeledValueItem(
+            label = stringResource(R.string.gc_fraud_sender_label),
+            value = args.senderName?.let {
+                stringResource(R.string.gc_fraud_sender_value, it, country)
+            } ?: country,
+        )
     }
     val qrIban = args.qrIban?.let {
-        GiniLabeledValueItem(
-            label = stringResource(R.string.gc_fraud_qr_iban_label),
-            value = formatIbanForDisplay(it),
-            hint = args.qrIbanHint,
-            valueContentDescription = formatIbanForSpeech(it),
-        )
+        ibanRow(stringResource(R.string.gc_fraud_qr_iban_label), it, countryLocale)
     }
     // The layout follows the type alone, so an inconsistent args instance cannot mix the
     // title of one case with the layout of another.
     val countryOnly = args.type == IBANMismatchType.COUNTRY
-    val printedIban = GiniLabeledValueItem(
-        label = stringResource(
-            if (countryOnly) {
-                R.string.gc_fraud_document_iban_label
-            } else {
-                R.string.gc_fraud_printed_iban_label
-            }
-        ),
-        value = formatIbanForDisplay(args.printedIban),
-        hint = args.printedIbanHint,
-        valueContentDescription = formatIbanForSpeech(args.printedIban),
+    val printedLabel = stringResource(
+        if (countryOnly) {
+            R.string.gc_fraud_document_iban_label
+        } else {
+            R.string.gc_fraud_printed_iban_label
+        }
     )
+    val printedIbans = args.printedIbans.map { ibanRow(printedLabel, it, countryLocale) }
     return IBANMismatchContent(
         title = title,
         description = description,
@@ -150,9 +151,23 @@ private fun ibanMismatchContent(args: IBANMismatchArgs): IBANMismatchContent {
         } else {
             stringResource(R.string.gc_fraud_detected_ibans_title)
         },
-        rows = listOfNotNull(sender.takeIf { countryOnly }, qrIban, printedIban),
+        rows = listOfNotNull(sender.takeIf { countryOnly }, qrIban) + printedIbans,
     )
 }
+
+@Composable
+private fun ibanRow(
+    label: String,
+    iban: IBANMismatchIban,
+    countryLocale: Locale,
+) = GiniLabeledValueItem(
+    label = label,
+    value = formatIbanForDisplay(iban.iban),
+    hint = iban.hintCountryCode?.let {
+        stringResource(R.string.gc_fraud_iban_country_hint, countryDisplayName(it, countryLocale))
+    },
+    valueContentDescription = formatIbanForSpeech(iban.iban),
+)
 
 @Composable
 private fun IBANMismatchWarningContent(
@@ -248,8 +263,8 @@ private fun IBANMismatchQrVsPrintedPreview() {
     IBANMismatchContentPreview(
         IBANMismatchArgs(
             type = IBANMismatchType.QR_VS_PRINTED,
-            qrIban = "PL12100001110100100012345678",
-            printedIban = "DE89370400440532013000",
+            qrIban = IBANMismatchIban("PL12100001110100100012345678"),
+            printedIbans = listOf(IBANMismatchIban("DE89370400440532013000")),
         )
     )
 }
@@ -262,9 +277,11 @@ private fun IBANMismatchCountryPreview() {
         IBANMismatchArgs(
             type = IBANMismatchType.COUNTRY,
             qrIban = null,
-            printedIban = "PL12100001110100100012345678",
-            sender = "Elektro Brandt GmbH · Germany",
-            printedIbanHint = "From Poland, not the sender's country",
+            printedIbans = listOf(
+                IBANMismatchIban("PL12100001110100100012345678", hintCountryCode = "PL")
+            ),
+            senderName = "Elektro Brandt GmbH",
+            senderCountryCode = "DE",
         )
     )
 }
@@ -273,24 +290,32 @@ private fun IBANMismatchCountryPreview() {
 @GiniScreenPreviewSizes
 @Composable
 private fun IBANMismatchCombinedPreview() {
-    IBANMismatchContentPreview(IBANMismatchDebug.sampleArgs())
+    IBANMismatchContentPreview(combinedPreviewArgs)
 }
 
 @Preview(
-    name = "Combined, both hints, expanded",
+    name = "Combined, two printed IBANs, expanded",
     uiMode = Configuration.UI_MODE_NIGHT_NO,
     showBackground = true,
 )
 @Composable
-private fun IBANMismatchCombinedBothHintsPreview() {
+private fun IBANMismatchCombinedTwoPrintedPreview() {
     IBANMismatchContentPreview(
-        args = IBANMismatchDebug.sampleArgs().copy(
-            printedIban = "AT611904300234573201",
-            printedIbanHint = "From Austria, not the sender's country",
+        args = combinedPreviewArgs.copy(
+            printedIbans = combinedPreviewArgs.printedIbans +
+                IBANMismatchIban("AT611904300234573201", hintCountryCode = "AT"),
         ),
         protectionExpanded = true,
     )
 }
+
+private val combinedPreviewArgs = IBANMismatchArgs(
+    type = IBANMismatchType.COMBINED,
+    qrIban = IBANMismatchIban("PL12100001110100100012345678", hintCountryCode = "PL"),
+    printedIbans = listOf(IBANMismatchIban("DE89370400440532013000")),
+    senderName = "Elektro Brandt GmbH",
+    senderCountryCode = "DE",
+)
 
 @Composable
 private fun IBANMismatchContentPreview(

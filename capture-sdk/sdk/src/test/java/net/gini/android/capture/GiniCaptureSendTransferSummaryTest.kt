@@ -157,6 +157,18 @@ class GiniCaptureSendTransferSummaryTest {
         assertThat(compoundSlot.captured.containsKey("crossBorderPayment")).isFalse()
     }
 
+    @Test
+    fun `SEPA - fraudSignals are not sent as feedback`() {
+        buildGiniCaptureWith(ProductTag.SepaExtractions)
+        storeCompoundExtractionsWithFraudSignals()
+        val compoundSlot = slot<Map<String, GiniCaptureCompoundExtraction>>()
+        every { mockNetworkService.sendFeedback(any(), capture(compoundSlot), any()) } just Runs
+
+        GiniCapture.sendTransferSummary(mapOf("iban" to "DE89370400440532013000"))
+
+        assertThat(compoundSlot.captured.keys).containsExactly("lineItems")
+    }
+
     // endregion
 
     // region no-op guard
@@ -193,6 +205,35 @@ class GiniCaptureSendTransferSummaryTest {
 
         assertThat(specificSlot.captured["iban"]?.value).isEqualTo("DE89370400440532013000")
         assertThat(specificSlot.captured["paymentRecipient"]?.value).isEqualTo("Acme GmbH")
+    }
+
+    @Test
+    fun `typed SEPA overload does not send fraudSignals as feedback`() {
+        buildGiniCaptureWith(ProductTag.SepaExtractions)
+        storeCompoundExtractionsWithFraudSignals()
+        val compoundSlot = slot<Map<String, GiniCaptureCompoundExtraction>>()
+        every { mockNetworkService.sendFeedback(any(), capture(compoundSlot), any()) } just Runs
+
+        GiniCapture.sendTransferSummary(
+            "Acme GmbH",
+            "REF-002",
+            "Invoice April",
+            "BE68539007547034",
+            "GEBABEBB",
+            Amount(java.math.BigDecimal("120.00"), AmountCurrency.EUR),
+            null
+        )
+
+        assertThat(compoundSlot.captured.keys).containsExactly("lineItems")
+    }
+
+    private fun storeCompoundExtractionsWithFraudSignals() {
+        GiniCapture.getInstance().internal().setUpdatedCompoundExtractions(
+            hashMapOf(
+                "fraudSignals" to GiniCaptureCompoundExtraction("fraudSignals", emptyList()),
+                "lineItems" to GiniCaptureCompoundExtraction("lineItems", emptyList()),
+            )
+        )
     }
 
     // endregion
