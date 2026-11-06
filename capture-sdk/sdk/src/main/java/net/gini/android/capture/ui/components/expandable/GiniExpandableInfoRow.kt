@@ -113,15 +113,15 @@ fun GiniExpandableInfoRow(
             modifier = Modifier
                 .size(CHEVRON_SIZE)
                 .rotate(chevronRotation),
-            painter = painterResource(R.drawable.gc_chevron_right_icon),
+            painter = painterResource(R.drawable.gc_chevron_down),
             contentDescription = null,
             tint = colors.chevronTint,
         )
     }
 }
 
-private const val CHEVRON_ROTATION_COLLAPSED = 90f
-private const val CHEVRON_ROTATION_EXPANDED = -90f
+private const val CHEVRON_ROTATION_COLLAPSED = 0f
+private const val CHEVRON_ROTATION_EXPANDED = 180f
 private val CORNER_RADIUS = 12.dp
 private val CONTENT_PADDING = 12.dp
 private val ICON_SIZE = 24.dp

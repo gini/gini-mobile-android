@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Chevron pointing down (Figma "How do I protect myself?" row); rotated 180° when the row is expanded. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="14dp"
+    android:height="8dp"
+    android:viewportWidth="14"
+    android:viewportHeight="8">
+  <path
+      android:pathData="M7,8C7.202,8 7.387,7.918 7.532,7.763L13.79,1.284C13.927,1.137 14,0.957 14,0.744C14,0.327 13.686,0 13.266,0C13.064,0 12.879,0.082 12.742,0.213L7,6.168L1.258,0.213C1.121,0.082 0.944,0 0.734,0C0.315,0 0,0.327 0,0.744C0,0.957 0.073,1.137 0.218,1.284L6.468,7.763C6.621,7.918 6.798,8 7,8Z"
+      android:fillColor="#161616"/>
+</vector>
