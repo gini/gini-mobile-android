@@ -8,9 +8,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
@@ -109,8 +111,14 @@ fun GiniExpandableInfoRow(
                 )
             }
         }
+        // Same height as the leading icon, so the chevron stays level with it while the row's
+        // content is top-aligned for the expanded body. The design keeps 16 dp between the title
+        // and the chevron, 4 dp more than between the icon and the title.
         Icon(
             modifier = Modifier
+                .padding(start = CHEVRON_EXTRA_SPACING)
+                .height(ICON_SIZE)
+                .wrapContentHeight(Alignment.CenterVertically)
                 .size(CHEVRON_SIZE)
                 .rotate(chevronRotation),
             painter = painterResource(R.drawable.gc_chevron_down),
@@ -127,6 +135,7 @@ private val CONTENT_PADDING = 12.dp
 private val ICON_SIZE = 24.dp
 private val CHEVRON_SIZE = 16.dp
 private val ICON_TEXT_SPACING = 12.dp
+private val CHEVRON_EXTRA_SPACING = 4.dp
 private val TITLE_BODY_SPACING = 4.dp
 private val MIN_TOUCH_TARGET = 48.dp
 
