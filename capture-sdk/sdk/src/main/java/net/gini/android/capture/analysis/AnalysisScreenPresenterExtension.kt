@@ -17,7 +17,6 @@ import net.gini.android.capture.analysis.AnalysisInteractor.ResultHolder
 import net.gini.android.capture.analysis.AnalysisScreenContract.View
 import net.gini.android.capture.analysis.fraud.IBANMismatchArgs
 import net.gini.android.capture.analysis.fraud.IBANMismatchArgsMapper
-import net.gini.android.capture.analysis.fraud.IBANMismatchDebug
 import net.gini.android.capture.analysis.transactiondoc.AttachedToTransactionDocumentProvider
 import net.gini.android.capture.analysis.warning.WarningType
 import net.gini.android.capture.di.getGiniCaptureKoin
@@ -219,21 +218,13 @@ internal class AnalysisScreenPresenterExtension(
      * `null` when no warning should be shown.
      *
      * [analysisResult] must be the holder as the analysis delivered it: the one forwarded to the
-     * integrator has `fraudSignals` stripped. While [IBANMismatchDebug.enabled] the signals and
-     * printed IBANs come from the debug samples instead.
+     * integrator has `fraudSignals` stripped.
      */
-    fun ibanMismatchArgs(analysisResult: ResultHolder): IBANMismatchArgs? {
-        val compoundExtractions = getMapOrEmpty(analysisResult.compoundExtractions)
-        val extractions = getMapOrEmpty(analysisResult.extractions)
-        return if (IBANMismatchDebug.enabled) {
-            IBANMismatchArgsMapper.map(
-                IBANMismatchDebug.parser.parse(IBANMismatchDebug.withSampleSignals(compoundExtractions)),
-                IBANMismatchDebug.withSamplePrintedIbans(extractions),
-            )
-        } else {
-            IBANMismatchArgsMapper.map(fraudSignalsParser.parse(compoundExtractions), extractions)
-        }
-    }
+    fun ibanMismatchArgs(analysisResult: ResultHolder): IBANMismatchArgs? =
+        IBANMismatchArgsMapper.map(
+            fraudSignalsParser.parse(getMapOrEmpty(analysisResult.compoundExtractions)),
+            getMapOrEmpty(analysisResult.extractions),
+        )
 
     /**
      * Shows the IBAN mismatch warning with [args] once the education animation is done.
@@ -256,7 +247,9 @@ internal class AnalysisScreenPresenterExtension(
             )
         } else {
             doWhenEducationFinished {
-                view.showIbanMismatch(args) {
+                // The chosen IBAN (null when the warning offered no choice) is not written into
+                // the extractions yet: that is PP-3966.
+                view.showIbanMismatch(args) { _: String? ->
                     handleSaveInvoicesLocally(
                         mIsInvoiceSavingEnabled,
                         false,

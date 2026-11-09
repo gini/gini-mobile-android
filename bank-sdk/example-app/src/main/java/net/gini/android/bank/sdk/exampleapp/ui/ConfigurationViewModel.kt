@@ -1,6 +1,5 @@
 package net.gini.android.bank.sdk.exampleapp.ui
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.ViewModel
@@ -29,7 +28,6 @@ import net.gini.android.bank.sdk.exampleapp.ui.composables.CustomGiniComposableS
 import net.gini.android.bank.sdk.exampleapp.ui.data.ExampleAppBankConfiguration
 import net.gini.android.bank.sdk.exampleapp.ui.data.ExampleRuntimeColorsProvider
 import net.gini.android.capture.GiniCaptureDebug
-import net.gini.android.capture.analysis.fraud.IBANMismatchDebug
 import net.gini.android.capture.help.HelpItem
 import net.gini.android.capture.internal.util.FileImportValidator
 import net.gini.android.capture.logging.ErrorLog
@@ -119,8 +117,6 @@ class ConfigurationViewModel @Inject constructor(
             GiniCaptureDebug.enable()
             configureLogging()
         }
-
-        applyIbanMismatchDebugSwitch(configuration.isIbanMismatchDebugEnabled)
     }
 
     private fun buildBaseCaptureConfiguration(configuration: ExampleAppBankConfiguration): CaptureConfiguration {
@@ -335,16 +331,6 @@ class ConfigurationViewModel @Inject constructor(
         override fun handleErrorLog(errorLog: ErrorLog) {
             LOG.error("Custom error logger: {}", errorLog.toString())
         }
-    }
-
-    /**
-     * Development switch: show the IBAN mismatch warning after every successful analysis.
-     * The switch is restricted to Gini's own modules; the example app is one of them, but it
-     * lives in a different Gradle group, so Lint has to be told.
-     */
-    @SuppressLint("RestrictedApi")
-    private fun applyIbanMismatchDebugSwitch(enabled: Boolean) {
-        IBANMismatchDebug.enabled = enabled
     }
 
     private fun configureLogging() {

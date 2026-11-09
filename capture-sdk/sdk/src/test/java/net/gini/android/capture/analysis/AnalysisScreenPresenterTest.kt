@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.os.Looper
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.core.util.Consumer
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.anyOrNull
@@ -42,7 +43,6 @@ import net.gini.android.capture.GiniCaptureHelper
 import net.gini.android.capture.ProductTag
 import net.gini.android.capture.analysis.AnalysisScreenPresenter.CROSS_BORDER_PAYMENT_KEY
 import net.gini.android.capture.analysis.fraud.IBANMismatchArgs
-import net.gini.android.capture.analysis.fraud.IBANMismatchDebug
 import net.gini.android.capture.analysis.fraud.IBANMismatchIban
 import net.gini.android.capture.analysis.fraud.IBANMismatchType
 import net.gini.android.capture.analysis.warning.WarningType
@@ -1667,13 +1667,13 @@ class AnalysisScreenPresenterTest {
         configurationProvider.update { it.copy(isFraudSignalsEnabled = true) }
         val extractions = ibanWithCandidates(QR_IBAN, PRINTED_IBAN)
         val listener = startPresenterForDueHint(extractions, qrMismatchCompounds())
-        val onProceedCaptor = argumentCaptor<Runnable>()
+        val onProceedCaptor = argumentCaptor<Consumer<String?>>()
         idleMainLooperUntil {
             verify(mView).showIbanMismatch(any(), onProceedCaptor.capture())
         }
 
-        // When the user taps "Proceed anyway"
-        onProceedCaptor.lastValue.run()
+        // When the user proceeds with an IBAN chosen on the selection sheet
+        onProceedCaptor.lastValue.accept(PRINTED_IBAN)
 
         // Then
         assertForwardedWithoutFraudSignals(listener, extractions)
@@ -1727,26 +1727,6 @@ class AnalysisScreenPresenterTest {
         // Then
         idleMainLooperUntil {
             verify(mView).showIbanMismatch(any(), any())
-        }
-    }
-
-    @Test
-    fun `development switch shows the warning built from the sample signals`() {
-        // Given the flag off and no fraud signals in the result
-        IBANMismatchDebug.enabled = true
-        try {
-            // When
-            val listener = startPresenterForDueHint(mapOf("iban" to specificExtraction("iban", PRINTED_IBAN)))
-
-            // Then
-            val argsCaptor = argumentCaptor<IBANMismatchArgs>()
-            idleMainLooperUntil {
-                verify(mView).showIbanMismatch(argsCaptor.capture(), any())
-            }
-            Truth.assertThat(argsCaptor.lastValue.type).isEqualTo(IBANMismatchType.COMBINED)
-            verify(listener, never()).onExtractionsAvailable(any(), any(), any())
-        } finally {
-            IBANMismatchDebug.enabled = false
         }
     }
 

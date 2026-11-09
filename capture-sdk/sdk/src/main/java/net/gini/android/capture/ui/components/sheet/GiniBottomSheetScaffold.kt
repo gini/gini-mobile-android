@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
@@ -35,22 +34,19 @@ import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.ui.theme.modifier.tabletMaxWidth
 
 /**
- * A full-height modal bottom sheet in the Gini style: it fills the window below the status bar,
- * is full width on phones and tablets, and keeps its [content] column at the tablet reading
- * width. The [footer] sits at the bottom of the sheet while the content fits and scrolls away
- * with the content once it does not.
+ * A full-height, non-dismissable modal bottom sheet in the Gini style for screens the user must
+ * answer, such as the fraud warnings: it fills the window below the status bar, is full width
+ * on phones and tablets, and keeps its [content] column at the tablet reading width. The
+ * [footer] sits at the bottom of the sheet while the content fits and scrolls away with the
+ * content once it does not.
  *
- * With [dismissable] `false` the sheet refuses every dismissal path: the back button, the back
- * gesture, taps on the scrim and swipes. Nothing calls [onDismissRequest] then; the host removes
- * the composable when the user has chosen one of the sheet's own actions. With [dismissable]
- * `true` the sheet behaves like a regular modal sheet and shows a drag handle.
+ * The sheet refuses every dismissal path: the back button, the back gesture, taps on the scrim
+ * and swipes. It shows no drag handle. The host removes the composable when the user has chosen
+ * one of the sheet's own actions.
  *
  * Another [ModalBottomSheet] composed inside [content] opens its own window on top of this one.
  *
- * @param onDismissRequest called when the user dismisses a dismissable sheet
  * @param modifier applied to the sheet surface
- * @param dismissable whether back, scrim tap and swipe close the sheet
- * @param showDragHandle whether the grabber is shown; defaults to [dismissable]
  * @param paneTitle announced by accessibility services when the sheet opens; falls back to the
  * generic Material 3 "Bottom Sheet" when `null`
  * @param colors colors of the sheet, see [GiniBottomSheetScaffoldColors.colors]
@@ -59,10 +55,7 @@ import net.gini.android.capture.ui.theme.modifier.tabletMaxWidth
  */
 @Composable
 fun GiniBottomSheetScaffold(
-    onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
-    dismissable: Boolean = true,
-    showDragHandle: Boolean = dismissable,
     paneTitle: String? = null,
     colors: GiniBottomSheetScaffoldColors = GiniBottomSheetScaffoldColors.colors(),
     footer: (@Composable ColumnScope.() -> Unit)? = null,
@@ -70,10 +63,11 @@ fun GiniBottomSheetScaffold(
 ) {
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
-        confirmValueChange = { target -> dismissable || target != SheetValue.Hidden },
+        confirmValueChange = { target -> target != SheetValue.Hidden },
     )
     ModalBottomSheet(
-        onDismissRequest = onDismissRequest,
+        // Never called: every dismissal path is disabled below.
+        onDismissRequest = {},
         modifier = modifier
             .statusBarsPadding()
             .then(
@@ -85,20 +79,15 @@ fun GiniBottomSheetScaffold(
             ),
         sheetState = sheetState,
         sheetMaxWidth = Dp.Unspecified,
-        sheetGesturesEnabled = dismissable,
-        dragHandle = if (showDragHandle) {
-            { BottomSheetDefaults.DragHandle(color = colors.dragHandleColor) }
-        } else {
-            null
-        },
+        sheetGesturesEnabled = false,
+        dragHandle = null,
         properties = ModalBottomSheetProperties(
-            shouldDismissOnBackPress = dismissable,
-            shouldDismissOnClickOutside = dismissable,
+            shouldDismissOnBackPress = false,
+            shouldDismissOnClickOutside = false,
         ),
         containerColor = colors.containerColor,
     ) {
         GiniBottomSheetScaffoldBody(
-            topPadding = if (showDragHandle) 0.dp else SHEET_TOP_PADDING,
             footer = footer,
             content = content,
         )
@@ -111,7 +100,6 @@ fun GiniBottomSheetScaffold(
  */
 @Composable
 private fun GiniBottomSheetScaffoldBody(
-    topPadding: Dp,
     footer: (@Composable ColumnScope.() -> Unit)?,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -133,7 +121,7 @@ private fun GiniBottomSheetScaffoldBody(
                     .padding(
                         start = SHEET_HORIZONTAL_PADDING,
                         end = SHEET_HORIZONTAL_PADDING,
-                        top = topPadding,
+                        top = SHEET_TOP_PADDING,
                     ),
                 content = content,
             )
@@ -167,7 +155,6 @@ private fun GiniBottomSheetScaffoldBodyPreview() {
         Surface(color = GiniTheme.colorScheme.dialogs.container) {
             Column(modifier = Modifier.width(360.dp)) {
                 GiniBottomSheetScaffoldBody(
-                    topPadding = SHEET_TOP_PADDING,
                     footer = {
                         Text(text = "Footer", color = GiniTheme.colorScheme.text.primary)
                     },

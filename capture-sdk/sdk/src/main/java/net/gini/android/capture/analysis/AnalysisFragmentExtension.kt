@@ -94,6 +94,8 @@ class AnalysisFragmentExtension {
     /**
      * Shows the IBAN mismatch warning over the Analysis screen. Both CTAs first remove the
      * composition, which closes the sheet's window, and only then run the presenter's action.
+     * [onProceed] receives the IBAN chosen on the selection sheet, or `null` when the warning
+     * offered no choice.
      *
      * Internal use only; `@JvmName` keeps the name unmangled so [AnalysisFragmentImpl] (Java)
      * can call it while [IBANMismatchArgs] stays `internal`.
@@ -101,7 +103,7 @@ class AnalysisFragmentExtension {
     @JvmName("showIbanMismatch")
     internal fun showIbanMismatch(
         args: IBANMismatchArgs,
-        onProceed: () -> Unit,
+        onProceed: (selectedIban: String?) -> Unit,
         onCancel: () -> Unit,
     ) {
         ibanMismatchView.visibility = View.VISIBLE
@@ -113,9 +115,9 @@ class AnalysisFragmentExtension {
                         hideIbanMismatch()
                         onCancel()
                     },
-                    onProceed = {
+                    onProceed = { selectedIban ->
                         hideIbanMismatch()
-                        onProceed()
+                        onProceed(selectedIban)
                     },
                     composableProviderConfig = GiniCapture.getInstance()
                         .giniComposableStyleProvider

@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -43,32 +44,42 @@ import java.util.Locale
 /**
  * The IBAN mismatch warning: a non-dismissable sheet over the Analysis screen that explains
  * which fraud signals were found and shows the IBANs involved. The user leaves it only through
- * "Cancel transfer" ([onCancel]) or "Proceed anyway" ([onProceed]); the host removes the
- * composable afterwards.
+ * "Cancel transfer" ([onCancel]) or "Proceed anyway"; the host removes the composable afterwards.
  *
- * The only state the screen owns is whether the "How do I protect myself?" row is expanded,
- * kept in `rememberSaveable` so it survives rotation.
+ * "Proceed anyway" opens the [IBANSelectionSheet] on top of the warning when there are IBANs
+ * to choose from (the QR-vs-printed and combined cases) and reports the choice through
+ * [onProceed]; dismissing the sheet returns to the warning. In the country-only case there is
+ * nothing to choose and [onProceed] is called at once with `null`.
+ *
+ * The state the screen owns, whether the "How do I protect myself?" row is expanded and
+ * whether the selection sheet is open, lives in `rememberSaveable` so it survives rotation.
  */
 @Composable
 internal fun IBANMismatchWarningScreen(
     args: IBANMismatchArgs,
     onCancel: () -> Unit,
-    onProceed: () -> Unit,
+    onProceed: (selectedIban: String?) -> Unit,
     composableProviderConfig: GiniComposableStyleProviderConfig?,
 ) {
     var protectionExpanded by rememberSaveable { mutableStateOf(false) }
+    var selectionOpen by rememberSaveable { mutableStateOf(false) }
     val content = ibanMismatchContent(args)
+    val selectionArgs = remember(args) { args.toSelectionArgs() }
 
     GiniBottomSheetScaffold(
-        onDismissRequest = {},
-        dismissable = false,
         paneTitle = content.title,
         footer = {
             GiniActionFooter(
                 primaryText = stringResource(R.string.gc_cancel_transfer),
                 onPrimaryClick = onCancel,
                 secondaryText = stringResource(R.string.gc_proceed_anyway),
-                onSecondaryClick = onProceed,
+                onSecondaryClick = {
+                    if (selectionArgs == null) {
+                        onProceed(null)
+                    } else {
+                        selectionOpen = true
+                    }
+                },
                 composableProviderConfig = composableProviderConfig,
             )
         },
@@ -78,6 +89,18 @@ internal fun IBANMismatchWarningScreen(
             protectionExpanded = protectionExpanded,
             onProtectionExpandedChange = { protectionExpanded = it },
         )
+        // A second ModalBottomSheet opens its own window on top of the warning's.
+        if (selectionOpen && selectionArgs != null) {
+            IBANSelectionSheet(
+                args = selectionArgs,
+                onDismiss = { selectionOpen = false },
+                onContinue = { selectedIban ->
+                    selectionOpen = false
+                    onProceed(selectedIban)
+                },
+                composableProviderConfig = composableProviderConfig,
+            )
+        }
     }
 }
 
@@ -116,20 +139,18 @@ private fun ibanMismatchContent(args: IBANMismatchArgs): IBANMismatchContent {
             IBANMismatchType.COMBINED -> R.string.gc_fraud_combined_mismatch_description
         }
     )
-    // Country names follow the language of the SDK's strings, not the device, so the hint never
-    // mixes two languages.
-    val countryLocale = Locale.forLanguageTag(stringResource(R.string.gc_fraud_country_name_locale))
+    val countryLocale = countryNameLocale()
     val sender = args.senderCountryCode?.let { countryCode ->
         val country = countryDisplayName(countryCode, countryLocale)
         GiniLabeledValueItem(
             label = stringResource(R.string.gc_fraud_sender_label),
             value = args.senderName?.let {
-                stringResource(R.string.gc_fraud_sender_value, it, country)
+                stringResource(R.string.gc_fraud_sender_with_country, it, country)
             } ?: country,
         )
     }
     val qrIban = args.qrIban?.let {
-        ibanRow(stringResource(R.string.gc_fraud_qr_iban_label), it, countryLocale)
+        ibanItem(stringResource(R.string.gc_fraud_qr_iban_label), it, countryLocale)
     }
     // The layout follows the type alone, so an inconsistent args instance cannot mix the
     // title of one case with the layout of another.
@@ -141,7 +162,7 @@ private fun ibanMismatchContent(args: IBANMismatchArgs): IBANMismatchContent {
             R.string.gc_fraud_printed_iban_label
         }
     )
-    val printedIbans = args.printedIbans.map { ibanRow(printedLabel, it, countryLocale) }
+    val printedIbans = args.printedIbans.map { ibanItem(printedLabel, it, countryLocale) }
     return IBANMismatchContent(
         title = title,
         description = description,
@@ -155,8 +176,20 @@ private fun ibanMismatchContent(args: IBANMismatchArgs): IBANMismatchContent {
     )
 }
 
+/**
+ * The locale of the country names in the hints and the sender line. Country names follow the
+ * language of the SDK's strings, not the device, so a sentence never mixes two languages.
+ */
 @Composable
-private fun ibanRow(
+internal fun countryNameLocale(): Locale =
+    Locale.forLanguageTag(stringResource(R.string.gc_fraud_country_name_locale))
+
+/**
+ * One IBAN row, shared with the [IBANSelectionSheet]: the formatted IBAN and, when its country
+ * differs from the sender's, the red country hint below it.
+ */
+@Composable
+internal fun ibanItem(
     label: String,
     iban: IBANMismatchIban,
     countryLocale: Locale,

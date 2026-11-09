@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.util.Consumer;
 import androidx.fragment.app.FragmentActivity;
 
 import net.gini.android.capture.BankSDKBridge;
@@ -372,10 +373,11 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     @Override
-    void showIbanMismatch(@NonNull final IBANMismatchArgs args, @NonNull final Runnable onProceed) {
+    void showIbanMismatch(@NonNull final IBANMismatchArgs args,
+                          @NonNull final Consumer<String> onProceed) {
         stopAndHideHints();
-        fragmentExtension.showIbanMismatch(args, () -> {
-            onProceed.run();
+        fragmentExtension.showIbanMismatch(args, selectedIban -> {
+            onProceed.accept(selectedIban);
             return Unit.INSTANCE;
         }, () -> {
             // Same steps as AnalysisFragment.cancelTransaction(), the warning sheets' cancel CTA.
