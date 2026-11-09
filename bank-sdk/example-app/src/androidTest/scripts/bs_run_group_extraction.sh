@@ -3,6 +3,9 @@ set -e
 #
 # Shard 3/6 — Extraction / review / results / product-tag tests (network extraction).
 #
+# NoResultsMockBackendTests (PP-3920) runs on the mock backend; its three QR tests need a real
+# QR code in front of the camera, so they always show as skipped on BrowserStack — expected.
+#
 # Usage:
 #   BS_USER="myuser" BS_KEY="mykey" ./bs_run_group_extraction.sh
 #
@@ -14,4 +17,5 @@ export BUILD_NAME="${BUILD_NAME:-group-extraction-$(date +%Y%m%d-%H%M%S)}"
   ExtractionScreenTests \
   ReviewScreenTests \
   NoResultsTests \
+  NoResultsMockBackendTests \
   ProductTagConfigurationTests
