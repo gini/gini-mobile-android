@@ -61,11 +61,11 @@ internal object IBANMismatchArgsMapper {
         extractions: Map<String, GiniCaptureSpecificExtraction>,
         qrIban: String,
     ): List<String> {
-        val qrKey = qrIban.normalized()
+        val qrKey = normalizeIban(qrIban)
         return extractions[IBAN_KEY]?.candidates.orEmpty()
             .mapNotNull { it.value?.trim()?.takeIf(String::isNotEmpty) }
-            .distinctBy { it.normalized() }
-            .filter { it.normalized() != qrKey }
+            .distinctBy(::normalizeIban)
+            .filter { normalizeIban(it) != qrKey }
     }
 
     private fun senderName(extractions: Map<String, GiniCaptureSpecificExtraction>): String? =
@@ -73,13 +73,14 @@ internal object IBANMismatchArgsMapper {
 
     /** Sets the hint when the IBAN's country is known and differs from [senderCountry]. */
     private fun String.toMismatchIban(senderCountry: String): IBANMismatchIban {
-        val ibanCountry = normalized().take(COUNTRY_CODE_LENGTH)
+        val ibanCountry = normalizeIban(this).take(COUNTRY_CODE_LENGTH)
             .takeIf { it.length == COUNTRY_CODE_LENGTH && it.all(Char::isLetter) }
         return IBANMismatchIban(
             iban = this,
             hintCountryCode = ibanCountry?.takeIf { it != senderCountry },
         )
     }
-
-    private fun String.normalized(): String = filterNot(Char::isWhitespace).uppercase()
 }
+
+/** [iban] without whitespace and upper-cased, the form in which IBANs are compared. */
+internal fun normalizeIban(iban: String): String = iban.filterNot(Char::isWhitespace).uppercase()

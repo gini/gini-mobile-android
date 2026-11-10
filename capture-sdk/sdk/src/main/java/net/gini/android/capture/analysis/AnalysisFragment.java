@@ -29,6 +29,7 @@ import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
 import net.gini.android.capture.internal.util.CancelListener;
 
+import static net.gini.android.capture.analysis.AnalysisFragmentImpl.CHOSEN_IBAN_KEY;
 import static net.gini.android.capture.analysis.AnalysisFragmentImpl.INVOICE_SAVING_IN_PROGRESS_KEY;
 import static net.gini.android.capture.analysis.AnalysisFragmentImpl.PENDING_SAVING_ACTION_KEY;
 import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
@@ -71,6 +72,9 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
         outState.putString(
                 PENDING_SAVING_ACTION_KEY,
                 mFragmentImpl.getPendingSavingAction());
+        outState.putString(
+                CHOSEN_IBAN_KEY,
+                mFragmentImpl.getChosenIban());
     }
 
     private void registerSafFolderSelectionHandler() {

@@ -599,9 +599,11 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
 
     @Override
     void updateInvoiceSavingState(Boolean isInProgress,
-            @Nullable final String pendingSavingAction) {
+            @Nullable final String pendingSavingAction,
+            @Nullable final String chosenIban) {
         isSavingInvoicesInProgress = isInProgress;
         extension.restorePendingSavingAction(pendingSavingAction);
+        extension.restoreChosenIban(chosenIban);
     }
 
     @Override

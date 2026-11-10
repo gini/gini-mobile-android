@@ -102,8 +102,11 @@ interface AnalysisScreenContract {
          * @param pendingSavingAction name of the CTA waiting for saving to finish. The view must
          *                            persist it, because saving leaves the SDK for the Storage
          *                            Access Framework and the screen can be recreated meanwhile.
+         * @param chosenIban          the IBAN chosen on the IBAN selection sheet, or {@code null}.
+         *                            Persisted for the same reason.
          */
-        abstract void processInvoiceSaving(@NonNull String pendingSavingAction);
+        abstract void processInvoiceSaving(@NonNull String pendingSavingAction,
+                                           @Nullable String chosenIban);
 
         /**
          * Shows or hides the Gini ingredient brand element ("Powered by Gini").
@@ -129,7 +132,8 @@ interface AnalysisScreenContract {
         abstract List<Uri> assembleMultiPageDocumentUris();
 
         abstract void updateInvoiceSavingState(Boolean isInProgress,
-                @Nullable String pendingSavingAction);
+                @Nullable String pendingSavingAction,
+                @Nullable String chosenIban);
 
         abstract void releaseMutexForEducation();
     }

@@ -15,6 +15,7 @@ import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCaptureError
 import net.gini.android.capture.analysis.AnalysisInteractor.ResultHolder
 import net.gini.android.capture.analysis.AnalysisScreenContract.View
+import net.gini.android.capture.analysis.fraud.ChosenIbanExtractions
 import net.gini.android.capture.analysis.fraud.IBANMismatchArgs
 import net.gini.android.capture.analysis.fraud.IBANMismatchArgsMapper
 import net.gini.android.capture.analysis.transactiondoc.AttachedToTransactionDocumentProvider
@@ -88,6 +89,13 @@ internal class AnalysisScreenPresenterExtension(
      * saved state so it survives a recreation while the SAF folder picker is open.
      */
     private var pendingSavingAction: PendingSavingAction = PendingSavingAction.PROCEED
+
+    /**
+     * The IBAN chosen on the IBAN selection sheet, written into the extractions when the flow
+     * continues; `null` when no choice was made. Mirrored into the view's saved state next to
+     * [pendingSavingAction].
+     */
+    private var chosenIban: String? = null
 
     fun cancel() {
         job.cancel()
@@ -229,7 +237,7 @@ internal class AnalysisScreenPresenterExtension(
     /**
      * Shows the IBAN mismatch warning with [args] once the education animation is done.
      * "Proceed anyway" runs the same steps as the already-paid warning's "Proceed anyway" CTA and
-     * hands the extractions on unchanged.
+     * hands the extractions on with the IBAN chosen on the selection sheet.
      */
     fun showIbanMismatchWarning(
         args: IBANMismatchArgs,
@@ -247,9 +255,9 @@ internal class AnalysisScreenPresenterExtension(
             )
         } else {
             doWhenEducationFinished {
-                // The chosen IBAN (null when the warning offered no choice) is not written into
-                // the extractions yet: that is PP-3966.
-                view.showIbanMismatch(args) { _: String? ->
+                // The chosen IBAN is null when the warning offered no choice.
+                view.showIbanMismatch(args) { iban: String? ->
+                    chosenIban = iban
                     handleSaveInvoicesLocally(
                         mIsInvoiceSavingEnabled,
                         false,
@@ -281,7 +289,7 @@ internal class AnalysisScreenPresenterExtension(
             return
         } else {
             pendingSavingAction = pendingAction
-            view.processInvoiceSaving(pendingAction.name)
+            view.processInvoiceSaving(pendingAction.name, chosenIban)
         }
     }
 
@@ -302,9 +310,27 @@ internal class AnalysisScreenPresenterExtension(
         action: PendingSavingAction,
         resultHolder: ResultHolder,
         activity: Activity
-    ) = when (action) {
-        PendingSavingAction.PROCEED -> clearSavedImagesAndProceed(resultHolder, activity)
-        PendingSavingAction.SCHEDULE_PAYMENT -> proceedWithSchedulePayment(resultHolder, activity)
+    ) {
+        val result = withChosenIban(resultHolder)
+        chosenIban = null
+        when (action) {
+            PendingSavingAction.PROCEED -> clearSavedImagesAndProceed(result, activity)
+            PendingSavingAction.SCHEDULE_PAYMENT -> proceedWithSchedulePayment(result, activity)
+        }
+    }
+
+    /** [resultHolder] with [chosenIban] written into its extractions; the same holder without one. */
+    private fun withChosenIban(resultHolder: ResultHolder): ResultHolder {
+        val extractions = getMapOrEmpty(resultHolder.extractions)
+        val chosen = ChosenIbanExtractions.apply(extractions, chosenIban)
+        if (chosen === extractions) return resultHolder
+        return ResultHolder(
+            resultHolder.result,
+            chosen,
+            getMapOrEmpty(resultHolder.compoundExtractions),
+            resultHolder.documentId,
+            resultHolder.documentFileName
+        )
     }
 
     /**
@@ -318,6 +344,15 @@ internal class AnalysisScreenPresenterExtension(
         pendingSavingAction = PendingSavingAction.entries
             .firstOrNull { it.name == actionName }
             ?: PendingSavingAction.PROCEED
+    }
+
+    /**
+     * Restores the IBAN chosen on the IBAN selection sheet after the screen was recreated during
+     * the local invoice saving step. Called with the value the view persisted; `null` when no
+     * choice was made.
+     */
+    fun restoreChosenIban(iban: String?) {
+        chosenIban = iban
     }
 
     /**
