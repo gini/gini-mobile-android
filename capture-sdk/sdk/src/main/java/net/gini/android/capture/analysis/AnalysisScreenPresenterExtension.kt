@@ -236,34 +236,24 @@ internal class AnalysisScreenPresenterExtension(
 
     /**
      * Shows the IBAN mismatch warning with [args] once the education animation is done.
-     * "Proceed anyway" runs the same steps as the already-paid warning's "Proceed anyway" CTA and
-     * hands the extractions on with the IBAN chosen on the selection sheet.
+     * "Proceed anyway" stores the IBAN chosen on the selection sheet, then runs [onContinue]: the
+     * remaining hints, which hand the extractions on and save the invoice. When invoice saving is
+     * already in progress the screen was recreated, so the warning is skipped and [onContinue]
+     * runs at once.
      */
     fun showIbanMismatchWarning(
         args: IBANMismatchArgs,
-        mIsInvoiceSavingEnabled: Boolean,
         isSavingInvoicesInProgress: Boolean,
-        resultHolder: ResultHolder,
-        activity: Activity
+        onContinue: () -> Unit,
     ) {
         if (isSavingInvoicesInProgress) {
-            handleSaveInvoicesLocally(
-                mIsInvoiceSavingEnabled,
-                true,
-                resultHolder,
-                activity
-            )
+            onContinue()
         } else {
             doWhenEducationFinished {
                 // The chosen IBAN is null when the warning offered no choice.
                 view.showIbanMismatch(args) { iban: String? ->
                     chosenIban = iban
-                    handleSaveInvoicesLocally(
-                        mIsInvoiceSavingEnabled,
-                        false,
-                        resultHolder,
-                        activity
-                    )
+                    onContinue()
                 }
             }
         }

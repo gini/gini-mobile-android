@@ -673,3 +673,195 @@ and the selection sheet). So the "Before merge" cleanup is done on this branch:
   `IBANMismatchDebug` and `IBANMismatchDebug$Case`.
 
 Not yet seen from prod: `IBAN_COUNTRY_MISMATCH` (three foreign-IBAN invoices returned no signal).
+
+---
+
+# PP-3961 phase 3: Continue into the normal hints after the fraud warning
+
+Status: implemented
+Ticket: https://ginis.atlassian.net/browse/PP-3961
+Branch: `PP-3961-wire-fraud-signals`, on top of the PP-3966 work (`specs/PP-3966-feature.md`,
+uncommitted at the time of writing — commit it first or build on the same working tree).
+Source: [Fraud prevention v1: UI/UX flow and testing conditions](https://ginis.atlassian.net/wiki/spaces/bank/pages/2100920349),
+§2 step 8: "Country-only warning: 'Continue anyway' goes to bank app flow (e.g. Already paid,
+Credit note)".
+
+## Problem
+
+The fraud warning is the first branch of the Analysis presenter's hint chain, and "Proceed anyway"
+ends the flow: the extractions go straight to the bank app. So a document that is also already
+paid, a credit note, schedulable or nearly due never shows that hint. Example: a credit note with
+a foreign IBAN keeps its `amountToPay`, because the credit-note branch (which removes it) is never
+reached. The UI/UX page says the flow must continue into the bank app flow after the warning.
+
+## Decisions (from the clarifying questions)
+
+- All three warning types (QR vs printed, country, combined) continue into the hint chain after
+  "Proceed anyway" (after the selection sheet where it opens). One rule for all.
+- The page's step 8 names only the country-only warning, and step 5 is marked "(to be
+  confirmed)". Confirmed 2026-11-10: all three fraud warning types continue into the normal hints.
+- Order: fraud warning first, then the first matching hint, then the bank app. Invoice saving runs
+  once, at the end, through the hint's own CTA.
+
+## Requirements
+
+Setup: `fraudSignalsEnabled = true`, the result has a fraud signal, so the warning shows. "The
+chain" = the existing branches after the fraud branch in `AnalysisScreenPresenter`:
+already paid → credit note → schedule payment → payment due → plain proceed.
+
+- **R1 (MUST, entry):** Given a fraud signal and `paymentState = "Paid"` with the already-paid hint
+  enabled, when the user taps "Proceed anyway" (country-only) or picks an IBAN and taps "Next" (QR
+  or combined), then `View.showWarning(WarningType.DOCUMENT_MARKED_AS_PAID, …)` is called, and
+  `onExtractionsAvailable` is not called yet.
+- **R2 (MUST, happy):** Given a fraud signal and a credit note (`businessDocType = "CreditNote"`,
+  credit-note hint enabled), after "Proceed anyway" the credit-note warning shows, and when its
+  "Proceed" runs, `onExtractionsAvailable` receives extractions **without** `amountToPay`.
+- **R3 (MUST, happy):** Given a fraud signal and a due date that triggers the schedule-payment hint,
+  after "Proceed anyway" the schedule-payment sheet shows; its "Schedule" CTA ends in
+  `onSchedulePayment`, its "Proceed" in `onExtractionsAvailable`.
+- **R4 (MUST, happy):** Given a fraud signal and the payment-due hint conditions, after "Proceed
+  anyway" `showWarning(WarningType.PAYMENT_DUE_DATE, …)` is called.
+- **R5 (MUST, happy):** Given a fraud signal and no hint condition, "Proceed anyway" hands the
+  extractions on exactly as today (no extra screen).
+- **R6 (MUST, happy):** The IBAN chosen on the selection sheet (PP-3966) is still the `"iban"` value
+  the bank app receives at the end of every path in R1–R5, including after the credit-note
+  `removeAmountToPay` copy and on the `onSchedulePayment` path.
+- **R7 (MUST, async):** Invoice saving (Storage Access Framework) is requested exactly once per
+  flow — by the hint's CTA, or by the plain proceed when no hint applies — never by the fraud
+  warning itself. With saving enabled, `View.processInvoiceSaving` is called once.
+- **R8 (MUST, async):** Given the screen is recreated while the folder picker is open after a hint
+  CTA that followed the fraud warning, when the flow restarts, then the fraud warning and the hint
+  are not shown again and the flow continues with the restored pending action and the restored
+  chosen IBAN (e.g. "Schedule" after recreation still ends in `onSchedulePayment`).
+- **R9 (MUST, error):** "Cancel transfer" on the fraud warning still ends the flow
+  (`AnalysisFragmentImpl.showIbanMismatch`'s cancel), and no hint is shown afterwards.
+- **R10 (MUST, happy):** Documents without a fraud signal go through the chain exactly as before
+  (all existing hint tests stay green unchanged).
+
+## Affected modules
+
+| Module | Change |
+|---|---|
+| `capture-sdk:sdk` | `AnalysisScreenPresenter.java`: the chain after the fraud branch moves into a private method that both the normal path and the fraud warning's proceed call. `AnalysisScreenPresenterExtension.kt`: `showIbanMismatchWarning` takes a continuation instead of starting invoice saving. |
+| `bank-sdk:sdk` | No code change; run its tests. |
+
+## Public API impact
+
+None. `AnalysisScreenPresenter` and `AnalysisScreenContract` are package-private Java; the
+extension is `internal`. No `api/sdk.api` change; `apiCheck` must pass without `apiDump`.
+
+## Technical conventions
+
+1. **Language.** Kotlin for the extension change. Legacy Java touched: `AnalysisScreenPresenter.java`
+   only — an extract-method refactor of the existing branches (`shouldShowAlreadyPaidInvoiceWarning`
+   … final `proceedWithExtractions`, lines ~376–414), no behaviour change for documents without a
+   fraud signal. No conversion.
+2. **UI.** None. The warning, the sheet and the hint sheets are unchanged.
+3. **Architecture.** Legacy Java MVP stays: the presenter owns the decision order; the extension
+   owns showing the warning. No ViewModel.
+4. **DI / async.** None new. The continuation runs on the main thread (the Compose callback); every
+   chain branch already schedules its UI through `doWhenEducationFinished`
+   (`AnalysisScreenPresenterExtension.kt`, `scope.launch` + `withContext(Dispatchers.Main)`).
+5. **Strings.** None.
+6. **Quality gates.** `ktlintCheck`, `detekt`, `lint`, `apiCheck` clean on `capture-sdk:sdk`;
+   `bank-sdk:sdk:testDebugUnitTest` green.
+
+## Design
+
+### Presenter (`analysis/AnalysisScreenPresenter.java`)
+
+- New `private void showHintOrProceed(@NonNull AnalysisInteractor.ResultHolder resultHolder)`
+  containing the branches that follow the fraud branch today, unchanged: already paid
+  (`successResultHolder = resultHolder; shouldClearImageCaches = false; showDocumentMarkedWarning`),
+  credit note (`removeAmountToPay`), schedule payment, payment due, else `proceedWithExtractions`.
+- The `SUCCESS_WITH_EXTRACTIONS` case keeps the two "no extractions" checks, then:
+  `else if (ibanMismatchArgs != null) { successResultHolder = resultHolder; shouldClearImageCaches = false; extension.showIbanMismatchWarning(ibanMismatchArgs, isSavingInvoicesInProgress, () -> showHintOrProceed(resultHolder)); } else { showHintOrProceed(resultHolder); }`.
+  `shouldClearImageCaches = false` is set once in the outer branch (the continuation runs later,
+  so it cannot set the local), which gives the same value after the switch as today.
+
+### Extension (`analysis/AnalysisScreenPresenterExtension.kt`)
+
+- `showIbanMismatchWarning(args, isSavingInvoicesInProgress, onContinue: () -> Unit)`:
+  - `isSavingInvoicesInProgress` → call `onContinue()` at once, without showing the warning (R8):
+    the chain's matching branch then sees the same flag and resumes saving with the restored
+    `pendingSavingAction` (the schedule-payment branch already passes it) and the restored
+    `chosenIban` (PP-3966).
+  - otherwise `doWhenEducationFinished { view.showIbanMismatch(args) { iban -> chosenIban = iban; onContinue() } }`.
+  - The `mIsInvoiceSavingEnabled`, `resultHolder` and `activity` parameters and the
+    `handleSaveInvoicesLocally` call are removed from this method (R7).
+- `chosenIban` stays stored until `runPendingSavingAction` applies and clears it (PP-3966), so it
+  survives the hint step and the `removeAmountToPay` copy (R6).
+
+### Unchanged
+
+`AnalysisScreenContract.View.showIbanMismatch`, `AnalysisFragmentImpl`, `AnalysisFragmentExtension`,
+the warning and sheet composables, the hint sheets, `ChosenIbanExtractions`.
+
+## Test plan
+
+Extend `capture-sdk/sdk/src/test/java/net/gini/android/capture/analysis/AnalysisScreenPresenterTest.kt`,
+"IBAN mismatch warning" region — Robolectric + Mockito-Kotlin + Truth, existing helpers
+(`startPresenterForDueHint`, `creditNoteExtractions`, `dueHintExtractions`, `qrMismatchCompounds`,
+`ibanWithCandidates`, `idleMainLooperUntil`). About 7 tests; the chain has five exits and two async
+paths, each a distinct regression:
+
+1. Fraud + already paid → after proceed, `showWarning(DOCUMENT_MARKED_AS_PAID, …)`; no
+   `onExtractionsAvailable` yet (R1). The existing "…ahead of other warnings" test stays: it checks
+   that no hint shows while the warning is open, which is still true.
+2. Fraud + credit note → after proceed and the credit-note "Proceed", extractions without
+   `amountToPay` and with the chosen `PRINTED_IBAN` (R2, R6).
+3. Fraud + schedule-payment hint → "Schedule" → `onSchedulePayment` with the chosen IBAN (R3, R6).
+4. Fraud + payment-due hint → `showWarning(PAYMENT_DUE_DATE, …)` (R4).
+5. Fraud, no hint → as today (existing proceed tests cover it; keep them) (R5).
+6. Fraud + already paid with invoice saving enabled → `processInvoiceSaving` called once, after
+   the already-paid "Proceed", not after the fraud "Proceed anyway" (R7).
+7. Recreation: `updateInvoiceSavingState(true, "SCHEDULE_PAYMENT", PRINTED_IBAN)` then `start()`
+   with fraud + schedule conditions → no `showIbanMismatch`, `onSchedulePayment` with
+   `PRINTED_IBAN` (R8).
+
+R9 is the existing cancel wiring (unchanged view code). R10: the whole existing presenter suite
+must stay green without edits to non-fraud tests.
+
+### Not tested
+
+- The visual sequence warning → sheet → hint sheet on device (manual: Musterfirma Girocode invoice
+  plus a document that is also marked paid, if one is available in the epic's test folder).
+- Compose rendering of the sheets (no Compose UI test setup in `capture-sdk:sdk` unit tests).
+
+## Out of scope
+
+- Changing the order or content of the existing hints.
+- The BIC question (PP-3966 open question).
+- iOS behaviour (PP-3960/PP-3962).
+
+## Open questions
+
+None. The step 5 / step 8 conflict on the UI/UX page is settled: all three fraud warning types
+continue into the normal hints (confirmed 2026-11-10). The iOS team should build the same, and the
+UI/UX page still says "(to be confirmed)" on step 5.
+
+## Implementation plan
+- [x] 1. Tests first in `AnalysisScreenPresenterTest.kt`, "IBAN mismatch warning" region: fraud +
+  already paid, credit note, schedule, payment due, saving once, recreation (R1–R4, R6–R8); the
+  existing saving test waits for the now-async saving request (R5, R10)
+- [x] 2. `AnalysisScreenPresenter.java`: extract `showHintOrProceed`; the fraud branch passes it
+  as the continuation. `AnalysisScreenPresenterExtension.kt`: `showIbanMismatchWarning(args,
+  isSavingInvoicesInProgress, onContinue)` (R1–R9)
+- [x] 3. Verify: `/gini-check capture-sdk:sdk bank-sdk:sdk`, `apiCheck`, code review (R10)
+
+## Build notes
+
+- Verification: `testDebugUnitTest`, `lint`, `detekt`, `ktlintCheck` and `apiCheck` pass on
+  `capture-sdk:sdk` and `bank-sdk:sdk` (no `api/sdk.api` change).
+- Tests: 7 new presenter tests (already paid, credit note, schedule "Schedule" and "Proceed",
+  payment due, saving once, recreation during saving); the existing saving test waits for the
+  saving request, which now goes through `doWhenEducationFinished`.
+- Device (S22, prod, Musterfirma Girocode invoice, already-paid hint forced by a temporary local
+  change that was removed afterwards): fraud warning → printed IBAN → "Document marked as paid" →
+  "Proceed anyway" → `iban` = `DE02120300000000202051`.
+- Recreation while a hint is open after the fraud warning (dark mode switched on device): the fraud
+  warning shows again on top, the user picks the IBAN again, then the hint shows with working
+  buttons and the chosen IBAN is handed on. The user is not stuck and no IBAN is lost. The repeat
+  of the fraud warning is accepted as is (decision 2026-11-10); persisting "fraud warning passed"
+  is not built.
+
