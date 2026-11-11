@@ -32,7 +32,7 @@ In:
   country-only and combined cases.
 - The IBAN selection sheet `analysis/fraud/IBANSelectionSheet` (design frames 1.2.2–1.2.4 and
   the `Mix-Sheet-*` frames), stacked over the warning when "Proceed anyway" is tapped in the
-  QR-vs-printed and combined cases. Its three states: initial, error (no choice when "Next" is
+  QR-vs-printed and combined cases. Its three states: initial, error (no choice when "Continue" is
   tapped), selected. The chosen IBAN is handed to the caller and not used yet.
 - The Analysis-screen hooks taken over from the spike: `IBANMismatchDebug` (restricted-visibility
   development switch, **off by default**, extended with a case selector), the presenter check
@@ -41,7 +41,7 @@ In:
   `gc_fragment_analysis` layouts, and the "Debug / development" controls in the bank-sdk
   example app.
 - "Cancel transfer" ends the flow like the warning sheets' cancel CTA; "Proceed anyway" (country
-  case) and the selection sheet's "Next" (other cases) hand the extractions on unchanged (same
+  case) and the selection sheet's "Continue" (other cases) hand the extractions on unchanged (same
   path as the already-paid warning's "Proceed anyway").
 - DE and EN strings in capture-sdk resources (`gc_fraud_*`, `gc_a11y_expanded/collapsed`), so banks
   can override them.
@@ -71,12 +71,12 @@ before the next one starts. The user starts each step explicitly.
    footnote and a single-button `GiniActionFooter`. Content: `IBANSelectionArgs` (QR IBAN,
    printed IBAN, optional hints — derived from `IBANMismatchArgs`). Owns `selectedIban` and
    `showError` in `rememberSaveable`. Strings DE/EN: `gc_fraud_select_iban_title`,
-   `gc_fraud_select_iban_error`, `gc_fraud_select_iban_footnote`; "Next" reuses `gc_next`.
+   `gc_fraud_select_iban_error`, `gc_fraud_select_iban_footnote`; "Continue" uses `gc_fraud_select_iban_continue` (`gc_continue` is "Verarbeiten" in German).
    Previews: initial/error/selected × QR-vs-printed/combined, light/dark, font scale.
    a11y review before it is committed.
 3. **Stack the sheet over the warning.** In `IBANMismatchWarningScreen`, "Proceed anyway"
    opens the sheet for `QR_VS_PRINTED` and `COMBINED` and calls `onProceed(null)` directly for
-   `COUNTRY`. Sheet dismissal (back, scrim, swipe) returns to the warning. "Next" without a
+   `COUNTRY`. Sheet dismissal (back, scrim, swipe) returns to the warning. "Continue" without a
    choice sets the error state; with a choice it hides the sheet and calls
    `onProceed(selectedIban)`. `onProceed` becomes `(String?) -> Unit` through
    `AnalysisFragmentExtension.showIbanMismatch`; the presenter ignores the value for now (PP-3966
@@ -85,12 +85,12 @@ before the next one starts. The user starts each step explicitly.
    the three sheet states, light/dark, portrait/landscape, phone/tablet, 200 % font size
    (the design's `200%` and `1.4.1 Scroll` frames), rotation with the warning and with the
    sheet open, TalkBack (pane titles, headings, radio group with "1 of 2", the error announced
-   after "Next" with no choice and read again on the rows), external keyboard (Tab order rows →
+   after "Continue" with no choice and read again on the rows), external keyboard (Tab order rows →
    Next, focus stays inside the open sheet, focus visible). Fix what the pass finds.
 5. **Tests and checks.** `AnalysisScreenPresenterTest` updated for the case selector. Compose
    tests under Robolectric for the selection sheet's state transitions (initial → error on
-   "Next" → selected clears the error → `onProceed` with the chosen IBAN), asserting the
-   semantics too (`Selected`, `Role.RadioButton`, `Error` present on both rows after "Next" with
+   "Continue" → selected clears the error → `onProceed` with the chosen IBAN), asserting the
+   semantics too (`Selected`, `Role.RadioButton`, `Error` present on both rows after "Continue" with
    no choice and absent after a selection, row height at least 48 dp), modelled on bank-sdk's
    `SkontoScreenContentTest`. capture-sdk has Robolectric but not the Compose test rule yet:
    add `libs.compose.ui.test.junit4` and `libs.compose.ui.test.manifest` as `testImplementation`
@@ -105,14 +105,14 @@ before the next one starts. The user starts each step explicitly.
 | Design element | Component | Notes |
 |---|---|---|
 | Scrim + 28 dp-top-cornered sheet below the status bar, full width on all devices, no grabber, no dismissal | `sheet/GiniBottomSheetScaffold` | Wraps `ModalBottomSheet` with the spike's non-dismissal configuration (`confirmValueChange` refuses `Hidden`, back/scrim disabled, gestures off, no drag handle, `sheetMaxWidth = Dp.Unspecified`). Content column capped with `tabletMaxWidth()`; footer pinned to the bottom while content fits, scrolls with it otherwise (`heightIn(min = maxHeight)` + weighted spacer in a scrolling column). Only for full-height screens the user must answer. |
-| Content-height dismissable sheet with grabber (selection sheet) | Material `ModalBottomSheet` directly, inside `IBANSelectionSheet` | Gini container and grabber colors, `tabletMaxWidth()`, the same 24 dp gutters and pane title. Not the scaffold: its footer-pinning logic and non-dismissal are the opposite of what this sheet needs, and flags for both shapes made the scaffold a config bag. |
+| Content-height dismissable sheet with grabber on phones, centred dialog on tablets in both orientations (selection sheet) | Material `ModalBottomSheet` on phones and a Compose `Dialog` (extra-large corners, 32 dp window margin, capped at `gc_tablet_width`, scrolls when taller than the window) on tablets, chosen by `isTablet()` inside `IBANSelectionSheet`; the body is shared | Gini container and grabber colors, `tabletMaxWidth()`, the same 24 dp gutters and pane title. Not the scaffold: its footer-pinning logic and non-dismissal are the opposite of what this sheet needs, and flags for both shapes made the scaffold a config bag. |
 | Red alert icon on an error-tinted rounded square, centred headline + description | `header/GiniHeaderBlock` | Title has `heading()` semantics; icon decorative. |
 | "How do I protect myself?" row with shield, chevron, revealed body | `expandable/GiniExpandableInfoRow` | State hoisted (`expanded`/`onExpandedChange`), `Role.Button`, `stateDescription` expanded/collapsed, chevron rotates. |
 | "Sender" on a grey card (combined case) | `card/GiniInfoCard` | Placeholder background, 8 dp corners. |
 | Label-over-value rows with optional red hint | `labeledvalue/GiniLabeledValue` | Merged semantics (one TalkBack stop), optional leading slot for a radio. |
 | Rows separated by hairlines, optional "The following IBANs were detected" title | private `IBANMismatchRows` in the warning screen | Data-driven via `GiniLabeledValueItem`; the former public `GiniLabeledValueList` was inlined. |
 | Radio with error ring (selection sheet) | `radio/GiniRadioButton` | Wraps Material 3 `RadioButton` like `GiniCheckbox` wraps `Checkbox`; `isError`. |
-| Filled "Cancel transfer" + outlined "Proceed anyway", stacked in portrait, side by side in landscape; single "Next" on the selection sheet | `footer/GiniActionFooter` | Reuses `GiniButton`/`GiniOutlinedButton`; single-button variant. |
+| Filled "Cancel transfer" + outlined "Proceed anyway", stacked in portrait, side by side in landscape; single "Continue" on the selection sheet | `footer/GiniActionFooter` | Reuses `GiniButton`/`GiniOutlinedButton`; single-button variant. |
 
 Per-case layout (from the Figma frames 1.2.1 / 1.3.1 / 1.2.1-Mix):
 
@@ -123,7 +123,7 @@ Per-case layout (from the Figma frames 1.2.1 / 1.3.1 / 1.2.1-Mix):
 Selection sheet (frames 1.2.2 / 1.2.3 / 1.2.4 and `Mix-Sheet-*`): drag handle, title "Choose an
 IBAN to continue" (heading), radio rows [QR IBAN (+ hint), printed IBAN (+ hint)] separated by a
 hairline, red error line "Choose an IBAN to continue" under the rows in the error state, centred
-grey footnote "You can still check the IBAN in the next step.", filled "Next". In the error state
+grey footnote "You can still check the IBAN in the next step.", filled "Continue". In the error state
 both radios draw the error ring. Opens over the warning; the warning stays visible behind the
 scrim.
 
@@ -152,7 +152,7 @@ at block boundaries and screen readers read them in chunks.
   `Role.RadioButton` on each row with the radio itself non-clickable (`onClick = null`), so
   TalkBack reads one stop per row with "1 of 2"; `error(message)` semantics on each row while
   the error is shown, so the invalid state is not conveyed by the red ring alone; the error is
-  announced with `announceForAccessibility` from a `LaunchedEffect` on every "Next" without a
+  announced with `announceForAccessibility` from a `LaunchedEffect` on every "Continue" without a
   choice (a `liveRegion` on a node that enters the composition is not announced by Compose; the
   education messages use the same precedent) and not re-announced after rotation; pane title on
   the sheet; the dismissable sheet keeps Material's "Close sheet" scrim action and the drag
@@ -250,9 +250,9 @@ the gallery. Passed:
 - Warning: back, scrim tap and swipe do nothing; the protect row expands; "Cancel transfer"
   ends the flow and returns to the host app; "Proceed anyway" continues to the extractions in
   the country case and opens the selection sheet in the other two.
-- Selection sheet: initial, error ("Next" without a choice: red rings + error line) and selected
+- Selection sheet: initial, error ("Continue" without a choice: red rings + error line) and selected
   states match frames 1.2.2–1.2.4; back, scrim and swipe close it back to the warning; a
-  reopened sheet starts clean; "Next" with a choice continues to the extractions.
+  reopened sheet starts clean; "Continue" with a choice continues to the extractions.
 - Recreation: a font-scale change with the warning open and a dark-mode change with the sheet
   open both restored the expanded protect row, the open sheet and its selection. Rotation itself
   cannot be tested on a phone: `ActivityHelper` forces portrait there.
@@ -272,7 +272,7 @@ Open:
   decision.
 - Tablet and landscape layouts (`GiniActionFooter` side by side, `tabletMaxWidth`) need a
   tablet; not covered.
-- TalkBack speech (the error announcement after "Next", the error read on the rows) was not
+- TalkBack speech (the error announcement after "Continue", the error read on the rows) was not
   verified with TalkBack running; the semantics are in the tree, the step-5 Robolectric tests
   assert them, a manual TalkBack pass is still owed.
 - Keyboard focus is visible only as Material's faint state layer on the rows (theme-wide, see
@@ -291,7 +291,7 @@ Open:
   screen; back/scrim/swipe do nothing; rotation keeps the sheet and the expanded protect row;
   "Cancel transfer" ends the flow; "Proceed anyway" continues to the extractions (country case)
   or opens the selection sheet (other cases); the sheet closes on back/scrim/swipe back to the
-  warning; "Next" without a choice shows the error, with a choice continues to the extractions.
+  warning; "Continue" without a choice shows the error, with a choice continues to the extractions.
 
 ---
 
@@ -710,7 +710,7 @@ chain" = the existing branches after the fraud branch in `AnalysisScreenPresente
 already paid → credit note → schedule payment → payment due → plain proceed.
 
 - **R1 (MUST, entry):** Given a fraud signal and `paymentState = "Paid"` with the already-paid hint
-  enabled, when the user taps "Proceed anyway" (country-only) or picks an IBAN and taps "Next" (QR
+  enabled, when the user taps "Proceed anyway" (country-only) or picks an IBAN and taps "Continue" (QR
   or combined), then `View.showWarning(WarningType.DOCUMENT_MARKED_AS_PAID, …)` is called, and
   `onExtractionsAvailable` is not called yet.
 - **R2 (MUST, happy):** Given a fraud signal and a credit note (`businessDocType = "CreditNote"`,
