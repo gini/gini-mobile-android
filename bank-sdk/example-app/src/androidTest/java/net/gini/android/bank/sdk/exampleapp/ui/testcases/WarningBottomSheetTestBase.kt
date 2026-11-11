@@ -28,6 +28,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.screens.MainScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.OnboardingScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.ReviewScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.WarningBottomSheetScreen
+import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockAnalysisFailure
 import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockBackend
 import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockClientConfiguration
 import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockScenario
@@ -157,6 +158,7 @@ abstract class WarningBottomSheetTestBase {
      * [ingredientBrandScreens] and [qrCodeEducationEnabled] are server-side too; both default to
      * off. [analysisDelayMillis] keeps the analysis pending that long, so a test can look at the
      * Analysis screen while it runs. [configurationFails] makes the `/configurations` request fail.
+     * [analysisFailure] picks the error screen for [UiTestMockScenario.ANALYSIS_ERROR].
      *
      * Must be called before the photo payment button is clicked, like [configureHints]. Cleared
      * in [tearDown].
@@ -169,7 +171,8 @@ abstract class WarningBottomSheetTestBase {
         ingredientBrandScreens: Set<String> = emptySet(),
         qrCodeEducationEnabled: Boolean = false,
         analysisDelayMillis: Long = 0,
-        configurationFails: Boolean = false
+        configurationFails: Boolean = false,
+        analysisFailure: UiTestMockAnalysisFailure = UiTestMockAnalysisFailure.GENERIC
     ) {
         UiTestMockBackend.arm(
             scenario = scenario,
@@ -181,7 +184,8 @@ abstract class WarningBottomSheetTestBase {
                 qrCodeEducationEnabled = qrCodeEducationEnabled
             ),
             analysisDelayMillis = analysisDelayMillis,
-            configurationFails = configurationFails
+            configurationFails = configurationFails,
+            analysisFailure = analysisFailure
         )
     }
 
