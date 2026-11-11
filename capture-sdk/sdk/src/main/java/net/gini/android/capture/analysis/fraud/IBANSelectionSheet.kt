@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
@@ -16,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -28,11 +30,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.dismiss
 import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.paneTitle
@@ -41,6 +44,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import net.gini.android.capture.R
 import net.gini.android.capture.ui.components.GiniComposableStyleProviderConfig
 import net.gini.android.capture.ui.components.footer.GiniActionFooter
@@ -50,18 +55,19 @@ import net.gini.android.capture.ui.components.radio.GiniRadioButton
 import net.gini.android.capture.ui.compose.GiniScreenPreviewSizes
 import net.gini.android.capture.ui.compose.GiniScreenPreviewUiModes
 import net.gini.android.capture.ui.theme.GiniTheme
-import net.gini.android.capture.ui.theme.modifier.tabletMaxWidth
+import net.gini.android.capture.ui.theme.modifier.isTablet
 
 /**
- * The IBAN selection sheet: a regular, dismissable modal sheet that wraps its content and asks
- * the user which of the IBANs of the mismatch warning (the QR IBAN and every printed IBAN) to
- * continue with. Back, scrim tap and swipe close it through [onDismiss]; "Next" with a choice
- * reports it through
- * [onContinue], "Next" without one shows the error state instead. The host removes the
- * composable after either callback.
+ * The IBAN selection sheet: a regular, dismissable modal that wraps its content and asks the
+ * user which of the IBANs of the mismatch warning (the QR IBAN and every printed IBAN) to
+ * continue with. On phones it is a modal bottom sheet with a grabber; on tablets, in both
+ * orientations, it is a centred dialog capped at the tablet reading width, since a full-width
+ * sheet is out of place on a wide screen. Back, scrim tap and (on phones) swipe close it through
+ * [onDismiss]; "Continue" with a choice reports it through [onContinue], "Continue" without one shows
+ * the error state instead. The host removes the composable after either callback.
  *
  * The sheet owns its choice and its error state in `rememberSaveable`, so both survive
- * rotation. Choosing an IBAN clears the error. Every "Next" without a choice announces the
+ * rotation. Choosing an IBAN clears the error. Every "Continue" without a choice announces the
  * error to accessibility services, since focus stays on the button and the rows only expose
  * the invalid state once they are focused again; the announcement is not repeated after
  * rotation.
@@ -75,25 +81,73 @@ internal fun IBANSelectionSheet(
 ) {
     var selectedIban by rememberSaveable { mutableStateOf<String?>(null) }
     var showError by rememberSaveable { mutableStateOf(false) }
-    var errorAnnouncements by remember { mutableIntStateOf(0) }
     val title = stringResource(R.string.gc_fraud_select_iban_title)
     val errorMessage = stringResource(R.string.gc_fraud_select_iban_error)
     val options = ibanSelectionOptions(args)
 
-    // A live region on the error line would not be announced when the line first enters the
-    // composition, so the error is announced explicitly, as the education messages do.
-    val view = LocalView.current
-    LaunchedEffect(errorAnnouncements) {
-        if (errorAnnouncements > 0) {
-            view.announceForAccessibility(errorMessage)
+    // Composed inside the container, so the error reads and the announcement stay in the body's
+    // own recompose scope and the announcement is raised from the modal window itself.
+    val body: @Composable () -> Unit = {
+        var errorAnnouncements by remember { mutableIntStateOf(0) }
+        // A live region on the error line would not be announced when the line first enters the
+        // composition, so the error is announced explicitly, as the education messages do.
+        val view = LocalView.current
+        LaunchedEffect(errorAnnouncements) {
+            if (errorAnnouncements > 0) {
+                view.announceForAccessibility(errorMessage)
+            }
         }
+        IBANSelectionBody(
+            title = title,
+            options = options,
+            selectedIban = selectedIban,
+            errorMessage = errorMessage.takeIf { showError },
+            onSelect = { iban ->
+                selectedIban = iban
+                showError = false
+            },
+            onContinue = {
+                val iban = selectedIban
+                if (iban == null) {
+                    showError = true
+                    errorAnnouncements++
+                } else {
+                    onContinue(iban)
+                }
+            },
+            composableProviderConfig = composableProviderConfig,
+        )
     }
 
+    if (isTablet()) {
+        IBANSelectionDialog(
+            paneTitle = title,
+            onDismiss = onDismiss,
+            content = body,
+        )
+    } else {
+        IBANSelectionBottomSheet(
+            paneTitle = title,
+            onDismiss = onDismiss,
+            content = body,
+        )
+    }
+}
+
+/**
+ * The phone container: a content-height Material bottom sheet with the Gini grabber and
+ * container colours, dismissed by back, scrim tap and swipe.
+ */
+@Composable
+private fun IBANSelectionBottomSheet(
+    paneTitle: String,
+    onDismiss: () -> Unit,
+    content: @Composable () -> Unit,
+) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        modifier = Modifier.semantics { paneTitle = title },
+        modifier = Modifier.semantics { this.paneTitle = paneTitle },
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-        // Full width on tablets too, like the warning sheet it opens over.
         sheetMaxWidth = Dp.Unspecified,
         dragHandle = { BottomSheetDefaults.DragHandle(color = GiniTheme.colorScheme.icons.secondary) },
         containerColor = GiniTheme.colorScheme.dialogs.container,
@@ -101,41 +155,84 @@ internal fun IBANSelectionSheet(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally,
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = SHEET_HORIZONTAL_PADDING)
+                .padding(bottom = SHEET_BOTTOM_PADDING),
+        ) {
+            content()
+        }
+    }
+}
+
+/**
+ * The tablet container: a centred dialog over a scrim, dismissed by back, scrim tap and the
+ * accessibility dismiss action. The dialog keeps a margin to the window edges, is capped at the
+ * tablet reading width and scrolls its content when the window is shorter than the content
+ * (landscape, large font sizes). Its corners match the bottom sheet's top corners (Material's
+ * extra-large shape).
+ */
+@Composable
+private fun IBANSelectionDialog(
+    paneTitle: String,
+    onDismiss: () -> Unit,
+    content: @Composable () -> Unit,
+) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false),
+    ) {
+        Surface(
+            modifier = Modifier
+                .padding(DIALOG_WINDOW_MARGIN)
+                .widthIn(max = dimensionResource(R.dimen.gc_tablet_width))
+                .semantics {
+                    this.paneTitle = paneTitle
+                    // The sheet offers its scrim as a "Close sheet" node; a Dialog has no such
+                    // node, so the dismiss action keeps a non-touch way out.
+                    dismiss {
+                        onDismiss()
+                        true
+                    }
+                },
+            shape = MaterialTheme.shapes.extraLarge,
+            color = GiniTheme.colorScheme.dialogs.container,
         ) {
             Column(
                 modifier = Modifier
-                    .tabletMaxWidth()
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
                     .padding(horizontal = SHEET_HORIZONTAL_PADDING)
-                    .padding(bottom = SHEET_BOTTOM_PADDING),
+                    .padding(top = DIALOG_TOP_PADDING, bottom = SHEET_BOTTOM_PADDING),
             ) {
-                IBANSelectionContent(
-                    title = title,
-                    options = options,
-                    selectedIban = selectedIban,
-                    errorMessage = errorMessage.takeIf { showError },
-                    onSelect = { iban ->
-                        selectedIban = iban
-                        showError = false
-                    },
-                )
-                Spacer(modifier = Modifier.height(CONTENT_FOOTER_SPACING))
-                IBANSelectionFooter(
-                    onContinue = {
-                        val iban = selectedIban
-                        if (iban == null) {
-                            showError = true
-                            errorAnnouncements++
-                        } else {
-                            onContinue(iban)
-                        }
-                    },
-                    composableProviderConfig = composableProviderConfig,
-                )
+                content()
             }
         }
     }
+}
+
+/** Title, rows, error line and footer, the same in both containers. */
+@Composable
+private fun IBANSelectionBody(
+    title: String,
+    options: List<IBANSelectionOption>,
+    selectedIban: String?,
+    errorMessage: String?,
+    onSelect: (String) -> Unit,
+    onContinue: () -> Unit,
+    composableProviderConfig: GiniComposableStyleProviderConfig?,
+) {
+    IBANSelectionContent(
+        title = title,
+        options = options,
+        selectedIban = selectedIban,
+        errorMessage = errorMessage,
+        onSelect = onSelect,
+    )
+    Spacer(modifier = Modifier.height(CONTENT_FOOTER_SPACING))
+    IBANSelectionFooter(
+        onContinue = onContinue,
+        composableProviderConfig = composableProviderConfig,
+    )
 }
 
 /**
@@ -250,7 +347,7 @@ private fun IBANSelectionFooter(
             textAlign = TextAlign.Center,
         )
         GiniActionFooter(
-            primaryText = stringResource(R.string.gc_next),
+            primaryText = stringResource(R.string.gc_fraud_select_iban_continue),
             onPrimaryClick = onContinue,
             composableProviderConfig = composableProviderConfig,
         )
@@ -259,6 +356,8 @@ private fun IBANSelectionFooter(
 
 private val SHEET_HORIZONTAL_PADDING = 24.dp
 private val SHEET_BOTTOM_PADDING = 24.dp
+private val DIALOG_WINDOW_MARGIN = 32.dp
+private val DIALOG_TOP_PADDING = 24.dp
 private val TITLE_ROWS_SPACING = 20.dp
 private val ROW_VERTICAL_PADDING = 12.dp
 private val ERROR_TOP_SPACING = 4.dp

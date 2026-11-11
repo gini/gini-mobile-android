@@ -89,7 +89,7 @@ internal fun IBANMismatchWarningScreen(
             protectionExpanded = protectionExpanded,
             onProtectionExpandedChange = { protectionExpanded = it },
         )
-        // A second ModalBottomSheet opens its own window on top of the warning's.
+        // The selection sheet (a dialog on tablets) opens its own window on top of the warning's.
         if (selectionOpen && selectionArgs != null) {
             IBANSelectionSheet(
                 args = selectionArgs,
