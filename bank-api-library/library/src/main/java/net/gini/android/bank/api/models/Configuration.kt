@@ -21,4 +21,5 @@ data class Configuration(
      * the client has no ingredient branding.
      */
     val ingredientBrandScreens: List<String> = emptyList(),
+    val isWeroQRCodeScanningEnabled: Boolean = false,
 )

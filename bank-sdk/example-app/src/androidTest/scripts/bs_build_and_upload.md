@@ -75,6 +75,14 @@ Both are also triggered by `bs_run_all_groups.sh`.
 |---|---|---|
 | `bs_run_group_errorscreens.sh` | `ErrorAndNoResultScreenMockBackendTests`, `ErrorScreenTests`, `NoResultsTests`, `FileImportErrorDialogTests`, `OpenWithTest#opening_unsupported_file_…` | Every test mapped to the Xray folder "Error & No result screens" (PP-2895…PP-2917), in one build; each entry names its cases. The mock-backend class forces each error screen, including no internet. Whole classes because BrowserStack rejects a `class` filter of 1000+ characters; this brings in two tests outside the set (`ErrorScreenTests#test3`, `FileImportErrorDialogTests#test3`). `ErrorScreenTests#test2`–`#test4` skip themselves on BrowserStack (the network can't be switched off). `bs_run_all_groups.sh` runs only the mock-backend class here, because the other classes already run in its import and extraction groups. |
 
+### No Result screen shard (PP-3920)
+
+| Script | Classes | Notes |
+|---|---|---|
+| `bs_run_group_extraction.sh` | `NoResultsTests`, `NoResultsMockBackendTests` (alongside the other extraction classes) | `NoResultsTests` imports an image / a PDF against the real Gini API. `NoResultsMockBackendTests` takes camera photos on the mock backend (`NO_RESULTS` scenario, empty extractions) — the only way to reach the **Retake images** button, which exists for camera-sourced documents only. Its three QR tests (`test6`–`test8`) need a real QR code in front of the camera, so they always show as **skipped** on BrowserStack — expected; run them on a local device with `sepa_payment_qr_poster.png` in view. |
+
+Also triggered by `bs_run_all_groups.sh` (shard `extraction`) and, as its own `noresults` shard, by `bs_run_release.sh`.
+
 ---
 
 ## Output APKs
