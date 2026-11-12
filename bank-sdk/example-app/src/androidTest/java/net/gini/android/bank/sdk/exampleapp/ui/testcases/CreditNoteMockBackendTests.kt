@@ -56,7 +56,11 @@ import org.junit.Test
  */
 class CreditNoteMockBackendTests : WarningBottomSheetTestBase() {
 
-    /** Frontend ON + SDK ON — the warning is displayed with its full content. */
+    /**
+     * Xray: PP-3446.
+     *
+     * Frontend ON + SDK ON — the warning is displayed with its full content.
+     */
     @Test
     fun test1_warningIsShownWhenBothFlagsAreOn() {
         armMockBackend(UiTestMockScenario.CREDIT_NOTE, creditNoteHintEnabled = true)
@@ -68,7 +72,11 @@ class CreditNoteMockBackendTests : WarningBottomSheetTestBase() {
         warningBottomSheet.assertCreditNoteState()
     }
 
-    /** Frontend ON + SDK OFF — no warning; the document is processed like an ordinary invoice. */
+    /**
+     * Xray: PP-3447.
+     *
+     * Frontend ON + SDK OFF — no warning; the document is processed like an ordinary invoice.
+     */
     @Test
     fun test2_noWarningWhenFrontendOnAndSdkOff() {
         armMockBackend(UiTestMockScenario.CREDIT_NOTE, creditNoteHintEnabled = true)
@@ -80,6 +88,8 @@ class CreditNoteMockBackendTests : WarningBottomSheetTestBase() {
     }
 
     /**
+     * Xray: PP-3451.
+     *
      * Frontend OFF + SDK ON — no warning. Previously manual: there is no way to turn the server
      * flag off from a device.
      */
@@ -93,7 +103,11 @@ class CreditNoteMockBackendTests : WarningBottomSheetTestBase() {
         assertProcessedLikeRegularInvoice()
     }
 
-    /** Frontend OFF + SDK OFF — no warning. Previously manual, for the same reason as test3. */
+    /**
+     * Xray: PP-3452.
+     *
+     * Frontend OFF + SDK OFF — no warning. Previously manual, for the same reason as test3.
+     */
     @Test
     fun test4_noWarningWhenFrontendOffAndSdkOff() {
         armMockBackend(UiTestMockScenario.CREDIT_NOTE, creditNoteHintEnabled = false)
@@ -168,6 +182,40 @@ class CreditNoteMockBackendTests : WarningBottomSheetTestBase() {
     }
 
     /**
+     * Xray: PP-2712, the plain-invoice path.
+     *
+     * The *scan* counterpart of `CreditNoteWarningTests.test2` (upload, PP-2713): with the SDK
+     * flag off, a photo of an ordinary invoice goes straight to the extraction screen with all
+     * four payment fields filled.
+     *
+     * It runs against the mock because it is a camera case: on BrowserStack the camera sees the
+     * device rack, so the real backend would return nothing. The Return Assistant / Skonto
+     * variant of the Xray case is not covered — the mock has no invoice scenario with line items.
+     */
+    @Test
+    fun test7_noWarningWhenScanningInvoiceWithSdkFlagOff() {
+        armMockBackend(UiTestMockScenario.INVOICE)
+        configureCreditNoteHint(enabled = false)
+
+        takePhotoAndProcess()
+
+        assertTrue(
+            "Extraction screen did not appear",
+            extractionScreen.assertExtractionScreenIsDisplayed()
+        )
+        assertFalse(
+            "Credit Note warning must not appear",
+            warningBottomSheet.isSheetDisplayed()
+        )
+        PAYMENT_FIELDS.forEach { field ->
+            assertTrue(
+                "$field must be filled for a scanned invoice",
+                extractionScreen.isExtractionFieldFilled(field)
+            )
+        }
+    }
+
+    /**
      * iOS's `assertProcessedLikeRegularInvoice`: no warning, and `amountToPay` is handed over
      * instead of stripped. The amount is the half that distinguishes "the warning was never due"
      * from "the warning was shown and the user proceeded", which strips it.
@@ -196,5 +244,8 @@ class CreditNoteMockBackendTests : WarningBottomSheetTestBase() {
 
         /** Likewise for the file-picker path — BrowserStack pre-loads this one as media. */
         const val ANY_PDF = "sample.pdf"
+
+        /** The fields the mock's `INVOICE` scenario returns. */
+        val PAYMENT_FIELDS = listOf("iban", "paymentRecipient", "paymentPurpose", "amountToPay")
     }
 }

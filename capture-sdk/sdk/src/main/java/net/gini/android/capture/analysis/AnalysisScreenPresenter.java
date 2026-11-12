@@ -12,6 +12,7 @@ import net.gini.android.capture.BankSDKBridge;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
+import net.gini.android.capture.analysis.fraud.IBANMismatchArgs;
 import net.gini.android.capture.analysis.warning.BusinessDocType;
 import net.gini.android.capture.ProductTag;
 import net.gini.android.capture.analysis.warning.WarningPaymentState;
@@ -356,50 +357,28 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
 
                                 }
 
+                                // Read from the unstripped result: resultHolder has no fraudSignals.
+                                final IBANMismatchArgs ibanMismatchArgs =
+                                        extension.ibanMismatchArgs(analysisResult);
                                 if (resultHolder.getExtractions().isEmpty() && !isCxMode()) {
                                     proceedSuccessNoExtractions();
                                 } else if (isCxEmptyExtractions(resultHolder)) {
                                     proceedSuccessNoExtractions();
-                                } else if (shouldShowAlreadyPaidInvoiceWarning(resultHolder)) {
+                                } else if (ibanMismatchArgs != null) {
+                                    // The fraud warning goes ahead of every other warning, and
+                                    // "Proceed anyway" continues into them.
                                     successResultHolder = resultHolder;
                                     shouldClearImageCaches = false;
-                                    extension.showDocumentMarkedWarning(
-                                            WarningType.DOCUMENT_MARKED_AS_PAID,
-                                            mIsInvoiceSavingEnabled,
+                                    extension.showIbanMismatchWarning(
+                                            ibanMismatchArgs,
                                             isSavingInvoicesInProgress,
-                                            successResultHolder,
-                                            getActivity());
-                                } else if (shouldShowCreditNoteWarning(resultHolder)) {
-                                    successResultHolder = removeAmountToPay(resultHolder);
-                                    shouldClearImageCaches = false;
-                                    extension.showDocumentMarkedWarning(
-                                            WarningType.DOCUMENT_MARKED_AS_CREDIT_NOTE,
-                                            mIsInvoiceSavingEnabled,
-                                            isSavingInvoicesInProgress,
-                                            successResultHolder,
-                                            getActivity());
-                                } else if (shouldShowSchedulePaymentHint(resultHolder)) {
-                                    successResultHolder = resultHolder;
-                                    shouldClearImageCaches = false;
-                                    extension.showSchedulePaymentHint(
-                                            resultHolder,
-                                            extractPaymentDueDateFromExtraction(resultHolder),
-                                            mIsInvoiceSavingEnabled,
-                                            isSavingInvoicesInProgress,
-                                            getActivity());
-                                } else if (shouldShowPaymentDueHint(resultHolder)) {
-                                    successResultHolder = resultHolder;
-                                    shouldClearImageCaches = false;
-                                    extension.showPaymentDueHint(
-                                            resultHolder,
-                                            extractPaymentDueDateFromExtraction(resultHolder),
-                                            mIsInvoiceSavingEnabled,
-                                            isSavingInvoicesInProgress,
-                                            getActivity());
+                                            () -> {
+                                                showHintOrProceed(resultHolder);
+                                                return Unit.INSTANCE;
+                                            });
                                 } else {
-                                    successResultHolder = resultHolder;
                                     shouldClearImageCaches = false;
-                                    proceedWithExtractions(resultHolder);
+                                    showHintOrProceed(resultHolder);
                                 }
                             }
                             case NO_NETWORK_SERVICE:
@@ -415,6 +394,49 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                         return null;
                     }
                 });
+    }
+
+    /**
+     * Shows the first hint that applies to {@code resultHolder} — already paid, credit note,
+     * schedule payment, payment due — or proceeds with the extractions when none applies.
+     */
+    private void showHintOrProceed(@NonNull final AnalysisInteractor.ResultHolder resultHolder) {
+        if (shouldShowAlreadyPaidInvoiceWarning(resultHolder)) {
+            successResultHolder = resultHolder;
+            extension.showDocumentMarkedWarning(
+                    WarningType.DOCUMENT_MARKED_AS_PAID,
+                    mIsInvoiceSavingEnabled,
+                    isSavingInvoicesInProgress,
+                    successResultHolder,
+                    getActivity());
+        } else if (shouldShowCreditNoteWarning(resultHolder)) {
+            successResultHolder = removeAmountToPay(resultHolder);
+            extension.showDocumentMarkedWarning(
+                    WarningType.DOCUMENT_MARKED_AS_CREDIT_NOTE,
+                    mIsInvoiceSavingEnabled,
+                    isSavingInvoicesInProgress,
+                    successResultHolder,
+                    getActivity());
+        } else if (shouldShowSchedulePaymentHint(resultHolder)) {
+            successResultHolder = resultHolder;
+            extension.showSchedulePaymentHint(
+                    resultHolder,
+                    extractPaymentDueDateFromExtraction(resultHolder),
+                    mIsInvoiceSavingEnabled,
+                    isSavingInvoicesInProgress,
+                    getActivity());
+        } else if (shouldShowPaymentDueHint(resultHolder)) {
+            successResultHolder = resultHolder;
+            extension.showPaymentDueHint(
+                    resultHolder,
+                    extractPaymentDueDateFromExtraction(resultHolder),
+                    mIsInvoiceSavingEnabled,
+                    isSavingInvoicesInProgress,
+                    getActivity());
+        } else {
+            successResultHolder = resultHolder;
+            proceedWithExtractions(resultHolder);
+        }
     }
 
     private boolean isCxMode() {
@@ -585,9 +607,11 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
 
     @Override
     void updateInvoiceSavingState(Boolean isInProgress,
-            @Nullable final String pendingSavingAction) {
+            @Nullable final String pendingSavingAction,
+            @Nullable final String chosenIban) {
         isSavingInvoicesInProgress = isInProgress;
         extension.restorePendingSavingAction(pendingSavingAction);
+        extension.restoreChosenIban(chosenIban);
     }
 
     @Override

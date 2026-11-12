@@ -47,6 +47,8 @@ import org.junit.Test
 class CreditNoteWarningTests : WarningBottomSheetTestBase() {
 
     /**
+     * Xray: PP-2690.
+     *
      * On a fresh install the SDK Feature Flag is on: the example app's Credit Note Hint switch
      * is checked without anybody touching it. Covers AC 9 of PP-2180 — the client default of
      * `creditNoteHintEnabled` is `true`. `clearPackageData` is enabled for this module, so
@@ -60,6 +62,8 @@ class CreditNoteWarningTests : WarningBottomSheetTestBase() {
     }
 
     /**
+     * Xray: PP-2713.
+     *
      * The upload path with a plain invoice. The variant carrying Return Assistant or Skonto
      * screens stays manual, as does the field-by-field "filled in correctly" check beyond
      * amountToPay.
@@ -93,6 +97,8 @@ class CreditNoteWarningTests : WarningBottomSheetTestBase() {
     }
 
     /**
+     * Xray: PP-2693.
+     *
      * The warning appears after analysis with its title, description and both CTAs. The CTA
      * order matters: "Cancel transfer" is the primary (filled) button and "Proceed anyway" the
      * secondary — the reverse of the due date states, so a title-only assertion would not catch
@@ -107,6 +113,8 @@ class CreditNoteWarningTests : WarningBottomSheetTestBase() {
     }
 
     /**
+     * Xray: PP-2694.
+     *
      * The warning is not cancelable: tapping the scrim outside the two buttons leaves it up.
      * Covers AC 7 of PP-2180.
      */
@@ -125,6 +133,8 @@ class CreditNoteWarningTests : WarningBottomSheetTestBase() {
     }
 
     /**
+     * Xray: PP-2695.
+     *
      * "Cancel transfer" (the primary CTA here) cancels the journey and returns to the screen the
      * user started from — the example app's landing page. Covers AC 5 of PP-2180.
      */
@@ -140,6 +150,8 @@ class CreditNoteWarningTests : WarningBottomSheetTestBase() {
     }
 
     /**
+     * Xray: PP-2696 (light, portrait; dark + landscape is `CreditNoteLandscapeDarkTests`).
+     *
      * Covers the amountToPay half only; the "IBAN, Recipient and Reference filled in
      * correctly" half stays manual — see below.
      *
@@ -158,10 +170,9 @@ class CreditNoteWarningTests : WarningBottomSheetTestBase() {
      * extracts, and its printed IBAN is only 10 characters. Once [CreditNoteFixtures] records a
      * validated extraction set, the fields it actually returns can be asserted here.
      *
-     * The same case in German is tracked separately. Following PP-3301 decision 4, texts are
-     * asserted from string resources so the test is locale-independent, which means it cannot
-     * prove the German copy specifically — that verification stays with the capture-sdk unit
-     * tests and manual QA.
+     * Following PP-3301 decision 4, texts are asserted from string resources so the test is
+     * locale-independent, which means it cannot prove the German copy specifically. The same
+     * case in German (PP-2711) is `CreditNoteLocaleFontScaleTests.test1`.
      */
     @Test
     fun test6_proceedAnywayShowsExtractionsWithoutAmount() {
@@ -184,6 +195,8 @@ class CreditNoteWarningTests : WarningBottomSheetTestBase() {
     }
 
     /**
+     * Xray: PP-3446.
+     *
      * Frontend Feature Flag ON and SDK Feature Flag ON: the warning shows. Covers AC 1 of
      * PP-2180. The switch is asserted to be on rather than assumed, so this differs from
      * [test3_creditNoteWarningIsDisplayedWithCorrectContent] by pinning the SDK gate explicitly.
@@ -202,6 +215,8 @@ class CreditNoteWarningTests : WarningBottomSheetTestBase() {
     }
 
     /**
+     * Xray: PP-3447.
+     *
      * Frontend Feature Flag ON but SDK Feature Flag OFF: no warning, and the credit note is
      * processed like an ordinary invoice — so `amountToPay` is handed over instead of stripped.
      * Covers AC 2 and AC 3 of PP-2180.
@@ -305,7 +320,32 @@ class CreditNoteWarningTests : WarningBottomSheetTestBase() {
         )
     }
 
+    /**
+     * Xray: PP-2734, with key events in place of a hardware keyboard.
+     *
+     * TAB moves the focus to "Cancel transfer" and then to "Proceed anyway", and ENTER on
+     * "Proceed anyway" continues like a tap does. The key events reach the app the way a
+     * keyboard's do; pairing or plugging in a real one stays manual.
+     *
+     * The number of TAB presses is not asserted — only that both buttons get the focus, in that
+     * order, within [KEYBOARD_MAX_TAB_PRESSES].
+     */
+    @Test
+    fun test11_proceedAnywayIsReachableWithKeyboard() {
+        uploadCreditNoteAndProcess()
+        assertTrue("Credit Note warning did not appear", warningBottomSheet.waitForSheet())
+
+        warningBottomSheet.focusSecondaryButtonWithTab(maxPresses = KEYBOARD_MAX_TAB_PRESSES)
+        warningBottomSheet.pressEnter()
+
+        assertProceedResult()
+    }
+
     private fun uploadCreditNoteAndProcess() {
         uploadFixtureInvoiceAndProcess(CreditNoteFixtures.CREDIT_NOTE_ASSET)
+    }
+
+    private companion object {
+        const val KEYBOARD_MAX_TAB_PRESSES = 6
     }
 }

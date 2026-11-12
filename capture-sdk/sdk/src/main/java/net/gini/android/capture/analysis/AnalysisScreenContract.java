@@ -7,9 +7,11 @@ import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.util.Consumer;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCaptureBasePresenter;
+import net.gini.android.capture.analysis.fraud.IBANMismatchArgs;
 import net.gini.android.capture.GiniCaptureBaseView;
 import net.gini.android.capture.analysis.education.EducationCompleteListener;
 import net.gini.android.capture.analysis.warning.WarningType;
@@ -84,13 +86,27 @@ interface AnalysisScreenContract {
         abstract void showEducation(EducationCompleteListener listener);
 
         /**
+         * Shows the IBAN mismatch warning over the Analysis screen. "Cancel transfer" is wired
+         * by the view like the warning sheets' cancel CTA.
+         *
+         * @param args      what the warning shows
+         * @param onProceed runs when the user proceeds, with the IBAN chosen on the selection
+         *                  sheet or {@code null} when the warning offered no choice
+         */
+        abstract void showIbanMismatch(@NonNull IBANMismatchArgs args,
+                                       @NonNull Consumer<String> onProceed);
+
+        /**
          * Starts the local invoice saving step.
          *
          * @param pendingSavingAction name of the CTA waiting for saving to finish. The view must
          *                            persist it, because saving leaves the SDK for the Storage
          *                            Access Framework and the screen can be recreated meanwhile.
+         * @param chosenIban          the IBAN chosen on the IBAN selection sheet, or {@code null}.
+         *                            Persisted for the same reason.
          */
-        abstract void processInvoiceSaving(@NonNull String pendingSavingAction);
+        abstract void processInvoiceSaving(@NonNull String pendingSavingAction,
+                                           @Nullable String chosenIban);
 
         /**
          * Shows or hides the Gini ingredient brand element ("Powered by Gini").
@@ -116,7 +132,8 @@ interface AnalysisScreenContract {
         abstract List<Uri> assembleMultiPageDocumentUris();
 
         abstract void updateInvoiceSavingState(Boolean isInProgress,
-                @Nullable String pendingSavingAction);
+                @Nullable String pendingSavingAction,
+                @Nullable String chosenIban);
 
         abstract void releaseMutexForEducation();
     }

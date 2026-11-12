@@ -183,6 +183,38 @@
     <string name="gc_gini_loading_indicator_content_description">Loading</string>
     <!--   endregion -->
 
+    <!--   region Fraud warnings -->
+    <string name="gc_fraud_iban_mismatch_title">Different IBANs in this document</string>
+    <string name="gc_fraud_iban_mismatch_description">The IBAN in the QR code doesn’t match the printed IBAN</string>
+    <string name="gc_fraud_country_mismatch_title">IBAN doesn’t match the sender’s country</string>
+    <string name="gc_fraud_country_mismatch_description">The country of the IBAN on the document is different from the sender’s country.</string>
+    <string name="gc_fraud_combined_mismatch_title">Different IBANs and countries found on this document</string>
+    <string name="gc_fraud_combined_mismatch_description">The IBAN in the QR code is different from the printed one. The IBAN country also doesn’t match the sender’s country.</string>
+    <string name="gc_fraud_protection_title">How do I protect myself?</string>
+    <string name="gc_fraud_protection_body">Documents are sometimes changed to redirect payments. If you’re unsure which IBAN is right, ask the sender using contact details you already know.</string>
+    <string name="gc_fraud_sender_label">Sender</string>
+    <string name="gc_fraud_detected_ibans_title">The following IBANs were detected</string>
+    <string name="gc_fraud_qr_iban_label">In the QR code</string>
+    <string name="gc_fraud_printed_iban_label">Printed on the document</string>
+    <string name="gc_fraud_document_iban_label">On the document</string>
+    <string name="gc_fraud_iban_country_hint">From %1$s, not the sender’s country</string>
+    <string name="gc_fraud_select_iban_title">To continue, select one of the IBANs</string>
+    <string name="gc_fraud_select_iban_error">Select an IBAN to continue</string>
+    <string name="gc_fraud_select_iban_footnote">You can still check the IBAN on the next screen.</string>
+    <string name="gc_fraud_select_iban_continue">Continue</string>
+    <!-- Language tag of the country names in gc_fraud_iban_country_hint and
+         gc_fraud_sender_with_country. Override it together with those strings when adding a
+         translation, e.g. "fr". -->
+    <string name="gc_fraud_country_name_locale">en</string>
+    <!--   endregion Fraud warnings -->
+
+    <!--   region Accessibility states -->
+    <string name="gc_a11y_expanded">Expanded</string>
+    <string name="gc_a11y_collapsed">Collapsed</string>
+    <string name="gc_a11y_expand">Expand</string>
+    <string name="gc_a11y_collapse">Collapse</string>
+    <!--   endregion Accessibility states -->
+
     <!--   region Warning -->
     <string name="gc_cancel_transfer">Cancel transfer</string>
     <string name="gc_proceed_anyway">Proceed anyway</string>

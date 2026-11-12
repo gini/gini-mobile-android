@@ -14,13 +14,18 @@ import org.hamcrest.Matchers.allOf
 
 class ReviewScreen {
     fun assertReviewTitleIsDisplayed(): ReviewScreen {
-        onView(withText("Review")).check(matches(isDisplayed()))
+        // By resource, not by "Review": the title follows the app's language (PP-3877).
+        onView(withText(net.gini.android.capture.R.string.gc_title_review)).check(matches(isDisplayed()))
         return this
     }
 
     fun clickProcessButton(): ReviewScreen {
         onView(
-            allOf(withId(net.gini.android.capture.R.id.gc_button_next), withText("Process")))
+            allOf(
+                withId(net.gini.android.capture.R.id.gc_button_next),
+                withText(net.gini.android.capture.R.string.gc_process_documents)
+            )
+        )
                 .perform(click())
         return this
     }

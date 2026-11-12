@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.util.Consumer;
 import androidx.fragment.app.FragmentActivity;
 
 import net.gini.android.capture.BankSDKBridge;
@@ -30,9 +31,11 @@ import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.analysis.education.EducationCompleteListener;
+import net.gini.android.capture.analysis.fraud.IBANMismatchArgs;
 import net.gini.android.capture.analysis.warning.WarningType;
 import net.gini.android.capture.error.ErrorFragment;
 import net.gini.android.capture.error.ErrorType;
+import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.internal.util.CancelListener;
@@ -75,6 +78,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     protected static final Logger LOG = LoggerFactory.getLogger(AnalysisFragmentImpl.class);
     protected static final String INVOICE_SAVING_IN_PROGRESS_KEY = "invoiceSavingInProgress";
     protected static final String PENDING_SAVING_ACTION_KEY = "pendingSavingAction";
+    protected static final String CHOSEN_IBAN_KEY = "chosenIban";
     private final FragmentImplCallback mFragment;
     private final CancelListener mCancelListener;
     private TextView mAnalysisMessageTextView;
@@ -96,6 +100,8 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     // Which CTA started the invoice saving step. Persisted alongside isInvoiceSavingInProgress so
     // a recreation during the SAF folder picker does not lose the user's choice.
     private String pendingSavingAction = null;
+    // The IBAN chosen on the IBAN selection sheet, persisted for the same reason.
+    private String chosenIban = null;
 
     AnalysisFragmentImpl(final FragmentImplCallback fragment,
                          final CancelListener cancelListener,
@@ -257,14 +263,18 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
         getPresenter().resumeInterruptedFlow();
         isInvoiceSavingInProgress = false;
+        chosenIban = null;
     }
 
     @Override
-    void processInvoiceSaving(@NonNull final String pendingSavingAction) {
+    void processInvoiceSaving(@NonNull final String pendingSavingAction,
+                              @Nullable final String chosenIban) {
         if (mFragment.getActivity() == null) return;
         isInvoiceSavingInProgress = true;
         this.pendingSavingAction = pendingSavingAction;
-        getPresenter().updateInvoiceSavingState(isInvoiceSavingInProgress, pendingSavingAction);
+        this.chosenIban = chosenIban;
+        getPresenter().updateInvoiceSavingState(isInvoiceSavingInProgress, pendingSavingAction,
+                chosenIban);
 
         String folderUri = SharedPreferenceHelper.INSTANCE.getString(
                 SAF_STORAGE_URI_KEY,
@@ -285,6 +295,11 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     @Nullable
     public String getPendingSavingAction() {
         return pendingSavingAction;
+    }
+
+    @Nullable
+    public String getChosenIban() {
+        return chosenIban;
     }
 
     void hideEducation() {
@@ -369,6 +384,22 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         mFragment.showWarning(warningType, titleFormatArg, onProceed, onSchedule);
     }
 
+    @Override
+    void showIbanMismatch(@NonNull final IBANMismatchArgs args,
+                          @NonNull final Consumer<String> onProceed) {
+        stopAndHideHints();
+        fragmentExtension.showIbanMismatch(args, selectedIban -> {
+            onProceed.accept(selectedIban);
+            return Unit.INSTANCE;
+        }, () -> {
+            // Same steps as AnalysisFragment.cancelTransaction(), the warning sheets' cancel CTA.
+            final Activity activity = mFragment.getActivity();
+            if (activity != null) ImageDiskStore.clear(activity);
+            mCancelListener.onCancelFlow();
+            return Unit.INSTANCE;
+        });
+    }
+
     // Keeps TalkBack focus on the warning bottom sheet by removing the rotating
     // capture suggestions behind it.
     private void stopAndHideHints() {
@@ -411,6 +442,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         if (savedInstanceState != null) {
             isInvoiceSavingInProgress = savedInstanceState.getBoolean(INVOICE_SAVING_IN_PROGRESS_KEY, false);
             pendingSavingAction = savedInstanceState.getString(PENDING_SAVING_ACTION_KEY);
+            chosenIban = savedInstanceState.getString(CHOSEN_IBAN_KEY);
         }
     }
 
@@ -543,7 +575,8 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     public void onResume() {
-        getPresenter().updateInvoiceSavingState(isInvoiceSavingInProgress, pendingSavingAction);
+        getPresenter().updateInvoiceSavingState(isInvoiceSavingInProgress, pendingSavingAction,
+                chosenIban);
         getPresenter().start();
     }
 
