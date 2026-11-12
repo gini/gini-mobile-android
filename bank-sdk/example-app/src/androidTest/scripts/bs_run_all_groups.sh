@@ -12,7 +12,7 @@ set -e
 # class, add it to a shard here too, or `all_groups` silently stops meaning "everything".
 # Comparing `ls ../java/net/gini/android/bank/sdk/exampleapp/ui/testcases/` against the
 # run_group calls below is the check — expect exactly that one class, plus the abstract bases
-# (SmokeJourneyTestBase, WarningBottomSheetTestBase), to be absent.
+# (SmokeJourneyTestBase, WarningBottomSheetTestBase, FraudWarningTestBase), to be absent.
 #
 # bs_run_group_smoke.sh is NOT one of these shards and is deliberately not triggered here:
 # it is a curated cross-cutting selection covering the Xray smoke set, and it overlaps several
@@ -92,6 +92,14 @@ run_group "duedate" \
 run_group "creditnote" \
   CreditNoteWarningTests \
   CreditNoteMockBackendTests
+
+run_group "fraud" \
+  FraudSignalsFlagTests \
+  FraudWarningContentTests \
+  FraudWarningActionsTests \
+  FraudFeedbackTests \
+  IbanSelectionSheetTests \
+  FraudWarningLandscapeTests
 
 run_group "ingredientbrand" \
   IngredientBrandTests \
