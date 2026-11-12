@@ -1,8 +1,19 @@
 package net.gini.android.bank.sdk.exampleapp.ui.screens
 
+import android.content.Context
+import android.content.res.Configuration
+import android.graphics.Rect
+import android.view.KeyEvent
+import android.view.View
+import android.widget.ScrollView
+import android.widget.TextView
+import androidx.annotation.IdRes
+import androidx.core.widget.NestedScrollView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.hasFocus
+import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
@@ -10,6 +21,11 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import net.gini.android.bank.sdk.exampleapp.ui.resources.AppResources
 import net.gini.android.capture.R as CaptureR
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertTrue
+import java.util.Locale
 
 /**
  * Page object for the capture SDK's warning bottom sheet (Due Date Hint, Schedule Payment
@@ -86,6 +102,108 @@ class WarningBottomSheetScreen {
         return this
     }
 
+    /**
+     * [assertCreditNoteState] for a test that sets the app's language itself (`@AppLocale`): the
+     * four texts are read from the SDK's resources for [localeTag], not from whatever language the
+     * app happens to run in — so a sheet that stayed in the wrong language fails here.
+     *
+     * For any language but English, each text must also differ from the English one. Without that,
+     * a missing translation (the resources falling back to English) would still pass.
+     */
+    fun assertCreditNoteStateIn(localeTag: String): WarningBottomSheetScreen {
+        val expected = CreditNoteTexts.of(localizedContext(localeTag))
+        if (localeTag != ENGLISH_LOCALE_TAG) {
+            val english = CreditNoteTexts.of(localizedContext(ENGLISH_LOCALE_TAG))
+            expected.all().zip(english.all()).forEach { (localized, englishText) ->
+                assertNotEquals(
+                    "The $localeTag text must differ from the English one",
+                    englishText,
+                    localized
+                )
+            }
+        }
+        assertSheetTexts(
+            title = expected.title,
+            description = expected.description,
+            primaryButton = expected.primaryButton,
+            secondaryButton = expected.secondaryButton
+        )
+        return this
+    }
+
+    /**
+     * The structural half of "not distorted, no overlap" at a large font size. It proves that
+     * nothing is cut off or overlapping, not that the sheet looks right — that stays manual.
+     *
+     * 1. Neither button's text is ellipsized or taller than the button.
+     * 2. Both buttons are completely on screen.
+     * 3. The two buttons do not overlap each other.
+     * 4. Neither button overlaps the visible part of the text's scroll container.
+     * 5. The title and the description are each completely on screen, or the scroll container
+     *    can scroll, so the hidden part is reachable.
+     *
+     * Before any of that, the sheet itself must run at [expectedFontScale]. Without it the checks
+     * would pass at the normal size on a device that took the setting but did not apply it.
+     */
+    fun assertSheetIsNotCutOff(expectedFontScale: Float): WarningBottomSheetScreen {
+        onView(withId(CaptureR.id.warningTitle)).check { view, noViewFoundException ->
+            if (noViewFoundException != null) throw noViewFoundException
+            assertEquals(
+                "The sheet is not shown at the font scale under test",
+                expectedFontScale,
+                view.resources.configuration.fontScale,
+                FONT_SCALE_TOLERANCE
+            )
+        }
+        val primary = assertButtonIsNotCutOff(CaptureR.id.primary_button, "Primary button")
+        val secondary = assertButtonIsNotCutOff(CaptureR.id.secondary_button, "Secondary button")
+        assertFalse(
+            "The two buttons overlap: $primary and $secondary",
+            Rect.intersects(primary, secondary)
+        )
+
+        val textScroll = assertTextIsReachable(CaptureR.id.warningTitle, "Title")
+        assertTextIsReachable(CaptureR.id.warningDescription, "Description")
+        assertFalse(
+            "Primary button $primary overlaps the text $textScroll",
+            Rect.intersects(primary, textScroll)
+        )
+        assertFalse(
+            "Secondary button $secondary overlaps the text $textScroll",
+            Rect.intersects(secondary, textScroll)
+        )
+        return this
+    }
+
+    /**
+     * Sends TAB, as a hardware keyboard would, until "Proceed anyway" (the secondary button) has
+     * the focus. "Cancel transfer" (the primary button) must have had it on an earlier press.
+     * How many presses that takes is not asserted, only that [maxPresses] are enough.
+     */
+    fun focusSecondaryButtonWithTab(maxPresses: Int): WarningBottomSheetScreen {
+        var primaryWasFocused = false
+        repeat(maxPresses) {
+            device.pressKeyCode(KeyEvent.KEYCODE_TAB)
+            device.waitForIdle()
+            if (isFocused(CaptureR.id.secondary_button)) {
+                assertTrue(
+                    "Cancel transfer did not get the focus before Proceed anyway",
+                    primaryWasFocused
+                )
+                return this
+            }
+            primaryWasFocused = primaryWasFocused || isFocused(CaptureR.id.primary_button)
+        }
+        throw AssertionError("Proceed anyway was not reachable with the keyboard")
+    }
+
+    /** Sends ENTER, as a hardware keyboard would. It activates the focused button. */
+    fun pressEnter(): WarningBottomSheetScreen {
+        device.pressKeyCode(KeyEvent.KEYCODE_ENTER)
+        device.waitForIdle()
+        return this
+    }
+
     fun clickPrimaryButton() {
         onView(withId(CaptureR.id.primary_button)).perform(click())
     }
@@ -131,9 +249,108 @@ class WarningBottomSheetScreen {
         onView(withId(CaptureR.id.secondary_button)).check(matches(withText(secondaryButton)))
     }
 
+    private fun localizedContext(localeTag: String): Context {
+        val configuration = Configuration(targetContext.resources.configuration)
+        configuration.setLocale(Locale.forLanguageTag(localeTag))
+        return targetContext.createConfigurationContext(configuration)
+    }
+
+    private fun isFocused(@IdRes id: Int): Boolean {
+        var focused = false
+        onView(withId(id)).check { view, noViewFoundException ->
+            if (noViewFoundException != null) throw noViewFoundException
+            focused = hasFocus().matches(view)
+        }
+        return focused
+    }
+
+    /** Checks 1 and 2 of [assertSheetIsNotCutOff]. Returns the button's rectangle in its window. */
+    private fun assertButtonIsNotCutOff(@IdRes id: Int, name: String): Rect {
+        val bounds = Rect()
+        onView(withId(id)).check { view, noViewFoundException ->
+            if (noViewFoundException != null) throw noViewFoundException
+            val button = view as TextView
+            val textLayout = button.layout ?: throw AssertionError("$name has no text")
+            for (line in 0 until textLayout.lineCount) {
+                assertEquals(
+                    "$name: \"${button.text}\" is ellipsized on line $line",
+                    0,
+                    textLayout.getEllipsisCount(line)
+                )
+            }
+            val textSpace = button.height - button.compoundPaddingTop - button.compoundPaddingBottom
+            assertTrue(
+                "$name: \"${button.text}\" needs ${textLayout.height} px but has $textSpace px",
+                textLayout.height <= textSpace
+            )
+            assertTrue("$name is not completely on screen", isCompletelyDisplayed().matches(button))
+            bounds.set(boundsInWindow(button))
+        }
+        return bounds
+    }
+
+    /**
+     * Check 5 of [assertSheetIsNotCutOff]. Returns the visible rectangle, in its window, of the
+     * nearest scroll container above the text (`textScroll` in portrait and on tablets,
+     * `contentScroll` in landscape).
+     */
+    private fun assertTextIsReachable(@IdRes id: Int, name: String): Rect {
+        val visibleScrollBounds = Rect()
+        onView(withId(id)).check { view, noViewFoundException ->
+            if (noViewFoundException != null) throw noViewFoundException
+            val scrollContainer = nearestScrollContainer(view)
+                ?: throw AssertionError("$name is not inside a scroll container")
+            assertTrue(
+                "$name is cut off and its container cannot scroll",
+                isCompletelyDisplayed().matches(view) ||
+                    scrollContainer.canScrollVertically(SCROLL_DOWN) ||
+                    scrollContainer.canScrollVertically(SCROLL_UP)
+            )
+            scrollContainer.getGlobalVisibleRect(visibleScrollBounds)
+        }
+        return visibleScrollBounds
+    }
+
+    private fun nearestScrollContainer(view: View): View? {
+        var parent = view.parent
+        while (parent != null) {
+            if (parent is NestedScrollView || parent is ScrollView) return parent as View
+            parent = parent.parent
+        }
+        return null
+    }
+
+    private fun boundsInWindow(view: View): Rect {
+        val location = IntArray(2)
+        view.getLocationInWindow(location)
+        return Rect(location[0], location[1], location[0] + view.width, location[1] + view.height)
+    }
+
+    /** The four texts of the Credit Note warning state, read from one context's resources. */
+    private class CreditNoteTexts(
+        val title: String,
+        val description: String,
+        val primaryButton: String,
+        val secondaryButton: String
+    ) {
+        fun all(): List<String> = listOf(title, description, primaryButton, secondaryButton)
+
+        companion object {
+            fun of(context: Context) = CreditNoteTexts(
+                title = context.getString(CaptureR.string.gc_document_marked_credit_note_title),
+                description = context.getString(CaptureR.string.gc_document_marked_credit_note_desc),
+                primaryButton = context.getString(CaptureR.string.gc_cancel_transfer),
+                secondaryButton = context.getString(CaptureR.string.gc_proceed_anyway)
+            )
+        }
+    }
+
     companion object {
         private const val SHEET_TIMEOUT = 30_000L
         private const val MIN_OUTSIDE_TAP_Y = 200
-
+        private const val ENGLISH_LOCALE_TAG = "en-GB"
+        private const val SCROLL_DOWN = 1
+        private const val SCROLL_UP = -1
+        private const val FONT_SCALE_TOLERANCE = 0.01f
     }
 }

@@ -17,6 +17,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.resources.AppResources
 import net.gini.android.bank.sdk.exampleapp.ui.resources.SimpleIdlingResource
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.anyOf
 
 class CaptureScreen {
     private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
@@ -107,9 +108,18 @@ class CaptureScreen {
 
     fun clickPhotos(): CaptureScreen {
         withIdlingResource()
+        // Where the system photo picker exists (API 33+, FileChooserFragment), the entry is the
+        // SDK's own string and follows the app's language (PP-3877). The "Photos" literal stays
+        // for older devices, where the entry is the gallery app's own label.
         onView(
-            allOf(withId(net.gini.android.capture.R.id.gc_app_label), withText("Photos")))
-             .perform(click())
+            allOf(
+                withId(net.gini.android.capture.R.id.gc_app_label),
+                anyOf(
+                    withText(net.gini.android.capture.R.string.gc_file_chooser_fotos_section_header),
+                    withText("Photos")
+                )
+            )
+        ).perform(click())
         return this
     }
 
