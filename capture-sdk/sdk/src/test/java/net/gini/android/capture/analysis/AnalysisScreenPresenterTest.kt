@@ -10,6 +10,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.core.util.Consumer
 import com.google.common.truth.Truth
+import com.nhaarman.mockitokotlin2.KArgumentCaptor
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.argumentCaptor
@@ -20,6 +21,7 @@ import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.spy
+import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.mockk.Runs
@@ -43,7 +45,7 @@ import net.gini.android.capture.GiniCaptureHelper
 import net.gini.android.capture.ProductTag
 import net.gini.android.capture.analysis.AnalysisScreenPresenter.CROSS_BORDER_PAYMENT_KEY
 import net.gini.android.capture.analysis.fraud.IBANMismatchArgs
-import net.gini.android.capture.analysis.fraud.IBANMismatchDebug
+import net.gini.android.capture.analysis.fraud.IBANMismatchIban
 import net.gini.android.capture.analysis.fraud.IBANMismatchType
 import net.gini.android.capture.analysis.warning.WarningType
 import net.gini.android.capture.di.getGiniCaptureKoin
@@ -60,6 +62,7 @@ import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
 import net.gini.android.capture.internal.util.FileImportHelper.ShowAlertCallback
 import net.gini.android.capture.internal.util.Size
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
+import net.gini.android.capture.network.model.GiniCaptureExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.Event
@@ -1633,109 +1636,559 @@ class AnalysisScreenPresenterTest {
     // region IBAN mismatch warning
 
     @Test
-    fun `should show IBAN mismatch warning ahead of other warnings when the development switch is on`() {
-        // Given
-        IBANMismatchDebug.case = IBANMismatchDebug.Case.COMBINED
-        configurationProvider.update { it.copy(isCreditNoteHintEnabled = true) }
-        try {
-            // When
-            val listener = startPresenterForDueHint(creditNoteExtractions())
-
-            // Then
-            idleMainLooperUntil {
-                verify(mView).showIbanMismatch(any(), any())
-            }
-            verify(mView, never()).showWarning(any(), anyOrNull(), any(), anyOrNull())
-            verify(listener, never()).onExtractionsAvailable(any(), any(), any())
-        } finally {
-            IBANMismatchDebug.case = null
+    fun `should show IBAN mismatch warning from the fraud signals ahead of other warnings`() {
+        // Given the credit note hint would apply too
+        configurationProvider.update {
+            it.copy(isFraudSignalsEnabled = true, isCreditNoteHintEnabled = true)
         }
-    }
-
-    @Test
-    fun `should show the IBAN mismatch case selected on the development switch`() {
-        // Given
-        IBANMismatchDebug.case = IBANMismatchDebug.Case.COUNTRY
-        try {
-            // When
-            startPresenterForDueHint(creditNoteExtractions())
-
-            // Then
-            val argsCaptor = argumentCaptor<IBANMismatchArgs>()
-            idleMainLooperUntil {
-                verify(mView).showIbanMismatch(argsCaptor.capture(), any())
-            }
-            Truth.assertThat(argsCaptor.lastValue.type).isEqualTo(IBANMismatchType.COUNTRY)
-        } finally {
-            IBANMismatchDebug.case = null
-        }
-    }
-
-    @Test
-    fun `proceed continuation without a chosen IBAN hands the extractions on unchanged`() {
-        // Given the country case, which offers no IBAN choice
-        IBANMismatchDebug.case = IBANMismatchDebug.Case.COUNTRY
-        try {
-            val listener = startPresenterForDueHint(creditNoteExtractions())
-            val onProceedCaptor = argumentCaptor<Consumer<String?>>()
-            idleMainLooperUntil {
-                verify(mView).showIbanMismatch(any(), onProceedCaptor.capture())
-            }
-
-            // When the user taps "Proceed anyway"
-            onProceedCaptor.lastValue.accept(null)
-
-            // Then
-            val extractionsCaptor = argumentCaptor<Map<String, GiniCaptureSpecificExtraction>>()
-            idleMainLooperUntil {
-                verify(listener).onExtractionsAvailable(extractionsCaptor.capture(), any(), any())
-            }
-            Truth.assertThat(extractionsCaptor.lastValue.keys)
-                .containsExactlyElementsIn(creditNoteExtractions().keys)
-        } finally {
-            IBANMismatchDebug.case = null
-        }
-    }
-
-    @Test
-    fun `proceed continuation of IBAN mismatch warning hands the extractions on unchanged`() {
-        // Given
-        IBANMismatchDebug.case = IBANMismatchDebug.Case.COMBINED
-        try {
-            val listener = startPresenterForDueHint(creditNoteExtractions())
-            val onProceedCaptor = argumentCaptor<Consumer<String?>>()
-            idleMainLooperUntil {
-                verify(mView).showIbanMismatch(any(), onProceedCaptor.capture())
-            }
-
-            // When the user proceeds with an IBAN chosen on the selection sheet
-            onProceedCaptor.lastValue.accept("DE89370400440532013000")
-
-            // Then
-            val extractionsCaptor = argumentCaptor<Map<String, GiniCaptureSpecificExtraction>>()
-            idleMainLooperUntil {
-                verify(listener).onExtractionsAvailable(extractionsCaptor.capture(), any(), any())
-            }
-            Truth.assertThat(extractionsCaptor.lastValue.keys)
-                .containsExactlyElementsIn(creditNoteExtractions().keys)
-        } finally {
-            IBANMismatchDebug.case = null
-        }
-    }
-
-    @Test
-    fun `should not show IBAN mismatch warning when the development switch is off`() {
-        // Given
-        IBANMismatchDebug.case = null
+        val extractions = creditNoteExtractions() +
+            ibanWithCandidates(QR_IBAN, PRINTED_IBAN)
 
         // When
-        val listener = startPresenterForDueHint(creditNoteExtractions(businessDocType = null))
+        val listener = startPresenterForDueHint(extractions, qrMismatchCompounds())
+
+        // Then
+        val argsCaptor = argumentCaptor<IBANMismatchArgs>()
+        idleMainLooperUntil {
+            verify(mView).showIbanMismatch(argsCaptor.capture(), any())
+        }
+        Truth.assertThat(argsCaptor.lastValue).isEqualTo(
+            IBANMismatchArgs(
+                type = IBANMismatchType.QR_VS_PRINTED,
+                qrIban = IBANMismatchIban(QR_IBAN),
+                printedIbans = listOf(IBANMismatchIban(PRINTED_IBAN)),
+            )
+        )
+        verify(mView, never()).showWarning(any(), anyOrNull(), any(), anyOrNull())
+        verify(listener, never()).onExtractionsAvailable(any(), any(), any())
+    }
+
+    @Test
+    fun `proceed with the printed IBAN hands it on as the iban extraction without fraudSignals`() {
+        // Given
+        configurationProvider.update { it.copy(isFraudSignalsEnabled = true) }
+        val extractions = ibanWithCandidates(QR_IBAN, PRINTED_IBAN) +
+            ("bic" to specificExtraction("bic", "COBADEFFXXX"))
+        val listener = startPresenterForDueHint(extractions, qrMismatchCompounds())
+        val onProceedCaptor = argumentCaptor<Consumer<String?>>()
+        idleMainLooperUntil {
+            verify(mView).showIbanMismatch(any(), onProceedCaptor.capture())
+        }
+
+        // When the user proceeds with the printed IBAN chosen on the selection sheet
+        onProceedCaptor.lastValue.accept(PRINTED_IBAN)
+
+        // Then the chosen IBAN is handed on, and the QR IBAN's BIC is not
+        val extractionsCaptor = argumentCaptor<Map<String, GiniCaptureSpecificExtraction>>()
+        val iban = assertForwardedIbanWithoutFraudSignals(listener, extractionsCaptor)
+        Truth.assertThat(iban.value).isEqualTo(PRINTED_IBAN)
+        Truth.assertThat(iban.isDirty).isTrue()
+        Truth.assertThat(iban.candidates.map { it.value }).containsExactly(QR_IBAN, PRINTED_IBAN)
+        Truth.assertThat(extractionsCaptor.lastValue).doesNotContainKey("bic")
+    }
+
+    @Test
+    fun `proceed with the QR IBAN hands the extractions on unchanged`() {
+        // Given
+        configurationProvider.update { it.copy(isFraudSignalsEnabled = true) }
+        val extractions = ibanWithCandidates(QR_IBAN, PRINTED_IBAN)
+        val listener = startPresenterForDueHint(extractions, qrMismatchCompounds())
+        val onProceedCaptor = argumentCaptor<Consumer<String?>>()
+        idleMainLooperUntil {
+            verify(mView).showIbanMismatch(any(), onProceedCaptor.capture())
+        }
+
+        // When the user keeps the QR code IBAN
+        onProceedCaptor.lastValue.accept(QR_IBAN)
+
+        // Then
+        assertForwardedWithoutFraudSignals(listener, extractions)
+    }
+
+    /**
+     * Saving the invoice locally leaves the SDK for the Storage Access Framework, so the chosen
+     * IBAN is handed to the view with the pending action and applied when the flow resumes. It
+     * is used once: a second resume on the same presenter hands on the backend IBAN.
+     */
+    @Test
+    fun `chosen IBAN survives the invoice saving step and is used once`() {
+        // Given invoice saving is enabled
+        configurationProvider.update { it.copy(isFraudSignalsEnabled = true) }
+        val extractions = ibanWithCandidates(QR_IBAN, PRINTED_IBAN)
+        val (presenter, listener) = startPresenterForDueHintReturningPresenter(
+            extractions,
+            qrMismatchCompounds(),
+            isInvoiceSavingEnabled = true
+        )
+        val onProceedCaptor = argumentCaptor<Consumer<String?>>()
+        idleMainLooperUntil {
+            verify(mView).showIbanMismatch(any(), onProceedCaptor.capture())
+        }
+
+        // When the user proceeds with the printed IBAN
+        onProceedCaptor.lastValue.accept(PRINTED_IBAN)
+
+        // Then saving is requested with the choice, and nothing is handed on yet
+        idleMainLooperUntil {
+            verify(mView).processInvoiceSaving("PROCEED", PRINTED_IBAN)
+        }
+        verify(listener, never()).onExtractionsAvailable(any(), any(), any())
+
+        // When saving finishes, twice on the same presenter
+        presenter.resumeInterruptedFlow()
+        presenter.resumeInterruptedFlow()
+
+        // Then the first hand-off carries the choice and the second the backend IBAN
+        val extractionsCaptor = argumentCaptor<Map<String, GiniCaptureSpecificExtraction>>()
+        verify(listener, times(2)).onExtractionsAvailable(extractionsCaptor.capture(), any(), any())
+        Truth.assertThat(extractionsCaptor.firstValue.getValue("iban").value).isEqualTo(PRINTED_IBAN)
+        Truth.assertThat(extractionsCaptor.secondValue).isEqualTo(extractions)
+    }
+
+    /**
+     * The screen can be recreated while the SAF folder picker is open. The restored flow skips
+     * the warning, so the choice must come back through `updateInvoiceSavingState`.
+     */
+    @Test
+    fun `chosen IBAN survives a recreation while invoice saving is in progress`() {
+        // Given the user chose the printed IBAN and the screen was recreated mid-saving
+        configurationProvider.update { it.copy(isFraudSignalsEnabled = true) }
+        val (presenter, listener) = startPresenterForDueHintReturningPresenter(
+            ibanWithCandidates(QR_IBAN, PRINTED_IBAN),
+            qrMismatchCompounds(),
+            isInvoiceSavingEnabled = true,
+            startPresenter = false
+        )
+        presenter.updateInvoiceSavingState(true, "PROCEED", PRINTED_IBAN)
+
+        // When the flow resumes after recreation
+        presenter.start()
+
+        // Then the warning is not shown again and the choice is handed on
+        val iban = assertForwardedIbanWithoutFraudSignals(listener)
+        Truth.assertThat(iban.value).isEqualTo(PRINTED_IBAN)
+        verify(mView, never()).showIbanMismatch(any(), any())
+    }
+
+    @Test
+    fun `should not show IBAN mismatch warning when the fraud signals flag is off`() {
+        // Given the provider default (isFraudSignalsEnabled = false)
+        val extractions = ibanWithCandidates(QR_IBAN, PRINTED_IBAN)
+
+        // When
+        val listener = startPresenterForDueHint(extractions, qrMismatchCompounds())
+
+        // Then
+        assertForwardedWithoutFraudSignals(listener, extractions)
+        verify(mView, never()).showIbanMismatch(any(), any())
+    }
+
+    @Test
+    fun `should not show IBAN mismatch warning without fraud signals`() {
+        // Given
+        configurationProvider.update { it.copy(isFraudSignalsEnabled = true) }
+        val extractions = ibanWithCandidates(QR_IBAN, PRINTED_IBAN)
+
+        // When
+        val listener = startPresenterForDueHint(extractions)
 
         // Then
         idleMainLooperUntil {
-            verify(listener).onExtractionsAvailable(any(), any(), any())
+            verify(listener).onExtractionsAvailable(eq(extractions), any(), any())
         }
         verify(mView, never()).showIbanMismatch(any(), any())
+    }
+
+    @Test
+    fun `should show IBAN mismatch warning in CX mode`() {
+        // Given
+        configurationProvider.update { it.copy(isFraudSignalsEnabled = true) }
+        val cbp = GiniCaptureCompoundExtraction(
+            CROSS_BORDER_PAYMENT_KEY,
+            listOf(mapOf("amount" to specificExtraction("amount", "12.00:EUR")))
+        )
+
+        // When
+        startPresenterForDueHint(
+            ibanWithCandidates(QR_IBAN, PRINTED_IBAN),
+            qrMismatchCompounds() + (CROSS_BORDER_PAYMENT_KEY to cbp),
+            giniCapture = createGiniCaptureInstanceWithProductTag(ProductTag.CxExtractions)
+        )
+
+        // Then
+        idleMainLooperUntil {
+            verify(mView).showIbanMismatch(any(), any())
+        }
+    }
+
+    @Test
+    fun `already paid warning follows the IBAN mismatch warning`() {
+        // Given
+        configurationProvider.update {
+            it.copy(isFraudSignalsEnabled = true, isAlreadyPaidHintEnabled = true)
+        }
+        val extractions = dueHintExtractions(dueDate = null, paymentState = "Paid") +
+            ibanWithCandidates(QR_IBAN, PRINTED_IBAN)
+        val listener = startPresenterForDueHint(extractions, qrMismatchCompounds())
+
+        // When
+        proceedOnIbanMismatch(PRINTED_IBAN)
+
+        // Then
+        idleMainLooperUntil {
+            verify(mView).showWarning(eq(WarningType.DOCUMENT_MARKED_AS_PAID), anyOrNull(), any(), anyOrNull())
+        }
+        verify(listener, never()).onExtractionsAvailable(any(), any(), any())
+    }
+
+    @Test
+    fun `credit note warning follows the IBAN mismatch warning and keeps the chosen IBAN`() {
+        // Given
+        configurationProvider.update {
+            it.copy(isFraudSignalsEnabled = true, isCreditNoteHintEnabled = true)
+        }
+        val extractions = creditNoteExtractions() + ibanWithCandidates(QR_IBAN, PRINTED_IBAN)
+        val listener = startPresenterForDueHint(extractions, qrMismatchCompounds())
+        proceedOnIbanMismatch(PRINTED_IBAN)
+        val onProceedCaptor = argumentCaptor<Runnable>()
+        idleMainLooperUntil {
+            verify(mView).showWarning(
+                eq(WarningType.DOCUMENT_MARKED_AS_CREDIT_NOTE), anyOrNull(), onProceedCaptor.capture(), anyOrNull()
+            )
+        }
+
+        // When the user proceeds on the credit note warning
+        onProceedCaptor.lastValue.run()
+
+        // Then
+        val extractionsCaptor = argumentCaptor<Map<String, GiniCaptureSpecificExtraction>>()
+        idleMainLooperUntil {
+            verify(listener).onExtractionsAvailable(extractionsCaptor.capture(), any(), any())
+        }
+        Truth.assertThat(extractionsCaptor.lastValue).doesNotContainKey("amountToPay")
+        Truth.assertThat(extractionsCaptor.lastValue.getValue("iban").value).isEqualTo(PRINTED_IBAN)
+    }
+
+    @Test
+    fun `schedule payment sheet follows the IBAN mismatch warning and keeps the chosen IBAN`() {
+        // Given
+        configurationProvider.update {
+            it.copy(isFraudSignalsEnabled = true, isPaymentScheduleHintEnabled = true)
+        }
+        val extractions = dueHintExtractions(LocalDate.now().plusDays(10).toString()) +
+            ibanWithCandidates(QR_IBAN, PRINTED_IBAN)
+        val listener = startPresenterForDueHint(extractions, qrMismatchCompounds())
+        proceedOnIbanMismatch(PRINTED_IBAN)
+        val onScheduleCaptor = argumentCaptor<Runnable>()
+        idleMainLooperUntil {
+            verify(mView).showWarning(eq(WarningType.SCHEDULE_PAYMENT), any(), any(), onScheduleCaptor.capture())
+        }
+
+        // When the user taps "Schedule Payment"
+        onScheduleCaptor.lastValue.run()
+
+        // Then
+        val extractionsCaptor = argumentCaptor<Map<String, GiniCaptureSpecificExtraction>>()
+        idleMainLooperUntil {
+            verify(listener).onSchedulePayment(extractionsCaptor.capture(), any(), any())
+        }
+        Truth.assertThat(extractionsCaptor.lastValue.getValue("iban").value).isEqualTo(PRINTED_IBAN)
+        verify(listener, never()).onExtractionsAvailable(any(), any(), any())
+    }
+
+    @Test
+    fun `proceed on the schedule payment sheet after the IBAN mismatch warning keeps the chosen IBAN`() {
+        // Given
+        configurationProvider.update {
+            it.copy(isFraudSignalsEnabled = true, isPaymentScheduleHintEnabled = true)
+        }
+        val extractions = dueHintExtractions(LocalDate.now().plusDays(10).toString()) +
+            ibanWithCandidates(QR_IBAN, PRINTED_IBAN)
+        val listener = startPresenterForDueHint(extractions, qrMismatchCompounds())
+        proceedOnIbanMismatch(PRINTED_IBAN)
+        val onProceedCaptor = argumentCaptor<Runnable>()
+        idleMainLooperUntil {
+            verify(mView).showWarning(eq(WarningType.SCHEDULE_PAYMENT), any(), onProceedCaptor.capture(), any())
+        }
+
+        // When the user taps "Proceed Anyway"
+        onProceedCaptor.lastValue.run()
+
+        // Then
+        val iban = assertForwardedIbanWithoutFraudSignals(listener)
+        Truth.assertThat(iban.value).isEqualTo(PRINTED_IBAN)
+        verify(listener, never()).onSchedulePayment(any(), any(), any())
+    }
+
+    @Test
+    fun `payment due hint follows the IBAN mismatch warning`() {
+        // Given
+        configurationProvider.update {
+            it.copy(isFraudSignalsEnabled = true, isPaymentDueHintEnabled = true)
+        }
+        val extractions = dueHintExtractions(LocalDate.now().plusDays(10).toString()) +
+            ibanWithCandidates(QR_IBAN, PRINTED_IBAN)
+        val listener = startPresenterForDueHint(extractions, qrMismatchCompounds())
+
+        // When
+        proceedOnIbanMismatch(QR_IBAN)
+
+        // Then
+        idleMainLooperUntil {
+            verify(mView).showWarning(eq(WarningType.PAYMENT_DUE_DATE), any(), any(), anyOrNull())
+        }
+        verify(listener, never()).onExtractionsAvailable(any(), any(), any())
+    }
+
+    /**
+     * The invoice is saved once, by the hint that follows the IBAN mismatch warning, not by the
+     * warning itself.
+     */
+    @Test
+    fun `invoice saving is requested once by the hint after the IBAN mismatch warning`() {
+        // Given invoice saving is enabled
+        configurationProvider.update {
+            it.copy(isFraudSignalsEnabled = true, isAlreadyPaidHintEnabled = true)
+        }
+        val extractions = dueHintExtractions(dueDate = null, paymentState = "Paid") +
+            ibanWithCandidates(QR_IBAN, PRINTED_IBAN)
+        val (presenter, listener) = startPresenterForDueHintReturningPresenter(
+            extractions,
+            qrMismatchCompounds(),
+            isInvoiceSavingEnabled = true
+        )
+        proceedOnIbanMismatch(PRINTED_IBAN)
+        val onProceedCaptor = argumentCaptor<Runnable>()
+        idleMainLooperUntil {
+            verify(mView).showWarning(
+                eq(WarningType.DOCUMENT_MARKED_AS_PAID), anyOrNull(), onProceedCaptor.capture(), anyOrNull()
+            )
+        }
+        verify(mView, never()).processInvoiceSaving(any(), anyOrNull())
+
+        // When the user proceeds on the already paid warning and saving finishes
+        onProceedCaptor.lastValue.run()
+        verify(mView, times(1)).processInvoiceSaving("PROCEED", PRINTED_IBAN)
+        presenter.resumeInterruptedFlow()
+
+        // Then
+        val extractionsCaptor = argumentCaptor<Map<String, GiniCaptureSpecificExtraction>>()
+        verify(listener).onExtractionsAvailable(extractionsCaptor.capture(), any(), any())
+        Truth.assertThat(extractionsCaptor.lastValue.getValue("iban").value).isEqualTo(PRINTED_IBAN)
+    }
+
+    /**
+     * The screen can be recreated while the SAF folder picker is open after the schedule CTA
+     * that followed the IBAN mismatch warning. Neither sheet is shown again, and the restored CTA
+     * and IBAN win.
+     */
+    @Test
+    fun `schedule payment after the IBAN mismatch warning survives a recreation`() {
+        // Given
+        configurationProvider.update {
+            it.copy(isFraudSignalsEnabled = true, isPaymentScheduleHintEnabled = true)
+        }
+        val extractions = dueHintExtractions(LocalDate.now().plusDays(10).toString()) +
+            ibanWithCandidates(QR_IBAN, PRINTED_IBAN)
+        val (presenter, listener) = startPresenterForDueHintReturningPresenter(
+            extractions,
+            qrMismatchCompounds(),
+            isInvoiceSavingEnabled = true,
+            startPresenter = false
+        )
+        presenter.updateInvoiceSavingState(true, "SCHEDULE_PAYMENT", PRINTED_IBAN)
+
+        // When the flow resumes after recreation
+        presenter.start()
+
+        // Then
+        val extractionsCaptor = argumentCaptor<Map<String, GiniCaptureSpecificExtraction>>()
+        idleMainLooperUntil {
+            verify(listener).onSchedulePayment(extractionsCaptor.capture(), any(), any())
+        }
+        Truth.assertThat(extractionsCaptor.lastValue.getValue("iban").value).isEqualTo(PRINTED_IBAN)
+        verify(mView, never()).showIbanMismatch(any(), any())
+        verify(mView, never()).showWarning(any(), anyOrNull(), any(), anyOrNull())
+        verify(listener, never()).onExtractionsAvailable(any(), any(), any())
+    }
+
+    /** Waits for the IBAN mismatch warning and proceeds with [iban] chosen on the selection sheet. */
+    private fun proceedOnIbanMismatch(iban: String?) {
+        val onProceedCaptor = argumentCaptor<Consumer<String?>>()
+        idleMainLooperUntil {
+            verify(mView).showIbanMismatch(any(), onProceedCaptor.capture())
+        }
+        onProceedCaptor.lastValue.accept(iban)
+    }
+
+    private fun qrMismatchCompounds(): Map<String, GiniCaptureCompoundExtraction> {
+        val signal = mapOf(
+            "signalCode" to specificExtraction("signalCode", "QR_PRINTED_IBAN_MISMATCH"),
+            "severity" to specificExtraction("severity", "STOP"),
+            "iban" to specificExtraction("iban", QR_IBAN),
+        )
+        return mapOf(
+            "fraudSignals" to GiniCaptureCompoundExtraction("fraudSignals", listOf(signal)),
+            "lineItems" to GiniCaptureCompoundExtraction("lineItems", emptyList()),
+        )
+    }
+
+    private fun ibanWithCandidates(vararg candidates: String) = mapOf(
+        "iban" to GiniCaptureSpecificExtraction(
+            "iban",
+            candidates.first(),
+            "iban",
+            null,
+            candidates.map { GiniCaptureExtraction(it, "iban", null) }
+        )
+    )
+
+    // endregion
+
+    // region Fraud signals are never forwarded
+
+    @Test
+    fun `forwarded compound extractions do not contain fraudSignals when the flag is on`() {
+        // Given
+        configurationProvider.update { it.copy(isFraudSignalsEnabled = true) }
+        val extractions = mapOf("iban" to specificExtraction("iban", "DE89370400440532013000"))
+
+        // When
+        val listener = startPresenterForDueHint(extractions, compoundsWithFraudSignals())
+
+        // Then
+        assertForwardedWithoutFraudSignals(listener, extractions)
+    }
+
+    @Test
+    fun `forwarded compound extractions do not contain fraudSignals when the flag is off`() {
+        // Given the provider default (isFraudSignalsEnabled = false)
+        val extractions = mapOf("iban" to specificExtraction("iban", "AT611904300234573201"))
+
+        // When
+        val listener = startPresenterForDueHint(extractions, compoundsWithFraudSignals())
+
+        // Then the flow is unchanged apart from the removed fraudSignals
+        assertForwardedWithoutFraudSignals(listener, extractions)
+    }
+
+    @Test
+    fun `proceed continuation of payment due hint does not forward fraudSignals`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentDueHintEnabled = true) }
+        val extractions = dueHintExtractions(LocalDate.now().plusDays(10).toString())
+        val listener = startPresenterForDueHint(extractions, compoundsWithFraudSignals())
+        val onProceedCaptor = argumentCaptor<Runnable>()
+        idleMainLooperUntil {
+            verify(mView).showWarning(eq(WarningType.PAYMENT_DUE_DATE), any(), onProceedCaptor.capture(), anyOrNull())
+        }
+
+        // When the user taps "Proceed Anyway"
+        onProceedCaptor.lastValue.run()
+
+        // Then
+        assertForwardedWithoutFraudSignals(listener, extractions)
+    }
+
+    @Test
+    fun `proceed continuation of already paid warning does not forward fraudSignals`() {
+        // Given
+        configurationProvider.update { it.copy(isAlreadyPaidHintEnabled = true) }
+        val extractions = dueHintExtractions(dueDate = null, paymentState = "Paid")
+        val listener = startPresenterForDueHint(extractions, compoundsWithFraudSignals())
+        val onProceedCaptor = argumentCaptor<Runnable>()
+        idleMainLooperUntil {
+            verify(mView).showWarning(eq(WarningType.DOCUMENT_MARKED_AS_PAID), anyOrNull(), onProceedCaptor.capture(), anyOrNull())
+        }
+
+        // When the user taps "Proceed Anyway"
+        onProceedCaptor.lastValue.run()
+
+        // Then
+        assertForwardedWithoutFraudSignals(listener, extractions)
+    }
+
+    @Test
+    fun `schedule CTA does not hand over fraudSignals`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentScheduleHintEnabled = true) }
+        val extractions = dueHintExtractions(LocalDate.now().plusDays(10).toString())
+        val listener = startPresenterForDueHint(extractions, compoundsWithFraudSignals())
+        val onScheduleCaptor = argumentCaptor<Runnable>()
+        idleMainLooperUntil {
+            verify(mView).showWarning(eq(WarningType.SCHEDULE_PAYMENT), any(), any(), onScheduleCaptor.capture())
+        }
+
+        // When the user taps "Schedule Payment"
+        onScheduleCaptor.lastValue.run()
+
+        // Then
+        val compoundCaptor = argumentCaptor<Map<String, GiniCaptureCompoundExtraction>>()
+        verify(listener).onSchedulePayment(eq(extractions), compoundCaptor.capture(), any())
+        Truth.assertThat(compoundCaptor.lastValue.keys).containsExactly("lineItems")
+    }
+
+    /**
+     * Characterises the no-extractions routing when `fraudSignals` is the only compound
+     * extraction. The routing only looks at specific extractions, so this is not a regression
+     * test for the strip itself.
+     */
+    @Test
+    fun `only fraudSignals without specific extractions proceeds to the no-extractions screen`() {
+        // Given
+        configurationProvider.update { it.copy(isFraudSignalsEnabled = true) }
+
+        // When
+        val listener = startPresenterForDueHint(
+            emptyMap(),
+            compoundsWithFraudSignals() - "lineItems"
+        )
+
+        // Then
+        idleMainLooperUntil {
+            verify(listener).onProceedToNoExtractionsScreen(any())
+        }
+        verify(listener, never()).onExtractionsAvailable(any(), any(), any())
+    }
+
+    private fun compoundsWithFraudSignals(): Map<String, GiniCaptureCompoundExtraction> {
+        val signal = mapOf(
+            "signalCode" to specificExtraction("signalCode", "QR_PRINTED_IBAN_MISMATCH"),
+            "severity" to specificExtraction("severity", "STOP"),
+            "iban" to specificExtraction("iban", "LT601010012345678901"),
+        )
+        return mapOf(
+            "fraudSignals" to GiniCaptureCompoundExtraction("fraudSignals", listOf(signal)),
+            "lineItems" to GiniCaptureCompoundExtraction("lineItems", emptyList()),
+        )
+    }
+
+    /** Asserts the hand-off without `fraudSignals` and returns the forwarded `iban` extraction. */
+    private fun assertForwardedIbanWithoutFraudSignals(
+        listener: AnalysisFragmentListener,
+        extractionsCaptor: KArgumentCaptor<Map<String, GiniCaptureSpecificExtraction>> = argumentCaptor()
+    ): GiniCaptureSpecificExtraction {
+        val compoundCaptor = argumentCaptor<Map<String, GiniCaptureCompoundExtraction>>()
+        idleMainLooperUntil {
+            verify(listener).onExtractionsAvailable(
+                extractionsCaptor.capture(),
+                compoundCaptor.capture(),
+                any()
+            )
+        }
+        Truth.assertThat(compoundCaptor.lastValue.keys).containsExactly("lineItems")
+        return extractionsCaptor.lastValue.getValue("iban")
+    }
+
+    private fun assertForwardedWithoutFraudSignals(
+        listener: AnalysisFragmentListener,
+        extractions: Map<String, GiniCaptureSpecificExtraction>
+    ) {
+        val compoundCaptor = argumentCaptor<Map<String, GiniCaptureCompoundExtraction>>()
+        idleMainLooperUntil {
+            verify(listener).onExtractionsAvailable(eq(extractions), compoundCaptor.capture(), any())
+        }
+        Truth.assertThat(compoundCaptor.lastValue.keys).containsExactly("lineItems")
     }
 
     // endregion
@@ -2090,7 +2543,7 @@ class AnalysisScreenPresenterTest {
 
         // Then saving is requested first, tagged with the CTA so it survives a recreation, and
         // the hand-off has NOT happened yet
-        verify(mView).processInvoiceSaving("SCHEDULE_PAYMENT")
+        verify(mView).processInvoiceSaving("SCHEDULE_PAYMENT", null)
         verify(listener, never()).onSchedulePayment(any(), any(), any())
         verify(listener, never()).onExtractionsAvailable(any(), any(), any())
     }
@@ -2119,7 +2572,7 @@ class AnalysisScreenPresenterTest {
             verify(mView).showWarning(eq(WarningType.SCHEDULE_PAYMENT), any(), any(), onScheduleCaptor.capture())
         }
         onScheduleCaptor.lastValue.run()
-        verify(mView).processInvoiceSaving(any())
+        verify(mView).processInvoiceSaving(any(), anyOrNull())
 
         // When saving finishes and the SDK resumes the flow
         presenter.first.resumeInterruptedFlow()
@@ -2149,7 +2602,7 @@ class AnalysisScreenPresenterTest {
             verify(mView).showWarning(eq(WarningType.SCHEDULE_PAYMENT), any(), onProceedCaptor.capture(), any())
         }
         onProceedCaptor.lastValue.run()
-        verify(mView).processInvoiceSaving(any())
+        verify(mView).processInvoiceSaving(any(), anyOrNull())
 
         // When
         presenter.first.resumeInterruptedFlow()
@@ -2179,7 +2632,7 @@ class AnalysisScreenPresenterTest {
 
         // Then
         verify(listener).onSchedulePayment(eq(extractions), any(), any())
-        verify(mView, never()).processInvoiceSaving(any())
+        verify(mView, never()).processInvoiceSaving(any(), anyOrNull())
     }
 
     /**
@@ -2201,7 +2654,7 @@ class AnalysisScreenPresenterTest {
             isInvoiceSavingEnabled = true,
             startPresenter = false
         )
-        presenter.updateInvoiceSavingState(true, "SCHEDULE_PAYMENT")
+        presenter.updateInvoiceSavingState(true, "SCHEDULE_PAYMENT", null)
 
         // When the flow resumes after recreation
         presenter.start()
@@ -2228,7 +2681,7 @@ class AnalysisScreenPresenterTest {
             isInvoiceSavingEnabled = true,
             startPresenter = false
         )
-        presenter.updateInvoiceSavingState(true, "PROCEED")
+        presenter.updateInvoiceSavingState(true, "PROCEED", null)
 
         // When
         presenter.start()
@@ -2255,7 +2708,7 @@ class AnalysisScreenPresenterTest {
             isInvoiceSavingEnabled = true,
             startPresenter = false
         )
-        presenter.updateInvoiceSavingState(true, null)
+        presenter.updateInvoiceSavingState(true, null, null)
 
         // When
         presenter.start()
@@ -2299,3 +2752,6 @@ class AnalysisScreenPresenterTest {
     // endregion
 
 }
+
+private const val QR_IBAN = "PL61109010140000071219812874"
+private const val PRINTED_IBAN = "DE02120300000000202051"

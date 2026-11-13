@@ -1,21 +1,16 @@
 package net.gini.android.capture.analysis.fraud
 
 /**
- * Display data of the IBAN selection sheet: the two IBANs the user chooses between after
- * "Proceed anyway" on the IBAN mismatch warning. Every text arrives already resolved; the sheet
- * only lays it out.
+ * Display data of the IBAN selection sheet: the IBANs the user chooses between after
+ * "Proceed anyway" on the IBAN mismatch warning. The sheet resolves every text from string
+ * resources, like the warning; it lists the same IBANs as the warning, in the same order.
  *
  * @property qrIban the IBAN read from the payment QR code
- * @property printedIban the IBAN printed on the document
- * @property qrIbanCountry the QR IBAN's country when it differs from the sender's; shown as the
- * red hint below that IBAN
- * @property printedIbanCountry the printed IBAN's country when it differs from the sender's
+ * @property printedIbans the IBANs printed on the document, in document order; never empty
  */
 internal data class IBANSelectionArgs(
-    val qrIban: String,
-    val printedIban: String,
-    val qrIbanCountry: String? = null,
-    val printedIbanCountry: String? = null,
+    val qrIban: IBANMismatchIban,
+    val printedIbans: List<IBANMismatchIban>,
 )
 
 /**
@@ -24,12 +19,5 @@ internal data class IBANSelectionArgs(
  */
 internal fun IBANMismatchArgs.toSelectionArgs(): IBANSelectionArgs? =
     qrIban
-        ?.takeIf { type != IBANMismatchType.COUNTRY }
-        ?.let { qrIban ->
-            IBANSelectionArgs(
-                qrIban = qrIban,
-                printedIban = printedIban,
-                qrIbanCountry = qrIbanCountry,
-                printedIbanCountry = printedIbanCountry,
-            )
-        }
+        ?.takeIf { type != IBANMismatchType.COUNTRY && printedIbans.isNotEmpty() }
+        ?.let { qrIban -> IBANSelectionArgs(qrIban = qrIban, printedIbans = printedIbans) }

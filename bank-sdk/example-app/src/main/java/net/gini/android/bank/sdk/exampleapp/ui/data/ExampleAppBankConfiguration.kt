@@ -8,7 +8,6 @@ import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.util.FileImportValidator
 import net.gini.android.capture.ProductTag
-import net.gini.android.capture.analysis.fraud.IBANMismatchDebug
 
 
 @Parcelize
@@ -160,10 +159,6 @@ data class ExampleAppBankConfiguration(
 
     // Debug mode
     val isDebugModeEnabled: Boolean = true,
-
-    // Development: show the IBAN mismatch warning for this case after every successful analysis
-    // net.gini.android.capture.analysis.fraud.IBANMismatchDebug#case → null is off
-    val ibanMismatchDebugCase: IBANMismatchDebug.Case? = null,
 
     // Is Allow Screenshots
     val isAllowScreenshotsEnabled: Boolean = true,

@@ -17,5 +17,8 @@ fun Modifier.tabletMaxWidth(): Modifier {
     }
 }
 
+/**
+ * Whether the SDK's tablet resources (`values-sw600dp`) are in effect, in both orientations.
+ */
 @Composable
-private fun isTablet(): Boolean = booleanResource(id = R.bool.gc_is_tablet)
+internal fun isTablet(): Boolean = booleanResource(id = R.bool.gc_is_tablet)
