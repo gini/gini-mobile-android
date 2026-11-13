@@ -156,6 +156,10 @@ abstract class WarningBottomSheetTestBase {
      * off. [analysisDelayMillis] keeps the analysis pending that long, so a test can look at the
      * Analysis screen while it runs. [configurationFails] makes the `/configurations` request fail.
      *
+     * [fraudSignalsEnabled] is the server-side gate of the fraud prevention (IBAN mismatch)
+     * warning; [alreadyPaidHintEnabled], [paymentDueHintEnabled] and [paymentScheduleHintEnabled]
+     * are the server-side gates of the other Analysis screen hints. All four default to off.
+     *
      * Must be called before the photo payment button is clicked, like [configureHints]. Cleared
      * in [tearDown].
      */
@@ -167,7 +171,11 @@ abstract class WarningBottomSheetTestBase {
         ingredientBrandScreens: Set<String> = emptySet(),
         qrCodeEducationEnabled: Boolean = false,
         analysisDelayMillis: Long = 0,
-        configurationFails: Boolean = false
+        configurationFails: Boolean = false,
+        fraudSignalsEnabled: Boolean = false,
+        alreadyPaidHintEnabled: Boolean = false,
+        paymentDueHintEnabled: Boolean = false,
+        paymentScheduleHintEnabled: Boolean = false
     ) {
         UiTestMockBackend.arm(
             scenario = scenario,
@@ -176,7 +184,11 @@ abstract class WarningBottomSheetTestBase {
                 returnAssistantEnabled = returnAssistantEnabled,
                 skontoEnabled = skontoEnabled,
                 ingredientBrandScreens = ingredientBrandScreens,
-                qrCodeEducationEnabled = qrCodeEducationEnabled
+                qrCodeEducationEnabled = qrCodeEducationEnabled,
+                fraudSignalsEnabled = fraudSignalsEnabled,
+                alreadyPaidHintEnabled = alreadyPaidHintEnabled,
+                paymentDueHintEnabled = paymentDueHintEnabled,
+                paymentScheduleHintEnabled = paymentScheduleHintEnabled
             ),
             analysisDelayMillis = analysisDelayMillis,
             configurationFails = configurationFails
