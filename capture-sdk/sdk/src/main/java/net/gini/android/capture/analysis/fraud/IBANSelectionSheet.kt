@@ -6,15 +6,10 @@ import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.tappableElement
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
@@ -57,6 +52,7 @@ import net.gini.android.capture.ui.components.footer.GiniActionFooter
 import net.gini.android.capture.ui.components.labeledvalue.GiniLabeledValue
 import net.gini.android.capture.ui.components.labeledvalue.GiniLabeledValueItem
 import net.gini.android.capture.ui.components.radio.GiniRadioButton
+import net.gini.android.capture.ui.components.sheet.sheetTappableElementPadding
 import net.gini.android.capture.ui.compose.GiniScreenPreviewSizes
 import net.gini.android.capture.ui.compose.GiniScreenPreviewUiModes
 import net.gini.android.capture.ui.theme.GiniTheme
@@ -143,11 +139,8 @@ internal fun IBANSelectionSheet(
  * The phone container: a content-height Material bottom sheet with the Gini grabber and
  * container colours, dismissed by back, scrim tap and swipe.
  *
- * The sheet's window is edge-to-edge, and Material pads only the content, and only at the top
- * and bottom. With three-button navigation the bar is tappable system UI, at the bottom in
- * portrait and, on most phones, at the side in landscape, so the sheet itself keeps out of it
- * on the bottom and both sides and the scrim shows behind the bar. The gesture bar is not
- * tappable and reports no inset, so the sheet still runs under it as Material intends.
+ * The sheet keeps out of the three-button navigation bar on the bottom and both sides, see
+ * [sheetTappableElementPadding].
  */
 @Composable
 private fun IBANSelectionBottomSheet(
@@ -158,9 +151,7 @@ private fun IBANSelectionBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         modifier = Modifier
-            .windowInsetsPadding(
-                WindowInsets.tappableElement.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom)
-            )
+            .sheetTappableElementPadding()
             .semantics { this.paneTitle = paneTitle },
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         sheetMaxWidth = Dp.Unspecified,
