@@ -35,6 +35,15 @@ To run a single test class while iterating:
 
 Gradle must run on JDK 17 (newer JDKs fail with IllegalAccessError).
 
+## Agent files (`.claude/agents/`)
+
+- A new agent file cannot be used as `subagent_type` in the session that
+  wrote it ("Agent type not found"). For dry runs, give a `general-purpose`
+  agent the file to read and follow, or start a new session.
+- When a new specialist takes over a topic, also remove that topic from the
+  old owner in `gini-orchestrator.md` — its team-table row and every
+  delegation rule that still names it — not only add the new rule.
+
 ## Verification (step 5 of the workflow)
 
 Run the `/gini-check` skill — it runs the CI gate (testDebugUnitTest, lint,
@@ -43,6 +52,41 @@ expanding through the dependency chain. Everything must pass.
 
 If the spec's test plan includes instrumented/UI tests, also run
 `/gini-connected-check` (needs a device or emulator).
+
+### Self code review — after the gate is green
+
+Once `/gini-check` passes, hand the finished work to the **`code-reviewer`**
+agent (Task tool, `subagent_type: "code-reviewer"`) for a pre-push
+self-review. It reads the branch commits **and** the uncommitted working tree,
+applies the `/gini-review` rulebook (`AGENTS.md`,
+`.claude/rules/coroutines-flow.md`, `.claude/skills/gini-review/platform.md`,
+`.claude/skills/gini-review/references/general-rules.md`), and returns
+triaged findings — no verdict, no posted comments, no edits, no commits.
+
+Give it the ticket id so it can read the spec and check the implementation
+against the requirements and the "Out of scope" section. If the branch is
+stacked on another feature branch, also give it that base branch.
+
+Handling what it returns:
+
+- **Blockers and warnings**: fix them, re-run `/gini-check` for the
+  affected modules, then run `code-reviewer` once more on the result. The
+  same 3-attempt bound from step 5 applies.
+- **Escalations** (`→ escalate to <agent>`): route those to the named
+  specialist via the `gini-orchestrator`, or raise them with the user if the
+  fix would widen the spec's scope.
+- **Verification gaps** it names — most often `apiCheck`, which CI runs but
+  `/gini-check` does not: run them before offering to commit.
+- **Nits**: the author's call; do not silently expand the change for them.
+- **No findings is a normal outcome** — report it as-is.
+
+Run this before offering to commit, and report its findings in the step 6
+summary. It is a review, not a gate: it cannot replace `/gini-check`, and a
+clean self-review never means the checks passed.
+
+For a full pull-request review against the Jira ticket's acceptance criteria,
+with a coverage ledger and the option to post inline comments, use the
+`/gini-review` skill instead — that is a separate, later step.
 
 ## Coding conventions
 

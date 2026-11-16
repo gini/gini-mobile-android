@@ -41,6 +41,16 @@ those branch from the matching version branch, not `main` (see RELEASE.md).
   release introduced a change.
 - Inter-module effects: a bug surfacing in bank-sdk may root-cause in
   capture-sdk or core-api-library — see the dependency chain in AGENTS.md.
+- **Root-cause agent:** when the reproduction from step 2 does not already
+  point at the defective line, hand the hunt to the **`debugger-specialist`**
+  agent (Task tool, `subagent_type: "debugger-specialist"`) with the ticket
+  id, the artifact (stack trace, ANR trace, Gradle/CI output or the test's
+  run history) and the SDK version. It is read-only — it runs single-class
+  tests, `git log`/`blame` and `adb logcat`, never a fix — and returns one
+  hypothesis with `file:line` evidence, a reproduction plan, impact and
+  confidence, and a route line naming the specialist who owns the code.
+  Carry those into `specs/<ticket>-bug.md`; the fix stays with this workflow
+  (step 6) or with the named specialist via `/gini-task`.
 
 ## Regression test conventions
 
@@ -55,6 +65,42 @@ those branch from the matching version branch, not `main` (see RELEASE.md).
 Run the `/gini-check` skill — the CI gate (testDebugUnitTest, lint, detekt,
 ktlintCheck) for affected modules, expanded through the dependency chain.
 If the regression test is instrumented, also run `/gini-connected-check`.
+
+### Self code review — after the gate is green
+
+Once `/gini-check` passes, hand the finished work to the **`code-reviewer`**
+agent (Task tool, `subagent_type: "code-reviewer"`) for a pre-push
+self-review. It reads the branch commits **and** the uncommitted working tree,
+applies the `/gini-review` rulebook (`AGENTS.md`,
+`.claude/rules/coroutines-flow.md`, `.claude/skills/gini-review/platform.md`,
+`.claude/skills/gini-review/references/general-rules.md`), and returns
+triaged findings — no verdict, no posted comments, no edits, no commits.
+
+Give it the ticket id so it can read `specs/<ticket>-bug.md` and check that
+the fix addresses the diagnosed root cause, not only the symptom, and that
+the regression test fails without the fix. If the branch is
+stacked on another feature branch, also give it that base branch.
+
+Handling what it returns:
+
+- **Blockers and warnings**: fix them, re-run `/gini-check` for the
+  affected modules, then run `code-reviewer` once more on the result. The
+  same 3-attempt bound from step 7 applies.
+- **Escalations** (`→ escalate to <agent>`): route those to the named
+  specialist via the `gini-orchestrator`, or raise them with the user if the
+  fix would grow beyond a fix — that is a `/gini-plan` escalation.
+- **Verification gaps** it names — most often `apiCheck`, which CI runs but
+  `/gini-check` does not: run them before offering to commit.
+- **Nits**: the author's call; do not silently expand the change for them.
+- **No findings is a normal outcome** — report it as-is.
+
+Run this before offering to commit, and report its findings in the wrap-up
+summary. It is a review, not a gate: it cannot replace `/gini-check`, and a
+clean self-review never means the checks passed.
+
+For a full pull-request review against the Jira ticket's acceptance criteria,
+with a coverage ledger and the option to post inline comments, use the
+`/gini-review` skill instead — that is a separate, later step.
 
 ## Commit conventions
 

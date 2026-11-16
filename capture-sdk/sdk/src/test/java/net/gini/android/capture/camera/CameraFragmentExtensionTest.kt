@@ -1,9 +1,30 @@
 package net.gini.android.capture.camera
 
 import com.google.common.truth.Truth.assertThat
+import io.mockk.coEvery
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.slot
+import io.mockk.verify
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
 import net.gini.android.capture.di.getGiniCaptureKoin
+import net.gini.android.capture.education.GetEducationFeatureEnabledUseCase
+import android.view.View
+import android.view.ViewGroup
+import net.gini.android.capture.ingredientbrand.IngredientBrandLoadingIndicatorAdapter
+import net.gini.android.capture.view.CustomLoadingIndicatorAdapter
 import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
 import net.gini.android.capture.internal.provider.UnsupportedQrWarningSessionPin
+import net.gini.android.capture.internal.qrcode.PaymentQRCodeData
+import net.gini.android.capture.internal.qreducation.GetQrEducationTypeUseCase
+import net.gini.android.capture.internal.qreducation.IncrementQrCodeRecognizedCounterUseCase
+import net.gini.android.capture.internal.qreducation.UpdateFlowTypeUseCase
+import net.gini.android.capture.internal.qreducation.model.QrEducationType
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -12,11 +33,45 @@ import org.koin.dsl.module
 
 class CameraFragmentExtensionTest {
 
+    /**
+     * Records every [setPoweredByGiniVisible] call and exposes the `protected`
+     * [isQrEducationStepRunning], so the tests can assert on both.
+     */
+    private class RecordingExtension(
+        private val onlyQRCodeScanningEnabled: () -> Boolean,
+        qrStepDispatcher: CoroutineDispatcher = Dispatchers.IO,
+        qrStepMainDispatcher: CoroutineDispatcher = Dispatchers.Main,
+    ) : CameraFragmentExtension(qrStepDispatcher, qrStepMainDispatcher) {
+
+        val poweredByGiniCalls = mutableListOf<Boolean>()
+
+        var interactionBlockedCount = 0
+
+        override fun hideImageCorners() = Unit
+        override fun blockInteractionForQrCodeStep() {
+            interactionBlockedCount++
+        }
+
+        override fun setPoweredByGiniVisible(visible: Boolean) {
+            poweredByGiniCalls += visible
+        }
+
+        override fun isOnlyQRCodeScanningEnabled() = onlyQRCodeScanningEnabled()
+
+        fun educationStepRunning(): Boolean = isQrEducationStepRunning()
+
+        fun showsQrStepLoadingIndicator(): Boolean = shouldShowQrStepLoadingIndicator()
+    }
+
     private lateinit var configurationProvider: GiniBankConfigurationProvider
     private lateinit var sessionPin: UnsupportedQrWarningSessionPin
+    private lateinit var qrEducationTypeUseCase: GetQrEducationTypeUseCase
+    private lateinit var educationFeatureEnabledUseCase: GetEducationFeatureEnabledUseCase
     private lateinit var koinTestModule: Module
-    private lateinit var extension: CameraFragmentExtension
+    private lateinit var extension: RecordingExtension
     private var onlyQRCodeScanningEnabled = false
+
+    private val qrCodeData = mockk<PaymentQRCodeData>(relaxed = true)
 
     @Before
     fun setup() {
@@ -24,28 +79,147 @@ class CameraFragmentExtensionTest {
         // which is shared by all tests running in the same JVM.
         configurationProvider = GiniBankConfigurationProvider()
         sessionPin = UnsupportedQrWarningSessionPin()
+        // Stubbed rather than real: showQrCodePopup resolves these on the way into both halves,
+        // and the production definitions need Android infrastructure a JVM unit test has not got.
+        qrEducationTypeUseCase = mockk(relaxed = true)
+        educationFeatureEnabledUseCase = mockk(relaxed = true)
         koinTestModule = module {
             single { configurationProvider }
             single { sessionPin }
+            single { qrEducationTypeUseCase }
+            single { educationFeatureEnabledUseCase }
+            single { mockk<UpdateFlowTypeUseCase>(relaxed = true) }
+            single { mockk<IncrementQrCodeRecognizedCounterUseCase>(relaxed = true) }
         }
         getGiniCaptureKoin().loadModules(listOf(koinTestModule))
         onlyQRCodeScanningEnabled = false
-        extension = object : CameraFragmentExtension() {
-            override fun hideImageCorners() = Unit
-            override fun isOnlyQRCodeScanningEnabled() = onlyQRCodeScanningEnabled
-        }
+        extension = RecordingExtension({ onlyQRCodeScanningEnabled })
+        extension.mPaymentQRCodePopup = mockk(relaxed = true)
+        extension.qrCodeEducationPopup = mockk(relaxed = true)
     }
 
     @After
     fun tearDown() {
         // Koin's unloadModules drops the overriding definitions instead of restoring the
-        // production ones, so the session pin is re-declared here: otherwise the shared Koin
-        // context is left with no UnsupportedQrWarningSessionPin definition and every later
-        // test in this JVM that resolves it fails with NoDefinitionFoundException.
+        // production ones, so the definitions that have no capture-sdk production binding are
+        // re-declared here: otherwise the shared Koin context is left without them and every
+        // later test in this JVM that resolves one fails with NoDefinitionFoundException.
         getGiniCaptureKoin().unloadModules(listOf(koinTestModule))
         getGiniCaptureKoin().loadModules(
             listOf(module { single { UnsupportedQrWarningSessionPin() } })
         )
+    }
+
+    /** Drives [CameraFragmentExtension.showQrCodePopup] into its invoice-retrieval branch. */
+    private fun runRetrievalHalf() {
+        coEvery { qrEducationTypeUseCase.execute() } returns null
+        every { educationFeatureEnabledUseCase.invoke() } returns false
+        extension.showQrCodePopup(qrCodeData) { }
+    }
+
+    /**
+     * Drives [CameraFragmentExtension.showQrCodePopup] into its QR-code education branch.
+     *
+     * The stubbed `show` never runs its completion callback by itself — in production the Compose
+     * `LaunchedEffect` fires it after the animation, and never when the camera view is destroyed
+     * first. Tests that need the carousel to complete capture the callback with
+     * [extensionOn] and invoke it on cue.
+     */
+    private fun runEducationHalf() {
+        coEvery { qrEducationTypeUseCase.execute() } returns QrEducationType.PHOTO_DOC
+        every { educationFeatureEnabledUseCase.invoke() } returns true
+        extension.showQrCodePopup(qrCodeData) { }
+    }
+
+    /**
+     * The approved design shows the brand element from the QR-detected state on, not only once
+     * the invoice starts loading, so the retrieval half raises it when its popup appears.
+     *
+     * R13 still holds because the controls are put out of reach first — asserted here rather
+     * than left implicit, since raising the badge over a live shutter is the exact thing that
+     * rule forbids.
+     */
+    @Test
+    fun `retrieval half raises the brand element once the controls are out of reach`() {
+        configurationProvider.update { it.copy(ingredientBrandScreens = setOf("Analysis")) }
+
+        runRetrievalHalf()
+
+        assertThat(extension.poweredByGiniCalls).containsExactly(true)
+        assertThat(extension.interactionBlockedCount).isEqualTo(1)
+    }
+
+    @Test
+    fun `retrieval half leaves the brand element alone when the configuration does not list the screen`() {
+        runRetrievalHalf()
+
+        assertThat(extension.poweredByGiniCalls).isEmpty()
+        // Still blocked: the step covers the preview whether or not the badge is enabled.
+        assertThat(extension.interactionBlockedCount).isEqualTo(1)
+    }
+
+    /**
+     * Starts with the education half so the flag is genuinely `true` going in — otherwise this
+     * would pass on the initial `false` alone and would not notice the reset at the top of
+     * `showQrCodePopup` being removed.
+     */
+    @Test
+    fun `retrieval half does not leave the education step marked as running`() {
+        runEducationHalf()
+        assertThat(extension.educationStepRunning()).isTrue()
+
+        runRetrievalHalf()
+
+        assertThat(extension.educationStepRunning()).isFalse()
+    }
+
+    @Test
+    fun `education half raises the brand element when the configuration lists the screen`() {
+        configurationProvider.update { it.copy(ingredientBrandScreens = setOf("Analysis")) }
+
+        runEducationHalf()
+
+        assertThat(extension.poweredByGiniCalls).containsExactly(true)
+        assertThat(extension.educationStepRunning()).isTrue()
+    }
+
+    /**
+     * Matches iOS (`QRCodeOverlay.showAnimation` shows the education view *or* the loading
+     * indicator, never both) and the epic: while the QR-code education message is on screen, no
+     * loading indicator runs behind it — not the Gini mark, not the integrator's, not the default.
+     */
+    @Test
+    fun `education half shows no loading indicator`() {
+        configurationProvider.update { it.copy(ingredientBrandScreens = setOf("Analysis")) }
+
+        runEducationHalf()
+
+        assertThat(extension.showsQrStepLoadingIndicator()).isFalse()
+    }
+
+    @Test
+    fun `education half shows no loading indicator without ingredient branding either`() {
+        runEducationHalf()
+
+        assertThat(extension.showsQrStepLoadingIndicator()).isFalse()
+    }
+
+    /** The retrieval half keeps its indicator, and so does a retrieval after an education. */
+    @Test
+    fun `retrieval half shows the loading indicator, also after an earlier education`() {
+        runEducationHalf()
+
+        runRetrievalHalf()
+
+        assertThat(extension.showsQrStepLoadingIndicator()).isTrue()
+    }
+
+    @Test
+    fun `education half leaves the brand element alone when the configuration does not list the screen`() {
+        runEducationHalf()
+
+        assertThat(extension.poweredByGiniCalls).isEmpty()
+        assertThat(extension.educationStepRunning()).isTrue()
     }
 
     @Test
@@ -129,4 +303,218 @@ class CameraFragmentExtensionTest {
         // Then: the next session pins the new warning again
         assertThat(extension.isUnsupportedQRCodeWarningEnabled()).isTrue()
     }
+
+    private class NoopIndicatorAdapter : CustomLoadingIndicatorAdapter {
+        override fun onCreateView(container: ViewGroup): View = View(container.context)
+        override fun onVisible() = Unit
+        override fun onHidden() = Unit
+        override fun onDestroy() = Unit
+    }
+
+    /**
+     * The camera always binds its own adapter, which chooses between the Gini mark and the
+     * integrator's indicator when the indicator is shown. It cannot choose here: this is the first
+     * screen the SDK opens and ingredientBrandScreens has not arrived yet.
+     */
+    @Test
+    fun `always provides the camera loading indicator adapter`() {
+        val instance = extension.loadingIndicatorAdapterInstance(NoopIndicatorAdapter())
+
+        assertThat(instance.viewAdapter)
+            .isInstanceOf(IngredientBrandLoadingIndicatorAdapter::class.java)
+    }
+
+    /**
+     * InjectedViewContainer tracks adapter ownership per instance, so the camera must hand back the
+     * same one across view recreations rather than a fresh instance each time.
+     */
+    @Test
+    fun `reuses the same loading indicator instance across view recreations`() {
+        val first = extension.loadingIndicatorAdapterInstance(NoopIndicatorAdapter())
+        val second = extension.loadingIndicatorAdapterInstance(NoopIndicatorAdapter())
+
+        assertThat(second).isSameInstanceAs(first)
+    }
+
+    /**
+     * Replaces [extension] with one whose waiters run on [dispatcher], and whose education popup
+     * stub hands the carousel's completion callback to [onCarouselComplete] — the Compose
+     * `LaunchedEffect` owns that call in production, so a test completes the step by invoking it.
+     */
+    private fun extensionOn(
+        dispatcher: CoroutineDispatcher,
+        onCarouselComplete: io.mockk.CapturingSlot<() -> Unit>,
+    ) {
+        extension = RecordingExtension({ onlyQRCodeScanningEnabled }, dispatcher, dispatcher)
+        extension.mPaymentQRCodePopup = mockk(relaxed = true)
+        extension.qrCodeEducationPopup = mockk(relaxed = true) {
+            every { show(any(), capture(onCarouselComplete)) } returns Unit
+        }
+        extension.fragmentListener = mockk(relaxed = true)
+    }
+
+    /**
+     * The real carousel's `onComplete` never fires when the camera view is destroyed during the
+     * 4.5 s animation: the ComposeView disposes its composition and the `LaunchedEffect` dies with
+     * it. The stubbed `show` models exactly that. The next education step on the same fragment
+     * instance — back from the no-results screen the empty-extractions branch navigated to, scan
+     * again — must start normally; the signal left behind by the interrupted step must never block
+     * it. Before the fix this parked the main thread in `educationMutex.lock()` for good.
+     */
+    @Test(timeout = 5_000)
+    fun `a second education step is not blocked by a carousel that never completed`() {
+        runEducationHalf()
+
+        runEducationHalf()
+
+        verify(exactly = 2) { extension.qrCodeEducationPopup.show(any(), any()) }
+        assertThat(extension.educationStepRunning()).isTrue()
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `onQrCodeFallbackToUnsupported invokes the callback at once when no education step ran`() =
+        runTest {
+            extensionOn(StandardTestDispatcher(testScheduler), slot())
+            var called = 0
+
+            extension.onQrCodeFallbackToUnsupported { called += 1 }
+            advanceUntilIdle()
+
+            assertThat(called).isEqualTo(1)
+        }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `onQrCodeFallbackToUnsupported waits for the carousel to complete and then fires once`() =
+        runTest {
+            val onCarouselComplete = slot<() -> Unit>()
+            extensionOn(StandardTestDispatcher(testScheduler), onCarouselComplete)
+            runEducationHalf()
+            var called = 0
+
+            extension.onQrCodeFallbackToUnsupported { called += 1 }
+            advanceUntilIdle()
+            assertThat(called).isEqualTo(0)
+
+            onCarouselComplete.captured()
+            advanceUntilIdle()
+
+            assertThat(called).isEqualTo(1)
+        }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `onQrCodeRecognized delivers the extractions once the carousel completed`() =
+        runTest {
+            val onCarouselComplete = slot<() -> Unit>()
+            extensionOn(StandardTestDispatcher(testScheduler), onCarouselComplete)
+            runEducationHalf()
+
+            extension.onQrCodeRecognized(emptyMap())
+            advanceUntilIdle()
+            verify(exactly = 0) { extension.fragmentListener.onExtractionsAvailable(any()) }
+
+            onCarouselComplete.captured()
+            advanceUntilIdle()
+
+            verify(exactly = 1) { extension.fragmentListener.onExtractionsAvailable(any()) }
+        }
+
+    /**
+     * The acceptance criterion of PP-3937: a camera fragment destroyed while the carousel plays
+     * (back press) must not keep a coroutine suspended for the process lifetime. The carousel's
+     * callback never fires here, exactly like a disposed ComposeView; the fragment's teardown
+     * is what has to release the waiters — and it must not deliver anything to the dead screen.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `destroying the fragment releases every waiter parked on an interrupted carousel`() =
+        runTest {
+            extensionOn(StandardTestDispatcher(testScheduler), slot())
+            runEducationHalf()
+            var fallbackCalled = 0
+            extension.onQrCodeRecognized(emptyMap())
+            extension.onQrCodeFallbackToUnsupported { fallbackCalled += 1 }
+            advanceUntilIdle()
+            assertThat(extension.hasPendingQrStepWaiters()).isTrue()
+
+            extension.cancelQrStepWaiters()
+            advanceUntilIdle()
+
+            assertThat(extension.hasPendingQrStepWaiters()).isFalse()
+            assertThat(fallbackCalled).isEqualTo(0)
+            verify(exactly = 0) { extension.fragmentListener.onExtractionsAvailable(any()) }
+        }
+
+    /**
+     * Same interrupted carousel, but the fragment lives on (back from the no-results screen) and
+     * the next scan runs the plain retrieval half: its waiters must not be held up by the dead
+     * carousel's signal.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `a retrieval step after an interrupted education step does not wait for the dead carousel`() =
+        runTest {
+            extensionOn(StandardTestDispatcher(testScheduler), slot())
+            runEducationHalf()
+
+            runRetrievalHalf()
+            extension.onQrCodeRecognized(emptyMap())
+            advanceUntilIdle()
+
+            verify(exactly = 1) { extension.fragmentListener.onExtractionsAvailable(any()) }
+        }
+
+    /**
+     * Same surviving fragment, recreated view, but the next scan is an EPS code:
+     * `CameraFragmentImpl.handleEPSPaymentQRCode` calls [CameraFragmentExtension.onQrCodeRecognized]
+     * without going through `showQrCodePopup`, so nothing on that path replaces the dead
+     * carousel's signal. The view recreation (`CameraFragmentImpl.createPopups`) has to drop it.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `a waiter that skipped showQrCodePopup after an interrupted education step is released by the view recreation`() =
+        runTest {
+            extensionOn(StandardTestDispatcher(testScheduler), slot())
+            runEducationHalf()
+
+            extension.resetQrEducationStep()
+            extension.onQrCodeRecognized(emptyMap())
+            advanceUntilIdle()
+
+            assertThat(extension.hasPendingQrStepWaiters()).isFalse()
+            assertThat(extension.educationStepRunning()).isFalse()
+            verify(exactly = 1) { extension.fragmentListener.onExtractionsAvailable(any()) }
+        }
+
+    /**
+     * The failure mode the test above guards against, pinned so a future refactoring that routes
+     * the EPS path around the reset is caught: without the view recreation the waiter does hang
+     * on the interrupted carousel.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `a waiter that skipped showQrCodePopup after an interrupted education step stays parked without the view recreation`() =
+        runTest {
+            extensionOn(StandardTestDispatcher(testScheduler), slot())
+            runEducationHalf()
+
+            extension.onQrCodeRecognized(emptyMap())
+            advanceUntilIdle()
+
+            assertThat(extension.hasPendingQrStepWaiters()).isTrue()
+            verify(exactly = 0) { extension.fragmentListener.onExtractionsAvailable(any()) }
+            extension.cancelQrStepWaiters()
+        }
+
+    @Test
+    fun `isWeroQRCodeScanningEnabled reflects the configuration provider`() {
+        assertThat(extension.isWeroQRCodeScanningEnabled()).isFalse()
+
+        configurationProvider.update { it.copy(isWeroQRCodeScanningEnabled = true) }
+
+        assertThat(extension.isWeroQRCodeScanningEnabled()).isTrue()
+    }
+
 }

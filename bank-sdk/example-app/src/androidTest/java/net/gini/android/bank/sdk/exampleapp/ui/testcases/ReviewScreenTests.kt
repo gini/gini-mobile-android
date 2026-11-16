@@ -121,4 +121,5 @@ class ReviewScreenTests {
     fun tearDown() {
         IdlingRegistry.getInstance().unregister(idlingResource)
     }
+
 }

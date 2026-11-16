@@ -88,6 +88,21 @@ class OpenWithTest {
     }
 
     @Test
+    fun opening_heic_with_SplashActivity_launches_Bank_SDK() {
+        launchActivityForOpenWith<SplashActivity>(listOf("invoice.heic"), "image/heic")
+    }
+
+    @Test
+    fun opening_heic_with_MainActivity_launches_Bank_SDK() {
+        launchActivityForOpenWith<MainActivity>(listOf("invoice.heic"), "image/heic")
+    }
+
+    @Test
+    fun opening_heic_with_CaptureFlowHostActivity_launches_Bank_SDK() {
+        launchActivityForOpenWith<CaptureFlowHostActivity>(listOf("invoice.heic"), "image/heic")
+    }
+
+    @Test
     fun opening_images_with_SplashActivity_launches_Bank_SDK() {
         launchActivityForOpenWith<SplashActivity>(listOf("test_image.jpeg", "test_image_2.jpeg"), "image/jpeg")
     }

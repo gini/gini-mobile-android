@@ -29,7 +29,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
-        app:layout_constraintBottom_toTopOf="@+id/gbs_bottom_bar_navigation"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gbs_top_bar_navigation">
@@ -194,14 +194,6 @@
     </androidx.core.widget.NestedScrollView>
 
 
-    <net.gini.android.capture.view.InjectedViewContainer
-        android:id="@+id/gbs_bottom_bar_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/gbs_scroll_view_container" />
 
 
     <androidx.compose.ui.platform.ComposeView

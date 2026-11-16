@@ -18,6 +18,11 @@ sonar {
         property("sonar.organization", "gini")
         property("sonar.sources", "src/main/java")
         property("sonar.host.url", "https://sonarcloud.io")
+        // java:S9391 asks for the Stream API, which is only available from API 24. This module
+        // ships with minSdk 23 and without core-library desugaring, so loops have to stay.
+        property("sonar.issue.ignore.multicriteria", "noStreamApi")
+        property("sonar.issue.ignore.multicriteria.noStreamApi.ruleKey", "java:S9391")
+        property("sonar.issue.ignore.multicriteria.noStreamApi.resourceKey", "**/*.java")
     }
 }
 

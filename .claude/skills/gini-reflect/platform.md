@@ -43,6 +43,46 @@ NOT learning targets:
   the spec predicted.
 - `/gini-check` and `/gini-connected-check` output — which CI gate failed
   and why.
+- **A `code-reviewer` self-review of the session's work** — see below. Its
+  findings are the sharpest evidence source available at step 1, because
+  they show where the code drifted from the standing docs while the author
+  believed it did not.
+
+## Self code review — run at step 1
+
+Before distilling learnings, hand the session's work to the **`code-reviewer`**
+agent (Task tool, `subagent_type: "code-reviewer"`), passing the ticket id.
+It reads the branch commits and the uncommitted working tree, applies the
+`/gini-review` rulebook (`AGENTS.md`, `.claude/rules/coroutines-flow.md`,
+`.claude/skills/gini-review/platform.md`,
+`.claude/skills/gini-review/references/general-rules.md`), and returns
+triaged findings.
+
+It is safe to run here: `code-reviewer` has no Edit or Write tool, and its
+instructions limit Bash to read-only `git`/`gh`, so it does not change
+production code — the reflect workflow's rule holds.
+
+**Read its findings as evidence about the docs, not just about the code:**
+
+- A finding the author could not have avoided from reading the standing docs
+  is a **documentation gap** — that is a learning, and step 3 routes it.
+- The *same* finding appearing repeatedly across a diff points at a
+  convention that is missing, ambiguous, or stated somewhere nobody reads.
+- A finding that quotes a standing doc correctly is just a defect in this
+  change. Report it to the user — it gets fixed in `/gini-build` or
+  `/gini-fix`, not here — and it is **not** a learning.
+- **No findings is a normal outcome** and means nothing needs distilling
+  from this source.
+
+Discard anything that is a one-off slip. A learning has to be something the
+next session would hit too.
+
+This is deliberately a *different* use of the same agent than in
+`gini-build/platform.md` and `gini-fix/platform.md`, where it runs as the
+pre-push review on finished code. Here it runs after the work is done, to
+question the **documentation** rather than to block a push. Running it in
+both places is expected, and a clean result in either never means a
+verification gate passed — only `/gini-check` (plus `apiCheck`) says that.
 
 ## Commit conventions
 

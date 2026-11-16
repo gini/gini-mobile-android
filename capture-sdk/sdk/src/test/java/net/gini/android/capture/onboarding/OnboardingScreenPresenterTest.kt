@@ -14,7 +14,6 @@ import junitparams.Parameters
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureHelper
 import net.gini.android.capture.R
-import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter
 import net.gini.android.capture.tracking.Event
 import net.gini.android.capture.tracking.EventTracker
 import net.gini.android.capture.tracking.OnboardingScreenEvent
@@ -301,8 +300,6 @@ class OnboardingScreenPresenterTest {
         // Then
 
         verify { mView.showSkipAndNextButtons() }
-        verify(exactly = 0) { mView.showSkipAndNextButtonsInNavigationBarBottom() }
-
     }
 
     @Test
@@ -333,7 +330,6 @@ class OnboardingScreenPresenterTest {
 
         // Then
         verify(exactly = 2) { mView.showSkipAndNextButtons() }
-        verify(exactly = 0) { mView.showSkipAndNextButtonsInNavigationBarBottom() }
     }
 
     @Test
@@ -363,7 +359,30 @@ class OnboardingScreenPresenterTest {
 
         // Then
         verify { mView.showGetStartedButton() }
-        verify(exactly = 0) { mView.showGetStartedButtonInNavigationBarBottom() }
+    }
+
+    @Test
+    fun `show 'get started' button on start when there is only one page`() {
+        // Given
+        GiniCapture.Builder()
+            .build()
+        val presenter = createPresenter()
+
+        val customPages: List<OnboardingPage> = Lists.newArrayList(
+            OnboardingPage(
+                R.string.gc_onboarding_align_corners_title,
+                R.string.gc_onboarding_align_corners_message,
+                null
+            )
+        )
+        presenter.setCustomPages(customPages)
+
+        // When
+        presenter.start()
+
+        // Then
+        verify { mView.showGetStartedButton() }
+        verify(exactly = 0) { mView.showSkipAndNextButtons() }
     }
 
 }

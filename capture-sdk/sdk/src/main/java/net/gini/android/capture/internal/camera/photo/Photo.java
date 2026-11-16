@@ -42,6 +42,16 @@ public interface Photo extends Parcelable {
 
     ImageDocument.ImageFormat getImageFormat();
 
+    /**
+     * Corrects the format after the image data was re-encoded.
+     *
+     * <p> Used by {@link PhotoCompressionModifier}, which always writes JPEG:
+     * an imported HEIC arrives here as {@link ImageDocument.ImageFormat#HEIC}
+     * and has to report JPEG once its bytes are JPEG, so that the document
+     * built from it is uploaded with the right content type.
+     */
+    void setImageFormat(ImageDocument.ImageFormat imageFormat);
+
     PhotoEdit edit();
 
     void updateBitmapPreview();

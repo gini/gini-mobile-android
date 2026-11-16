@@ -13,8 +13,10 @@ import java.util.Map;
 /**
  * Contains a return reason.
  *
- * <p> Return reasons are shown to the user when a line item is deselected in the return assistant.
+ * @deprecated Return reasons are no longer supported. The SDK never provides instances of this
+ * class any more and it will be removed in the next major version.
  */
+@Deprecated
 public class GiniCaptureReturnReason implements Parcelable {
 
     private final String mId;

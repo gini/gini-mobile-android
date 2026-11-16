@@ -58,7 +58,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/gc_injected_navigation_bar_container_bottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/gc_guideline_image_start"
         app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar">
@@ -267,10 +266,27 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/gc_injected_navigation_bar_container_bottom"
         app:layout_constraintEnd_toStartOf="@+id/gc_pane_wrapper"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar">
+
+        <!--
+          The centre of the whole screen, inside this wrapper. The QR code step (the "QR code
+          detected" status, the check mark, the loading indicator and its text) is centred here,
+          not on the camera frame: the design's landscape QR frames (Figma 37377:171444,
+          37377:171529, 35002:11693) centre that column on the screen, in line with the Powered by
+          Gini badge and the QR code education below and around it. The views stay inside this
+          wrapper because QRCodePopup looks them up in it.
+
+          This wrapper ends at gc_guideline_image_start (75% of the screen width), so the screen
+          centre (50%) is at 0.5 / 0.75 of the wrapper's width. Update both together.
+        -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gc_guideline_screen_center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.6667" />
 
         <ImageView
             android:id="@+id/gc_camera_frame"
@@ -359,8 +375,8 @@
             android:textColor="@color/gc_light_01"
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/gc_camera_frame"
-            app:layout_constraintEnd_toEndOf="@+id/gc_camera_frame"
-            app:layout_constraintStart_toStartOf="@+id/gc_camera_frame"
+            app:layout_constraintEnd_toEndOf="@+id/gc_guideline_screen_center"
+            app:layout_constraintStart_toStartOf="@+id/gc_guideline_screen_center"
             app:layout_constraintTop_toTopOf="@+id/gc_camera_frame" />
 
         <ImageView
@@ -370,8 +386,8 @@
             android:src="@drawable/gc_check"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/gc_camera_frame"
-            app:layout_constraintEnd_toEndOf="@+id/gc_camera_frame"
-            app:layout_constraintStart_toStartOf="@+id/gc_camera_frame"
+            app:layout_constraintEnd_toEndOf="@+id/gc_guideline_screen_center"
+            app:layout_constraintStart_toStartOf="@+id/gc_guideline_screen_center"
             app:layout_constraintTop_toTopOf="@+id/gc_camera_frame" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -420,13 +436,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-    <net.gini.android.capture.view.InjectedViewContainer
-        android:id="@+id/gc_injected_navigation_bar_container_bottom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+
 
     <ViewStub
         android:id="@+id/gc_stub_camera_no_permission"
@@ -434,7 +444,7 @@
         android:layout_height="0dp"
         android:layout="@layout/gc_layout_camera_no_permission"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/gc_injected_navigation_bar_container_bottom"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar" />
@@ -448,5 +458,36 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar" />
+
+    <!--
+      The Gini ingredient brand element. On this screen it belongs to the QR-code analysis step
+      only — not to the live camera. CameraFragmentImpl is the single writer of this view: it
+      raises it for both halves of that step and takes it down again, so the badge is never on
+      screen while the shutter is usable, which is why it can sit centred at the very bottom as
+      the approved design shows.
+
+      Declared LAST on purpose: the education overlay (gc_qr_code_education_compose_view) spans
+      the screen, so the badge has to come after it to draw on top of it. It constrains to the
+      parent bottom, which puts it 16dp above the screen bottom — the same position it held when
+      it was anchored to gc_injected_navigation_bar_container_bottom, because that container was
+      empty and zero-height at the parent bottom whenever no bottom bar was injected. PP-3229
+      removed that container, so the anchor moved to the parent directly.
+
+      Horizontally it centres on the root, not on gc_camera_frame_wrapper. The design's landscape
+      QR frames (Figma 35002:11651 and 35002:11693, 1.2.5 / 1.2.6 android-phL-QReng-camera-hint)
+      draw the control pane inside the 800dp frame and put the badge at the centre of the whole
+      screen, in line with the QR code education message, which spans the root as well. Centring
+      on the camera area left the badge visibly to the left of that message.
+    -->
+    <include
+        android:id="@+id/gc_powered_by_gini"
+        layout="@layout/gc_powered_by_gini"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/gc_large"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

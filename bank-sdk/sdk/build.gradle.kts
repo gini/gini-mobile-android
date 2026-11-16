@@ -68,6 +68,13 @@ android {
         compose = true
     }
 
+    testOptions {
+        unitTests {
+            // Compose screens are rendered under Robolectric, which needs the merged resources
+            // (strings, drawables, booleans) of this module and its dependencies.
+            isIncludeAndroidResources = true
+        }
+    }
 
     buildTypes {
         debug {
@@ -159,6 +166,10 @@ dependencies {
     testImplementation(libs.androidx.test.junit.ktx)
     testImplementation(libs.androidx.test.runner)
     testImplementation(libs.jUnitParams)
+    // Compose UI tests run on the JVM under Robolectric; the manifest artifact registers the
+    // ComponentActivity that createComposeRule() hosts the composables in.
+    testImplementation(libs.compose.ui.test.junit4)
+    testImplementation(libs.compose.ui.test.manifest)
 
     androidTestImplementation(libs.moshi.core)
     kspAndroidTest(libs.moshi.codegen)

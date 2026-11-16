@@ -29,6 +29,8 @@ public interface AnalysisFragmentListener {
      *
      * @param extractions a map of the extractions with the extraction labels as keys
      * @param compoundExtractions a map of the compound extractions with the extraction labels as keys
+     * @param returnReasons deprecated, return reasons are no longer supported and this list is
+     *                      always empty
      */
     void onExtractionsAvailable(
             @NonNull final Map<String, GiniCaptureSpecificExtraction> extractions,
@@ -45,6 +47,8 @@ public interface AnalysisFragmentListener {
      *
      * @param extractions a map of the extractions with the extraction labels as keys
      * @param compoundExtractions a map of the compound extractions with the extraction labels as keys
+     * @param returnReasons deprecated, return reasons are no longer supported and this list is
+     *                      always empty
      */
     default void onSchedulePayment(
             @NonNull final Map<String, GiniCaptureSpecificExtraction> extractions,

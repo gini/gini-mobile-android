@@ -79,6 +79,17 @@ class GiniCaptureViewModelTest {
     }
 
     @Test
+    fun `observer carries the persisted ingredient brand screens into the provider`() {
+        createViewModel()
+
+        persistedConfiguration.value =
+            configuration(ingredientBrandScreens = setOf("Analysis"))
+
+        assertThat(configurationProvider.provide().ingredientBrandScreens)
+            .containsExactly("Analysis")
+    }
+
+    @Test
     fun `clearing the ViewModel releases the pinned warning type for the next session`() {
         val viewModelStore = ViewModelStore()
         viewModelStore.put("gini-capture", createViewModel())
@@ -105,7 +116,10 @@ class GiniCaptureViewModelTest {
         unsupportedQrWarningSessionPin = sessionPin,
     )
 
-    private fun configuration(isUnsupportedQRCodeWarningEnabled: Boolean) = Configuration(
+    private fun configuration(
+        isUnsupportedQRCodeWarningEnabled: Boolean = false,
+        ingredientBrandScreens: Set<String> = emptySet(),
+    ) = Configuration(
         clientID = "",
         isUserJourneyAnalyticsEnabled = false,
         isSkontoEnabled = false,
@@ -119,5 +133,6 @@ class GiniCaptureViewModelTest {
         isAlreadyPaidHintEnabled = false,
         isPaymentDueHintEnabled = false,
         isUnsupportedQRCodeWarningEnabled = isUnsupportedQRCodeWarningEnabled,
+        ingredientBrandScreens = ingredientBrandScreens,
     )
 }

@@ -10,7 +10,11 @@ import java.util.List;
 /**
  * Helper class to map the {@link net.gini.android.bank.api.models.ReturnReason} from the Gini API SDK to the Gini Capture
  * Library's {@link GiniCaptureReturnReason} and vice versa.
+ *
+ * @deprecated Return reasons are no longer supported. The default network service does not
+ * map them any more and this class will be removed in the next major version.
  */
+@Deprecated
 public final class ReturnReasonsMapper {
 
     private ReturnReasonsMapper() {

@@ -58,6 +58,7 @@ import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsE
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
 import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.util.protectViewFromInsets
+import net.gini.android.capture.internal.ui.runtimecolors.runtimeColorsThemedInflaterOrNull
 
 @Suppress("TooManyFunctions")
 class CaptureFlowFragment(private val openWithDocument: Document? = null) :
@@ -114,6 +115,11 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
+        runtimeColorsThemedInflaterOrNull(
+            inflater,
+            requireContext(),
+            net.gini.android.capture.R.style.GiniCaptureTheme
+        )?.let { return it }
         val contextThemeWrapper =
             ContextThemeWrapper(requireContext(), net.gini.android.capture.R.style.GiniCaptureTheme)
         return inflater.cloneInContext(contextThemeWrapper)
@@ -346,7 +352,6 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
                 ExtractionsResultData(
                     specificExtractions = result.specificExtractions,
                     compoundExtractions = result.compoundExtractions,
-                    returnReasons = result.returnReasons
                 ),
                 skontoData = skontoData,
                 skontoInvoiceHighlights = highlightBoxes.toTypedArray(),
@@ -414,14 +419,20 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
                 CaptureSDKResult.Empty
             }
         }
-        return if (result.specificExtractions.isEmpty() ||
-            !pay5ExtractionsAvailable(result.specificExtractions) &&
-            !epsPaymentAvailable(result.specificExtractions)
-        ) {
-            CaptureSDKResult.Empty
-        } else {
+        return if (hasRecognisedExtractions(result.specificExtractions)) {
             result
+        } else {
+            CaptureSDKResult.Empty
         }
+    }
+
+    private fun hasRecognisedExtractions(
+        specificExtractions: Map<String, GiniCaptureSpecificExtraction>
+    ): Boolean {
+        if (specificExtractions.isEmpty()) return false
+        return pay5ExtractionsAvailable(specificExtractions) ||
+                epsPaymentAvailable(specificExtractions) ||
+                weroPaymentAvailable(specificExtractions)
     }
 
     private fun isPay5Extraction(extractionName: String): Boolean {
@@ -438,6 +449,9 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     private fun epsPaymentAvailable(specificExtractions: Map<String, GiniCaptureSpecificExtraction>) =
         specificExtractions.keys.contains("epsPaymentQRCodeUrl")
 
+    private fun weroPaymentAvailable(specificExtractions: Map<String, GiniCaptureSpecificExtraction>) =
+        specificExtractions.keys.contains("weroPaymentQRCodeUrl")
+
     override fun onPayInvoice(
         specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
         compoundExtractions: Map<String, GiniCaptureCompoundExtraction>
@@ -445,8 +459,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         finishWithResult(
             CaptureResult.Success(
                 specificExtractions,
-                compoundExtractions,
-                emptyList()
+                compoundExtractions
             )
         )
     }
@@ -459,8 +472,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         finishWithResult(
             CaptureResult.Success(
                 specificExtractions,
-                compoundExtractions,
-                emptyList()
+                compoundExtractions
             )
         )
     }

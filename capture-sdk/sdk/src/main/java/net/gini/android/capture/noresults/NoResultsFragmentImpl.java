@@ -17,7 +17,6 @@ import net.gini.android.capture.EnterManuallyButtonListener;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.document.ImageMultiPageDocument;
-import net.gini.android.capture.error.view.ErrorNavigationBarBottomAdapter;
 import net.gini.android.capture.help.PhotoTipsAdapter;
 import net.gini.android.capture.help.SupportedFormatsAdapter;
 import net.gini.android.capture.internal.ui.ClickListenerExtKt;
@@ -131,7 +130,6 @@ class NoResultsFragmentImpl {
         }
 
         setupTopBarNavigation();
-        setupBottomBarNavigation();
         setUpList(mView);
 
         return mView;
@@ -192,9 +190,7 @@ class NoResultsFragmentImpl {
             topBarContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(
                     GiniCapture.getInstance().internal().getNavigationBarTopAdapterInstance(),
                     injectedViewAdapter -> {
-                        NavButtonType navType = GiniCapture.getInstance().isBottomNavigationBarEnabled()
-                                ? NavButtonType.NONE : NavButtonType.BACK;
-                        injectedViewAdapter.setNavButtonType(navType);
+                        injectedViewAdapter.setNavButtonType(NavButtonType.BACK);
                         injectedViewAdapter.setTitle(
                                 mFragment.getActivity() != null
                                         ? mFragment.getActivity().getString(R.string.gc_title_no_results)
@@ -205,20 +201,6 @@ class NoResultsFragmentImpl {
                     }
             ));
         }
-    }
-
-    private void setupBottomBarNavigation() {
-        InjectedViewContainer<ErrorNavigationBarBottomAdapter> topBarContainer =
-                mView.findViewById(R.id.gc_injected_navigation_bar_container_bottom);
-
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
-            topBarContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(
-                    GiniCapture.getInstance().internal().getErrorNavigationBarBottomAdapterInstance(),
-                    injectedViewAdapter -> injectedViewAdapter.setOnBackClickListener(new IntervalClickListener(
-                            v -> navigateToCameraScreen(UserAnalyticsEvent.CLOSE_TAPPED)))
-            ));
-        }
-
     }
 
     private void navigateToCameraScreen(UserAnalyticsEvent event) {

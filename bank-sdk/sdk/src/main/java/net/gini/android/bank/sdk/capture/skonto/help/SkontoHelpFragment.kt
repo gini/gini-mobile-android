@@ -6,13 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.FrameLayout
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,16 +28,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.skonto.help.colors.SkontoHelpScreenColors
 import net.gini.android.bank.sdk.capture.skonto.help.colors.section.SkontoHelpDescriptionSectionColors
@@ -53,18 +47,9 @@ import net.gini.android.capture.ui.components.topbar.GiniTopBar
 import net.gini.android.capture.ui.components.topbar.GiniTopBarColors
 import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.ui.theme.modifier.tabletMaxWidth
-import net.gini.android.capture.view.InjectedViewAdapterInstance
 
 
 class SkontoHelpFragment : Fragment() {
-
-    private val isBottomNavigationBarEnabled =
-        GiniCapture.getInstance().isBottomNavigationBarEnabled
-
-    private val customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoHelpNavigationBarBottomAdapter>? =
-        GiniBank.skontoHelpNavigationBarBottomAdapterInstance
-    private var customBottomNavigationBarView: View? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,16 +65,11 @@ class SkontoHelpFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        customBottomNavigationBarView =
-            container?.let { customBottomNavBarAdapter?.viewAdapter?.onCreateView(it) }
-
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 GiniTheme {
                     ScreenContent(
-                        isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
-                        customBottomNavBarAdapter = customBottomNavBarAdapter,
                         navigateBack = {
                             findNavController()
                                 .navigateUp()
@@ -108,8 +88,6 @@ private fun ScreenContentPreview() {
         ScreenContent(
             navigateBack = {},
             screenColorScheme = SkontoHelpScreenColors.colors(),
-            isBottomNavigationBarEnabled = false,
-            customBottomNavBarAdapter = null
         )
     }
 }
@@ -121,8 +99,6 @@ private fun ScreenContentPreviewLight() {
         ScreenContent(
             navigateBack = {},
             screenColorScheme = SkontoHelpScreenColors.colors(),
-            isBottomNavigationBarEnabled = false,
-            customBottomNavBarAdapter = null
         )
     }
 
@@ -131,10 +107,8 @@ private fun ScreenContentPreviewLight() {
 @Composable
 private fun ScreenContent(
     navigateBack: () -> Unit,
-    isBottomNavigationBarEnabled: Boolean,
     modifier: Modifier = Modifier,
     screenColorScheme: SkontoHelpScreenColors = SkontoHelpScreenColors.colors(),
-    customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoHelpNavigationBarBottomAdapter>? = null,
 ) {
 
     BackHandler { navigateBack() }
@@ -142,17 +116,13 @@ private fun ScreenContent(
     ScreenStateContent(
         modifier = modifier,
         screenColorScheme = screenColorScheme,
-        isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
         onBackClicked = navigateBack,
-        customBottomNavBarAdapter = customBottomNavBarAdapter,
     )
 }
 
 @Composable
 private fun ScreenStateContent(
     onBackClicked: () -> Unit,
-    isBottomNavigationBarEnabled: Boolean,
-    customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoHelpNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
     screenColorScheme: SkontoHelpScreenColors = SkontoHelpScreenColors.colors()
 ) {
@@ -163,15 +133,8 @@ private fun ScreenStateContent(
         containerColor = screenColorScheme.backgroundColor,
         topBar = {
             TopAppBar(
-                isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
                 colors = screenColorScheme.topAppBarColors,
                 onBackClicked = onBackClicked,
-            )
-        }, bottomBar = {
-            HelpCustomNavBarSection(
-                isBottomNavigationBarEnabled,
-                customBottomNavBarAdapter,
-                onBackClicked
             )
         }) {
         Column(
@@ -207,37 +170,6 @@ private fun ScreenStateContent(
         }
     }
 
-}
-
-@Composable
-private fun HelpCustomNavBarSection(
-    isBottomNavigationBarEnabled: Boolean,
-    customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoHelpNavigationBarBottomAdapter>?,
-    onBackClicked: () -> Unit,
-) {
-    if (customBottomNavBarAdapter != null) {
-        val ctx = LocalContext.current
-        AndroidView(factory = {
-            customBottomNavBarAdapter.viewAdapter.onCreateView(FrameLayout(ctx))
-        }, update = {
-            with(customBottomNavBarAdapter.viewAdapter) {
-                setOnBackClickListener(onBackClicked)
-            }
-        })
-    } else {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
-        ) {
-            AnimatedVisibility(visible = isBottomNavigationBarEnabled) {
-                NavigationActionBack(
-                    modifier = Modifier.padding(16.dp),
-                    onClick = onBackClicked
-                )
-            }
-
-        }
-    }
 }
 
 @Composable
@@ -380,7 +312,6 @@ private fun HelpDescriptionSection(
 @Composable
 private fun TopAppBar(
     onBackClicked: () -> Unit,
-    isBottomNavigationBarEnabled: Boolean,
     colors: GiniTopBarColors,
     modifier: Modifier = Modifier,
 ) {
@@ -389,12 +320,10 @@ private fun TopAppBar(
         colors = colors,
         title = stringResource(id = R.string.gbs_skonto_help_title),
         navigationIcon = {
-            AnimatedVisibility(visible = !isBottomNavigationBarEnabled) {
-                NavigationActionBack(
-                    modifier = Modifier.padding(start = 16.dp, end = 32.dp),
-                    onClick = onBackClicked
-                )
-            }
+            NavigationActionBack(
+                modifier = Modifier.padding(start = 16.dp, end = 32.dp),
+                onClick = onBackClicked
+            )
         })
 }
 

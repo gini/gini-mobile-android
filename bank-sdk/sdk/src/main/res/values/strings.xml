@@ -5,7 +5,6 @@
     <string name="gbs_digital_invoice_line_item_edit">Bearbeiten</string>
     <string name="gbs_digital_invoice_line_item_quantity">%1$s pro Stück</string>
 
-    <string name="gbs_digital_invoice_return_reason_dialog_title">Der Grund der Rücksendung</string>
 
     <string name="gbs_digital_invoice_line_item_details_quantity_decrease_content_description">Anzahl verringern</string>
     <string name="gbs_digital_invoice_line_item_details_quantity_increase_content_description">Anzahl erhöhen</string>

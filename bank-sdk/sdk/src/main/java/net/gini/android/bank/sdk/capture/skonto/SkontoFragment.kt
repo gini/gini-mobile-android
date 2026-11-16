@@ -5,12 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
-import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.skonto.formatter.AmountFormatter
 import net.gini.android.bank.sdk.capture.skonto.viewmodel.SkontoFragmentViewModel
@@ -21,7 +24,6 @@ import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.internal.util.ContextHelper
 import net.gini.android.capture.ui.theme.GiniTheme
-import net.gini.android.capture.view.InjectedViewAdapterInstance
 import org.koin.core.parameter.parametersOf
 
 class SkontoFragment : Fragment() {
@@ -40,14 +42,6 @@ class SkontoFragment : Fragment() {
             field = value
         }
 
-    // GiniCapture.isBottomNavigationBarEnabled() is @Deprecated and always returns false.
-    // Hardcode false to avoid the deprecated call and keep this consistent with the SDK intent.
-    private val isBottomNavigationBarEnabled: Boolean = false
-
-    private val customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>? =
-        GiniBank.skontoNavigationBarBottomAdapterInstance
-    private var customBottomNavigationBarView: View? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,12 +54,17 @@ class SkontoFragment : Fragment() {
         }
     }
 
+    /**
+     * [testTagsAsResourceId] exposes this screen's [SkontoTestTags] to UiAutomator as
+     * resource ids, which is how the example app's UI tests address the Skonto controls.
+     * It is read from the nearest ancestor semantics node, so it is set here on the
+     * Compose root rather than per element, and every other Compose root needs its own.
+     * It affects no user-visible behaviour: test tags are not read by TalkBack.
+     */
+    @OptIn(ExperimentalComposeUiApi::class)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        customBottomNavigationBarView =
-            container?.let { customBottomNavBarAdapter?.viewAdapter?.onCreateView(it) }
-
         viewModel.setListener(skontoFragmentListener)
 
         return ComposeView(requireContext()).apply {
@@ -73,12 +72,11 @@ class SkontoFragment : Fragment() {
             setContent {
                 GiniTheme {
                     SkontoScreenContent(
+                        modifier = Modifier.semantics { testTagsAsResourceId = true },
                         viewModel = viewModel,
                         amountFormatter = amountFormatter,
-                        customBottomNavBarAdapter = customBottomNavBarAdapter,
                         displayConfig = SkontoDisplayConfig(
                             isLandScape = !ContextHelper.isPortraitOrientation(requireContext()),
-                            isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
                             composableProviderConfig = GiniCapture.getInstance()
                                 .giniComposableStyleProvider?.setGiniComposableStyleProviderConfig(),
                             shouldFieldShowKeyboard = viewModel.isKeyboardVisible,

@@ -19,6 +19,11 @@ data class ExampleAppBankConfiguration(
     // net.gini.android.capture.GiniCapture.Builder#setFileImportEnabled → on/off switch
     val isFileImportEnabled: Boolean = true,
 
+    // open with via Uri-based API
+    // net.gini.android.bank.sdk.GiniBank#createDocumentForImportedFiles(uris)/
+    //      net.gini.android.bank.sdk.GiniBank#createCaptureFlowFragmentForUris → on/off switch
+    val isOpenWithUriBasedApiEnabled: Boolean = false,
+
     // QR code scanning
     // net.gini.android.capture.GiniCapture.Builder#setOnlyQRCodeScanning → on/off switch
     val isQrCodeEnabled: Boolean = true,
@@ -101,6 +106,11 @@ data class ExampleAppBankConfiguration(
 
     // enable custom primary button in compose
     val isCustomPrimaryComposeButtonEnabled: Boolean = false,
+
+    // enable runtime colors with a test palette
+    // net.gini.android.bank.sdk.capture.CaptureConfiguration#customResourceProvider →
+    //    on/off switch to pass an ExampleRuntimeColorsProvider
+    val isCustomRuntimeColorsEnabled: Boolean = false,
 
     // enable event tracker
     // net.gini.android.capture.GiniCapture.Builder#setEventTracker → ignore

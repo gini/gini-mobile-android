@@ -13,6 +13,7 @@ import net.gini.android.capture.BankSDKBridge;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
+import net.gini.android.capture.analysis.fraud.IBANMismatchArgs;
 import net.gini.android.capture.analysis.warning.BusinessDocType;
 import net.gini.android.capture.ProductTag;
 import net.gini.android.capture.analysis.warning.WarningPaymentState;
@@ -23,6 +24,8 @@ import net.gini.android.capture.document.GiniCaptureDocumentError;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 import net.gini.android.capture.document.PdfDocument;
 import net.gini.android.capture.error.ErrorType;
+import net.gini.android.capture.fraudSignals.FraudSignalsExtractions;
+import net.gini.android.capture.ingredientbrand.IngredientBrandScreen;
 import net.gini.android.capture.internal.camera.photo.ParcelableMemoryCache;
 import net.gini.android.capture.internal.document.DocumentRenderer;
 import net.gini.android.capture.internal.document.DocumentRendererFactory;
@@ -43,7 +46,6 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -206,6 +208,8 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
             createDocumentRenderer();
         }
         clearParcelableMemoryCache();
+        getView().setPoweredByGiniVisible(
+                extension.getIngredientBrandVisibleUseCase().invoke(IngredientBrandScreen.ANALYSIS));
         getView().showScanAnimation(mIsInvoiceSavingEnabled);
         loadDocumentData();
         showHintsForImage();
@@ -304,7 +308,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
             return Unit.INSTANCE;
         });
         mAnalysisInteractor.analyzeMultiPageDocument(mMultiPageDocument)
-                .handle((resultHolder, throwable) -> {
+                .handle((analysisResult, throwable) -> {
 
                     stopScanAnimation();
                     if (isStopped()) {
@@ -314,12 +318,18 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                         handleAnalysisError(throwable);
                         return null;
                     }
-                    handleAnalysisResult(resultHolder);
+                    handleAnalysisResult(analysisResult);
                     return null;
                 });
     }
 
-    private void handleAnalysisResult(@NonNull final AnalysisInteractor.ResultHolder resultHolder) {
+    /**
+     * @param analysisResult the holder as the analysis delivered it, including fraudSignals
+     */
+    private void handleAnalysisResult(@NonNull final AnalysisInteractor.ResultHolder analysisResult) {
+        // fraudSignals is for the SDK's own fraud warning only and must never
+        // reach the integrator or the feedback.
+        final AnalysisInteractor.ResultHolder resultHolder = withoutFraudSignals(analysisResult);
         final RemoteAnalyzedDocument remoteAnalyzedDocument = new RemoteAnalyzedDocument(
                 resultHolder.getDocumentId(),
                 resultHolder.getDocumentFileName()
@@ -335,7 +345,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
             case SUCCESS_WITH_EXTRACTIONS:
                 mAnalysisCompleted = true;
                 updateAnalyzedDocumentProviders(remoteAnalyzedDocument);
-                shouldClearImageCaches = handleSuccessWithExtractions(resultHolder);
+                shouldClearImageCaches = handleSuccessWithExtractions(analysisResult, resultHolder);
                 break;
             case NO_NETWORK_SERVICE:
                 break;
@@ -362,16 +372,43 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     /**
      * Continues the flow for an analysis which returned extractions.
      *
+     * @param analysisResult the holder as the analysis delivered it, including fraudSignals
+     * @param resultHolder   the same holder with fraudSignals stripped
      * @return {@code true} if the saved images may be cleared right away, {@code false} if the
      * extractions are still needed by the screen shown next
      */
     private boolean handleSuccessWithExtractions(
+            @NonNull final AnalysisInteractor.ResultHolder analysisResult,
             @NonNull final AnalysisInteractor.ResultHolder resultHolder) {
+        // Read from the unstripped result: resultHolder has no fraudSignals.
+        final IBANMismatchArgs ibanMismatchArgs = extension.ibanMismatchArgs(analysisResult);
         if ((resultHolder.getExtractions().isEmpty() && !isCxMode())
                 || isCxEmptyExtractions(resultHolder)) {
             proceedSuccessNoExtractions();
             return true;
         }
+        if (ibanMismatchArgs != null) {
+            // The fraud warning goes ahead of every other warning, and
+            // "Proceed anyway" continues into them.
+            successResultHolder = resultHolder;
+            extension.showIbanMismatchWarning(
+                    ibanMismatchArgs,
+                    isSavingInvoicesInProgress,
+                    () -> {
+                        showHintOrProceed(resultHolder);
+                        return Unit.INSTANCE;
+                    });
+        } else {
+            showHintOrProceed(resultHolder);
+        }
+        return false;
+    }
+
+    /**
+     * Shows the first hint that applies to {@code resultHolder} — already paid, credit note,
+     * schedule payment, payment due — or proceeds with the extractions when none applies.
+     */
+    private void showHintOrProceed(@NonNull final AnalysisInteractor.ResultHolder resultHolder) {
         if (shouldShowAlreadyPaidInvoiceWarning(resultHolder)) {
             successResultHolder = resultHolder;
             extension.showDocumentMarkedWarning(
@@ -408,7 +445,6 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
             successResultHolder = resultHolder;
             proceedWithExtractions(resultHolder);
         }
-        return false;
     }
 
     private boolean isCxMode() {
@@ -576,9 +612,11 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
 
     @Override
     void updateInvoiceSavingState(Boolean isInProgress,
-            @Nullable final String pendingSavingAction) {
+            @Nullable final String pendingSavingAction,
+            @Nullable final String chosenIban) {
         isSavingInvoicesInProgress = isInProgress;
         extension.restorePendingSavingAction(pendingSavingAction);
+        extension.restoreChosenIban(chosenIban);
     }
 
     @Override
@@ -748,6 +786,20 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         return BusinessDocType.from(paymentStateValue);
     }
 
+    @Nullable
+    private AnalysisInteractor.ResultHolder withoutFraudSignals(@Nullable final AnalysisInteractor.ResultHolder resultHolder) {
+        if (resultHolder == null) {
+            return null;
+        }
+        return new AnalysisInteractor.ResultHolder(
+                resultHolder.getResult(),
+                resultHolder.getExtractions(),
+                FraudSignalsExtractions.withoutFraudSignals(resultHolder.getCompoundExtractions()),
+                resultHolder.getDocumentId(),
+                resultHolder.getDocumentFileName()
+        );
+    }
+
     private AnalysisInteractor.ResultHolder removeAmountToPay(@NonNull final AnalysisInteractor.ResultHolder resultHolder) {
         Map<String, GiniCaptureSpecificExtraction> extractions = new HashMap<>(resultHolder.getExtractions());
         extractions.remove("amountToPay");
@@ -755,7 +807,6 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                 resultHolder.getResult(),
                 extractions,
                 new HashMap<>(),
-                new ArrayList<>(),
                 resultHolder.getDocumentId(),
                 resultHolder.getDocumentFileName()
         );

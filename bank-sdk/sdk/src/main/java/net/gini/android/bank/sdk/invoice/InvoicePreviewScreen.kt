@@ -44,9 +44,9 @@ import net.gini.android.capture.ui.components.list.ZoomableLazyColumn
 import net.gini.android.capture.ui.components.tooltip.GiniTooltipBox
 import net.gini.android.capture.ui.components.topbar.GiniTopBar
 import net.gini.android.capture.ui.theme.GiniTheme
-import net.gini.android.capture.ui.theme.colors.GiniColorPrimitives
 import org.orbitmvi.orbit.compose.collectAsState
 import net.gini.android.capture.R as CaptureR
+import net.gini.android.capture.internal.ui.runtimecolors.giniFixedColorPrimitives
 
 @Composable
 internal fun InvoicePreviewScreen(
@@ -104,7 +104,7 @@ internal fun InvoiceScreenErrorContent(
         topBar = {
             GiniTopBar(
                 title = stringResource(id = CaptureR.string.gc_title_error),
-                colors = colors.topBarColors.copy(containerColor = GiniColorPrimitives().dark01),
+                colors = colors.topBarColors.copy(containerColor = giniFixedColorPrimitives().dark01),
                 navigationIcon = {
                     NavigationActionBack(
                         modifier = Modifier

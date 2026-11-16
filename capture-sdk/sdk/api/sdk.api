@@ -199,7 +199,9 @@ public final class net/gini/android/capture/CaptureSDKResult$Error$Creator : and
 public final class net/gini/android/capture/CaptureSDKResult$SchedulePayment : net/gini/android/capture/CaptureSDKResult {
 	public static final field $stable I
 	public static final field CREATOR Landroid/os/Parcelable$Creator;
+	public fun <init> (Ljava/util/Map;Ljava/util/Map;)V
 	public fun <init> (Ljava/util/Map;Ljava/util/Map;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/Map;Ljava/util/Map;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun describeContents ()I
 	public final fun getCompoundExtractions ()Ljava/util/Map;
 	public final fun getReturnReasons ()Ljava/util/List;
@@ -218,7 +220,9 @@ public final class net/gini/android/capture/CaptureSDKResult$SchedulePayment$Cre
 public final class net/gini/android/capture/CaptureSDKResult$Success : net/gini/android/capture/CaptureSDKResult {
 	public static final field $stable I
 	public static final field CREATOR Landroid/os/Parcelable$Creator;
+	public fun <init> (Ljava/util/Map;Ljava/util/Map;)V
 	public fun <init> (Ljava/util/Map;Ljava/util/Map;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/Map;Ljava/util/Map;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun describeContents ()I
 	public final fun getCompoundExtractions ()Ljava/util/Map;
 	public final fun getReturnReasons ()Ljava/util/List;
@@ -314,15 +318,13 @@ public class net/gini/android/capture/GiniCapture {
 	public fun createGiniCaptureFragmentForIntent (Landroid/content/Context;Landroid/content/Intent;Lnet/gini/android/capture/GiniCapture$CreateGiniCaptureFragmentForIntentCallback;)Lnet/gini/android/capture/util/CancellationToken;
 	public fun createIntentForImportedFiles (Landroid/content/Intent;Landroid/content/Context;Lnet/gini/android/capture/AsyncCallback;)Lnet/gini/android/capture/util/CancellationToken;
 	public fun getAllowScreenshots ()Z
-	public fun getCameraNavigationBarBottomAdapter ()Lnet/gini/android/capture/camera/view/CameraNavigationBarBottomAdapter;
 	public fun getCustomHelpItems ()Ljava/util/List;
 	public fun getCustomOnboardingPages ()Ljava/util/ArrayList;
+	public fun getCustomResourceProvider ()Lnet/gini/android/capture/ui/theme/colors/CustomResourceProvider;
 	public fun getCustomUploadMetadata ()Ljava/util/Map;
 	public fun getDocumentImportEnabledFileTypes ()Lnet/gini/android/capture/DocumentImportEnabledFileTypes;
 	public fun getEntryPoint ()Lnet/gini/android/capture/EntryPoint;
-	public fun getErrorNavigationBarBottomAdapter ()Lnet/gini/android/capture/error/view/ErrorNavigationBarBottomAdapter;
 	public fun getGiniComposableStyleProvider ()Lnet/gini/android/capture/ui/components/GiniComposableStyleProvider;
-	public fun getHelpNavigationBarBottomAdapter ()Lnet/gini/android/capture/help/view/HelpNavigationBarBottomAdapter;
 	public fun getImportedFileSizeBytesLimit ()I
 	public static fun getInstance ()Lnet/gini/android/capture/GiniCapture;
 	public fun getLoadingIndicatorAdapter ()Lnet/gini/android/capture/view/CustomLoadingIndicatorAdapter;
@@ -331,16 +333,13 @@ public class net/gini/android/capture/GiniCapture {
 	public fun getOnboardingAlignCornersIllustrationAdapter ()Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;
 	public fun getOnboardingLightingIllustrationAdapter ()Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;
 	public fun getOnboardingMultiPageIllustrationAdapter ()Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;
-	public fun getOnboardingNavigationBarBottomAdapter ()Lnet/gini/android/capture/onboarding/view/OnboardingNavigationBarBottomAdapter;
 	public fun getOnboardingQRCodeIllustrationAdapter ()Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;
 	public fun getPaymentDueHintThresholdDays ()I
 	public fun getProductTag ()Lnet/gini/android/capture/ProductTag;
-	public fun getReviewNavigationBarBottomAdapter ()Lnet/gini/android/capture/review/multipage/view/ReviewNavigationBarBottomAdapter;
 	public fun getSaveInvoicesEnabled ()Z
 	public static fun hasInstance ()Z
 	public fun internal ()Lnet/gini/android/capture/GiniCapture$Internal;
 	public fun isAlreadyPaidHintEnabled ()Z
-	public fun isBottomNavigationBarEnabled ()Z
 	public fun isCreditNoteHintEnabled ()Z
 	public fun isFileImportEnabled ()Z
 	public fun isFlashButtonEnabled ()Z
@@ -371,6 +370,7 @@ public class net/gini/android/capture/GiniCapture$Builder {
 	public fun setCustomErrorLoggerListener (Lnet/gini/android/capture/logging/ErrorLoggerListener;)Lnet/gini/android/capture/GiniCapture$Builder;
 	public fun setCustomHelpItems (Ljava/util/List;)Lnet/gini/android/capture/GiniCapture$Builder;
 	public fun setCustomOnboardingPages (Ljava/util/ArrayList;)Lnet/gini/android/capture/GiniCapture$Builder;
+	public fun setCustomResourceProvider (Lnet/gini/android/capture/ui/theme/colors/CustomResourceProvider;)Lnet/gini/android/capture/GiniCapture$Builder;
 	public fun setDocumentImportEnabledFileTypes (Lnet/gini/android/capture/DocumentImportEnabledFileTypes;)Lnet/gini/android/capture/GiniCapture$Builder;
 	public fun setEntryPoint (Lnet/gini/android/capture/EntryPoint;)Lnet/gini/android/capture/GiniCapture$Builder;
 	public fun setEventTracker (Lnet/gini/android/capture/tracking/EventTracker;)Lnet/gini/android/capture/GiniCapture$Builder;
@@ -425,24 +425,21 @@ public class net/gini/android/capture/GiniCapture$CreateGiniCaptureFragmentForIn
 public class net/gini/android/capture/GiniCapture$Internal {
 	public static final field DEFAULT_ENTRY_POINT Lnet/gini/android/capture/EntryPoint;
 	public fun <init> (Lnet/gini/android/capture/GiniCapture;)V
+	public fun createDocumentForImportedUris (Ljava/util/List;Landroid/content/Context;Lnet/gini/android/capture/AsyncCallback;)Lnet/gini/android/capture/util/CancellationToken;
 	public static fun createGiniCaptureFragmentForOpenWithDocument (Lnet/gini/android/capture/Document;)Lnet/gini/android/capture/GiniCaptureFragment;
-	public fun getCameraNavigationBarBottomAdapterInstance ()Lnet/gini/android/capture/view/InjectedViewAdapterInstance;
+	public fun getColorResolver ()Lnet/gini/android/capture/internal/ui/runtimecolors/GiniColorResolver;
 	public fun getCompoundExtractions ()Ljava/util/Map;
 	public fun getDocumentDataMemoryCache ()Lnet/gini/android/capture/internal/cache/DocumentDataMemoryCache;
 	public fun getErrorLogger ()Lnet/gini/android/capture/logging/ErrorLogger;
-	public fun getErrorNavigationBarBottomAdapterInstance ()Lnet/gini/android/capture/view/InjectedViewAdapterInstance;
 	public fun getEventTracker ()Lnet/gini/android/capture/tracking/EventTracker;
 	public fun getGiniCaptureNetworkService ()Lnet/gini/android/capture/network/GiniCaptureNetworkService;
-	public fun getHelpNavigationBarBottomAdapterInstance ()Lnet/gini/android/capture/view/InjectedViewAdapterInstance;
 	public fun getImageDiskStore ()Lnet/gini/android/capture/internal/storage/ImageDiskStore;
 	public fun getImageMultiPageDocumentMemoryStore ()Lnet/gini/android/capture/internal/document/ImageMultiPageDocumentMemoryStore;
 	public fun getLoadingIndicatorAdapterInstance ()Lnet/gini/android/capture/view/InjectedViewAdapterInstance;
 	public fun getNavigationBarTopAdapterInstance ()Lnet/gini/android/capture/view/InjectedViewAdapterInstance;
 	public fun getNetworkRequestsManager ()Lnet/gini/android/capture/internal/network/NetworkRequestsManager;
 	public fun getOnButtonLoadingIndicatorAdapterInstance ()Lnet/gini/android/capture/view/InjectedViewAdapterInstance;
-	public fun getOnboardingNavigationBarBottomAdapterInstance ()Lnet/gini/android/capture/view/InjectedViewAdapterInstance;
 	public fun getPhotoMemoryCache ()Lnet/gini/android/capture/internal/cache/PhotoMemoryCache;
-	public fun getReviewNavigationBarBottomAdapterInstance ()Lnet/gini/android/capture/view/InjectedViewAdapterInstance;
 	public fun getReviewScreenAnalysisError ()Ljava/lang/Throwable;
 	public fun setReviewScreenAnalysisError (Ljava/lang/Throwable;)V
 	public fun setUpdatedCompoundExtractions (Ljava/util/Map;)V
@@ -538,6 +535,7 @@ public final class net/gini/android/capture/GiniCaptureFragmentListener$DefaultI
 
 public class net/gini/android/capture/ImportImageFileUrisAsyncTask : net/gini/android/capture/internal/fileimport/AbstractImportImageUrisAsyncTask {
 	public fun <init> (Landroid/content/Context;Landroid/content/Intent;Lnet/gini/android/capture/GiniCapture;Lnet/gini/android/capture/Document$Source;Lnet/gini/android/capture/Document$ImportMethod;Lnet/gini/android/capture/AsyncCallback;)V
+	public fun <init> (Landroid/content/Context;Lnet/gini/android/capture/GiniCapture;Lnet/gini/android/capture/Document$Source;Lnet/gini/android/capture/Document$ImportMethod;Lnet/gini/android/capture/AsyncCallback;)V
 	protected fun onError (Lnet/gini/android/capture/document/ImageMultiPageDocument;Lnet/gini/android/capture/ImportedFileValidationException;)V
 	protected fun onHaltingError (Lnet/gini/android/capture/ImportedFileValidationException;)V
 	protected synthetic fun onPostExecute (Ljava/lang/Object;)V
@@ -706,6 +704,7 @@ public final class net/gini/android/capture/analysis/AnalysisFragmentExtension {
 	public fun <init> ()V
 	public final fun bindViews (Landroid/view/View;)V
 	public final fun hideEducation ()V
+	public final fun loadingIndicatorAdapterInstance (Lnet/gini/android/capture/view/CustomLoadingIndicatorAdapter;)Lnet/gini/android/capture/view/InjectedViewAdapterInstance;
 	public final fun showEducation (Lkotlin/jvm/functions/Function0;)V
 }
 
@@ -760,6 +759,13 @@ public final class net/gini/android/capture/analysis/AnalysisInteractor$ResultHo
 	public static fun toCaptureResult (Lnet/gini/android/capture/analysis/AnalysisInteractor$ResultHolder;)Lnet/gini/android/capture/CaptureSDKResult$Success;
 }
 
+public final class net/gini/android/capture/analysis/ComposableSingletons$AnalysisFragmentExtensionKt {
+	public static final field INSTANCE Lnet/gini/android/capture/analysis/ComposableSingletons$AnalysisFragmentExtensionKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
+}
+
 public final class net/gini/android/capture/analysis/LastAnalyzedDocumentProvider {
 	public static final field $stable I
 	public fun <init> (Lkotlinx/coroutines/CoroutineDispatcher;Lnet/gini/android/capture/tracking/useranalytics/UserAnalyticsEventTracker;)V
@@ -785,6 +791,13 @@ public final class net/gini/android/capture/analysis/RemoteAnalyzedDocument {
 
 public abstract interface class net/gini/android/capture/analysis/education/EducationCompleteListener {
 	public abstract fun onComplete ()V
+}
+
+public final class net/gini/android/capture/analysis/fraud/ComposableSingletons$IBANSelectionSheetKt {
+	public static final field INSTANCE Lnet/gini/android/capture/analysis/fraud/ComposableSingletons$IBANSelectionSheetKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public abstract interface class net/gini/android/capture/analysis/transactiondoc/AttachedToTransactionDocumentProvider {
@@ -958,24 +971,6 @@ public class net/gini/android/capture/camera/PhotoThumbnail : androidx/constrain
 	public fun setOnClickListener (Landroid/view/View$OnClickListener;)V
 }
 
-public abstract interface class net/gini/android/capture/camera/view/CameraNavigationBarBottomAdapter : net/gini/android/capture/view/InjectedViewAdapter {
-	public abstract fun setBackButtonVisibility (I)V
-	public abstract fun setOnBackButtonClickListener (Landroid/view/View$OnClickListener;)V
-	public abstract fun setOnHelpButtonClickListener (Landroid/view/View$OnClickListener;)V
-}
-
-public final class net/gini/android/capture/camera/view/DefaultCameraNavigationBarBottomAdapter : net/gini/android/capture/camera/view/CameraNavigationBarBottomAdapter {
-	public static final field $stable I
-	public fun <init> ()V
-	public final fun getViewBinding ()Lnet/gini/android/capture/databinding/GcCameraBottomBarBinding;
-	public fun onCreateView (Landroid/view/ViewGroup;)Landroid/view/View;
-	public fun onDestroy ()V
-	public fun setBackButtonVisibility (I)V
-	public fun setOnBackButtonClickListener (Landroid/view/View$OnClickListener;)V
-	public fun setOnHelpButtonClickListener (Landroid/view/View$OnClickListener;)V
-	public final fun setViewBinding (Lnet/gini/android/capture/databinding/GcCameraBottomBarBinding;)V
-}
-
 public final class net/gini/android/capture/databinding/GcActivityAnalysisBinding : androidx/viewbinding/ViewBinding {
 	public final field gcFragmentAnalyzeDocument Landroid/widget/FrameLayout;
 	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcActivityAnalysisBinding;
@@ -1017,24 +1012,12 @@ public final class net/gini/android/capture/databinding/GcActivityMultiPageRevie
 
 public final class net/gini/android/capture/databinding/GcActivityNoresultsBinding : androidx/viewbinding/ViewBinding {
 	public final field gcFragmentNoresults Landroid/widget/FrameLayout;
-	public final field gcInjectedNavigationBarContainerBottom Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcRoot Landroidx/constraintlayout/widget/ConstraintLayout;
 	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcActivityNoresultsBinding;
 	public synthetic fun getRoot ()Landroid/view/View;
 	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
 	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/capture/databinding/GcActivityNoresultsBinding;
 	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/capture/databinding/GcActivityNoresultsBinding;
-}
-
-public final class net/gini/android/capture/databinding/GcCameraBottomBarBinding : androidx/viewbinding/ViewBinding {
-	public final field gcCameraTitle Landroid/widget/TextView;
-	public final field gcGoBack Landroid/widget/ImageButton;
-	public final field gcHelp Landroid/widget/ImageButton;
-	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcCameraBottomBarBinding;
-	public synthetic fun getRoot ()Landroid/view/View;
-	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
-	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/capture/databinding/GcCameraBottomBarBinding;
-	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/capture/databinding/GcCameraBottomBarBinding;
 }
 
 public final class net/gini/android/capture/databinding/GcDetectionErrorLayoutBinding : androidx/viewbinding/ViewBinding {
@@ -1059,15 +1042,6 @@ public final class net/gini/android/capture/databinding/GcDialogUnsupportedQrCod
 	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/capture/databinding/GcDialogUnsupportedQrCodeBinding;
 }
 
-public final class net/gini/android/capture/databinding/GcErrorNavigationBarBottomBinding : androidx/viewbinding/ViewBinding {
-	public final field gcGoBack Landroid/widget/ImageButton;
-	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcErrorNavigationBarBottomBinding;
-	public synthetic fun getRoot ()Landroid/view/View;
-	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
-	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/capture/databinding/GcErrorNavigationBarBottomBinding;
-	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/capture/databinding/GcErrorNavigationBarBottomBinding;
-}
-
 public final class net/gini/android/capture/databinding/GcFragmentAnalysisBinding : androidx/viewbinding/ViewBinding {
 	public final field frameLayout Landroid/widget/FrameLayout;
 	public final field frameLayout3 Landroid/widget/FrameLayout;
@@ -1078,10 +1052,12 @@ public final class net/gini/android/capture/databinding/GcFragmentAnalysisBindin
 	public final field gcAnalysisMessage Landroid/widget/TextView;
 	public final field gcAnalysisOverlay Landroid/widget/LinearLayout;
 	public final field gcEducationContainer Landroidx/compose/ui/platform/ComposeView;
+	public final field gcIbanMismatchContainer Landroidx/compose/ui/platform/ComposeView;
 	public final field gcImagePicture Landroid/widget/ImageView;
 	public final field gcInjectedLoadingIndicatorContainer Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcLayoutRoot Landroidx/constraintlayout/widget/ConstraintLayout;
 	public final field gcNavigationTopBar Lnet/gini/android/capture/view/InjectedViewContainer;
+	public final field gcPoweredByGini Lnet/gini/android/capture/databinding/GcPoweredByGiniBinding;
 	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcFragmentAnalysisBinding;
 	public synthetic fun getRoot ()Landroid/view/View;
 	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
@@ -1111,12 +1087,13 @@ public final class net/gini/android/capture/databinding/GcFragmentCameraBinding 
 	public final field gcDocumentImportButtonSubtitle Landroid/widget/TextView;
 	public final field gcFlashGroupWrapper Landroidx/constraintlayout/widget/ConstraintLayout;
 	public final field gcGuidelineImageStart Landroidx/constraintlayout/widget/Guideline;
+	public final field gcGuidelineScreenCenter Landroidx/constraintlayout/widget/Guideline;
 	public final field gcIbanDetected Landroid/widget/TextView;
 	public final field gcInjectedLoadingIndicator Lnet/gini/android/capture/view/InjectedViewContainer;
-	public final field gcInjectedNavigationBarContainerBottom Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcNavigationTopBar Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcPaneWrapper Landroidx/constraintlayout/widget/ConstraintLayout;
 	public final field gcPhotoThumbnail Lnet/gini/android/capture/camera/PhotoThumbnail;
+	public final field gcPoweredByGini Lnet/gini/android/capture/databinding/GcPoweredByGiniBinding;
 	public final field gcQrCodeCheck Landroid/widget/ImageView;
 	public final field gcQrCodeEducationComposeView Landroidx/compose/ui/platform/ComposeView;
 	public final field gcQrCodeStatus Landroid/widget/TextView;
@@ -1145,7 +1122,6 @@ public final class net/gini/android/capture/databinding/GcFragmentErrorBinding :
 	public final field gcGuidelineEndErrorHeader Landroidx/constraintlayout/widget/Guideline;
 	public final field gcGuidelineStartError Landroidx/constraintlayout/widget/Guideline;
 	public final field gcGuidelineStartErrorHeader Landroidx/constraintlayout/widget/Guideline;
-	public final field gcInjectedNavigationBarContainerBottom Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcInjectedNavigationBarContainerTop Lnet/gini/android/capture/view/InjectedViewContainer;
 	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcFragmentErrorBinding;
 	public synthetic fun getRoot ()Landroid/view/View;
@@ -1170,7 +1146,6 @@ public final class net/gini/android/capture/databinding/GcFragmentFileImportHelp
 	public final field customFontTextView6 Landroid/widget/TextView;
 	public final field customFontTextView7 Landroid/widget/TextView;
 	public final field gcFileImportConstraintLayout Landroidx/constraintlayout/widget/ConstraintLayout;
-	public final field gcInjectedNavigationBarContainerBottom Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcInjectedNavigationBarContainerTop Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcSection1Illustration Landroid/widget/ImageView;
 	public final field gcSection2Illustration Landroid/widget/ImageView;
@@ -1194,7 +1169,6 @@ public final class net/gini/android/capture/databinding/GcFragmentGiniCaptureBin
 
 public final class net/gini/android/capture/databinding/GcFragmentHelpBinding : androidx/viewbinding/ViewBinding {
 	public final field gcHelpItems Landroidx/recyclerview/widget/RecyclerView;
-	public final field gcInjectedNavigationBarContainerBottom Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcInjectedNavigationBarContainerTop Lnet/gini/android/capture/view/InjectedViewContainer;
 	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcFragmentHelpBinding;
 	public synthetic fun getRoot ()Landroid/view/View;
@@ -1211,7 +1185,6 @@ public final class net/gini/android/capture/databinding/GcFragmentMultiPageRevie
 	public final field gcFragmentContainer Landroidx/fragment/app/FragmentContainerView;
 	public final field gcGuidelineViewpagerEnd Landroidx/constraintlayout/widget/Guideline;
 	public final field gcInjectedLoadingIndicatorContainer Lnet/gini/android/capture/view/InjectedViewContainer;
-	public final field gcInjectedNavigationBarContainerBottom Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcMainViewsWrapper Landroidx/constraintlayout/widget/ConstraintLayout;
 	public final field gcNavigationTopBar Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcPagerRecyclerView Landroidx/recyclerview/widget/RecyclerView;
@@ -1236,7 +1209,6 @@ public final class net/gini/android/capture/databinding/GcFragmentNoresultsBindi
 	public final field gcButtonNoResultsEnterManually Landroid/widget/Button;
 	public final field gcButtonNoResultsRetakeImages Landroid/widget/Button;
 	public final field gcErrorHeaderIcon Landroid/widget/ImageView;
-	public final field gcInjectedNavigationBarContainerBottom Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcInjectedNavigationBarContainerTop Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcNoResultsButtonContainer Landroid/view/View;
 	public final field gcNoResultsHeader Landroid/widget/TextView;
@@ -1257,7 +1229,6 @@ public final class net/gini/android/capture/databinding/GcFragmentOnboardingBind
 	public final field gcBottomContainer Landroidx/constraintlayout/widget/ConstraintLayout;
 	public final field gcGetStarted Landroid/widget/Button;
 	public final field gcGuidelineImageStart Landroidx/constraintlayout/widget/Guideline;
-	public final field gcInjectedNavigationBarContainerBottom Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcLayoutPageIndicators Landroid/widget/LinearLayout;
 	public final field gcNext Landroid/widget/Button;
 	public final field gcNextSkipGroup Landroidx/constraintlayout/widget/Group;
@@ -1284,7 +1255,6 @@ public final class net/gini/android/capture/databinding/GcFragmentOnboardingPage
 }
 
 public final class net/gini/android/capture/databinding/GcFragmentPhotoTipsHelpBinding : androidx/viewbinding/ViewBinding {
-	public final field gcInjectedNavigationBarContainerBottom Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcInjectedNavigationBarContainerTop Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcTipsRecycleview Landroidx/recyclerview/widget/RecyclerView;
 	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcFragmentPhotoTipsHelpBinding;
@@ -1296,7 +1266,6 @@ public final class net/gini/android/capture/databinding/GcFragmentPhotoTipsHelpB
 
 public final class net/gini/android/capture/databinding/GcFragmentSupportedFormatsHelpBinding : androidx/viewbinding/ViewBinding {
 	public final field gcFormatsList Landroidx/recyclerview/widget/RecyclerView;
-	public final field gcInjectedNavigationBarContainerBottom Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcInjectedNavigationBarContainerTop Lnet/gini/android/capture/view/InjectedViewContainer;
 	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcFragmentSupportedFormatsHelpBinding;
 	public synthetic fun getRoot ()Landroid/view/View;
@@ -1313,15 +1282,6 @@ public final class net/gini/android/capture/databinding/GcFragmentZoomInPreviewB
 	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
 	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/capture/databinding/GcFragmentZoomInPreviewBinding;
 	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/capture/databinding/GcFragmentZoomInPreviewBinding;
-}
-
-public final class net/gini/android/capture/databinding/GcHelpNavigationBarBottomBinding : androidx/viewbinding/ViewBinding {
-	public final field gcGoBack Landroid/widget/ImageButton;
-	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcHelpNavigationBarBottomBinding;
-	public synthetic fun getRoot ()Landroid/view/View;
-	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
-	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/capture/databinding/GcHelpNavigationBarBottomBinding;
-	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/capture/databinding/GcHelpNavigationBarBottomBinding;
 }
 
 public final class net/gini/android/capture/databinding/GcItemFileProviderAppBinding : androidx/viewbinding/ViewBinding {
@@ -1431,26 +1391,6 @@ public final class net/gini/android/capture/databinding/GcNavigationBarTopBindin
 	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/capture/databinding/GcNavigationBarTopBinding;
 }
 
-public final class net/gini/android/capture/databinding/GcNoResultsNavigationBarBottomBinding : androidx/viewbinding/ViewBinding {
-	public final field gcGoBack Landroid/widget/ImageButton;
-	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcNoResultsNavigationBarBottomBinding;
-	public synthetic fun getRoot ()Landroid/view/View;
-	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
-	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/capture/databinding/GcNoResultsNavigationBarBottomBinding;
-	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/capture/databinding/GcNoResultsNavigationBarBottomBinding;
-}
-
-public final class net/gini/android/capture/databinding/GcOnboardingNavigationBarBottomBinding : androidx/viewbinding/ViewBinding {
-	public final field gcGetStarted Landroid/widget/Button;
-	public final field gcNext Landroid/widget/Button;
-	public final field gcSkip Landroid/widget/Button;
-	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcOnboardingNavigationBarBottomBinding;
-	public synthetic fun getRoot ()Landroid/view/View;
-	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
-	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/capture/databinding/GcOnboardingNavigationBarBottomBinding;
-	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/capture/databinding/GcOnboardingNavigationBarBottomBinding;
-}
-
 public final class net/gini/android/capture/databinding/GcPhotoThumbnailBinding : androidx/viewbinding/ViewBinding {
 	public final field gcBadge Landroid/widget/TextView;
 	public final field gcThumbnail Landroid/widget/ImageView;
@@ -1470,19 +1410,12 @@ public final class net/gini/android/capture/databinding/GcPhotoTipsHeaderBinding
 	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/capture/databinding/GcPhotoTipsHeaderBinding;
 }
 
-public final class net/gini/android/capture/databinding/GcReviewNavigationBarBottomBinding : androidx/viewbinding/ViewBinding {
-	public final field gcAddPage Landroid/widget/ImageView;
-	public final field gcAddPageButton Landroid/widget/Button;
-	public final field gcAddPagesWrapper Landroid/widget/LinearLayout;
-	public final field gcContinue Landroid/widget/Button;
-	public final field gcInjectedLoadingIndicatorContainer Lnet/gini/android/capture/view/InjectedViewContainer;
-	public final field gcPagesTxt Landroid/widget/TextView;
-	public final field gcProcessDocumentsWrapper Landroidx/constraintlayout/widget/ConstraintLayout;
-	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcReviewNavigationBarBottomBinding;
+public final class net/gini/android/capture/databinding/GcPoweredByGiniBinding : androidx/viewbinding/ViewBinding {
+	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcPoweredByGiniBinding;
 	public synthetic fun getRoot ()Landroid/view/View;
-	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
-	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/capture/databinding/GcReviewNavigationBarBottomBinding;
-	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/capture/databinding/GcReviewNavigationBarBottomBinding;
+	public fun getRoot ()Landroid/widget/ImageView;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/capture/databinding/GcPoweredByGiniBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/capture/databinding/GcPoweredByGiniBinding;
 }
 
 public final class net/gini/android/capture/databinding/GcWarningBottomSheetBinding : androidx/viewbinding/ViewBinding {
@@ -1516,6 +1449,7 @@ public final class net/gini/android/capture/di/CaptureSdkJavaInterop {
 	public static final field $stable I
 	public static final field INSTANCE Lnet/gini/android/capture/di/CaptureSdkJavaInterop;
 	public static final fun getEInvoiceFeatureEnabledUseCase ()Lnet/gini/android/capture/einvoice/GetEInvoiceFeatureEnabledUseCase;
+	public static final fun getWeroQRCodeScanningEnabledUseCase ()Lnet/gini/android/capture/wero/GetWeroQRCodeScanningEnabledUseCase;
 }
 
 public final class net/gini/android/capture/document/DocumentFactory {
@@ -1524,6 +1458,7 @@ public final class net/gini/android/capture/document/DocumentFactory {
 	public static fun newImageDocumentFromPhoto (Lnet/gini/android/capture/internal/camera/photo/Photo;)Lnet/gini/android/capture/document/ImageDocument;
 	public static fun newImageDocumentFromPhoto (Lnet/gini/android/capture/internal/camera/photo/Photo;Landroid/net/Uri;)Lnet/gini/android/capture/document/ImageDocument;
 	public static fun newImageDocumentFromPhotoAndDocument (Lnet/gini/android/capture/internal/camera/photo/Photo;Lnet/gini/android/capture/document/GiniCaptureDocument;)Lnet/gini/android/capture/document/ImageDocument;
+	public static fun newImageDocumentFromUri (Landroid/net/Uri;Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/capture/Document$ImportMethod;)Lnet/gini/android/capture/document/ImageDocument;
 	public static fun newImageDocumentFromUri (Landroid/net/Uri;Landroid/content/Intent;Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/capture/Document$ImportMethod;)Lnet/gini/android/capture/document/ImageDocument;
 	public static fun newMultiPageDocument (Lnet/gini/android/capture/document/GiniCaptureDocument;)Lnet/gini/android/capture/document/GiniCaptureMultiPageDocument;
 }
@@ -1606,6 +1541,7 @@ public class net/gini/android/capture/document/ImageDocument : net/gini/android/
 
 public final class net/gini/android/capture/document/ImageDocument$ImageFormat : java/lang/Enum {
 	public static final field GIF Lnet/gini/android/capture/document/ImageDocument$ImageFormat;
+	public static final field HEIC Lnet/gini/android/capture/document/ImageDocument$ImageFormat;
 	public static final field JPEG Lnet/gini/android/capture/document/ImageDocument$ImageFormat;
 	public static final field PNG Lnet/gini/android/capture/document/ImageDocument$ImageFormat;
 	public static fun valueOf (Ljava/lang/String;)Lnet/gini/android/capture/document/ImageDocument$ImageFormat;
@@ -1623,6 +1559,7 @@ public class net/gini/android/capture/document/PdfDocument : net/gini/android/ca
 	public static final field CREATOR Landroid/os/Parcelable$Creator;
 	public fun describeContents ()I
 	public fun equals (Ljava/lang/Object;)Z
+	public static fun fromUri (Landroid/net/Uri;Lnet/gini/android/capture/Document$ImportMethod;)Lnet/gini/android/capture/document/PdfDocument;
 	public fun getFilename ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun loadFilename (Landroid/content/Context;)V
@@ -1660,6 +1597,7 @@ public final class net/gini/android/capture/document/XmlDocument : net/gini/andr
 	public synthetic fun <init> (Landroid/os/Parcel;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun describeContents ()I
 	public static final fun fromIntent (Landroid/content/Intent;Lnet/gini/android/capture/Document$ImportMethod;)Lnet/gini/android/capture/document/XmlDocument;
+	public static final fun fromUri (Landroid/net/Uri;Lnet/gini/android/capture/Document$ImportMethod;)Lnet/gini/android/capture/document/XmlDocument;
 	public final fun getFilename ()Ljava/lang/String;
 	public final fun loadFilename (Landroid/content/Context;)V
 	public fun writeToParcel (Landroid/os/Parcel;I)V
@@ -1667,6 +1605,7 @@ public final class net/gini/android/capture/document/XmlDocument : net/gini/andr
 
 public final class net/gini/android/capture/document/XmlDocument$Companion {
 	public final fun fromIntent (Landroid/content/Intent;Lnet/gini/android/capture/Document$ImportMethod;)Lnet/gini/android/capture/document/XmlDocument;
+	public final fun fromUri (Landroid/net/Uri;Lnet/gini/android/capture/Document$ImportMethod;)Lnet/gini/android/capture/document/XmlDocument;
 }
 
 public final class net/gini/android/capture/document/XmlMultiPageDocument : net/gini/android/capture/document/GiniCaptureMultiPageDocument {
@@ -1755,10 +1694,6 @@ public final class net/gini/android/capture/error/ErrorType$Companion {
 	public final fun typeFromDocumentErrorCode (Lnet/gini/android/capture/document/GiniCaptureDocumentError$ErrorCode;)Lnet/gini/android/capture/error/ErrorType;
 	public final fun typeFromError (Lnet/gini/android/capture/network/Error;Z)Lnet/gini/android/capture/error/ErrorType;
 	public static synthetic fun typeFromError$default (Lnet/gini/android/capture/error/ErrorType$Companion;Lnet/gini/android/capture/network/Error;ZILjava/lang/Object;)Lnet/gini/android/capture/error/ErrorType;
-}
-
-public abstract interface class net/gini/android/capture/error/view/ErrorNavigationBarBottomAdapter : net/gini/android/capture/view/InjectedViewAdapter {
-	public abstract fun setOnBackClickListener (Landroid/view/View$OnClickListener;)V
 }
 
 public final class net/gini/android/capture/help/FileImportHelpFragment : androidx/fragment/app/Fragment {
@@ -1895,10 +1830,6 @@ public final class net/gini/android/capture/help/SupportedFormatsHelpFragment$Co
 	public final fun newInstance ()Lnet/gini/android/capture/help/SupportedFormatsHelpFragment;
 }
 
-public abstract interface class net/gini/android/capture/help/view/HelpNavigationBarBottomAdapter : net/gini/android/capture/view/InjectedViewAdapter {
-	public abstract fun setOnBackClickListener (Landroid/view/View$OnClickListener;)V
-}
-
 public class net/gini/android/capture/internal/cache/DocumentDataMemoryCache : net/gini/android/capture/internal/cache/MemoryCache {
 	public fun <init> ()V
 	protected fun createCache ()Landroid/util/LruCache;
@@ -2028,6 +1959,7 @@ public abstract interface class net/gini/android/capture/internal/camera/photo/P
 	public abstract fun isImported ()Z
 	public abstract fun saveToFile (Ljava/io/File;)V
 	public abstract fun setData ([B)V
+	public abstract fun setImageFormat (Lnet/gini/android/capture/document/ImageDocument$ImageFormat;)V
 	public abstract fun setParcelableMemoryCacheTag (Ljava/lang/String;)V
 	public abstract fun setRotationForDisplay (I)V
 	public abstract fun updateBitmapPreview ()V
@@ -2148,6 +2080,7 @@ public class net/gini/android/capture/internal/document/ImageMultiPageDocumentMe
 
 public abstract class net/gini/android/capture/internal/fileimport/AbstractImportImageUrisAsyncTask : android/os/AsyncTask {
 	protected fun <init> (Landroid/content/Context;Landroid/content/Intent;Lnet/gini/android/capture/GiniCapture;Lnet/gini/android/capture/Document$Source;Lnet/gini/android/capture/Document$ImportMethod;Lnet/gini/android/capture/AsyncCallback;)V
+	protected fun <init> (Landroid/content/Context;Lnet/gini/android/capture/GiniCapture;Lnet/gini/android/capture/Document$Source;Lnet/gini/android/capture/Document$ImportMethod;Lnet/gini/android/capture/AsyncCallback;)V
 	protected fun doInBackground ([Landroid/net/Uri;)Lnet/gini/android/capture/document/ImageMultiPageDocument;
 	protected synthetic fun doInBackground ([Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getCallback ()Lnet/gini/android/capture/AsyncCallback;
@@ -2423,8 +2356,8 @@ public class net/gini/android/capture/internal/network/AnalysisNetworkRequestRes
 
 public final class net/gini/android/capture/internal/network/Configuration {
 	public static final field $stable I
-	public fun <init> (Ljava/util/UUID;Ljava/lang/String;ZZZZZZZLjava/lang/String;ZZZZZZ)V
-	public synthetic fun <init> (Ljava/util/UUID;Ljava/lang/String;ZZZZZZZLjava/lang/String;ZZZZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/util/UUID;Ljava/lang/String;ZZZZZZZLjava/lang/String;ZZZZZZLjava/util/Set;ZZ)V
+	public synthetic fun <init> (Ljava/util/UUID;Ljava/lang/String;ZZZZZZZLjava/lang/String;ZZZZZZLjava/util/Set;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/UUID;
 	public final fun component10 ()Ljava/lang/String;
 	public final fun component11 ()Z
@@ -2433,6 +2366,9 @@ public final class net/gini/android/capture/internal/network/Configuration {
 	public final fun component14 ()Z
 	public final fun component15 ()Z
 	public final fun component16 ()Z
+	public final fun component17 ()Ljava/util/Set;
+	public final fun component18 ()Z
+	public final fun component19 ()Z
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Z
 	public final fun component4 ()Z
@@ -2441,16 +2377,18 @@ public final class net/gini/android/capture/internal/network/Configuration {
 	public final fun component7 ()Z
 	public final fun component8 ()Z
 	public final fun component9 ()Z
-	public final fun copy (Ljava/util/UUID;Ljava/lang/String;ZZZZZZZLjava/lang/String;ZZZZZZ)Lnet/gini/android/capture/internal/network/Configuration;
-	public static synthetic fun copy$default (Lnet/gini/android/capture/internal/network/Configuration;Ljava/util/UUID;Ljava/lang/String;ZZZZZZZLjava/lang/String;ZZZZZZILjava/lang/Object;)Lnet/gini/android/capture/internal/network/Configuration;
+	public final fun copy (Ljava/util/UUID;Ljava/lang/String;ZZZZZZZLjava/lang/String;ZZZZZZLjava/util/Set;ZZ)Lnet/gini/android/capture/internal/network/Configuration;
+	public static synthetic fun copy$default (Lnet/gini/android/capture/internal/network/Configuration;Ljava/util/UUID;Ljava/lang/String;ZZZZZZZLjava/lang/String;ZZZZZZLjava/util/Set;ZZILjava/lang/Object;)Lnet/gini/android/capture/internal/network/Configuration;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAmplitudeApiKey ()Ljava/lang/String;
 	public final fun getClientID ()Ljava/lang/String;
 	public final fun getId ()Ljava/util/UUID;
+	public final fun getIngredientBrandScreens ()Ljava/util/Set;
 	public fun hashCode ()I
 	public final fun isAlreadyPaidHintEnabled ()Z
 	public final fun isCreditNoteHintEnabled ()Z
 	public final fun isEInvoiceEnabled ()Z
+	public final fun isFraudSignalsEnabled ()Z
 	public final fun isInstantPaymentEnabled ()Z
 	public final fun isPaymentDueHintEnabled ()Z
 	public final fun isPaymentScheduleHintEnabled ()Z
@@ -2461,6 +2399,7 @@ public final class net/gini/android/capture/internal/network/Configuration {
 	public final fun isTransactionDocsEnabled ()Z
 	public final fun isUnsupportedQRCodeWarningEnabled ()Z
 	public final fun isUserJourneyAnalyticsEnabled ()Z
+	public final fun isWeroQRCodeScanningEnabled ()Z
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -2707,6 +2646,7 @@ public class net/gini/android/capture/internal/qrcode/PaymentQRCodeData : androi
 	public fun <init> (Lnet/gini/android/capture/internal/qrcode/PaymentQRCodeData$Format;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public fun describeContents ()I
 	public fun equals (Ljava/lang/Object;)Z
+	public static fun fromWeroCandidate (Ljava/lang/String;)Lnet/gini/android/capture/internal/qrcode/PaymentQRCodeData;
 	public fun getAmount ()Ljava/lang/String;
 	public fun getBIC ()Ljava/lang/String;
 	public fun getFormat ()Lnet/gini/android/capture/internal/qrcode/PaymentQRCodeData$Format;
@@ -2729,6 +2669,7 @@ public final class net/gini/android/capture/internal/qrcode/PaymentQRCodeData$Fo
 	public static final field PAY_BY_SQUARE Lnet/gini/android/capture/internal/qrcode/PaymentQRCodeData$Format;
 	public static final field SPC Lnet/gini/android/capture/internal/qrcode/PaymentQRCodeData$Format;
 	public static final field SPD Lnet/gini/android/capture/internal/qrcode/PaymentQRCodeData$Format;
+	public static final field UNKNOWN Lnet/gini/android/capture/internal/qrcode/PaymentQRCodeData$Format;
 	public static final field UPNQR Lnet/gini/android/capture/internal/qrcode/PaymentQRCodeData$Format;
 	public static fun valueOf (Ljava/lang/String;)Lnet/gini/android/capture/internal/qrcode/PaymentQRCodeData$Format;
 	public static fun values ()[Lnet/gini/android/capture/internal/qrcode/PaymentQRCodeData$Format;
@@ -2896,6 +2837,20 @@ public class net/gini/android/capture/internal/ui/ViewStubSafeInflater {
 	public fun inflate ()Landroid/view/View;
 }
 
+public final class net/gini/android/capture/internal/ui/runtimecolors/RuntimeColorPrimitivesKt {
+	public static final fun giniFixedColorPrimitives (Landroidx/compose/runtime/Composer;I)Lnet/gini/android/capture/ui/theme/colors/GiniColorPrimitives;
+}
+
+public final class net/gini/android/capture/internal/ui/runtimecolors/RuntimeColors {
+	public static final fun applyGiniRuntimeColors (Lcom/google/android/material/snackbar/Snackbar;Landroid/content/Context;)Lcom/google/android/material/snackbar/Snackbar;
+	public static final fun giniColor (Landroid/content/Context;I)I
+	public static final fun giniColorFromAttr (Landroid/content/Context;I)Ljava/lang/Integer;
+	public static final fun giniDrawable (Landroid/content/Context;I)Landroid/graphics/drawable/Drawable;
+	public static final fun runtimeColorsThemedContextOrNull (Landroid/content/Context;I)Landroid/content/Context;
+	public static final fun runtimeColorsThemedInflaterOrNull (Landroid/view/LayoutInflater;Landroid/content/Context;I)Landroid/view/LayoutInflater;
+	public static final fun setGiniBackgroundResource (Landroid/view/View;I)V
+}
+
 public final class net/gini/android/capture/internal/util/ActivityHelper {
 	public static fun enableHomeAsUp (Landroidx/appcompat/app/AppCompatActivity;)V
 	public static fun forcePortraitOrientationOnPhones (Landroid/app/Activity;)V
@@ -2950,6 +2905,13 @@ public final class net/gini/android/capture/internal/util/DeviceHelper {
 	public static fun getDeviceType (Landroid/content/Context;)Ljava/lang/String;
 }
 
+public final class net/gini/android/capture/internal/util/ExifOrientationReader {
+	public static final field $stable I
+	public static final field INSTANCE Lnet/gini/android/capture/internal/util/ExifOrientationReader;
+	public static final fun readRotationForDisplay (Landroid/net/Uri;Landroid/content/Context;)I
+	public static final fun toRotationForDisplay (I)I
+}
+
 public final class net/gini/android/capture/internal/util/FeatureConfiguration {
 	public static fun getDocumentImportEnabledFileTypes ()Lnet/gini/android/capture/DocumentImportEnabledFileTypes;
 	public static fun isFileImportEnabled ()Z
@@ -2989,6 +2951,14 @@ public final class net/gini/android/capture/internal/util/FileImportValidator$Er
 	public static fun values ()[Lnet/gini/android/capture/internal/util/FileImportValidator$Error;
 }
 
+public final class net/gini/android/capture/internal/util/HeicHeader {
+	public static final field $stable I
+	public static final field HEADER_LENGTH I
+	public static final field INSTANCE Lnet/gini/android/capture/internal/util/HeicHeader;
+	public static final fun isHeic (Landroid/net/Uri;Landroid/content/Context;)Z
+	public static final fun isHeic ([B)Z
+}
+
 public final class net/gini/android/capture/internal/util/LogSanitizer {
 	public static final field $stable I
 	public static final field INSTANCE Lnet/gini/android/capture/internal/util/LogSanitizer;
@@ -2997,9 +2967,14 @@ public final class net/gini/android/capture/internal/util/LogSanitizer {
 
 public final class net/gini/android/capture/internal/util/MimeType : java/lang/Enum {
 	public static final field APPLICATION_JSON Lnet/gini/android/capture/internal/util/MimeType;
+	public static final field APPLICATION_OCTET_STREAM Lnet/gini/android/capture/internal/util/MimeType;
 	public static final field APPLICATION_PDF Lnet/gini/android/capture/internal/util/MimeType;
 	public static final field APPLICATION_XML Lnet/gini/android/capture/internal/util/MimeType;
 	public static final field IMAGE_GIF Lnet/gini/android/capture/internal/util/MimeType;
+	public static final field IMAGE_HEIC Lnet/gini/android/capture/internal/util/MimeType;
+	public static final field IMAGE_HEIC_SEQUENCE Lnet/gini/android/capture/internal/util/MimeType;
+	public static final field IMAGE_HEIF Lnet/gini/android/capture/internal/util/MimeType;
+	public static final field IMAGE_HEIF_SEQUENCE Lnet/gini/android/capture/internal/util/MimeType;
 	public static final field IMAGE_JPEG Lnet/gini/android/capture/internal/util/MimeType;
 	public static final field IMAGE_PNG Lnet/gini/android/capture/internal/util/MimeType;
 	public static final field IMAGE_PREFIX Lnet/gini/android/capture/internal/util/MimeType;
@@ -3241,19 +3216,15 @@ public class net/gini/android/capture/onboarding/OnboardingFragment : androidx/f
 	public fun activatePageIndicatorForPage (I)V
 	public fun close ()V
 	protected fun createPresenter (Landroid/app/Activity;)V
-	public fun hideButtons ()V
 	public fun onCreate (Landroid/os/Bundle;)V
 	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
 	public fun onGetLayoutInflater (Landroid/os/Bundle;)Landroid/view/LayoutInflater;
 	public fun scrollToPage (I)V
-	public fun setNavigationBarBottomAdapterInstance (Lnet/gini/android/capture/view/InjectedViewAdapterInstance;)V
 	public synthetic fun setPresenter (Lnet/gini/android/capture/GiniCaptureBasePresenter;)V
 	public fun setPresenter (Lnet/gini/android/capture/onboarding/OnboardingScreenContract$Presenter;)V
 	public fun showGetStartedButton ()V
-	public fun showGetStartedButtonInNavigationBarBottom ()V
 	public fun showPages (Ljava/util/List;)V
 	public fun showSkipAndNextButtons ()V
-	public fun showSkipAndNextButtonsInNavigationBarBottom ()V
 }
 
 public class net/gini/android/capture/onboarding/OnboardingPage : android/os/Parcelable {
@@ -3305,22 +3276,6 @@ public final class net/gini/android/capture/onboarding/view/ImageOnboardingIllus
 public abstract interface class net/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter : android/os/Parcelable, net/gini/android/capture/view/InjectedViewAdapter {
 	public abstract fun onHidden ()V
 	public abstract fun onVisible ()V
-}
-
-public abstract interface class net/gini/android/capture/onboarding/view/OnboardingNavigationBarBottomAdapter : net/gini/android/capture/view/InjectedViewAdapter {
-	public abstract fun setOnGetStartedButtonClickListener (Landroid/view/View$OnClickListener;)V
-	public abstract fun setOnNextButtonClickListener (Landroid/view/View$OnClickListener;)V
-	public abstract fun setOnSkipButtonClickListener (Landroid/view/View$OnClickListener;)V
-	public abstract fun showButtons ([Lnet/gini/android/capture/onboarding/view/OnboardingNavigationBarBottomButton;)V
-}
-
-public final class net/gini/android/capture/onboarding/view/OnboardingNavigationBarBottomButton : java/lang/Enum {
-	public static final field GET_STARTED Lnet/gini/android/capture/onboarding/view/OnboardingNavigationBarBottomButton;
-	public static final field NEXT Lnet/gini/android/capture/onboarding/view/OnboardingNavigationBarBottomButton;
-	public static final field SKIP Lnet/gini/android/capture/onboarding/view/OnboardingNavigationBarBottomButton;
-	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public static fun valueOf (Ljava/lang/String;)Lnet/gini/android/capture/onboarding/view/OnboardingNavigationBarBottomButton;
-	public static fun values ()[Lnet/gini/android/capture/onboarding/view/OnboardingNavigationBarBottomButton;
 }
 
 public final class net/gini/android/capture/paymentHints/GetAlreadyPaidHintEnabledUseCase {
@@ -3478,28 +3433,6 @@ public final class net/gini/android/capture/review/multipage/previews/PreviewPag
 	public fun <init> (Lnet/gini/android/capture/review/multipage/previews/PreviewPagesAdapter;Landroid/view/View;)V
 	public final fun getMImageViewContainer ()Lnet/gini/android/capture/review/RotatableImageViewContainer;
 	public final fun getView ()Landroid/view/View;
-}
-
-public final class net/gini/android/capture/review/multipage/view/DefaultReviewNavigationBarBottomAdapter : net/gini/android/capture/review/multipage/view/ReviewNavigationBarBottomAdapter {
-	public static final field $stable I
-	public fun <init> ()V
-	public fun hideLoadingIndicator ()V
-	public fun onCreateView (Landroid/view/ViewGroup;)Landroid/view/View;
-	public fun onDestroy ()V
-	public fun setAddPageButtonVisibility (I)V
-	public fun setContinueButtonEnabled (Z)V
-	public fun setOnAddPageButtonClickListener (Landroid/view/View$OnClickListener;)V
-	public fun setOnContinueButtonClickListener (Landroid/view/View$OnClickListener;)V
-	public fun showLoadingIndicator ()V
-}
-
-public abstract interface class net/gini/android/capture/review/multipage/view/ReviewNavigationBarBottomAdapter : net/gini/android/capture/view/InjectedViewAdapter {
-	public abstract fun hideLoadingIndicator ()V
-	public abstract fun setAddPageButtonVisibility (I)V
-	public abstract fun setContinueButtonEnabled (Z)V
-	public abstract fun setOnAddPageButtonClickListener (Landroid/view/View$OnClickListener;)V
-	public abstract fun setOnContinueButtonClickListener (Landroid/view/View$OnClickListener;)V
-	public abstract fun showLoadingIndicator ()V
 }
 
 public class net/gini/android/capture/review/zoom/ZoomInPreviewFragment : androidx/fragment/app/Fragment {
@@ -4365,6 +4298,39 @@ public final class net/gini/android/capture/ui/components/button/outlined/GiniOu
 	public static final fun GiniOutlinedButton (Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Lnet/gini/android/capture/ui/components/button/outlined/GiniOutlinedButtonColors;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
 }
 
+public final class net/gini/android/capture/ui/components/card/ComposableSingletons$GiniInfoCardKt {
+	public static final field INSTANCE Lnet/gini/android/capture/ui/components/card/ComposableSingletons$GiniInfoCardKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function3;
+	public static field lambda-2 Lkotlin/jvm/functions/Function2;
+	public static field lambda-3 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda-2$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-3$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
+}
+
+public final class net/gini/android/capture/ui/components/card/GiniInfoCardColors {
+	public static final field $stable I
+	public static final field Companion Lnet/gini/android/capture/ui/components/card/GiniInfoCardColors$Companion;
+	public synthetic fun <init> (JILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-0d7_KjU ()J
+	public final fun copy-8_81llA (J)Lnet/gini/android/capture/ui/components/card/GiniInfoCardColors;
+	public static synthetic fun copy-8_81llA$default (Lnet/gini/android/capture/ui/components/card/GiniInfoCardColors;JILjava/lang/Object;)Lnet/gini/android/capture/ui/components/card/GiniInfoCardColors;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getContainerColor-0d7_KjU ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/capture/ui/components/card/GiniInfoCardColors$Companion {
+	public final fun colors-Iv8Zu3U (JLandroidx/compose/runtime/Composer;II)Lnet/gini/android/capture/ui/components/card/GiniInfoCardColors;
+}
+
+public final class net/gini/android/capture/ui/components/card/GiniInfoCardKt {
+	public static final fun GiniInfoCard (Landroidx/compose/ui/Modifier;Lnet/gini/android/capture/ui/components/card/GiniInfoCardColors;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+}
+
 public final class net/gini/android/capture/ui/components/checkbox/ComposableSingletons$GiniCheckboxKt {
 	public static final field INSTANCE Lnet/gini/android/capture/ui/components/checkbox/ComposableSingletons$GiniCheckboxKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function2;
@@ -4420,6 +4386,145 @@ public final class net/gini/android/capture/ui/components/checkbox/GiniCheckboxK
 	public static final fun GiniCheckboxCheckedDisabledPreview (Landroidx/compose/runtime/Composer;I)V
 	public static final fun GiniCheckboxCheckedPreview (Landroidx/compose/runtime/Composer;I)V
 	public static final fun GiniCheckboxUncheckedPreview (Landroidx/compose/runtime/Composer;I)V
+}
+
+public final class net/gini/android/capture/ui/components/expandable/ComposableSingletons$GiniExpandableInfoRowKt {
+	public static final field INSTANCE Lnet/gini/android/capture/ui/components/expandable/ComposableSingletons$GiniExpandableInfoRowKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public static field lambda-2 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-2$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
+}
+
+public final class net/gini/android/capture/ui/components/expandable/GiniExpandableInfoRowColors {
+	public static final field $stable I
+	public static final field Companion Lnet/gini/android/capture/ui/components/expandable/GiniExpandableInfoRowColors$Companion;
+	public synthetic fun <init> (JJJJJILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-0d7_KjU ()J
+	public final fun component2-0d7_KjU ()J
+	public final fun component3-0d7_KjU ()J
+	public final fun component4-0d7_KjU ()J
+	public final fun component5-0d7_KjU ()J
+	public final fun copy-t635Npw (JJJJJ)Lnet/gini/android/capture/ui/components/expandable/GiniExpandableInfoRowColors;
+	public static synthetic fun copy-t635Npw$default (Lnet/gini/android/capture/ui/components/expandable/GiniExpandableInfoRowColors;JJJJJILjava/lang/Object;)Lnet/gini/android/capture/ui/components/expandable/GiniExpandableInfoRowColors;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBodyColor-0d7_KjU ()J
+	public final fun getChevronTint-0d7_KjU ()J
+	public final fun getContainerColor-0d7_KjU ()J
+	public final fun getIconTint-0d7_KjU ()J
+	public final fun getTitleColor-0d7_KjU ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/capture/ui/components/expandable/GiniExpandableInfoRowColors$Companion {
+	public final fun colors-zjMxDiM (JJJJJLandroidx/compose/runtime/Composer;II)Lnet/gini/android/capture/ui/components/expandable/GiniExpandableInfoRowColors;
+}
+
+public final class net/gini/android/capture/ui/components/expandable/GiniExpandableInfoRowKt {
+	public static final fun GiniExpandableInfoRow (Ljava/lang/String;Ljava/lang/String;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/graphics/painter/Painter;Landroidx/compose/ui/Modifier;Lnet/gini/android/capture/ui/components/expandable/GiniExpandableInfoRowColors;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class net/gini/android/capture/ui/components/footer/ComposableSingletons$GiniActionFooterKt {
+	public static final field INSTANCE Lnet/gini/android/capture/ui/components/footer/ComposableSingletons$GiniActionFooterKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public static field lambda-2 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-2$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
+}
+
+public final class net/gini/android/capture/ui/components/header/ComposableSingletons$GiniHeaderBlockKt {
+	public static final field INSTANCE Lnet/gini/android/capture/ui/components/header/ComposableSingletons$GiniHeaderBlockKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public static field lambda-2 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-2$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
+}
+
+public final class net/gini/android/capture/ui/components/header/GiniHeaderBlockColors {
+	public static final field $stable I
+	public static final field Companion Lnet/gini/android/capture/ui/components/header/GiniHeaderBlockColors$Companion;
+	public synthetic fun <init> (JJJJILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-0d7_KjU ()J
+	public final fun component2-0d7_KjU ()J
+	public final fun component3-0d7_KjU ()J
+	public final fun component4-0d7_KjU ()J
+	public final fun copy-jRlVdoo (JJJJ)Lnet/gini/android/capture/ui/components/header/GiniHeaderBlockColors;
+	public static synthetic fun copy-jRlVdoo$default (Lnet/gini/android/capture/ui/components/header/GiniHeaderBlockColors;JJJJILjava/lang/Object;)Lnet/gini/android/capture/ui/components/header/GiniHeaderBlockColors;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDescriptionColor-0d7_KjU ()J
+	public final fun getIconContainerColor-0d7_KjU ()J
+	public final fun getIconTint-0d7_KjU ()J
+	public final fun getTitleColor-0d7_KjU ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/capture/ui/components/header/GiniHeaderBlockColors$Companion {
+	public final fun colors-ro_MJ88 (JJJJLandroidx/compose/runtime/Composer;II)Lnet/gini/android/capture/ui/components/header/GiniHeaderBlockColors;
+}
+
+public final class net/gini/android/capture/ui/components/header/GiniHeaderBlockKt {
+	public static final fun GiniHeaderBlock (Ljava/lang/String;Landroidx/compose/ui/graphics/painter/Painter;Landroidx/compose/ui/Modifier;Ljava/lang/String;Lnet/gini/android/capture/ui/components/header/GiniHeaderBlockColors;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class net/gini/android/capture/ui/components/labeledvalue/ComposableSingletons$GiniLabeledValueKt {
+	public static final field INSTANCE Lnet/gini/android/capture/ui/components/labeledvalue/ComposableSingletons$GiniLabeledValueKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public static field lambda-2 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-2$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
+}
+
+public final class net/gini/android/capture/ui/components/labeledvalue/GiniLabeledValueColors {
+	public static final field $stable I
+	public static final field Companion Lnet/gini/android/capture/ui/components/labeledvalue/GiniLabeledValueColors$Companion;
+	public synthetic fun <init> (JJJILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-0d7_KjU ()J
+	public final fun component2-0d7_KjU ()J
+	public final fun component3-0d7_KjU ()J
+	public final fun copy-ysEtTa8 (JJJ)Lnet/gini/android/capture/ui/components/labeledvalue/GiniLabeledValueColors;
+	public static synthetic fun copy-ysEtTa8$default (Lnet/gini/android/capture/ui/components/labeledvalue/GiniLabeledValueColors;JJJILjava/lang/Object;)Lnet/gini/android/capture/ui/components/labeledvalue/GiniLabeledValueColors;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHintColor-0d7_KjU ()J
+	public final fun getLabelColor-0d7_KjU ()J
+	public final fun getValueColor-0d7_KjU ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/capture/ui/components/labeledvalue/GiniLabeledValueColors$Companion {
+	public final fun colors-RGew2ao (JJJLandroidx/compose/runtime/Composer;II)Lnet/gini/android/capture/ui/components/labeledvalue/GiniLabeledValueColors;
+}
+
+public final class net/gini/android/capture/ui/components/labeledvalue/GiniLabeledValueItem {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lnet/gini/android/capture/ui/components/labeledvalue/GiniLabeledValueItem;
+	public static synthetic fun copy$default (Lnet/gini/android/capture/ui/components/labeledvalue/GiniLabeledValueItem;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lnet/gini/android/capture/ui/components/labeledvalue/GiniLabeledValueItem;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHint ()Ljava/lang/String;
+	public final fun getLabel ()Ljava/lang/String;
+	public final fun getValue ()Ljava/lang/String;
+	public final fun getValueContentDescription ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/capture/ui/components/labeledvalue/GiniLabeledValueKt {
+	public static final fun GiniLabeledValue (Ljava/lang/String;Ljava/lang/String;Landroidx/compose/ui/Modifier;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/capture/ui/components/labeledvalue/GiniLabeledValueColors;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class net/gini/android/capture/ui/components/list/ZoomableLazyColumnKt {
@@ -4570,6 +4675,78 @@ public final class net/gini/android/capture/ui/components/picker/date/GiniDatePi
 
 public final class net/gini/android/capture/ui/components/picker/date/GiniDatePickerDialogKt {
 	public static final fun GiniDatePickerDialog (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Ljava/time/LocalDate;Landroidx/compose/material3/SelectableDates;Lnet/gini/android/capture/ui/components/picker/date/GiniDatePickerDialogColors;ZLandroidx/compose/runtime/Composer;II)V
+}
+
+public final class net/gini/android/capture/ui/components/radio/ComposableSingletons$GiniRadioButtonKt {
+	public static final field INSTANCE Lnet/gini/android/capture/ui/components/radio/ComposableSingletons$GiniRadioButtonKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public static field lambda-2 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-2$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
+}
+
+public final class net/gini/android/capture/ui/components/radio/GiniRadioButtonColors {
+	public static final field $stable I
+	public static final field Companion Lnet/gini/android/capture/ui/components/radio/GiniRadioButtonColors$Companion;
+	public synthetic fun <init> (JJJJILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-0d7_KjU ()J
+	public final fun component2-0d7_KjU ()J
+	public final fun component3-0d7_KjU ()J
+	public final fun component4-0d7_KjU ()J
+	public final fun copy-jRlVdoo (JJJJ)Lnet/gini/android/capture/ui/components/radio/GiniRadioButtonColors;
+	public static synthetic fun copy-jRlVdoo$default (Lnet/gini/android/capture/ui/components/radio/GiniRadioButtonColors;JJJJILjava/lang/Object;)Lnet/gini/android/capture/ui/components/radio/GiniRadioButtonColors;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDisabledColor-0d7_KjU ()J
+	public final fun getErrorColor-0d7_KjU ()J
+	public final fun getSelectedColor-0d7_KjU ()J
+	public final fun getUnselectedColor-0d7_KjU ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/capture/ui/components/radio/GiniRadioButtonColors$Companion {
+	public final fun colors-ro_MJ88 (JJJJLandroidx/compose/runtime/Composer;II)Lnet/gini/android/capture/ui/components/radio/GiniRadioButtonColors;
+}
+
+public final class net/gini/android/capture/ui/components/radio/GiniRadioButtonKt {
+	public static final fun GiniRadioButton (ZLkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZZLnet/gini/android/capture/ui/components/radio/GiniRadioButtonColors;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class net/gini/android/capture/ui/components/sheet/ComposableSingletons$GiniBottomSheetScaffoldKt {
+	public static final field INSTANCE Lnet/gini/android/capture/ui/components/sheet/ComposableSingletons$GiniBottomSheetScaffoldKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function3;
+	public static field lambda-2 Lkotlin/jvm/functions/Function3;
+	public static field lambda-3 Lkotlin/jvm/functions/Function2;
+	public static field lambda-4 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda-2$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda-3$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-4$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
+}
+
+public final class net/gini/android/capture/ui/components/sheet/GiniBottomSheetScaffoldColors {
+	public static final field $stable I
+	public static final field Companion Lnet/gini/android/capture/ui/components/sheet/GiniBottomSheetScaffoldColors$Companion;
+	public synthetic fun <init> (JILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-0d7_KjU ()J
+	public final fun copy-8_81llA (J)Lnet/gini/android/capture/ui/components/sheet/GiniBottomSheetScaffoldColors;
+	public static synthetic fun copy-8_81llA$default (Lnet/gini/android/capture/ui/components/sheet/GiniBottomSheetScaffoldColors;JILjava/lang/Object;)Lnet/gini/android/capture/ui/components/sheet/GiniBottomSheetScaffoldColors;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getContainerColor-0d7_KjU ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/capture/ui/components/sheet/GiniBottomSheetScaffoldColors$Companion {
+	public final fun colors-Iv8Zu3U (JLandroidx/compose/runtime/Composer;II)Lnet/gini/android/capture/ui/components/sheet/GiniBottomSheetScaffoldColors;
+}
+
+public final class net/gini/android/capture/ui/components/sheet/GiniBottomSheetScaffoldKt {
+	public static final fun GiniBottomSheetScaffold (Landroidx/compose/ui/Modifier;Ljava/lang/String;Lnet/gini/android/capture/ui/components/sheet/GiniBottomSheetScaffoldColors;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class net/gini/android/capture/ui/components/switcher/GiniSwitchColors {
@@ -4806,6 +4983,10 @@ public final class net/gini/android/capture/ui/theme/GiniThemeKt {
 	public static final fun GiniTheme (ZLkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
 }
 
+public abstract interface class net/gini/android/capture/ui/theme/colors/CustomResourceProvider {
+	public abstract fun customPreferredColor (Ljava/lang/String;Z)Ljava/lang/Integer;
+}
+
 public final class net/gini/android/capture/ui/theme/colors/GiniColorPrimitives {
 	public static final field $stable I
 	public static final field Companion Lnet/gini/android/capture/ui/theme/colors/GiniColorPrimitives$Companion;
@@ -4888,8 +5069,8 @@ public final class net/gini/android/capture/ui/theme/colors/GiniColorPrimitives$
 public final class net/gini/android/capture/ui/theme/colors/GiniColorScheme {
 	public static final field $stable I
 	public fun <init> ()V
-	public fun <init> (Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Background;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$BottomBar;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$TopAppBar;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Placeholder;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Text;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Card;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Badge;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Button;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ButtonOutlined;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ProgressBarButton;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$TextField;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Toggles;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Dialogs;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Icons;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$DatePicker;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Checkbox;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ContextMenu;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Logo;)V
-	public synthetic fun <init> (Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Background;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$BottomBar;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$TopAppBar;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Placeholder;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Text;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Card;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Badge;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Button;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ButtonOutlined;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ProgressBarButton;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$TextField;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Toggles;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Dialogs;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Icons;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$DatePicker;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Checkbox;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ContextMenu;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Logo;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Background;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$BottomBar;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$TopAppBar;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Placeholder;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Text;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Card;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Badge;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Button;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ButtonOutlined;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ProgressBarButton;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$TextField;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Toggles;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Dialogs;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Icons;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$DatePicker;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Checkbox;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ContextMenu;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Logo;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ErrorHint;)V
+	public synthetic fun <init> (Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Background;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$BottomBar;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$TopAppBar;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Placeholder;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Text;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Card;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Badge;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Button;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ButtonOutlined;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ProgressBarButton;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$TextField;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Toggles;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Dialogs;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Icons;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$DatePicker;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Checkbox;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ContextMenu;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Logo;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ErrorHint;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Background;
 	public final fun component10 ()Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ProgressBarButton;
 	public final fun component11 ()Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$TextField;
@@ -4900,6 +5081,7 @@ public final class net/gini/android/capture/ui/theme/colors/GiniColorScheme {
 	public final fun component16 ()Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Checkbox;
 	public final fun component17 ()Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ContextMenu;
 	public final fun component18 ()Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Logo;
+	public final fun component19 ()Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ErrorHint;
 	public final fun component2 ()Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$BottomBar;
 	public final fun component3 ()Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$TopAppBar;
 	public final fun component4 ()Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Placeholder;
@@ -4908,8 +5090,8 @@ public final class net/gini/android/capture/ui/theme/colors/GiniColorScheme {
 	public final fun component7 ()Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Badge;
 	public final fun component8 ()Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Button;
 	public final fun component9 ()Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ButtonOutlined;
-	public final fun copy (Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Background;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$BottomBar;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$TopAppBar;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Placeholder;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Text;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Card;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Badge;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Button;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ButtonOutlined;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ProgressBarButton;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$TextField;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Toggles;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Dialogs;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Icons;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$DatePicker;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Checkbox;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ContextMenu;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Logo;)Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme;
-	public static synthetic fun copy$default (Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Background;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$BottomBar;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$TopAppBar;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Placeholder;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Text;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Card;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Badge;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Button;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ButtonOutlined;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ProgressBarButton;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$TextField;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Toggles;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Dialogs;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Icons;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$DatePicker;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Checkbox;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ContextMenu;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Logo;ILjava/lang/Object;)Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme;
+	public final fun copy (Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Background;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$BottomBar;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$TopAppBar;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Placeholder;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Text;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Card;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Badge;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Button;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ButtonOutlined;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ProgressBarButton;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$TextField;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Toggles;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Dialogs;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Icons;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$DatePicker;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Checkbox;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ContextMenu;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Logo;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ErrorHint;)Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme;
+	public static synthetic fun copy$default (Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Background;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$BottomBar;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$TopAppBar;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Placeholder;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Text;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Card;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Badge;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Button;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ButtonOutlined;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ProgressBarButton;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$TextField;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Toggles;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Dialogs;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Icons;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$DatePicker;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Checkbox;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ContextMenu;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Logo;Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ErrorHint;ILjava/lang/Object;)Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBackground ()Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Background;
 	public final fun getBadge ()Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Badge;
@@ -4921,6 +5103,7 @@ public final class net/gini/android/capture/ui/theme/colors/GiniColorScheme {
 	public final fun getContextMenu ()Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ContextMenu;
 	public final fun getDatePicker ()Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$DatePicker;
 	public final fun getDialogs ()Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Dialogs;
+	public final fun getErrorHint ()Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ErrorHint;
 	public final fun getIcons ()Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Icons;
 	public final fun getLogo ()Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Logo;
 	public final fun getPlaceholder ()Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$Placeholder;
@@ -5170,6 +5353,21 @@ public final class net/gini/android/capture/ui/theme/colors/GiniColorScheme$Dial
 	public final fun getContainer-0d7_KjU ()J
 	public final fun getLabelText-0d7_KjU ()J
 	public final fun getText-0d7_KjU ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/capture/ui/theme/colors/GiniColorScheme$ErrorHint {
+	public static final field $stable I
+	public synthetic fun <init> (JJILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-0d7_KjU ()J
+	public final fun component2-0d7_KjU ()J
+	public final fun copy--OWjLjI (JJ)Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ErrorHint;
+	public static synthetic fun copy--OWjLjI$default (Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ErrorHint;JJILjava/lang/Object;)Lnet/gini/android/capture/ui/theme/colors/GiniColorScheme$ErrorHint;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getContainer-0d7_KjU ()J
+	public final fun getContent-0d7_KjU ()J
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -5660,5 +5858,11 @@ public abstract interface class net/gini/android/capture/view/NavigationBarTopAd
 public abstract interface class net/gini/android/capture/view/OnButtonLoadingIndicatorAdapter : net/gini/android/capture/view/InjectedViewAdapter {
 	public abstract fun onHidden ()V
 	public abstract fun onVisible ()V
+}
+
+public final class net/gini/android/capture/wero/GetWeroQRCodeScanningEnabledUseCase {
+	public static final field $stable I
+	public fun <init> (Lnet/gini/android/capture/internal/provider/GiniBankConfigurationProvider;)V
+	public final fun invoke ()Z
 }
 

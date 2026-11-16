@@ -5,6 +5,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import org.hamcrest.Matchers.allOf
 
 class FileImportErrorDialog {
+
     fun checkContentIsDisplayed(resourceId: Int, content: String): Boolean {
         var isContentPanelDisplayed = false
         onView(

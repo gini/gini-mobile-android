@@ -27,6 +27,8 @@ class GiniBankConfigurationProvider {
             isUnsupportedQRCodeWarningEnabled = false,
             isPaymentScheduleHintEnabled = false,
             isCreditNoteHintEnabled = false,
+            ingredientBrandScreens = emptySet(),
+            isFraudSignalsEnabled = false,
         )
     )
 

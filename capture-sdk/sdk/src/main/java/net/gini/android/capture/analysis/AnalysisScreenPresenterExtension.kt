@@ -16,17 +16,21 @@ import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCaptureError
 import net.gini.android.capture.analysis.AnalysisInteractor.ResultHolder
 import net.gini.android.capture.analysis.AnalysisScreenContract.View
+import net.gini.android.capture.analysis.fraud.ChosenIbanExtractions
+import net.gini.android.capture.analysis.fraud.IBANMismatchArgs
+import net.gini.android.capture.analysis.fraud.IBANMismatchArgsMapper
 import net.gini.android.capture.analysis.transactiondoc.AttachedToTransactionDocumentProvider
 import net.gini.android.capture.analysis.warning.WarningType
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.document.GiniCaptureDocument
 import net.gini.android.capture.document.GiniCaptureDocumentError
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument
+import net.gini.android.capture.fraudSignals.FraudSignalsParser
+import net.gini.android.capture.ingredientbrand.GetIngredientBrandVisibleUseCase
 import net.gini.android.capture.internal.qreducation.GetInvoiceEducationTypeUseCase
 import net.gini.android.capture.internal.qreducation.IncrementInvoiceRecognizedCounterUseCase
 import net.gini.android.capture.internal.qreducation.model.InvoiceEducationType
 import net.gini.android.capture.internal.storage.ImageDiskStore
-import net.gini.android.capture.internal.util.NullabilityHelper.getListOrEmpty
 import net.gini.android.capture.internal.util.NullabilityHelper.getMapOrEmpty
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
@@ -38,6 +42,7 @@ import net.gini.android.capture.paymentHints.GetPaymentScheduleHintEnabledUseCas
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.EventTrackingHelper
 
+@Suppress("TooManyFunctions")
 internal class AnalysisScreenPresenterExtension @JvmOverloads constructor(
     private val view: View,
     private val mainDispatcher: CoroutineDispatcher = Dispatchers.Main,
@@ -58,6 +63,11 @@ internal class AnalysisScreenPresenterExtension @JvmOverloads constructor(
 
     val paymentScheduleHintEnabledUseCase:
             GetPaymentScheduleHintEnabledUseCase by getGiniCaptureKoin().inject()
+
+    private val fraudSignalsParser: FraudSignalsParser by getGiniCaptureKoin().inject()
+
+    val ingredientBrandVisibleUseCase:
+            GetIngredientBrandVisibleUseCase by getGiniCaptureKoin().inject()
 
     val lastAnalyzedDocumentProvider: LastAnalyzedDocumentProvider
             by getGiniCaptureKoin().inject()
@@ -81,6 +91,13 @@ internal class AnalysisScreenPresenterExtension @JvmOverloads constructor(
      * saved state so it survives a recreation while the SAF folder picker is open.
      */
     private var pendingSavingAction: PendingSavingAction = PendingSavingAction.PROCEED
+
+    /**
+     * The IBAN chosen on the IBAN selection sheet, written into the extractions when the flow
+     * continues; `null` when no choice was made. Mirrored into the view's saved state next to
+     * [pendingSavingAction].
+     */
+    private var chosenIban: String? = null
 
     fun cancel() {
         job.cancel()
@@ -164,7 +181,7 @@ internal class AnalysisScreenPresenterExtension @JvmOverloads constructor(
             .onExtractionsAvailable(
                 getMapOrEmpty(resultHolder.extractions),
                 getMapOrEmpty(resultHolder.compoundExtractions),
-                getListOrEmpty(resultHolder.returnReasons)
+                emptyList()
             )
     }
 
@@ -207,6 +224,44 @@ internal class AnalysisScreenPresenterExtension @JvmOverloads constructor(
     }
 
     /**
+     * Builds the IBAN mismatch warning from the fraud signals of [analysisResult], or returns
+     * `null` when no warning should be shown.
+     *
+     * [analysisResult] must be the holder as the analysis delivered it: the one forwarded to the
+     * integrator has `fraudSignals` stripped.
+     */
+    fun ibanMismatchArgs(analysisResult: ResultHolder): IBANMismatchArgs? =
+        IBANMismatchArgsMapper.map(
+            fraudSignalsParser.parse(getMapOrEmpty(analysisResult.compoundExtractions)),
+            getMapOrEmpty(analysisResult.extractions),
+        )
+
+    /**
+     * Shows the IBAN mismatch warning with [args] once the education animation is done.
+     * "Proceed anyway" stores the IBAN chosen on the selection sheet, then runs [onContinue]: the
+     * remaining hints, which hand the extractions on and save the invoice. When invoice saving is
+     * already in progress the screen was recreated, so the warning is skipped and [onContinue]
+     * runs at once.
+     */
+    fun showIbanMismatchWarning(
+        args: IBANMismatchArgs,
+        isSavingInvoicesInProgress: Boolean,
+        onContinue: () -> Unit,
+    ) {
+        if (isSavingInvoicesInProgress) {
+            onContinue()
+        } else {
+            doWhenEducationFinished {
+                // The chosen IBAN is null when the warning offered no choice.
+                view.showIbanMismatch(args) { iban: String? ->
+                    chosenIban = iban
+                    onContinue()
+                }
+            }
+        }
+    }
+
+    /**
      * Runs the local invoice saving step, then continues with [pendingAction].
      *
      * Saving hands off to the Storage Access Framework, so the action cannot be run here. It is
@@ -226,7 +281,7 @@ internal class AnalysisScreenPresenterExtension @JvmOverloads constructor(
             return
         } else {
             pendingSavingAction = pendingAction
-            view.processInvoiceSaving(pendingAction.name)
+            view.processInvoiceSaving(pendingAction.name, chosenIban)
         }
     }
 
@@ -247,9 +302,27 @@ internal class AnalysisScreenPresenterExtension @JvmOverloads constructor(
         action: PendingSavingAction,
         resultHolder: ResultHolder,
         activity: Activity
-    ) = when (action) {
-        PendingSavingAction.PROCEED -> clearSavedImagesAndProceed(resultHolder, activity)
-        PendingSavingAction.SCHEDULE_PAYMENT -> proceedWithSchedulePayment(resultHolder, activity)
+    ) {
+        val result = withChosenIban(resultHolder)
+        chosenIban = null
+        when (action) {
+            PendingSavingAction.PROCEED -> clearSavedImagesAndProceed(result, activity)
+            PendingSavingAction.SCHEDULE_PAYMENT -> proceedWithSchedulePayment(result, activity)
+        }
+    }
+
+    /** [resultHolder] with [chosenIban] written into its extractions; the same holder without one. */
+    private fun withChosenIban(resultHolder: ResultHolder): ResultHolder {
+        val extractions = getMapOrEmpty(resultHolder.extractions)
+        val chosen = ChosenIbanExtractions.apply(extractions, chosenIban)
+        if (chosen === extractions) return resultHolder
+        return ResultHolder(
+            resultHolder.result,
+            chosen,
+            getMapOrEmpty(resultHolder.compoundExtractions),
+            resultHolder.documentId,
+            resultHolder.documentFileName
+        )
     }
 
     /**
@@ -263,6 +336,15 @@ internal class AnalysisScreenPresenterExtension @JvmOverloads constructor(
         pendingSavingAction = PendingSavingAction.entries
             .firstOrNull { it.name == actionName }
             ?: PendingSavingAction.PROCEED
+    }
+
+    /**
+     * Restores the IBAN chosen on the IBAN selection sheet after the screen was recreated during
+     * the local invoice saving step. Called with the value the view persisted; `null` when no
+     * choice was made.
+     */
+    fun restoreChosenIban(iban: String?) {
+        chosenIban = iban
     }
 
     /**
@@ -381,7 +463,7 @@ internal class AnalysisScreenPresenterExtension @JvmOverloads constructor(
             .onSchedulePayment(
                 getMapOrEmpty(resultHolder.extractions),
                 getMapOrEmpty(resultHolder.compoundExtractions),
-                getListOrEmpty(resultHolder.returnReasons)
+                emptyList()
             )
     }
 
@@ -426,6 +508,7 @@ internal class AnalysisScreenPresenterExtension @JvmOverloads constructor(
             /* no-op */
         }
 
+        @Suppress("DEPRECATION")
         override fun onExtractionsAvailable(
             extractions: Map<String, GiniCaptureSpecificExtraction>,
             compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,

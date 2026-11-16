@@ -52,7 +52,7 @@ class GiniCoreAPIBuilderTest {
     fun testSetWrongConnectionTimeout() {
         val builder = CoreAPIBuilder(ApplicationProvider.getApplicationContext(), "clientId", "clientSecret", "@example.com")
         try {
-            builder.setConnectionTimeoutInMs(-1)
+            builder.setConnectTimeoutInMs(-1)
             Assert.fail("IllegalArgumentException should be thrown")
         } catch (exc: IllegalArgumentException) {
         }

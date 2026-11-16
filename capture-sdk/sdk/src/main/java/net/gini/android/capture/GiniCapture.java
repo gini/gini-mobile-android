@@ -2,19 +2,15 @@ package net.gini.android.capture;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import net.gini.android.capture.camera.CameraActivity;
-import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter;
-import net.gini.android.capture.camera.view.DefaultCameraNavigationBarBottomAdapter;
-import net.gini.android.capture.error.view.DefaultErrorNavigationBarBottomAdapter;
-import net.gini.android.capture.error.view.ErrorNavigationBarBottomAdapter;
+import net.gini.android.capture.fraudSignals.FraudSignalsExtractions;
 import net.gini.android.capture.help.HelpItem;
-import net.gini.android.capture.help.view.DefaultHelpNavigationBarBottomAdapter;
-import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter;
 import net.gini.android.capture.internal.cache.DocumentDataMemoryCache;
 import net.gini.android.capture.internal.cache.PhotoMemoryCache;
 import net.gini.android.capture.internal.document.ImageMultiPageDocumentMemoryStore;
@@ -28,11 +24,7 @@ import net.gini.android.capture.network.GiniCaptureNetworkService;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 import net.gini.android.capture.onboarding.OnboardingPage;
-import net.gini.android.capture.onboarding.view.DefaultOnboardingNavigationBarBottomAdapter;
 import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter;
-import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
-import net.gini.android.capture.review.multipage.view.DefaultReviewNavigationBarBottomAdapter;
-import net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomAdapter;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.CameraScreenEvent;
 import net.gini.android.capture.tracking.Event;
@@ -40,7 +32,9 @@ import net.gini.android.capture.tracking.EventTracker;
 import net.gini.android.capture.tracking.OnboardingScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
+import net.gini.android.capture.internal.ui.runtimecolors.GiniColorResolver;
 import net.gini.android.capture.ui.components.GiniComposableStyleProvider;
+import net.gini.android.capture.ui.theme.colors.CustomResourceProvider;
 import net.gini.android.capture.util.CancellationToken;
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter;
@@ -143,10 +137,6 @@ public class GiniCapture {
     private final ErrorLogger mErrorLogger;
     private final int mImportedFileSizeBytesLimit;
     private final InjectedViewAdapterInstance<NavigationBarTopAdapter> navigationBarTopAdapterInstance;
-    private final InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> onboardingNavigationBarBottomAdapterInstance;
-    private final InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> helpNavigationBarBottomAdapterInstance;
-    private final InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> cameraNavigationBarBottomAdapterInstance;
-    private final InjectedViewAdapterInstance<ErrorNavigationBarBottomAdapter> errorNavigationBarBottomAdapterInstance;
     private final boolean isAlreadyPaidHintEnabled;
     private final boolean isPaymentDueHintEnabled;
     private final boolean isPaymentScheduleHintEnabled;
@@ -157,9 +147,10 @@ public class GiniCapture {
     private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingMultiPageIllustrationAdapterInstance;
     private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingQRCodeIllustrationAdapterInstance;
     private final InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter> loadingIndicatorAdapterInstance;
-    private final InjectedViewAdapterInstance<ReviewNavigationBarBottomAdapter> reviewNavigationBarBottomAdapterInstance;
     private final InjectedViewAdapterInstance<OnButtonLoadingIndicatorAdapter> onButtonLoadingIndicatorAdapterInstance;
     private final GiniComposableStyleProvider mGiniComposableStyleProvider;
+    private final CustomResourceProvider mCustomResourceProvider;
+    private final GiniColorResolver mColorResolver;
     private final EntryPoint entryPoint;
     private final boolean allowScreenshots;
     private final boolean saveInvoicesLocallyEnabled;
@@ -266,6 +257,8 @@ public class GiniCapture {
         }
         // We should remove skonto from compound extractions as we don't want to override them by clients when sending normal feedback!
         sInstance.mInternal.getCompoundExtractions().remove(COMPOUND_EXTRACTION_SKONTO_DISCOUNTS);
+        // fraudSignals is for the SDK's own fraud warning only and is never sent as feedback.
+        sInstance.mInternal.getCompoundExtractions().remove(FraudSignalsExtractions.FRAUD_SIGNALS_KEY);
 
         // Test fails here if for some reason mGiniCaptureNetworkService is null
         // Added null checking to fix test fail -> or figure out something else
@@ -343,6 +336,7 @@ public class GiniCapture {
         }
         // Remove skonto so it isn't overridden when sending normal feedback.
         instance.mInternal.getCompoundExtractions().remove(COMPOUND_EXTRACTION_SKONTO_DISCOUNTS);
+        instance.mInternal.getCompoundExtractions().remove(FraudSignalsExtractions.FRAUD_SIGNALS_KEY);
 
         if (instance.mGiniCaptureNetworkService != null) {
             instance.mGiniCaptureNetworkService.sendFeedback(extractionMap,
@@ -493,9 +487,6 @@ public class GiniCapture {
         mErrorLogger = new ErrorLogger(builder.getGiniErrorLoggerIsOn(), builder.getGiniCaptureNetworkService(), builder.getCustomErrorLoggerListener());
         mImportedFileSizeBytesLimit = builder.getImportedFileSizeBytesLimit();
         navigationBarTopAdapterInstance = builder.getNavigationBarTopAdapterInstance();
-        onboardingNavigationBarBottomAdapterInstance = builder.getOnboardingNavigationBarBottomAdapterInstance();
-        helpNavigationBarBottomAdapterInstance = builder.getHelpNavigationBarBottomAdapterInstance();
-        errorNavigationBarBottomAdapterInstance = builder.getErrorNavigationBarBottomAdapterInstance();
         isAlreadyPaidHintEnabled = builder.isAlreadyPaidHintEnabled();
         isPaymentDueHintEnabled = builder.isPaymentDueHintEnabled();
         isPaymentScheduleHintEnabled = builder.isPaymentScheduleHintEnabled();
@@ -505,9 +496,7 @@ public class GiniCapture {
         onboardingLightingIllustrationAdapterInstance = builder.getOnboardingLightingIllustrationAdapterInstance();
         onboardingMultiPageIllustrationAdapterInstance = builder.getOnboardingMultiPageIllustrationAdapterInstance();
         onboardingQRCodeIllustrationAdapterInstance = builder.getOnboardingQRCodeIllustrationAdapterInstance();
-        cameraNavigationBarBottomAdapterInstance = builder.getCameraNavigationBarBottomAdapterInstance();
         loadingIndicatorAdapterInstance = builder.getLoadingIndicatorAdapterInstance();
-        reviewNavigationBarBottomAdapterInstance = builder.getReviewNavigationBarBottomAdapterInstance();
         onButtonLoadingIndicatorAdapterInstance = builder.getOnButtonLoadingIndicatorAdapterInstance();
         entryPoint = builder.getEntryPoint();
         allowScreenshots = builder.getAllowScreenshots();
@@ -515,6 +504,8 @@ public class GiniCapture {
         mCustomUploadMetadata = builder.getCustomUploadMetadata();
         mProductTag = builder.getProductTag();
         mGiniComposableStyleProvider = builder.getGiniComposableStyleProvider();
+        mCustomResourceProvider = builder.getCustomResourceProvider();
+        mColorResolver = new GiniColorResolver(mCustomResourceProvider);
     }
 
     /**
@@ -777,43 +768,6 @@ public class GiniCapture {
         return navigationBarTopAdapterInstance.getViewAdapter();
     }
 
-    @NonNull
-    public OnboardingNavigationBarBottomAdapter getOnboardingNavigationBarBottomAdapter() {
-        return onboardingNavigationBarBottomAdapterInstance.getViewAdapter();
-    }
-
-    @NonNull
-    public HelpNavigationBarBottomAdapter getHelpNavigationBarBottomAdapter() {
-        return helpNavigationBarBottomAdapterInstance.getViewAdapter();
-    }
-
-    @NonNull
-    public ErrorNavigationBarBottomAdapter getErrorNavigationBarBottomAdapter() {
-        return errorNavigationBarBottomAdapterInstance.getViewAdapter();
-    }
-
-    @NonNull
-    public CameraNavigationBarBottomAdapter getCameraNavigationBarBottomAdapter() {
-        return cameraNavigationBarBottomAdapterInstance.getViewAdapter();
-    }
-
-    /**
-     * Since the bottom navigation bar is disabled now ( as of Jan 2026),
-     * this method always returns false.
-     * <p>
-     * Once the codebase is cleaned up fully, this method will be removed as well.
-     * For now, it is kept with default false value because it is still used in multiple places.
-     * <p>
-     * For now marking it as deprecated to indicate it should not be used anymore.
-     *
-     * @deprecated The bottom navigation bar was removed and this method always returns
-     * {@code false}. It will be removed together with the remaining usages.
-     */
-    @Deprecated
-    public boolean isBottomNavigationBarEnabled() {
-        return false;
-    }
-
     public boolean isAlreadyPaidHintEnabled() {
         return isAlreadyPaidHintEnabled;
     }
@@ -876,10 +830,6 @@ public class GiniCapture {
     }
 
     @NonNull
-    public ReviewNavigationBarBottomAdapter getReviewNavigationBarBottomAdapter() {
-        return reviewNavigationBarBottomAdapterInstance.getViewAdapter();
-    }
-
     @Nullable
     public OnButtonLoadingIndicatorAdapter getOnButtonLoadingIndicatorAdapter() {
         return onButtonLoadingIndicatorAdapterInstance.getViewAdapter();
@@ -965,6 +915,17 @@ public class GiniCapture {
         return mGiniComposableStyleProvider;
     }
 
+    /**
+     * The provider of runtime palette colors, if one was set.
+     *
+     * @return the {@link CustomResourceProvider} set with
+     * {@link Builder#setCustomResourceProvider(CustomResourceProvider)}, or {@code null}
+     */
+    @Nullable
+    public CustomResourceProvider getCustomResourceProvider() {
+        return mCustomResourceProvider;
+    }
+
     public interface CreateGiniCaptureFragmentForIntentCallback {
         void callback(CreateGiniCaptureFragmentForIntentResult result);
     }
@@ -1040,10 +1001,6 @@ public class GiniCapture {
         private ErrorLoggerListener mCustomErrorLoggerListener;
         private int mImportedFileSizeBytesLimit = FILE_SIZE_LIMIT;
         private InjectedViewAdapterInstance<NavigationBarTopAdapter> navigationBarTopAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultNavigationBarTopAdapter());
-        private final InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> navigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultOnboardingNavigationBarBottomAdapter());
-        private final InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> helpNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultHelpNavigationBarBottomAdapter());
-        private final InjectedViewAdapterInstance<ErrorNavigationBarBottomAdapter> errorNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultErrorNavigationBarBottomAdapter());
-        private final InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> cameraNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultCameraNavigationBarBottomAdapter());
         private boolean isAlreadyPaidHintEnabled = true;
         private boolean isPaymentDueHintEnabled = true;
         private boolean isPaymentScheduleHintEnabled = true;
@@ -1054,7 +1011,6 @@ public class GiniCapture {
         private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingMultiPageIllustrationAdapterInstance;
         private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingQRCodeIllustrationAdapterInstance;
         private InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter> loadingIndicatorAdapter = new InjectedViewAdapterInstance<>(new DefaultLoadingIndicatorAdapter());
-        private final InjectedViewAdapterInstance<ReviewNavigationBarBottomAdapter> reviewNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultReviewNavigationBarBottomAdapter());
 
         private InjectedViewAdapterInstance<OnButtonLoadingIndicatorAdapter> onButtonLoadingIndicatorAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultOnButtonLoadingIndicatorAdapter());
         private EntryPoint entryPoint = Internal.DEFAULT_ENTRY_POINT;
@@ -1065,6 +1021,7 @@ public class GiniCapture {
 
         private Map<String, String> customUploadMetadata;
         private GiniComposableStyleProvider giniComposableStyleProvider;
+        private CustomResourceProvider customResourceProvider;
 
         /**
          * Create a new {@link GiniCapture} instance.
@@ -1412,25 +1369,6 @@ public class GiniCapture {
             return navigationBarTopAdapterInstance;
         }
 
-        @NonNull
-        private InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> getOnboardingNavigationBarBottomAdapterInstance() {
-            return navigationBarBottomAdapterInstance;
-        }
-
-        @NonNull
-        private InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> getHelpNavigationBarBottomAdapterInstance() {
-            return helpNavigationBarBottomAdapterInstance;
-        }
-
-        @NonNull
-        private InjectedViewAdapterInstance<ErrorNavigationBarBottomAdapter> getErrorNavigationBarBottomAdapterInstance() {
-            return errorNavigationBarBottomAdapterInstance;
-        }
-
-        private InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> getCameraNavigationBarBottomAdapterInstance() {
-            return cameraNavigationBarBottomAdapterInstance;
-        }
-
         public Builder setAlreadyPaidHintEnabled(final Boolean enabled) {
             isAlreadyPaidHintEnabled = enabled;
             return this;
@@ -1574,10 +1512,6 @@ public class GiniCapture {
         }
 
 
-        private InjectedViewAdapterInstance<ReviewNavigationBarBottomAdapter> getReviewNavigationBarBottomAdapterInstance() {
-            return reviewNavigationBarBottomAdapterInstance;
-        }
-
         /**
          * Set the entry point used for launching the SDK. See {@link EntryPoint} for possible values.
          *
@@ -1646,6 +1580,25 @@ public class GiniCapture {
         }
 
         /**
+         * Set a provider for the colors of the Gini palette at runtime, for example colors loaded
+         * from your server. The SDK applies them on all screens. Without a provider the SDK uses
+         * its color resources, including your own {@code colors.xml} overrides.
+         *
+         * @param customResourceProvider a {@link CustomResourceProvider}
+         * @return the {@link Builder} instance
+         */
+        @NonNull
+        public Builder setCustomResourceProvider(@NonNull final CustomResourceProvider customResourceProvider) {
+            this.customResourceProvider = customResourceProvider;
+            return this;
+        }
+
+        @Nullable
+        private CustomResourceProvider getCustomResourceProvider() {
+            return customResourceProvider;
+        }
+
+        /**
          * Set the product tag to identify which extraction type to use.
          *
          * Default is {@link ProductTag.SepaExtractions}.
@@ -1682,8 +1635,35 @@ public class GiniCapture {
             mGiniCapture = giniCapture;
         }
 
+        @NonNull
+        public GiniColorResolver getColorResolver() {
+            return mGiniCapture.mColorResolver;
+        }
+
         public static GiniCaptureFragment createGiniCaptureFragmentForOpenWithDocument(@NonNull Document openWithDocument) {
             return GiniCaptureFragment.createInstance(openWithDocument);
+        }
+
+        /**
+         * Internal use only.
+         *
+         * <p> Creates a {@link Document} for the files pointed to by the given content Uris,
+         * received from another app. Mirrors
+         * {@link GiniCapture#createDocumentForImportedFiles(Intent, Context, AsyncCallback)} but
+         * takes the Uris directly instead of unwrapping them from an Intent.
+         *
+         * @param uris     the content Uris your app received
+         * @param context  Android context
+         * @param callback A {@link AsyncCallback} implementation
+         * @return a {@link CancellationToken} for cancelling the import process
+         * @suppress
+         */
+        @NonNull
+        public CancellationToken createDocumentForImportedUris(@NonNull final List<Uri> uris,
+                @NonNull final Context context,
+                @NonNull final AsyncCallback<Document, ImportedFileValidationException> callback) {
+            return new GiniCaptureUriImport(mGiniCapture)
+                    .createDocumentForImportedUris(uris, context, callback);
         }
 
         @Nullable
@@ -1744,28 +1724,8 @@ public class GiniCapture {
             return mGiniCapture.navigationBarTopAdapterInstance;
         }
 
-        public InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> getCameraNavigationBarBottomAdapterInstance() {
-            return mGiniCapture.cameraNavigationBarBottomAdapterInstance;
-        }
-
-        public InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> getHelpNavigationBarBottomAdapterInstance() {
-            return mGiniCapture.helpNavigationBarBottomAdapterInstance;
-        }
-
-        public InjectedViewAdapterInstance<ErrorNavigationBarBottomAdapter> getErrorNavigationBarBottomAdapterInstance() {
-            return mGiniCapture.errorNavigationBarBottomAdapterInstance;
-        }
-
         public InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter> getLoadingIndicatorAdapterInstance() {
             return mGiniCapture.loadingIndicatorAdapterInstance;
-        }
-
-        public InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> getOnboardingNavigationBarBottomAdapterInstance() {
-            return mGiniCapture.onboardingNavigationBarBottomAdapterInstance;
-        }
-
-        public InjectedViewAdapterInstance<ReviewNavigationBarBottomAdapter> getReviewNavigationBarBottomAdapterInstance() {
-            return mGiniCapture.reviewNavigationBarBottomAdapterInstance;
         }
 
         public InjectedViewAdapterInstance<OnButtonLoadingIndicatorAdapter> getOnButtonLoadingIndicatorAdapterInstance() {

@@ -19,12 +19,14 @@ import net.gini.android.bank.sdk.capture.CaptureConfiguration
 import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockBackend
 import net.gini.android.bank.sdk.exampleapp.core.DefaultNetworkServicesProvider
+import net.gini.android.bank.sdk.exampleapp.core.OpenWithUriApiPreference
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomLottiLoadingIndicatorAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomNavigationBarTopAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnButtonLoadingIndicatorAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnboardingIllustrationAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.composables.CustomGiniComposableStyleProvider
 import net.gini.android.bank.sdk.exampleapp.ui.data.ExampleAppBankConfiguration
+import net.gini.android.bank.sdk.exampleapp.ui.data.ExampleRuntimeColorsProvider
 import net.gini.android.capture.GiniCaptureDebug
 import net.gini.android.capture.help.HelpItem
 import net.gini.android.capture.internal.util.FileImportValidator
@@ -43,13 +45,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ConfigurationViewModel @Inject constructor(
-    internal val defaultNetworkServicesProvider: DefaultNetworkServicesProvider
+    internal val defaultNetworkServicesProvider: DefaultNetworkServicesProvider,
+    private val openWithUriApiPreference: OpenWithUriApiPreference
 ) : ViewModel() {
 
     private val _disableCameraPermissionFlow = MutableStateFlow(false)
     val disableCameraPermissionFlow: StateFlow<Boolean> = _disableCameraPermissionFlow
 
-    private val _configurationFlow = MutableStateFlow(ExampleAppBankConfiguration())
+    private val _configurationFlow = MutableStateFlow(
+        ExampleAppBankConfiguration(isOpenWithUriBasedApiEnabled = openWithUriApiPreference.isEnabled())
+    )
 
     fun getAlwaysAttachSetting(context: Context): Boolean {
         configureGiniBank(context) // Gini Bank should be configured before using transactionDocs
@@ -75,6 +80,11 @@ class ConfigurationViewModel @Inject constructor(
 
     fun setConfiguration(configuration: ExampleAppBankConfiguration) {
         _configurationFlow.value = configuration
+    }
+
+    fun setOpenWithUriBasedApiEnabled(isEnabled: Boolean) {
+        _configurationFlow.value = _configurationFlow.value.copy(isOpenWithUriBasedApiEnabled = isEnabled)
+        openWithUriApiPreference.setEnabled(isEnabled)
     }
 
     fun setupSDKWithDefaultConfigurations() {
@@ -256,6 +266,11 @@ class ConfigurationViewModel @Inject constructor(
         // enable custom primary compose button
         if (configuration.isCustomPrimaryComposeButtonEnabled) {
             result = result.copy(giniComposableStyleProvider = CustomGiniComposableStyleProvider())
+        }
+
+        // enable runtime colors with a test palette
+        if (configuration.isCustomRuntimeColorsEnabled) {
+            result = result.copy(customResourceProvider = ExampleRuntimeColorsProvider())
         }
 
         return result

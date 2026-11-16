@@ -177,7 +177,6 @@
     <ID>MaxLineLength:GiniCaptureFragment.kt$GiniCaptureFragment$// To be the first to handle back button pressed events we need to set this fragment as the primary navigation fragment</ID>
     <ID>MaxLineLength:GiniCaptureFragment.kt$GiniCaptureFragment$UserAnalyticsEventSuperProperty.EntryPoint(UserAnalyticsEventSuperProperty.EntryPoint.EntryPointType.OPEN_WITH)</ID>
     <ID>MaxLineLength:HelpFragment.kt$HelpFragment$HelpItem.SupportedFormats -> findNavController().navigate(HelpFragmentDirections.toSupportedFormatsHelpFragment())</ID>
-    <ID>MaxLineLength:HelpNavigationBarBottomAdapter.kt$DefaultHelpNavigationBarBottomAdapter$val viewBinding = GcHelpNavigationBarBottomBinding.inflate(LayoutInflater.from(container.context), container, false)</ID>
     <ID>MaxLineLength:IBANKnowledge.kt$IBANKnowledge$*</ID>
     <ID>MaxLineLength:IBANRecognizerImpl.kt$IBANRecognizerImpl$*</ID>
     <ID>MaxLineLength:IBANValidator.kt$IBANValidator.IBANError$EMPTY</ID>
@@ -238,12 +237,10 @@
     <ID>NewLineAtEndOfFile:NavigationBarTopAdapter.kt$net.gini.android.capture.view.NavigationBarTopAdapter.kt</ID>
     <ID>NewLineAtEndOfFile:OnButtonLoadingIndicatorAdapter.kt$net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter.kt</ID>
     <ID>NewLineAtEndOfFile:OnboardingIllustrationAdapter.kt$net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter.kt</ID>
-    <ID>NewLineAtEndOfFile:OnboardingNavigationBarBottomAdapter.kt$net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter.kt</ID>
     <ID>NewLineAtEndOfFile:PhotoTipsHelpFragment.kt$net.gini.android.capture.help.PhotoTipsHelpFragment.kt</ID>
     <ID>NewLineAtEndOfFile:PreviewPagesAdapter.kt$net.gini.android.capture.review.multipage.previews.PreviewPagesAdapter.kt</ID>
     <ID>NewLineAtEndOfFile:QRCodePopup.kt$net.gini.android.capture.internal.camera.view.QRCodePopup.kt</ID>
     <ID>NewLineAtEndOfFile:RecognizedText.kt$net.gini.android.capture.internal.textrecognition.RecognizedText.kt</ID>
-    <ID>NewLineAtEndOfFile:ReviewNavigationBarBottomAdapter.kt$net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomAdapter.kt</ID>
     <ID>NewLineAtEndOfFile:SnappedItemChangeRecyclerViewListener.kt$net.gini.android.capture.util.recyclerview.SnappedItemChangeRecyclerViewListener.kt</ID>
     <ID>NewLineAtEndOfFile:SupportedFormatsHelpFragment.kt$net.gini.android.capture.help.SupportedFormatsHelpFragment.kt</ID>
     <ID>NewLineAtEndOfFile:TextRecognizer.kt$net.gini.android.capture.internal.textrecognition.TextRecognizer.kt</ID>

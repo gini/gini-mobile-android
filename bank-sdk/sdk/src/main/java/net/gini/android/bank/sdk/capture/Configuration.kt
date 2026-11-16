@@ -2,7 +2,6 @@ package net.gini.android.bank.sdk.capture
 
 import net.gini.android.bank.sdk.BuildConfig
 import net.gini.android.bank.sdk.GiniBank
-import net.gini.android.bank.sdk.capture.skonto.SkontoNavigationBarBottomAdapter
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.GiniCapture
@@ -15,6 +14,7 @@ import net.gini.android.capture.onboarding.OnboardingPage
 import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
 import net.gini.android.capture.tracking.EventTracker
 import net.gini.android.capture.ui.components.GiniComposableStyleProvider
+import net.gini.android.capture.ui.theme.colors.CustomResourceProvider
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter
 import net.gini.android.capture.view.NavigationBarTopAdapter
 import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter
@@ -188,11 +188,6 @@ data class CaptureConfiguration(
      */
     val onButtonLoadingIndicatorAdapter: OnButtonLoadingIndicatorAdapter? = null,
 
-    /**
-     * Set an adapter implementation to show a custom bottom navigation bar on the Skonto screen.
-     */
-    val skontoNavigationBarBottomAdapter: SkontoNavigationBarBottomAdapter? = null,
-
 
     /**
      * Set the entry point used for launching the SDK. See [EntryPoint] for possible values.
@@ -248,6 +243,17 @@ data class CaptureConfiguration(
      * payment due hint state.
      */
     val paymentScheduleHintEnabled: Boolean = true,
+
+    /**
+     * Provider for the colors of the Gini palette at runtime, for example colors loaded from your
+     * server. The SDK applies them on all screens. Without a provider the SDK uses its color
+     * resources, including your own `colors.xml` overrides.
+     *
+     * See [CustomResourceProvider] for the palette names and the rules.
+     *
+     * Default value is `null`.
+     */
+    val customResourceProvider: CustomResourceProvider? = null,
 )
 
 internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfiguration): GiniCapture.Builder {
@@ -311,5 +317,6 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
                 )
             }
             configuration.giniComposableStyleProvider?.let { setGiniComposableStyleProvider(it) }
+            configuration.customResourceProvider?.let { setCustomResourceProvider(it) }
         }
 }

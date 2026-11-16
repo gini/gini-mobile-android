@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.util.Consumer;
 import androidx.fragment.app.FragmentActivity;
 
 import net.gini.android.capture.BankSDKBridge;
@@ -30,9 +31,11 @@ import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.analysis.education.EducationCompleteListener;
+import net.gini.android.capture.analysis.fraud.IBANMismatchArgs;
 import net.gini.android.capture.analysis.warning.WarningType;
 import net.gini.android.capture.error.ErrorFragment;
 import net.gini.android.capture.error.ErrorType;
+import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.internal.util.CancelListener;
@@ -49,6 +52,7 @@ import net.gini.android.capture.util.SAFHelper;
 import net.gini.android.capture.util.SharedPreferenceHelper;
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
+import net.gini.android.capture.view.InjectedViewAdapterInstance;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
@@ -75,6 +79,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     protected static final Logger LOG = LoggerFactory.getLogger(AnalysisFragmentImpl.class);
     protected static final String INVOICE_SAVING_IN_PROGRESS_KEY = "invoiceSavingInProgress";
     protected static final String PENDING_SAVING_ACTION_KEY = "pendingSavingAction";
+    protected static final String CHOSEN_IBAN_KEY = "chosenIban";
     private final FragmentImplCallback mFragment;
     private final CancelListener mCancelListener;
     private TextView mAnalysisMessageTextView;
@@ -83,6 +88,8 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private LinearLayout mAnalysisOverlay;
     private AnalysisHintsAnimator mHintsAnimator;
     private View mHintsContainer;
+    private View mPoweredByGiniView;
+    private boolean mHintShown;
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
     private InjectedViewContainer<CustomLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
     private boolean isScanAnimationActive;
@@ -94,6 +101,8 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     // Which CTA started the invoice saving step. Persisted alongside isInvoiceSavingInProgress so
     // a recreation during the SAF folder picker does not lose the user's choice.
     private String pendingSavingAction = null;
+    // The IBAN chosen on the IBAN selection sheet, persisted for the same reason.
+    private String chosenIban = null;
 
     AnalysisFragmentImpl(final FragmentImplCallback fragment,
                          final CancelListener cancelListener,
@@ -251,14 +260,18 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
         getPresenter().resumeInterruptedFlow();
         isInvoiceSavingInProgress = false;
+        chosenIban = null;
     }
 
     @Override
-    void processInvoiceSaving(@NonNull final String pendingSavingAction) {
+    void processInvoiceSaving(@NonNull final String pendingSavingAction,
+                              @Nullable final String chosenIban) {
         if (mFragment.getActivity() == null) return;
         isInvoiceSavingInProgress = true;
         this.pendingSavingAction = pendingSavingAction;
-        getPresenter().updateInvoiceSavingState(isInvoiceSavingInProgress, pendingSavingAction);
+        this.chosenIban = chosenIban;
+        getPresenter().updateInvoiceSavingState(isInvoiceSavingInProgress, pendingSavingAction,
+                chosenIban);
 
         String folderUri = SharedPreferenceHelper.INSTANCE.getString(
                 SAF_STORAGE_URI_KEY,
@@ -279,6 +292,11 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     @Nullable
     public String getPendingSavingAction() {
         return pendingSavingAction;
+    }
+
+    @Nullable
+    public String getChosenIban() {
+        return chosenIban;
     }
 
     void hideEducation() {
@@ -363,6 +381,22 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         mFragment.showWarning(warningType, titleFormatArg, onProceed, onSchedule);
     }
 
+    @Override
+    void showIbanMismatch(@NonNull final IBANMismatchArgs args,
+                          @NonNull final Consumer<String> onProceed) {
+        stopAndHideHints();
+        fragmentExtension.showIbanMismatch(args, selectedIban -> {
+            onProceed.accept(selectedIban);
+            return Unit.INSTANCE;
+        }, () -> {
+            // Same steps as AnalysisFragment.cancelTransaction(), the warning sheets' cancel CTA.
+            final Activity activity = mFragment.getActivity();
+            if (activity != null) ImageDiskStore.clear(activity);
+            mCancelListener.onCancelFlow();
+            return Unit.INSTANCE;
+        });
+    }
+
     // Keeps TalkBack focus on the warning bottom sheet by removing the rotating
     // capture suggestions behind it.
     private void stopAndHideHints() {
@@ -396,7 +430,8 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         layoutParams.width = newWidth;
         layoutParams.height = newHeight;
         mImageDocumentView.setLayoutParams(layoutParams);
-        mImageDocumentView.setRotation(rotationForDisplay);
+        final float rotationDegrees = (float) rotationForDisplay;
+        mImageDocumentView.setRotation(rotationDegrees);
     }
 
     // Required by superclass
@@ -404,6 +439,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         if (savedInstanceState != null) {
             isInvoiceSavingInProgress = savedInstanceState.getBoolean(INVOICE_SAVING_IN_PROGRESS_KEY, false);
             pendingSavingAction = savedInstanceState.getString(PENDING_SAVING_ACTION_KEY);
+            chosenIban = savedInstanceState.getString(CHOSEN_IBAN_KEY);
         }
     }
 
@@ -426,6 +462,23 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         mAnalysisOverlay = view.findViewById(R.id.gc_analysis_overlay);
         topAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
         injectedLoadingIndicatorContainer = view.findViewById(R.id.gc_injected_loading_indicator_container);
+        mPoweredByGiniView = view.findViewById(R.id.gc_powered_by_gini);
+    }
+
+    // Once a capture suggestion has been shown the badge stays hidden for the rest of this view,
+    // matching iOS and the design: the tip takes the badge's place at the bottom of the screen.
+    // Tracked in its own flag because the hint container is hidden again when a warning bottom
+    // sheet opens, and the badge must not come back behind the sheet on the next onResume.
+    @Override
+    void setPoweredByGiniVisible(final boolean visible) {
+        mPoweredByGiniView.setVisibility(visible && !mHintShown ? View.VISIBLE : View.GONE);
+    }
+
+    private void hidePoweredByGini() {
+        mHintShown = true;
+        if (mPoweredByGiniView != null) {
+            mPoweredByGiniView.setVisibility(View.GONE);
+        }
     }
 
     private void createHintsAnimator(@NonNull final View view) {
@@ -434,8 +487,10 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         final View hintContainer = view.findViewById(R.id.gc_analysis_hint_container);
         final TextView hintHeadlineTextView = view.findViewById(R.id.gc_analysis_hint_headline);
         mHintsContainer = hintContainer;
+        mHintShown = false;
         mHintsAnimator = new AnalysisHintsAnimator(mFragment.getActivity().getApplication(),
                 hintContainer, hintImageView, hintTextView, hintHeadlineTextView);
+        mHintsAnimator.setOnHintShownListener(this::hidePoweredByGini);
     }
 
     private void setTopBarInjectedViewContainer() {
@@ -454,8 +509,20 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     private void setLoadingIndicatorViewContainer() {
         if (GiniCapture.hasInstance()) {
+            // While the client configuration lists the Analysis screen in ingredientBrandScreens,
+            // the animated Gini mark replaces the loading indicator and an adapter injected with
+            // GiniCapture.Builder.setLoadingIndicatorAdapter() is deliberately not consulted —
+            // the ingredient brand must not be replaceable by the integrator (PP-3512).
+            // The choice is made whenever the indicator is shown, not here: on the "open with"
+            // path this screen opens before the client configuration has arrived, so deciding at
+            // view creation would keep the integrator's indicator for the whole screen.
+            InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter> adapterInstance =
+                    fragmentExtension.loadingIndicatorAdapterInstance(
+                            GiniCapture.getInstance().internal()
+                                    .getLoadingIndicatorAdapterInstance().getViewAdapter());
+
             injectedLoadingIndicatorContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(
-                    GiniCapture.getInstance().internal().getLoadingIndicatorAdapterInstance(),
+                    adapterInstance,
                     injectedViewAdapter -> {
                         if (isScanAnimationActive) {
                             injectedViewAdapter.onVisible();
@@ -499,7 +566,8 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     public void onResume() {
-        getPresenter().updateInvoiceSavingState(isInvoiceSavingInProgress, pendingSavingAction);
+        getPresenter().updateInvoiceSavingState(isInvoiceSavingInProgress, pendingSavingAction,
+                chosenIban);
         getPresenter().start();
     }
 

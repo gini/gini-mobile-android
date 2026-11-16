@@ -13,6 +13,7 @@ import net.gini.android.capture.R;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.ViewPropertyAnimatorCompat;
@@ -43,6 +44,10 @@ class AnalysisHintsAnimator {
     private ViewPropertyAnimatorCompat mHintAnimation;
     private List<AnalysisHint> mHints;
     private Runnable mHintCycleRunnable;
+    @Nullable
+    private Runnable mOnHintShownListener;
+    @Nullable
+    private String mPendingHintDescription;
 
     public AnalysisHintsAnimator(
             @NonNull final Context context,
@@ -55,10 +60,31 @@ class AnalysisHintsAnimator {
         mHintImageView = hintImageView;
         mHintTextView = hintTextView;
         mHintHeadlineTextView = hintHeadlineTextView;
+        setUpAccessibility();
+    }
+
+    /**
+     * Makes the hint one TalkBack element that is read out each time a new hint has slid in.
+     */
+    private void setUpAccessibility() {
+        ViewCompat.setAccessibilityLiveRegion(mHintContainer,
+                ViewCompat.ACCESSIBILITY_LIVE_REGION_POLITE);
+        ViewCompat.setScreenReaderFocusable(mHintContainer, true);
+        mHintImageView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        mHintHeadlineTextView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        mHintTextView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
     }
 
     public void setContainerViewHeight(final int containerViewHeight) {
         mContainerViewHeight = containerViewHeight;
+    }
+
+    /**
+     * Called each time a hint is about to slide into view. At that moment the container is still
+     * translated below the screen, so the listener can change the layout without a visible jump.
+     */
+    public void setOnHintShownListener(@Nullable final Runnable listener) {
+        mOnHintShownListener = listener;
     }
 
     public void start() {
@@ -71,8 +97,9 @@ class AnalysisHintsAnimator {
 
     @NonNull
     private ViewPropertyAnimatorCompat getSlideDownAnimation() {
+        final float slideDistance = (float) mContainerViewHeight;
         return ViewCompat.animate(mHintContainer)
-                .translationY(mContainerViewHeight)
+                .translationY(slideDistance)
                 .setDuration(HINT_ANIMATION_DURATION)
                 .setListener(new ViewPropertyAnimatorListenerAdapter() {
                     @Override
@@ -86,6 +113,9 @@ class AnalysisHintsAnimator {
         setNextHint();
         if (!TextUtils.isEmpty(mHintHeadlineTextView.getText())) {
             mHintContainer.setVisibility(View.VISIBLE);
+            if (mOnHintShownListener != null) {
+                mOnHintShownListener.run();
+            }
         }
         mHintAnimation = getSlideUpAnimation();
         mHintAnimation.start();
@@ -99,6 +129,12 @@ class AnalysisHintsAnimator {
                 .setListener(new ViewPropertyAnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(final View view) {
+                        // Changed only now that the hint is on screen: TalkBack may ignore live
+                        // region changes of an invisible or off-screen view
+                        if (mPendingHintDescription != null) {
+                            mHintContainer.setContentDescription(mPendingHintDescription);
+                            mPendingHintDescription = null;
+                        }
                         mHandler.postDelayed(mHintCycleRunnable, HINT_CYCLE_INTERVAL);
                     }
                 });
@@ -109,8 +145,10 @@ class AnalysisHintsAnimator {
         mHintImageView.setImageDrawable(
                 ContextCompat.getDrawable(mContext, nextHint.getDrawableResource()));
         mHintTextView.setText(nextHint.getTextResource());
-        mHintHeadlineTextView.setText(mContext.getString(R.string.gc_tip) + mContext.getString(nextHint.getTitleTextResource()));
-        mHintImageView.setContentDescription(mContext.getString(nextHint.getTitleTextResource()));
+        final String headline = mContext.getString(R.string.gc_tip) + mContext.getString(nextHint.getTitleTextResource());
+        mHintHeadlineTextView.setText(headline);
+        // The container is a polite live region, so changing its description reads the new hint out
+        mPendingHintDescription = headline + "\n" + mContext.getString(nextHint.getTextResource());
     }
 
     private AnalysisHint getNextHint() {
@@ -124,6 +162,7 @@ class AnalysisHintsAnimator {
     }
 
     public void stop() {
+        mPendingHintDescription = null;
         mHandler.removeCallbacks(mHintCycleRunnable);
         if (mHintAnimation != null) {
             mHintAnimation.cancel();

@@ -7,6 +7,10 @@ sealed class UserAnalyticsUserProperty(key: String, value: String) :
     data class GiniClientId(val clientId: String) :
         UserAnalyticsUserProperty("gini_client_id", clientId)
 
+    @Deprecated(
+        "Return reasons are no longer supported. This property is never set and will be " +
+            "removed in the next major version."
+    )
     data class ReturnReasonsEnabled(val isEnabled: Boolean) :
         UserAnalyticsUserProperty("return_reasons_enabled", isEnabled.mapToAnalyticsValue())
 

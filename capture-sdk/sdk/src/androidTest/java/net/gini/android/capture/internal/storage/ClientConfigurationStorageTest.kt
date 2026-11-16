@@ -37,6 +37,7 @@ class ClientConfigurationStorageTest {
             isUnsupportedQRCodeWarningEnabled = true,
             isEInvoiceEnabled = true,
             isPaymentScheduleHintEnabled = true,
+            isWeroQRCodeScanningEnabled = true,
         )
 
         storage.saveConfiguration(configuration)
@@ -55,6 +56,25 @@ class ClientConfigurationStorageTest {
         assertThat(result.isPaymentDueHintEnabled).isEqualTo(configuration.isPaymentDueHintEnabled)
         assertThat(result.isUnsupportedQRCodeWarningEnabled).isTrue()
         assertThat(result.isPaymentScheduleHintEnabled).isTrue()
+        assertThat(result.isWeroQRCodeScanningEnabled).isTrue()
+    }
+
+    @Test
+    fun getConfiguration_returnsSavedIngredientBrandScreens() = runTest {
+        storage.saveConfiguration(buildConfiguration(ingredientBrandScreens = setOf("Analysis")))
+
+        val result = storage.getConfiguration().first()
+
+        assertThat(result!!.ingredientBrandScreens).containsExactly("Analysis")
+    }
+
+    @Test
+    fun getConfiguration_returnsEmptyIngredientBrandScreens_whenNoneWereSaved() = runTest {
+        storage.saveConfiguration(buildConfiguration())
+
+        val result = storage.getConfiguration().first()
+
+        assertThat(result!!.ingredientBrandScreens).isEmpty()
     }
 
     @Test
@@ -72,6 +92,8 @@ class ClientConfigurationStorageTest {
         isUnsupportedQRCodeWarningEnabled: Boolean = false,
         isEInvoiceEnabled: Boolean = false,
         isPaymentScheduleHintEnabled: Boolean = false,
+        ingredientBrandScreens: Set<String> = emptySet(),
+        isWeroQRCodeScanningEnabled: Boolean = false,
     ) = Configuration(
         id = UUID.randomUUID(),
         clientID = "test-client-id",
@@ -89,5 +111,7 @@ class ClientConfigurationStorageTest {
         isUnsupportedQRCodeWarningEnabled = isUnsupportedQRCodeWarningEnabled,
         isPaymentScheduleHintEnabled = isPaymentScheduleHintEnabled,
         isCreditNoteHintEnabled = false,
+        ingredientBrandScreens = ingredientBrandScreens,
+        isWeroQRCodeScanningEnabled = isWeroQRCodeScanningEnabled,
     )
 }

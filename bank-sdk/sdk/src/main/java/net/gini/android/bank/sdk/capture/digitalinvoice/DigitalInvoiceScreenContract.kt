@@ -7,7 +7,6 @@ import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.capture.Amount
 import net.gini.android.capture.GiniCaptureBasePresenter
 import net.gini.android.capture.GiniCaptureBaseView
-import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import java.math.BigDecimal
 
 /**
@@ -34,10 +33,6 @@ interface DigitalInvoiceScreenContract {
         fun showAddons(addons: List<DigitalInvoiceAddon>)
         fun showSkonto(data: DigitalInvoiceSkontoListItem)
         fun updateFooterDetails(data: FooterDetails)
-        fun showReturnReasonDialog(
-            reasons: List<GiniCaptureReturnReason>,
-            resultCallback: ReturnReasonDialogResultCallback
-        )
 
         fun animateListScroll()
         fun onEditLineItem(selectableLineItem: SelectableLineItem)

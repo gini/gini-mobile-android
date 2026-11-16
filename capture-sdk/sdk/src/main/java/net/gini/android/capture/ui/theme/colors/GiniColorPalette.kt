@@ -30,6 +30,7 @@ data class GiniColorScheme(
     val checkbox: Checkbox = Checkbox(),
     val contextMenu: ContextMenu = ContextMenu(),
     val logo: Logo = Logo(),
+    val errorHint: ErrorHint = ErrorHint(),
 ) {
 
     @Immutable
@@ -239,6 +240,16 @@ data class GiniColorScheme(
     data class Logo(
         val tint: Color = Color.Unspecified,
     )
+
+    /**
+     * Colors of inline error feedback: a tinted container (e.g. behind a warning icon)
+     * and the strong error content drawn on or next to it.
+     */
+    @Immutable
+    data class ErrorHint(
+        val container: Color = Color.Unspecified,
+        val content: Color = Color.Unspecified,
+    )
 }
 
 /**
@@ -373,7 +384,11 @@ internal fun giniLightColorScheme(
         ),
         logo = GiniColorScheme.Logo(
             tint = accent01
-        )
+        ),
+        errorHint = GiniColorScheme.ErrorHint(
+            container = error04,
+            content = error02
+        ),
     )
 }
 
@@ -513,7 +528,11 @@ internal fun giniDarkColorScheme(
         ),
         logo = GiniColorScheme.Logo(
             tint = accent01
-        )
+        ),
+        errorHint = GiniColorScheme.ErrorHint(
+            container = error04,
+            content = error02
+        ),
     )
 }
 

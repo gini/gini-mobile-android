@@ -1,6 +1,7 @@
 package net.gini.android.bank.sdk.exampleapp.uitestsupport
 
 import net.gini.android.capture.network.GiniCaptureNetworkService
+import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 
 /**
  * UI-test support: lets an instrumented test replace the Gini API with canned responses.
@@ -42,16 +43,63 @@ object UiTestMockBackend {
     @Volatile
     var clientConfiguration: UiTestMockClientConfiguration = UiTestMockClientConfiguration()
 
+    /**
+     * How long `analyze` waits before it delivers the result. `0` delivers at once, as a mock
+     * normally does; a test that must look at the Analysis screen (or the QR overlay) while the
+     * analysis runs sets a delay so the screen stays up.
+     */
+    @Volatile
+    var analysisDelayMillis: Long = 0
+
+    /**
+     * When `true`, `getConfiguration` fails instead of serving [clientConfiguration], like a
+     * `/configurations` request that never reaches the backend. The SDK then keeps the values it
+     * saved from the last successful request.
+     */
+    @Volatile
+    var configurationFails: Boolean = false
+
+    /**
+     * The compound extractions of the last `sendFeedback` call, or `null` when no feedback was
+     * sent since the mock was armed. A copy, so later changes to the SDK's map do not show here.
+     *
+     * A test reads it to check what the SDK reports back to the backend, for example that the
+     * `fraudSignals` compound extraction is never part of the feedback.
+     */
+    @Volatile
+    var lastFeedbackCompoundExtractions: Map<String, GiniCaptureCompoundExtraction>? = null
+
+    /**
+     * The specific extractions of the last `sendFeedback` call as name → value, or `null` when no
+     * feedback was sent since the mock was armed.
+     *
+     * Only the values are kept, not the extraction objects: `GiniCaptureExtraction.value` is
+     * mutable, so a snapshot of the strings cannot change after it was recorded. A test reads it
+     * to check which IBAN and BIC the SDK reports back, for example after an IBAN was chosen on
+     * the fraud warning's selection sheet.
+     *
+     * Written before [lastFeedbackCompoundExtractions] in the same call, so once that one is set,
+     * this one is too.
+     */
+    @Volatile
+    var lastFeedbackExtractionValues: Map<String, String>? = null
+
     val isArmed: Boolean
         get() = scenario != null
 
     /** Arms the mock. Called from instrumented tests only. */
     fun arm(
         scenario: UiTestMockScenario,
-        clientConfiguration: UiTestMockClientConfiguration = UiTestMockClientConfiguration()
+        clientConfiguration: UiTestMockClientConfiguration = UiTestMockClientConfiguration(),
+        analysisDelayMillis: Long = 0,
+        configurationFails: Boolean = false
     ) {
         this.scenario = scenario
         this.clientConfiguration = clientConfiguration
+        this.analysisDelayMillis = analysisDelayMillis
+        this.configurationFails = configurationFails
+        lastFeedbackExtractionValues = null
+        lastFeedbackCompoundExtractions = null
     }
 
     /**
@@ -61,6 +109,10 @@ object UiTestMockBackend {
     fun disarm() {
         scenario = null
         clientConfiguration = UiTestMockClientConfiguration()
+        analysisDelayMillis = 0
+        configurationFails = false
+        lastFeedbackExtractionValues = null
+        lastFeedbackCompoundExtractions = null
     }
 
     /**
@@ -70,7 +122,9 @@ object UiTestMockBackend {
     fun networkService(): GiniCaptureNetworkService =
         UiTestMockNetworkService(
             scenario = requireNotNull(scenario) { "UiTestMockBackend is not armed" },
-            clientConfiguration = clientConfiguration
+            clientConfiguration = clientConfiguration,
+            analysisDelayMillis = analysisDelayMillis,
+            configurationFails = configurationFails
         )
 }
 
@@ -94,6 +148,64 @@ enum class UiTestMockScenario {
 
     /** An ordinary invoice: payment fields, no `businessDocType`. */
     INVOICE,
+
+    /** The analysis succeeds but finds nothing, so the SDK opens its No Results screen. */
+    NO_RESULTS,
+
+    /** The analysis request fails, so the SDK opens its Error screen. */
+    ANALYSIS_ERROR,
+
+    /**
+     * An invoice whose `fraudSignals` compound extraction holds only a `QR_PRINTED_IBAN_MISMATCH`
+     * signal (severity STOP). The `iban` extraction is the QR code IBAN, and its candidates add
+     * one other printed IBAN, so the SDK shows the QR-vs-printed IBAN mismatch warning when the
+     * `fraudSignalsEnabled` flag is on.
+     */
+    FRAUD_QR_MISMATCH,
+
+    /**
+     * An invoice whose `fraudSignals` holds only an `IBAN_COUNTRY_MISMATCH` signal (severity
+     * CHECK, creditor country DE) for a Slovak IBAN, so the SDK shows the country mismatch
+     * warning.
+     */
+    FRAUD_COUNTRY_MISMATCH,
+
+    /** Both signals of [FRAUD_QR_MISMATCH] and [FRAUD_COUNTRY_MISMATCH]: the combined warning. */
+    FRAUD_COMBINED,
+
+    /**
+     * `fraudSignals` with one element whose `signalCode` this SDK version does not know. The SDK
+     * skips unknown codes, so no warning is shown and the extractions are handed on.
+     */
+    FRAUD_UNKNOWN_CODE,
+
+    /**
+     * Like [FRAUD_QR_MISMATCH], but the `iban` candidates hold two printed IBANs besides the QR
+     * code IBAN, so the warning and the selection sheet list three IBANs.
+     */
+    FRAUD_SEVERAL_PRINTED,
+
+    /**
+     * A `QR_PRINTED_IBAN_MISMATCH` signal while the `iban` candidates hold only the QR code IBAN.
+     * With no other printed IBAN the SDK cannot explain the mismatch, so it drops the signal and
+     * shows no warning.
+     */
+    FRAUD_QR_WITHOUT_OTHER_PRINTED,
+
+    /**
+     * The same invoice extractions as the fraud scenarios (QR code IBAN, printed candidate, BIC,
+     * sender), but no `fraudSignals` compound extraction at all. No warning.
+     */
+    FRAUD_SIGNALS_MISSING,
+
+    /**
+     * [FRAUD_QR_MISMATCH] plus a claimable `skontoDiscounts` compound extraction, so the flow
+     * continues to the Skonto screen after the warning when Skonto is on.
+     */
+    FRAUD_QR_MISMATCH_WITH_SKONTO,
+
+    /** [FRAUD_COMBINED] plus the Skonto discount of [FRAUD_QR_MISMATCH_WITH_SKONTO]. */
+    FRAUD_COMBINED_WITH_SKONTO,
 }
 
 /**
@@ -104,9 +216,25 @@ enum class UiTestMockScenario {
  * [UiTestMockScenario.CREDIT_NOTE_WITH_LINE_ITEMS] needs `returnAssistantEnabled` on. `skontoEnabled`
  * is here so a test can turn Skonto OFF and isolate the Return Assistant branch of
  * `CaptureFlowFragment.processOnFinishedResultSuccessState`.
+ *
+ * `ingredientBrandScreens` switches the Gini ingredient brand (the Powered by Gini badge and the
+ * Gini loading indicator); empty means off. `qrCodeEducationEnabled` switches both the invoice
+ * education on the Analysis screen and the QR code education on the camera screen. Both default to
+ * off, so a test that does not ask for them sees neither.
+ *
+ * `fraudSignalsEnabled` gates the fraud prevention (IBAN mismatch) warning: with it off the SDK
+ * ignores the `fraudSignals` compound extraction. `alreadyPaidHintEnabled`,
+ * `paymentDueHintEnabled` and `paymentScheduleHintEnabled` are the server-side gates of the other
+ * Analysis screen hints. All four default to off, so existing tests see no change.
  */
 data class UiTestMockClientConfiguration(
     val creditNoteHintEnabled: Boolean = true,
     val returnAssistantEnabled: Boolean = true,
     val skontoEnabled: Boolean = true,
+    val ingredientBrandScreens: Set<String> = emptySet(),
+    val qrCodeEducationEnabled: Boolean = false,
+    val fraudSignalsEnabled: Boolean = false,
+    val alreadyPaidHintEnabled: Boolean = false,
+    val paymentDueHintEnabled: Boolean = false,
+    val paymentScheduleHintEnabled: Boolean = false,
 )

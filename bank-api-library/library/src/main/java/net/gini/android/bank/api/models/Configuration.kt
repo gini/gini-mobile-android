@@ -16,4 +16,14 @@ data class Configuration(
     val isUnsupportedQRCodeWarningEnabled: Boolean = false,
     val isPaymentScheduleHintEnabled: Boolean = false,
     val isCreditNoteHintEnabled: Boolean = false,
+    /**
+     * Names of the screens on which the Gini ingredient brand element is shown. Empty when
+     * the client has no ingredient branding.
+     */
+    val ingredientBrandScreens: List<String> = emptyList(),
+    val isWeroQRCodeScanningEnabled: Boolean = false,
+    /**
+     * Whether the backend delivers the `fraudSignals` compound extraction to this client.
+     */
+    val isFraudSignalsEnabled: Boolean = false,
 )

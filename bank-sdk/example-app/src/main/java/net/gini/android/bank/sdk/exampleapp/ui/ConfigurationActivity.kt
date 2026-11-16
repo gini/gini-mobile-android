@@ -123,6 +123,9 @@ class ConfigurationActivity : AppCompatActivity() {
             configuration.isDefaultSDKConfigurationsEnabled
         // file import
         binding.layoutFeatureToggle.switchOpenWith.isChecked = configuration.isFileImportEnabled
+        // open with via Uri-based API
+        binding.layoutFeatureToggle.switchOpenWithUriBasedApi.isChecked =
+            configuration.isOpenWithUriBasedApiEnabled
         // Capture SDK
         binding.layoutFeatureToggle.switchCaptureSdk.isChecked = configuration.isCaptureSDK
         // Saving Invoices Locally
@@ -189,6 +192,9 @@ class ConfigurationActivity : AppCompatActivity() {
         // enable custom primary button in compose
         binding.layoutGeneralUiCustomizationToggles.switchCustomPrimaryComposeButton.isChecked =
             configuration.isCustomPrimaryComposeButtonEnabled
+        // enable runtime colors with a test palette
+        binding.layoutGeneralUiCustomizationToggles.switchCustomRuntimeColors.isChecked =
+            configuration.isCustomRuntimeColorsEnabled
         // enable event tracker
         binding.layoutFeatureToggle.switchEventTracker.isChecked =
             configuration.isEventTrackerEnabled
@@ -287,6 +293,10 @@ class ConfigurationActivity : AppCompatActivity() {
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(isFileImportEnabled = isChecked)
             )
+        }
+        // open with via Uri-based API
+        binding.layoutFeatureToggle.switchOpenWithUriBasedApi.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setOpenWithUriBasedApiEnabled(isChecked)
         }
         // Capture SDK testing
         binding.layoutFeatureToggle.switchCaptureSdk.setOnCheckedChangeListener { _, isChecked ->
@@ -492,6 +502,14 @@ class ConfigurationActivity : AppCompatActivity() {
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
                     isCustomPrimaryComposeButtonEnabled = isChecked
+                )
+            )
+        }
+        // enable runtime colors with a test palette
+        binding.layoutGeneralUiCustomizationToggles.switchCustomRuntimeColors.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isCustomRuntimeColorsEnabled = isChecked
                 )
             )
         }

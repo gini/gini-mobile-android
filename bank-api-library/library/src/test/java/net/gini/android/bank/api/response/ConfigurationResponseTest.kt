@@ -31,6 +31,34 @@ class ConfigurationResponseTest {
     }
 
     @Test
+    fun `ingredientBrandScreens is parsed and mapped`() {
+        val response = adapter.fromJson(
+            """{"clientID":"client","ingredientBrandScreens":["Analysis"]}"""
+        )!!
+
+        assertThat(response.ingredientBrandScreens).containsExactly("Analysis")
+        assertThat(response.toConfiguration().ingredientBrandScreens)
+            .containsExactly("Analysis")
+    }
+
+    @Test
+    fun `ingredientBrandScreens maps an empty array to an empty list`() {
+        val response = adapter.fromJson(
+            """{"clientID":"client","ingredientBrandScreens":[]}"""
+        )!!
+
+        assertThat(response.toConfiguration().ingredientBrandScreens).isEmpty()
+    }
+
+    @Test
+    fun `ingredientBrandScreens defaults to an empty list when absent`() {
+        val response = adapter.fromJson("""{"clientID":"client"}""")!!
+
+        assertThat(response.ingredientBrandScreens).isNull()
+        assertThat(response.toConfiguration().ingredientBrandScreens).isEmpty()
+    }
+
+    @Test
     fun `paymentScheduleHintEnabled is independent of paymentDueHintEnabled`() {
         val response = adapter.fromJson(
             """{"clientID":"client","paymentDueHintEnabled":false,"paymentScheduleHintEnabled":true}"""
@@ -40,5 +68,69 @@ class ConfigurationResponseTest {
 
         assertThat(configuration.isPaymentDueHintEnabled).isFalse()
         assertThat(configuration.isPaymentScheduleHintEnabled).isTrue()
+    }
+
+    @Test
+    fun `fraudSignalsEnabled is parsed and mapped`() {
+        val response = adapter.fromJson(
+            """{"clientID":"client","fraudSignalsEnabled":true}"""
+        )!!
+
+        assertThat(response.fraudSignalsEnabled).isTrue()
+        assertThat(response.toConfiguration().isFraudSignalsEnabled).isTrue()
+    }
+
+    @Test
+    fun `fraudSignalsEnabled defaults to false when absent or null`() {
+        val absent = adapter.fromJson("""{"clientID":"client"}""")!!
+        val explicitNull = adapter.fromJson(
+            """{"clientID":"client","fraudSignalsEnabled":null}"""
+        )!!
+
+        assertThat(absent.fraudSignalsEnabled).isNull()
+        assertThat(absent.toConfiguration().isFraudSignalsEnabled).isFalse()
+        assertThat(explicitNull.toConfiguration().isFraudSignalsEnabled).isFalse()
+    }
+
+    @Test
+    fun `configuration response maps to configuration with defaults for missing fields`() {
+        val configuration = ConfigurationResponse(
+            clientID = null,
+            userJourneyAnalyticsEnabled = true,
+            skontoEnabled = null,
+            returnAssistantEnabled = null,
+            amplitudeApiKey = null,
+            transactionDocsEnabled = null,
+            qrCodeEducationEnabled = null,
+            instantPaymentEnabled = null,
+            eInvoiceEnabled = null,
+            alreadyPaidHintEnabled = null,
+            paymentDueHintEnabled = null,
+            savePhotosLocallyEnabled = null,
+            unsupportedQRCodeWarningEnabled = null,
+        ).toConfiguration()
+
+        assertThat(configuration.clientID).isEmpty()
+        assertThat(configuration.isUserJourneyAnalyticsEnabled).isTrue()
+        assertThat(configuration.isSkontoEnabled).isFalse()
+        assertThat(configuration.amplitudeApiKey).isNull()
+    }
+
+    @Test
+    fun `weroQRCodeScanningEnabled is parsed and mapped`() {
+        val response = adapter.fromJson(
+            """{"clientID":"client","weroQRCodeScanningEnabled":true}"""
+        )!!
+
+        assertThat(response.weroQRCodeScanningEnabled).isTrue()
+        assertThat(response.toConfiguration().isWeroQRCodeScanningEnabled).isTrue()
+    }
+
+    @Test
+    fun `weroQRCodeScanningEnabled defaults to false when absent`() {
+        val response = adapter.fromJson("""{"clientID":"client"}""")!!
+
+        assertThat(response.weroQRCodeScanningEnabled).isNull()
+        assertThat(response.toConfiguration().isWeroQRCodeScanningEnabled).isFalse()
     }
 }

@@ -9,7 +9,6 @@ import java.time.LocalDate
 /** Groups display-related configuration for DigitalInvoiceSkontoFragment functions. */
 internal data class DigitalInvoiceSkontoDisplayConfig(
     val isLandScape: Boolean,
-    val isBottomNavigationBarEnabled: Boolean,
     val shouldFieldShowKeyboard: Boolean = false,
 )
 

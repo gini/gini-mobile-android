@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
-import androidx.core.content.ContextCompat
 import androidx.core.os.BundleCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -22,18 +21,14 @@ import androidx.recyclerview.widget.LinearSmoothScroller
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.DigitalInvoiceSkontoFragment
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.args.DigitalInvoiceSkontoArgs
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.args.DigitalInvoiceSkontoResultArgs
-import net.gini.android.bank.sdk.capture.digitalinvoice.view.DefaultDigitalInvoiceNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.skonto.factory.text.SkontoDiscountLabelTextFactory
 import net.gini.android.bank.sdk.capture.skonto.factory.text.SkontoSavedAmountTextFactory
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.util.autoCleared
-import net.gini.android.bank.sdk.capture.util.parentFragmentManagerOrNull
 import net.gini.android.bank.sdk.capture.util.safeNavigate
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceBinding
 import net.gini.android.bank.sdk.di.getGiniBankKoin
@@ -48,7 +43,6 @@ import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.ui.IntervalToolbarMenuItemIntervalClickListener
 import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.internal.util.ContextHelper
-import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
@@ -57,6 +51,7 @@ import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsE
 import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.NavButtonType
+import net.gini.android.capture.internal.ui.runtimecolors.giniColor
 
 
 /**
@@ -64,9 +59,6 @@ import net.gini.android.capture.view.NavButtonType
  *
  * Copyright (c) 2019 Gini GmbH.
  */
-
-
-private const val TAG_RETURN_REASON_DIALOG = "TAG_RETURN_REASON_DIALOG"
 
 /**
  * Internal use only.
@@ -188,7 +180,6 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
             this,
             args.extractionsResult.specificExtractions,
             args.extractionsResult.compoundExtractions,
-            args.extractionsResult.returnReasons,
             args.skontoData,
             getAmountsAreConsistentExtraction(args.extractionsResult.specificExtractions),
             savedInstanceState,
@@ -231,7 +222,6 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
         initRecyclerView()
         setInputHandlers()
         initTopNavigationBar()
-        initBottomBar()
         changeMarginAccordingToFontOversize()
         presenter?.onViewCreated()
         handleIfShowAttachDialogWasShowing(savedInstanceState)
@@ -241,17 +231,11 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
     private fun handleSkontoSavedAmountColour() {
         if (ContextHelper.isDarkTheme(requireContext())) {
             binding.skontoSavedAmount.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    net.gini.android.capture.R.color.gc_success_02
-                )
+                requireContext().giniColor(net.gini.android.capture.R.color.gc_success_02)
             )
         } else {
             binding.skontoSavedAmount.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    net.gini.android.capture.R.color.gc_success_01
-                )
+                requireContext().giniColor(net.gini.android.capture.R.color.gc_success_01)
             )
         }
     }
@@ -292,16 +276,14 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
 
                 injectedViewAdapter.setNavButtonType(NavButtonType.CLOSE)
 
-                if (!GiniCapture.getInstance().isBottomNavigationBarEnabled) {
-                    injectedViewAdapter.setMenuResource(R.menu.gbs_menu_digital_invoice)
-                    injectedViewAdapter.setOnMenuItemClickListener(
-                        IntervalToolbarMenuItemIntervalClickListener {
-                            if (it.itemId == R.id.help) {
-                                showHelp()
-                            }
-                            true
-                        })
-                }
+                injectedViewAdapter.setMenuResource(R.menu.gbs_menu_digital_invoice)
+                injectedViewAdapter.setOnMenuItemClickListener(
+                    IntervalToolbarMenuItemIntervalClickListener {
+                        if (it.itemId == R.id.help) {
+                            showHelp()
+                        }
+                        true
+                    })
 
                 injectedViewAdapter.setOnNavButtonClickListener {
                     trackCloseTappedEvent()
@@ -314,68 +296,6 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
     private fun showHelp() {
         trackHelpTappedEvent()
         findNavController().navigate(DigitalInvoiceFragmentDirections.toDigitalInvoiceHelpFragment())
-    }
-
-    private fun injectBottomBarAdapter() {
-        binding.gbsBottomBarNavigation.injectedViewAdapterHolder =
-            InjectedViewAdapterHolder(GiniBank.digitalInvoiceNavigationBarBottomAdapterInstance) { injectedViewAdapter ->
-                injectedViewAdapter.setOnHelpClickListener {
-                    showHelp()
-                }
-
-                injectedViewAdapter.setOnProceedClickListener {
-                    payButtonClicked()
-                }
-
-                footerDetails?.let {
-                    val (integral, fractional) = it.totalGrossPriceIntegralAndFractionalParts
-                    injectedViewAdapter.setTotalPrice(integral + fractional)
-                    injectedViewAdapter.setProceedButtonEnabled(it.buttonEnabled)
-                    injectedViewAdapter.onSkontoPercentageBadgeVisibilityUpdate(
-                        it.skontoDiscountPercentage != null
-                    )
-                    injectedViewAdapter.onSkontoSavingsAmountVisibilityUpdated(
-                        it.skontoSavedAmount != null
-                    )
-                    it.skontoDiscountPercentage?.let { percentage ->
-                        injectedViewAdapter.onSkontoPercentageBadgeUpdated(
-                            skontoDiscountLabelTextFactory.create(percentage)
-                        )
-                    }
-                    it.skontoSavedAmount?.let { amount ->
-                        injectedViewAdapter.onSkontoSavingsAmountUpdated(
-                            skontoSavedAmountTextFactory.create(amount)
-                        )
-                    }
-                }
-            }
-    }
-
-    private fun hideBottomBarWrapper() {
-        binding.gbsBottomWrapper.visibility = View.GONE
-        binding.gbsPay.isEnabled = false
-    }
-
-    private fun initBottomBar() {
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
-            if (ContextHelper.isPortraitOrTablet(requireContext())) {
-                hideBottomBarWrapper()
-                injectBottomBarAdapter()
-
-            } else {
-                if (isDefaultBottomNavigationBar()) {
-                    binding.gbsBottomBarNavigation.injectedViewAdapterHolder =
-                        InjectedViewAdapterHolder(GiniBank.digitalInvoiceNavigationBarBottomAdapterInstance) { injectedViewAdapter ->
-                            injectedViewAdapter.setOnHelpClickListener {
-                                showHelp()
-                            }
-                        }
-                } else {
-                    hideBottomBarWrapper()
-                    injectBottomBarAdapter()
-                }
-            }
-        }
     }
 
     private fun initListener() {
@@ -416,10 +336,6 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
             presenter?.pay()
         }
     }
-
-    private fun isDefaultBottomNavigationBar() =
-        GiniBank.digitalInvoiceNavigationBarBottomAdapterInstance
-            .viewAdapter is DefaultDigitalInvoiceNavigationBarBottomAdapter
 
     private fun tryShowAttachDocToTransactionDialog(continueFlow: () -> Unit) {
         val autoAttachDoc = runBlocking { transactionDocShouldBeAutoAttachedUseCase() }
@@ -555,35 +471,6 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
                 skontoDiscountLabelTextFactory.create(data.skontoDiscountPercentage)
         }
 
-        val hasInstanceAndNavBarEnabled =
-            GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled
-        val isPortraitOrTablet = ContextHelper.isPortraitOrTablet(requireContext())
-        val isNotDefaultBottomNav = !isDefaultBottomNavigationBar()
-
-        if (hasInstanceAndNavBarEnabled && (isPortraitOrTablet || isNotDefaultBottomNav)) {
-            if ((!isPortraitOrTablet && !isDefaultBottomNavigationBar())) {
-                hideBottomBarWrapper()
-            }
-            binding.gbsBottomBarNavigation.modifyAdapterIfOwned {
-                (it as DigitalInvoiceNavigationBarBottomAdapter).apply {
-                    setTotalPrice(integral + fractional)
-                    setProceedButtonEnabled(data.buttonEnabled)
-                    onSkontoSavingsAmountVisibilityUpdated(isSkontoSavedAmountVisible)
-                    onSkontoPercentageBadgeVisibilityUpdate(isSkontoDiscountVisible)
-                    data.skontoDiscountPercentage?.let { percentage ->
-                        onSkontoPercentageBadgeUpdated(
-                            skontoDiscountLabelTextFactory.create(
-                                percentage
-                            )
-                        )
-                    }
-                    data.skontoSavedAmount?.let { amount ->
-                        onSkontoSavingsAmountUpdated(skontoSavedAmountTextFactory.create(amount))
-                    }
-                }
-            }
-        }
-
         this.footerDetails = data
     }
 
@@ -598,23 +485,6 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
 
     override fun showSkonto(data: DigitalInvoiceSkontoListItem) {
         lineItemsAdapter.skontoDiscount = listOf(data)
-    }
-
-    /**
-     * Internal use only.
-     *
-     * @suppress
-     */
-    override fun showReturnReasonDialog(
-        reasons: List<GiniCaptureReturnReason>,
-        resultCallback: ReturnReasonDialogResultCallback
-    ) {
-        parentFragmentManagerOrNull()?.let { fragmentManager ->
-            ReturnReasonDialog.createInstance(reasons).run {
-                callback = resultCallback
-                show(fragmentManager, TAG_RETURN_REASON_DIALOG)
-            }
-        }
     }
 
     /**
