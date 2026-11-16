@@ -207,6 +207,39 @@
     <string name="gc_invoice_education_content_description">analyse der Rechnung läuft</string>
     <string name="gc_gini_loading_indicator_content_description">Wird geladen</string>
 
+    <!--   region Fraud warnings -->
+    <string name="gc_fraud_iban_mismatch_title">Unterschiedliche IBANs im Dokument</string>
+    <string name="gc_fraud_iban_mismatch_description">Die IBAN im QR-Code stimmt nicht mit der aufgedruckten IBAN überein</string>
+    <string name="gc_fraud_country_mismatch_title">IBAN passt nicht zum Land des Absenders</string>
+    <string name="gc_fraud_country_mismatch_description">Das Land der IBAN auf dem Dokument unterscheidet sich vom Land des Absenders.</string>
+    <string name="gc_fraud_combined_mismatch_title">Unterschiedliche IBANs und Länder auf diesem Dokument</string>
+    <string name="gc_fraud_combined_mismatch_description">Die IBAN im QR-Code unterscheidet sich von der gedruckten. Außerdem passt das IBAN-Land nicht zum Land des Absenders.</string>
+    <string name="gc_fraud_protection_title">Wie schütze ich mich?</string>
+    <string name="gc_fraud_protection_body">Dokumente werden manchmal verändert, um Zahlungen umzuleiten. Fragen Sie im Zweifel beim Absender nach, welche IBAN stimmt – über Kontaktdaten, die Sie bereits kennen.</string>
+    <string name="gc_fraud_sender_label">Absender</string>
+    <string name="gc_fraud_detected_ibans_title">Folgende IBANs wurden erkannt</string>
+    <string name="gc_fraud_qr_iban_label">Im QR-Code</string>
+    <string name="gc_fraud_printed_iban_label">Auf dem Dokument gedruckt</string>
+    <string name="gc_fraud_document_iban_label">Auf dem Dokument</string>
+    <string name="gc_fraud_iban_country_hint">Aus %1$s, nicht aus dem Land des Absenders</string>
+    <string name="gc_fraud_sender_with_country" translatable="false">%1$s · %2$s</string>
+    <string name="gc_fraud_select_iban_title">Wählen Sie eine IBAN aus, um fortzufahren</string>
+    <string name="gc_fraud_select_iban_error">Wählen Sie eine IBAN, um fortzufahren</string>
+    <string name="gc_fraud_select_iban_footnote">Sie können die IBAN im nächsten Schritt noch prüfen.</string>
+    <string name="gc_fraud_select_iban_continue">Weiter</string>
+    <!-- Language tag of the country names in gc_fraud_iban_country_hint and
+         gc_fraud_sender_with_country. Override it together with those strings when adding a
+         translation, e.g. "fr". -->
+    <string name="gc_fraud_country_name_locale">de</string>
+    <!--   endregion Fraud warnings -->
+
+    <!--   region Accessibility states -->
+    <string name="gc_a11y_expanded">Aufgeklappt</string>
+    <string name="gc_a11y_collapsed">Zugeklappt</string>
+    <string name="gc_a11y_expand">Aufklappen</string>
+    <string name="gc_a11y_collapse">Zuklappen</string>
+    <!--   endregion Accessibility states -->
+
     <!--   region Warning -->
     <string name="gc_cancel_transfer">Überweisung abbrechen</string>
     <string name="gc_proceed_anyway">Trotzdem fortfahren</string>

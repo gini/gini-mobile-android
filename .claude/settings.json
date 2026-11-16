@@ -21,5 +21,25 @@
         ]
       }
     ]
+  },
+  "permissions": {
+    "deny": [
+      "Read(./local.properties)",
+      "Read(./**/local.properties)",
+      "Read(./**/test.properties)",
+      "Read(./**/build/generated/res/resValues/**)",
+      "Read(./**/build/intermediates/**/values/**)",
+      "Read(./**/*.jks)",
+      "Read(./**/*.keystore)",
+      "Read(./**/.env*)",
+      "Read(./**/google-services.json)",
+      "Edit(./local.properties)",
+      "Edit(./**/local.properties)",
+      "Edit(./**/test.properties)",
+      "Edit(./**/*.jks)",
+      "Edit(./**/*.keystore)",
+      "Edit(./**/.env*)",
+      "Edit(./**/google-services.json)"
+    ]
   }
 }
