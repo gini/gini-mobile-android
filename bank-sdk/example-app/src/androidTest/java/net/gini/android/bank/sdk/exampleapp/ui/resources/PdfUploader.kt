@@ -39,7 +39,19 @@ class PdfUploader {
         // Navigate there from the Recents view.
         navigateToDownloads()
 
-        clickFile(file)
+        try {
+            clickFile(file)
+        } catch (notListed: UiObjectNotFoundException) {
+            // A file copied to Downloads just before the picker opened is sometimes not listed
+            // yet (seen on BrowserStack Pixels in landscape). Opening Downloads again reloads it.
+            navigateToDownloads()
+            try {
+                clickFile(file)
+            } catch (stillNotListed: UiObjectNotFoundException) {
+                stillNotListed.addSuppressed(notListed)
+                throw stillNotListed
+            }
+        }
     }
 
     /**

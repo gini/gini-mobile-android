@@ -143,11 +143,17 @@ class FraudWarningScreen {
         listOf(FraudTexts.string(CaptureR.string.gc_fraud_sender_label)) +
             hintsFor(ibans, senderCountryCode)
 
-    fun clickCancelTransfer(): Boolean =
-        finder.clickText(FraudTexts.string(CaptureR.string.gc_cancel_transfer))
+    fun clickCancelTransfer(): Boolean = clickButton(CaptureR.string.gc_cancel_transfer)
 
-    fun clickProceedAnyway(): Boolean =
-        finder.clickText(FraudTexts.string(CaptureR.string.gc_proceed_anyway))
+    fun clickProceedAnyway(): Boolean = clickButton(CaptureR.string.gc_proceed_anyway)
+
+    /**
+     * Taps the footer button [textRes], trying again for [ELEMENT_TIMEOUT]. One scroll pass can
+     * miss the button in landscape while the sheet is still laying out: the footer sits below
+     * the fold there, and a BrowserStack run failed "Proceed anyway" right after the title showed.
+     */
+    private fun clickButton(textRes: Int): Boolean =
+        waitUntil(ELEMENT_TIMEOUT) { finder.clickText(FraudTexts.string(textRes)) }
 
     /** Taps "How do I protect myself?", which expands or collapses the row. */
     fun clickProtectionRow(): Boolean =

@@ -2,6 +2,8 @@ package net.gini.android.bank.sdk.exampleapp.ui.testcases
 
 import android.content.Intent
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.UiDevice
 import net.gini.android.bank.sdk.exampleapp.test.getAssetFileStorageUri
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity
 import net.gini.android.bank.sdk.exampleapp.ui.screens.FraudWarningScreen
@@ -13,6 +15,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 
 /**
@@ -50,6 +54,26 @@ import org.junit.Test
 class FraudSkontoTests : FraudWarningTestBase() {
 
     private val skontoScreen = SkontoScreen()
+
+    /**
+     * Starts in portrait. The Skonto screen moves its footer into the scrolling list in
+     * landscape, below the fold, so [SkontoScreen.waitForSkontoScreen] cannot find the total
+     * there. A landscape test whose process dies never runs `LandscapeDarkModeRule.after`, and
+     * on BrowserStack this class runs right after [FraudWarningLandscapeTests].
+     */
+    @Before
+    fun startInPortrait() {
+        // Freezes the rotation, so the sensor cannot turn it back during the test.
+        device.setOrientationPortrait()
+    }
+
+    @After
+    fun releaseRotation() {
+        device.unfreezeRotation()
+    }
+
+    private val device: UiDevice
+        get() = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
     /** TC-014: QR-vs-printed warning, "Proceed anyway", choose an IBAN, "Continue": Skonto. */
     @Test
