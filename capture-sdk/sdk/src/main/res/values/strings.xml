@@ -226,6 +226,11 @@
     <string name="gc_fraud_select_iban_title">Wählen Sie eine IBAN aus, um fortzufahren</string>
     <string name="gc_fraud_select_iban_error">Wählen Sie eine IBAN, um fortzufahren</string>
     <string name="gc_fraud_select_iban_footnote">Sie können die IBAN im nächsten Schritt noch prüfen.</string>
+    <string name="gc_fraud_select_iban_continue">Weiter</string>
+    <!-- Language tag of the country names in gc_fraud_iban_country_hint and
+         gc_fraud_sender_with_country. Override it together with those strings when adding a
+         translation, e.g. "fr". -->
+    <string name="gc_fraud_country_name_locale">de</string>
     <!--   endregion Fraud warnings -->
 
     <!--   region Accessibility states -->

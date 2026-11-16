@@ -71,6 +71,28 @@ class ConfigurationResponseTest {
     }
 
     @Test
+    fun `fraudSignalsEnabled is parsed and mapped`() {
+        val response = adapter.fromJson(
+            """{"clientID":"client","fraudSignalsEnabled":true}"""
+        )!!
+
+        assertThat(response.fraudSignalsEnabled).isTrue()
+        assertThat(response.toConfiguration().isFraudSignalsEnabled).isTrue()
+    }
+
+    @Test
+    fun `fraudSignalsEnabled defaults to false when absent or null`() {
+        val absent = adapter.fromJson("""{"clientID":"client"}""")!!
+        val explicitNull = adapter.fromJson(
+            """{"clientID":"client","fraudSignalsEnabled":null}"""
+        )!!
+
+        assertThat(absent.fraudSignalsEnabled).isNull()
+        assertThat(absent.toConfiguration().isFraudSignalsEnabled).isFalse()
+        assertThat(explicitNull.toConfiguration().isFraudSignalsEnabled).isFalse()
+    }
+
+    @Test
     fun `configuration response maps to configuration with defaults for missing fields`() {
         val configuration = ConfigurationResponse(
             clientID = null,

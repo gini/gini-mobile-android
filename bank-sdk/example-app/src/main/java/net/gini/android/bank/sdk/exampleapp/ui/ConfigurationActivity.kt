@@ -21,7 +21,6 @@ import net.gini.android.bank.sdk.exampleapp.ui.MainActivity.Companion.CAMERA_PER
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity.Companion.CONFIGURATION_BUNDLE
 import net.gini.android.bank.sdk.exampleapp.ui.data.ExampleAppBankConfiguration
 import net.gini.android.capture.DocumentImportEnabledFileTypes
-import net.gini.android.capture.analysis.fraud.IBANMismatchDebug
 import net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed
 import net.gini.android.capture.util.SharedPreferenceHelper
 import net.gini.android.capture.util.SharedPreferenceHelper.SAF_STORAGE_URI_KEY
@@ -244,16 +243,6 @@ class ConfigurationActivity : AppCompatActivity() {
         // Debug mode
         binding.layoutDebugDevelopmentOptionsToggles.switchDebugMode.isChecked =
             configuration.isDebugModeEnabled
-
-        // IBAN mismatch warning (development)
-        binding.layoutDebugDevelopmentOptionsToggles.toggleBtnIbanMismatchDebug.check(
-            when (configuration.ibanMismatchDebugCase) {
-                IBANMismatchDebug.Case.QR_VS_PRINTED -> R.id.btn_ibanMismatchDebugQrVsPrinted
-                IBANMismatchDebug.Case.COUNTRY -> R.id.btn_ibanMismatchDebugCountry
-                IBANMismatchDebug.Case.COMBINED -> R.id.btn_ibanMismatchDebugCombined
-                null -> R.id.btn_ibanMismatchDebugOff
-            }
-        )
 
         // enable skonto
         binding.layoutFeatureToggle.switchSkontoFeature.isChecked = configuration.isSkontoEnabled
@@ -652,19 +641,6 @@ class ConfigurationActivity : AppCompatActivity() {
                 configurationViewModel.configurationFlow.value.copy(isDebugModeEnabled = isChecked)
             )
         }
-        // IBAN mismatch warning (development)
-        binding.layoutDebugDevelopmentOptionsToggles.toggleBtnIbanMismatchDebug
-            .addOnButtonCheckedListener { toggleGroup, _, _ ->
-                val case = when (toggleGroup.checkedButtonId) {
-                    R.id.btn_ibanMismatchDebugQrVsPrinted -> IBANMismatchDebug.Case.QR_VS_PRINTED
-                    R.id.btn_ibanMismatchDebugCountry -> IBANMismatchDebug.Case.COUNTRY
-                    R.id.btn_ibanMismatchDebugCombined -> IBANMismatchDebug.Case.COMBINED
-                    else -> null
-                }
-                configurationViewModel.setConfiguration(
-                    configurationViewModel.configurationFlow.value.copy(ibanMismatchDebugCase = case)
-                )
-            }
         // Custom HTTP client
         binding.layoutDebugDevelopmentOptionsToggles.switchCustomHttpClient.setOnCheckedChangeListener { _, isChecked ->
             val configurationFlow = configurationViewModel.configurationFlow.value

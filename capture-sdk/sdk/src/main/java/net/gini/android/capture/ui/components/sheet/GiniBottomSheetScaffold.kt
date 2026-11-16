@@ -40,6 +40,10 @@ import net.gini.android.capture.ui.theme.modifier.tabletMaxWidth
  * [footer] sits at the bottom of the sheet while the content fits and scrolls away with the
  * content once it does not.
  *
+ * With three-button navigation the sheet stops before the navigation bar, at the bottom in
+ * portrait and, on most phones, at the side in landscape, and the scrim shows behind the bar.
+ * With gesture navigation the sheet runs under the gesture bar as Material intends.
+ *
  * The sheet refuses every dismissal path: the back button, the back gesture, taps on the scrim
  * and swipes. It shows no drag handle. The host removes the composable when the user has chosen
  * one of the sheet's own actions.
@@ -70,6 +74,7 @@ fun GiniBottomSheetScaffold(
         onDismissRequest = {},
         modifier = modifier
             .statusBarsPadding()
+            .sheetTappableElementPadding()
             .then(
                 if (paneTitle != null) {
                     Modifier.semantics { this.paneTitle = paneTitle }
