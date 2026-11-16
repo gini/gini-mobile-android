@@ -191,6 +191,10 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation (libs.jsonJava)
     testImplementation(libs.mockk)
+    // Compose UI tests run on the JVM under Robolectric; the manifest artifact registers the
+    // ComponentActivity that createComposeRule() hosts the composables in.
+    testImplementation(libs.compose.ui.test.junit4)
+    testImplementation(libs.compose.ui.test.manifest)
 
     debugImplementation(libs.androidx.test.core.ktx)
     debugImplementation(libs.androidx.fragment.testing)
