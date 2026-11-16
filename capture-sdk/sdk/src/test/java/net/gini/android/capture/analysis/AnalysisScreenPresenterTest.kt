@@ -1800,7 +1800,7 @@ class AnalysisScreenPresenterTest {
     }
 
     @Test
-    fun `should show IBAN mismatch warning in CX mode`() {
+    fun `should not show IBAN mismatch warning in CX mode`() {
         // Given
         configurationProvider.update { it.copy(isFraudSignalsEnabled = true) }
         val cbp = GiniCaptureCompoundExtraction(
@@ -1808,17 +1808,23 @@ class AnalysisScreenPresenterTest {
             listOf(mapOf("amount" to specificExtraction("amount", "12.00:EUR")))
         )
 
+        val extractions = ibanWithCandidates(QR_IBAN, PRINTED_IBAN)
+
         // When
-        startPresenterForDueHint(
-            ibanWithCandidates(QR_IBAN, PRINTED_IBAN),
+        val listener = startPresenterForDueHint(
+            extractions,
             qrMismatchCompounds() + (CROSS_BORDER_PAYMENT_KEY to cbp),
             giniCapture = createGiniCaptureInstanceWithProductTag(ProductTag.CxExtractions)
         )
 
-        // Then
+        // Then the extractions are handed on unchanged, without the warning and without fraudSignals
+        val compoundCaptor = argumentCaptor<Map<String, GiniCaptureCompoundExtraction>>()
         idleMainLooperUntil {
-            verify(mView).showIbanMismatch(any(), any())
+            verify(listener).onExtractionsAvailable(eq(extractions), compoundCaptor.capture(), any())
         }
+        Truth.assertThat(compoundCaptor.lastValue.keys)
+            .containsExactly("lineItems", CROSS_BORDER_PAYMENT_KEY)
+        verify(mView, never()).showIbanMismatch(any(), any())
     }
 
     @Test

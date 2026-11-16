@@ -358,8 +358,11 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                                 }
 
                                 // Read from the unstripped result: resultHolder has no fraudSignals.
-                                final IBANMismatchArgs ibanMismatchArgs =
-                                        extension.ibanMismatchArgs(analysisResult);
+                                // No warning in CX mode: the bank reads the CX account from
+                                // crossBorderPayment, so a chosen IBAN would not reach it.
+                                final IBANMismatchArgs ibanMismatchArgs = isCxMode()
+                                        ? null
+                                        : extension.ibanMismatchArgs(analysisResult);
                                 if (resultHolder.getExtractions().isEmpty() && !isCxMode()) {
                                     proceedSuccessNoExtractions();
                                 } else if (isCxEmptyExtractions(resultHolder)) {
