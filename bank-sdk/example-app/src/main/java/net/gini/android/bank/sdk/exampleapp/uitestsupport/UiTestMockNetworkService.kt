@@ -13,6 +13,9 @@ import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.util.CancellationToken
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 import java.util.UUID
 
 /**
@@ -177,6 +180,12 @@ internal class UiTestMockNetworkService(
         UiTestMockScenario.FRAUD_COMBINED -> fraudSignals(listOf(qrSignal(), countrySignal()))
 
         UiTestMockScenario.FRAUD_UNKNOWN_CODE -> fraudSignals(listOf(unknownSignal()))
+
+        UiTestMockScenario.FRAUD_QR_MISMATCH_WITH_SKONTO ->
+            fraudSignals(listOf(qrSignal())) + skontoDiscounts()
+
+        UiTestMockScenario.FRAUD_COMBINED_WITH_SKONTO ->
+            fraudSignals(listOf(qrSignal(), countrySignal())) + skontoDiscounts()
     }
 
     /**
@@ -307,6 +316,47 @@ object UiTestMockFraudData {
 
     /** The sender's country in the `IBAN_COUNTRY_MISMATCH` signal. */
     const val CREDITOR_COUNTRY = "DE"
+
+    /** The compound extraction key of the Skonto discount, as the SDK reads it. */
+    const val SKONTO_DISCOUNTS_KEY = "skontoDiscounts"
+
+    /** The discount in percent of the `*_WITH_SKONTO` scenarios. */
+    const val SKONTO_PERCENTAGE = "3.0"
+
+    /** The amount to pay with the discount: 3 % off the scenarios' 42.00 EUR. */
+    const val SKONTO_AMOUNT_TO_PAY = "40.74:EUR"
+}
+
+private const val SKONTO_REMAINING_DAYS = 14
+
+/**
+ * A `skontoDiscounts` compound extraction with the fields `SkontoDataExtractor` requires:
+ * [UiTestMockFraudData.SKONTO_PERCENTAGE] % off the scenarios' amount to pay, so
+ * [UiTestMockFraudData.SKONTO_AMOUNT_TO_PAY]. The due date is computed from today, so the
+ * discount is always claimable and the Skonto screen opens without the expired edge case.
+ * Computed with [Calendar] rather than `java.time`: the example app has no desugaring and runs
+ * from API 23. Outside [UiTestMockNetworkService] because it needs none of its state.
+ */
+private fun skontoDiscounts(): Map<String, GiniCaptureCompoundExtraction> {
+    val dueDate = Calendar.getInstance().apply {
+        add(Calendar.DAY_OF_YEAR, SKONTO_REMAINING_DAYS)
+    }.time.let { SimpleDateFormat("yyyy-MM-dd", Locale.US).format(it) }
+    fun extraction(name: String, value: String, entity: String) =
+        GiniCaptureSpecificExtraction(name, value, entity, null, emptyList())
+    val discount = linkedMapOf(
+        "skontoPercentageDiscounted" to
+            extraction("skontoPercentageDiscounted", UiTestMockFraudData.SKONTO_PERCENTAGE, "numeric"),
+        "skontoAmountToPay" to
+            extraction("skontoAmountToPay", UiTestMockFraudData.SKONTO_AMOUNT_TO_PAY, "amount"),
+        "skontoDueDate" to extraction("skontoDueDate", dueDate, "date"),
+        "skontoRemainingDays" to
+            extraction("skontoRemainingDays", SKONTO_REMAINING_DAYS.toString(), "numeric"),
+        "skontoPaymentMethod" to extraction("skontoPaymentMethod", "Unspecified", "text")
+    )
+    return mapOf(
+        UiTestMockFraudData.SKONTO_DISCOUNTS_KEY to
+            GiniCaptureCompoundExtraction(UiTestMockFraudData.SKONTO_DISCOUNTS_KEY, listOf(discount))
+    )
 }
 
 private val UiTestMockScenario.isCreditNote: Boolean
@@ -323,7 +373,9 @@ private val UiTestMockScenario.isCreditNote: Boolean
         UiTestMockScenario.FRAUD_UNKNOWN_CODE,
         UiTestMockScenario.FRAUD_SEVERAL_PRINTED,
         UiTestMockScenario.FRAUD_QR_WITHOUT_OTHER_PRINTED,
-        UiTestMockScenario.FRAUD_SIGNALS_MISSING -> false
+        UiTestMockScenario.FRAUD_SIGNALS_MISSING,
+        UiTestMockScenario.FRAUD_QR_MISMATCH_WITH_SKONTO,
+        UiTestMockScenario.FRAUD_COMBINED_WITH_SKONTO -> false
     }
 
 /** Whether the scenario serves the fraud invoice of `fraudInvoiceExtractions`. */
@@ -335,7 +387,9 @@ private val UiTestMockScenario.isFraudScenario: Boolean
         UiTestMockScenario.FRAUD_UNKNOWN_CODE,
         UiTestMockScenario.FRAUD_SEVERAL_PRINTED,
         UiTestMockScenario.FRAUD_QR_WITHOUT_OTHER_PRINTED,
-        UiTestMockScenario.FRAUD_SIGNALS_MISSING -> true
+        UiTestMockScenario.FRAUD_SIGNALS_MISSING,
+        UiTestMockScenario.FRAUD_QR_MISMATCH_WITH_SKONTO,
+        UiTestMockScenario.FRAUD_COMBINED_WITH_SKONTO -> true
 
         UiTestMockScenario.CREDIT_NOTE,
         UiTestMockScenario.CREDIT_NOTE_WITH_LINE_ITEMS,

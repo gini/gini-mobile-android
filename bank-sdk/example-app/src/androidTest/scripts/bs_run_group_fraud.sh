@@ -22,8 +22,11 @@ set -e
 #   FraudWarningLandscapeTests   9 tests: dark mode, device turned to landscape on the camera
 #                                screen: warning content, drop-down, both buttons, selection
 #                                content and "Continue". Skipped where dark mode cannot be set.
+#   FraudSkontoTests             4 tests: a Skonto invoice opened with "Open with": the warning
+#                                leads to the Skonto screen, and the Skonto and transfer summary
+#                                feedbacks after it.
 #
-# 41 tests in total. Each class is a separate argument; bs_build_and_upload.sh passes them to
+# 45 tests in total. Each class is a separate argument; bs_build_and_upload.sh passes them to
 # BrowserStack as its `class` list. (For a local adb run under the Test Orchestrator, filter ONE
 # class at a time — two comma-separated classes start 0 tests.)
 #
@@ -43,4 +46,5 @@ export BUILD_NAME="${BUILD_NAME:-group-fraud-$(date +%Y%m%d-%H%M%S)}"
   FraudWarningActionsTests \
   FraudFeedbackTests \
   IbanSelectionSheetTests \
-  FraudWarningLandscapeTests
+  FraudWarningLandscapeTests \
+  FraudSkontoTests

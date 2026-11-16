@@ -99,7 +99,8 @@ run_group "fraud" \
   FraudWarningActionsTests \
   FraudFeedbackTests \
   IbanSelectionSheetTests \
-  FraudWarningLandscapeTests
+  FraudWarningLandscapeTests \
+  FraudSkontoTests
 
 run_group "ingredientbrand" \
   IngredientBrandTests \

@@ -197,6 +197,15 @@ enum class UiTestMockScenario {
      * sender), but no `fraudSignals` compound extraction at all. No warning.
      */
     FRAUD_SIGNALS_MISSING,
+
+    /**
+     * [FRAUD_QR_MISMATCH] plus a claimable `skontoDiscounts` compound extraction, so the flow
+     * continues to the Skonto screen after the warning when Skonto is on.
+     */
+    FRAUD_QR_MISMATCH_WITH_SKONTO,
+
+    /** [FRAUD_COMBINED] plus the Skonto discount of [FRAUD_QR_MISMATCH_WITH_SKONTO]. */
+    FRAUD_COMBINED_WITH_SKONTO,
 }
 
 /**
