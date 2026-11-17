@@ -91,6 +91,7 @@ fun GiniBottomSheetScaffold(
             shouldDismissOnClickOutside = false,
         ),
         containerColor = colors.containerColor,
+        scrimColor = colors.scrimColor,
     ) {
         GiniBottomSheetScaffoldBody(
             footer = footer,

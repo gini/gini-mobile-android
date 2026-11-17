@@ -23,6 +23,10 @@ internal val LocalGiniColors = staticCompositionLocalOf {
 internal val LocalGiniTypography = staticCompositionLocalOf {
     GiniTypography()
 }
+internal val LocalGiniPrimitives = staticCompositionLocalOf {
+    GiniColorPrimitives()
+}
+internal val LocalGiniDarkMode = staticCompositionLocalOf { false }
 
 @Composable
 fun GiniTheme(
@@ -47,7 +51,9 @@ fun GiniTheme(
 
     CompositionLocalProvider(
         LocalGiniTypography provides typography,
-        LocalGiniColors provides colors
+        LocalGiniColors provides colors,
+        LocalGiniPrimitives provides giniPrimitives,
+        LocalGiniDarkMode provides darkMode,
     ) {
         MaterialTheme(
             /* colors = ... */
@@ -86,4 +92,16 @@ object GiniTheme {
     val colorScheme: GiniColorScheme
         @Composable
         get() = LocalGiniColors.current
+
+    /**
+     * The color primitives behind [colorScheme], one per `gc_*` color resource. They already
+     * honour a runtime color provider, which `colorResource(R.color.gc_…)` would bypass.
+     */
+    internal val primitives: GiniColorPrimitives
+        @Composable
+        get() = LocalGiniPrimitives.current
+
+    internal val isDarkMode: Boolean
+        @Composable
+        get() = LocalGiniDarkMode.current
 }

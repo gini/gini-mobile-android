@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import net.gini.android.capture.ui.theme.GiniTheme
+import net.gini.android.capture.ui.theme.colors.GiniSheetColors
 
 /**
  * Colors of [GiniHeaderBlock].
@@ -27,7 +28,7 @@ data class GiniHeaderBlockColors(
             iconContainerColor: Color = GiniTheme.colorScheme.placeholder.background,
             iconTint: Color = GiniTheme.colorScheme.text.accent,
             titleColor: Color = GiniTheme.colorScheme.text.primary,
-            descriptionColor: Color = GiniTheme.colorScheme.text.secondary,
+            descriptionColor: Color = GiniSheetColors.secondaryText,
         ) = GiniHeaderBlockColors(
             iconContainerColor = iconContainerColor,
             iconTint = iconTint,

@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -57,7 +58,11 @@ private fun GiniButton(
             contentColor = giniButtonColors.contentContent,
         ),
     ) {
-        content()
+        // The SDK's Button text style (Root.GiniCaptureTheme.Typography.Button), so the label
+        // follows the integrator's typography instead of Material's labelLarge.
+        ProvideTextStyle(GiniTheme.typography.button) {
+            content()
+        }
     }
 }
 

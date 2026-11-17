@@ -56,6 +56,7 @@ import net.gini.android.capture.ui.components.sheet.sheetTappableElementPadding
 import net.gini.android.capture.ui.compose.GiniScreenPreviewSizes
 import net.gini.android.capture.ui.compose.GiniScreenPreviewUiModes
 import net.gini.android.capture.ui.theme.GiniTheme
+import net.gini.android.capture.ui.theme.colors.GiniSheetColors
 import net.gini.android.capture.ui.theme.modifier.isTablet
 
 /**
@@ -155,8 +156,9 @@ private fun IBANSelectionBottomSheet(
             .semantics { this.paneTitle = paneTitle },
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         sheetMaxWidth = Dp.Unspecified,
-        dragHandle = { BottomSheetDefaults.DragHandle(color = GiniTheme.colorScheme.icons.secondary) },
-        containerColor = GiniTheme.colorScheme.dialogs.container,
+        dragHandle = { BottomSheetDefaults.DragHandle(color = GiniSheetColors.dragHandle) },
+        containerColor = GiniSheetColors.container,
+        scrimColor = GiniSheetColors.scrim,
     ) {
         Column(
             modifier = Modifier
@@ -201,7 +203,7 @@ private fun IBANSelectionDialog(
                     }
                 },
             shape = MaterialTheme.shapes.extraLarge,
-            color = GiniTheme.colorScheme.dialogs.container,
+            color = GiniSheetColors.container,
         ) {
             Column(
                 modifier = Modifier
@@ -285,7 +287,7 @@ private fun IBANSelectionContent(
                 .fillMaxWidth()
                 .semantics { heading() },
             text = title,
-            style = GiniTheme.typography.headline6,
+            style = GiniTheme.typography.headline5,
             color = GiniTheme.colorScheme.text.primary,
         )
         Spacer(modifier = Modifier.height(TITLE_ROWS_SPACING))
@@ -349,7 +351,7 @@ private fun IBANSelectionFooter(
             modifier = Modifier.fillMaxWidth(),
             text = stringResource(R.string.gc_fraud_select_iban_footnote),
             style = GiniTheme.typography.body2,
-            color = GiniTheme.colorScheme.text.secondary,
+            color = GiniSheetColors.secondaryText,
             textAlign = TextAlign.Center,
         )
         GiniActionFooter(
@@ -444,7 +446,7 @@ private fun IBANSelectionSheetPreview(
     showError: Boolean = false,
 ) {
     GiniTheme {
-        Surface(color = GiniTheme.colorScheme.dialogs.container) {
+        Surface(color = GiniSheetColors.container) {
             Column(
                 modifier = Modifier
                     .padding(horizontal = SHEET_HORIZONTAL_PADDING)
