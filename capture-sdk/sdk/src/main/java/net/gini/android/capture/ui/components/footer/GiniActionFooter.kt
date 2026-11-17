@@ -1,6 +1,7 @@
 package net.gini.android.capture.ui.components.footer
 
 import android.content.res.Configuration
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -9,9 +10,14 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import net.gini.android.capture.ui.components.GiniComposableStyleProviderConfig
@@ -38,7 +44,8 @@ import net.gini.android.capture.ui.theme.GiniTheme
  * @param onSecondaryClick called when the outlined button is tapped
  * @param horizontal whether the buttons sit side by side; defaults to landscape orientation
  * @param primaryColors colors of the filled button
- * @param secondaryColors colors of the outlined button
+ * @param secondaryColors colors of the outlined button. Its `container` color is drawn as the
+ * button's 1dp border; the button itself has no fill, as in the design
  */
 @Composable
 internal fun GiniActionFooter(
@@ -70,13 +77,13 @@ internal fun GiniActionFooter(
                 composableProviderConfig = composableProviderConfig,
                 giniButtonColors = primaryColors,
             )
-            GiniOutlinedButton(
+            FooterOutlinedButton(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight(),
                 text = secondaryText,
                 onClick = onSecondaryClick,
-                giniButtonColors = secondaryColors,
+                colors = secondaryColors,
             )
         }
     } else {
@@ -92,14 +99,40 @@ internal fun GiniActionFooter(
                 giniButtonColors = primaryColors,
             )
             if (secondaryText != null) {
-                GiniOutlinedButton(
+                FooterOutlinedButton(
                     modifier = Modifier.fillMaxWidth(),
                     text = secondaryText,
                     onClick = onSecondaryClick,
-                    giniButtonColors = secondaryColors,
+                    colors = secondaryColors,
                 )
             }
         }
+    }
+}
+
+/**
+ * The secondary button as the design draws it: no fill and a 1dp border in
+ * [GiniOutlinedButtonColors.container] (`gc_light_04` / `gc_dark_04`). [GiniOutlinedButton] fills
+ * its container instead, and it is released API, so its look stays as it is.
+ */
+@Composable
+private fun FooterOutlinedButton(
+    text: String,
+    onClick: () -> Unit,
+    colors: GiniOutlinedButtonColors,
+    modifier: Modifier = Modifier,
+) {
+    OutlinedButton(
+        modifier = modifier,
+        onClick = onClick,
+        shape = RoundedCornerShape(BUTTON_CORNER_RADIUS),
+        border = BorderStroke(BUTTON_BORDER_WIDTH, colors.container),
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = Color.Transparent,
+            contentColor = colors.content,
+        ),
+    ) {
+        Text(text = text)
     }
 }
 
@@ -108,6 +141,8 @@ private fun isLandscape(): Boolean =
     LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
 private val BUTTON_SPACING = 16.dp
+private val BUTTON_CORNER_RADIUS = 4.dp
+private val BUTTON_BORDER_WIDTH = 1.dp
 
 @GiniScreenPreviewUiModes
 @GiniScreenPreviewSizes

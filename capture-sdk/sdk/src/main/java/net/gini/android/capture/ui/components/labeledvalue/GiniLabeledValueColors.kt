@@ -23,7 +23,7 @@ data class GiniLabeledValueColors(
     companion object {
         @Composable
         fun colors(
-            labelColor: Color = GiniSheetColors.secondaryText,
+            labelColor: Color = GiniSheetColors.label,
             valueColor: Color = GiniTheme.colorScheme.text.primary,
             hintColor: Color = GiniTheme.colorScheme.errorHint.content,
         ) = GiniLabeledValueColors(

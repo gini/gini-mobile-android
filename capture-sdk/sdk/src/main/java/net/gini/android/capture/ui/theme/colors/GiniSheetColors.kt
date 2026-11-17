@@ -29,7 +29,16 @@ internal object GiniSheetColors {
         @Composable
         get() = lightOrDark(light = GiniTheme.primitives.dark06, dark = GiniTheme.primitives.light06)
 
-    /** Descriptions, labels and the footnote: `gc_dark_05` / `gc_light_05`. */
+    /**
+     * The small label above a value ("Sender", "In the QR code", …): `gc_dark_04` /
+     * `gc_light_03`, the design's `android/text/label`. It keeps 7:1 on the sheet and on the
+     * sender card in both modes, where [secondaryText] does not.
+     */
+    val label: Color
+        @Composable
+        get() = lightOrDark(light = GiniTheme.primitives.dark04, dark = GiniTheme.primitives.light03)
+
+    /** Descriptions and the footnote: `gc_dark_05` / `gc_light_05`. */
     val secondaryText: Color
         @Composable
         get() = lightOrDark(light = GiniTheme.primitives.dark05, dark = GiniTheme.primitives.light05)
