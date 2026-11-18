@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.os.Build
 import android.telephony.TelephonyManager
+import androidx.core.os.ConfigurationCompat
 import org.slf4j.LoggerFactory
 import java.util.Locale
 
@@ -90,15 +91,8 @@ class DeviceInfo(private val context: Context) {
 
 
         private val locale: Locale
-            get() {
-                val configuration = Resources.getSystem().configuration
-                return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    val localeList = configuration.locales
-                    if (localeList.isEmpty) Locale.getDefault() else localeList.get(0)
-                } else {
-                    configuration.locale
-                }
-            }
+            get() = ConfigurationCompat.getLocales(Resources.getSystem().configuration)[0]
+                ?: Locale.getDefault()
 
         private fun fetchLanguage(): String {
             return locale.language
