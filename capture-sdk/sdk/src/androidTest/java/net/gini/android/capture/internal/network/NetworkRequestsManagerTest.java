@@ -37,12 +37,15 @@ import java.util.LinkedHashMap;
 import java.util.Queue;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+
+import jersey.repackaged.jsr166e.CompletableFuture;
 
 /**
  * Created by Alpar Szotyori on 16.04.2018.
@@ -253,6 +256,7 @@ public class NetworkRequestsManagerTest {
             throws Exception {
         // Given
         final Queue<Runnable> uploadCompletionRunnables = new ConcurrentLinkedQueue<>();
+        final CountDownLatch deletionRequested = new CountDownLatch(1);
         // Simulate upload delays and queue completion to be executed on the main thread
         final GiniCaptureNetworkService networkService = spy(new GiniCaptureNetworkServiceStub() {
             @Override
@@ -260,7 +264,8 @@ public class NetworkRequestsManagerTest {
                     @NonNull final GiniCaptureNetworkCallback<Result, Error> callback) {
                 final Thread delayThread = new Thread(() -> {
                     try {
-                        Thread.sleep(200 + new Random().nextInt(300));
+                        // Complete the upload only after the deletion was requested
+                        deletionRequested.await();
                         uploadCompletionRunnables.add(() -> {
                             callback.success(new Result(DEFAULT_DOCUMENT_ID, DEFAULT_DOCUMENT_FILENAME));
                         });
@@ -282,7 +287,10 @@ public class NetworkRequestsManagerTest {
                 new AtomicReference<>();
         final Thread waitThread = new Thread(() -> {
             try {
-                requestResult.set(networkRequestsManager.delete(document).get());
+                final CompletableFuture<NetworkRequestResult<GiniCaptureDocument>> deletion =
+                        networkRequestsManager.delete(document);
+                deletionRequested.countDown();
+                requestResult.set(deletion.get());
             } catch (final InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
