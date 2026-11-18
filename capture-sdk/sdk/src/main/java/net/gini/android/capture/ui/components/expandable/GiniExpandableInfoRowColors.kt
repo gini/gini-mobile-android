@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import net.gini.android.capture.ui.theme.GiniTheme
+import net.gini.android.capture.ui.theme.colors.GiniSheetColors
 
 /**
  * Colors of [GiniExpandableInfoRow].
@@ -26,10 +27,10 @@ data class GiniExpandableInfoRowColors(
     companion object {
         @Composable
         fun colors(
-            containerColor: Color = GiniTheme.colorScheme.text.accent.copy(alpha = CONTAINER_ALPHA),
+            containerColor: Color = GiniSheetColors.infoRowContainer,
             iconTint: Color = GiniTheme.colorScheme.text.accent,
             titleColor: Color = GiniTheme.colorScheme.text.primary,
-            bodyColor: Color = GiniTheme.colorScheme.text.secondary,
+            bodyColor: Color = GiniSheetColors.secondaryText,
             chevronTint: Color = GiniTheme.colorScheme.text.primary,
         ) = GiniExpandableInfoRowColors(
             containerColor = containerColor,
@@ -38,7 +39,5 @@ data class GiniExpandableInfoRowColors(
             bodyColor = bodyColor,
             chevronTint = chevronTint,
         )
-
-        private const val CONTAINER_ALPHA = 0.12f
     }
 }

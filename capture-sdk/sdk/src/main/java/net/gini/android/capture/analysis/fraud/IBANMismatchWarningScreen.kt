@@ -39,6 +39,7 @@ import net.gini.android.capture.ui.components.sheet.GiniBottomSheetScaffold
 import net.gini.android.capture.ui.compose.GiniScreenPreviewSizes
 import net.gini.android.capture.ui.compose.GiniScreenPreviewUiModes
 import net.gini.android.capture.ui.theme.GiniTheme
+import net.gini.android.capture.ui.theme.colors.GiniSheetColors
 import java.util.Locale
 
 /**
@@ -356,7 +357,7 @@ private fun IBANMismatchContentPreview(
     protectionExpanded: Boolean = false,
 ) {
     GiniTheme {
-        Surface(color = GiniTheme.colorScheme.dialogs.container) {
+        Surface(color = GiniSheetColors.container) {
             Column(
                 modifier = Modifier.padding(24.dp),
                 verticalArrangement = Arrangement.spacedBy(32.dp),
