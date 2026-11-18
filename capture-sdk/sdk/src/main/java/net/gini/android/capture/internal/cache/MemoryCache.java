@@ -72,44 +72,51 @@ public abstract class MemoryCache<K, V> {
 
         mLog.debug("Create worker");
         final Worker<K, V> worker = createWorker(mRunningWorkers, key,
-                new AsyncCallback<V, Exception>() {
-                    @Override
-                    public void onSuccess(final V result) {
-                        if (mLog.isDebugEnabled()) {
-                            mLog.debug("Worker finished with result {}", getNameForLog(result));
-                        }
-                        mCache.put(key, result);
-                        callOnSuccessForWaitingCallbacks(key, result);
-                        if (mLog.isDebugEnabled()) {
-                            mLog.debug(LOG_REMOVE_CALLBACKS, getNameForLog(key));
-                        }
-                        mWaitingCallbacks.remove(key);
-                        executeNextWorker(context);
-                    }
+                createWorkerCallback(context, key));
+        registerWaitingCallback(key, callback);
+        scheduleWorker(context, key, worker);
+    }
 
-                    @Override
-                    public void onError(final Exception exception) {
-                        mLog.error("Worker finished with error", exception);
-                        callOnErrorForWaitingCallbacks(key, exception);
-                        if (mLog.isDebugEnabled()) {
-                            mLog.debug(LOG_REMOVE_CALLBACKS, getNameForLog(key));
-                        }
-                        mWaitingCallbacks.remove(key);
-                        executeNextWorker(context);
-                    }
+    private AsyncCallback<V, Exception> createWorkerCallback(@NonNull final Context context,
+            @NonNull final K key) {
+        return new AsyncCallback<V, Exception>() {
+            @Override
+            public void onSuccess(final V result) {
+                if (mLog.isDebugEnabled()) {
+                    mLog.debug("Worker finished with result {}", getNameForLog(result));
+                }
+                mCache.put(key, result);
+                callOnSuccessForWaitingCallbacks(key, result);
+                removeWaitingCallbacksAndExecuteNextWorker(context, key);
+            }
 
-                    @Override
-                    public void onCancelled() {
-                        mLog.error("Worker was cancelled");
-                        callOnCancelledForWaitingCallbacks(key);
-                        if (mLog.isDebugEnabled()) {
-                            mLog.debug(LOG_REMOVE_CALLBACKS, getNameForLog(key));
-                        }
-                        mWaitingCallbacks.remove(key);
-                        executeNextWorker(context);
-                    }
-                });
+            @Override
+            public void onError(final Exception exception) {
+                mLog.error("Worker finished with error", exception);
+                callOnErrorForWaitingCallbacks(key, exception);
+                removeWaitingCallbacksAndExecuteNextWorker(context, key);
+            }
 
+            @Override
+            public void onCancelled() {
+                mLog.error("Worker was cancelled");
+                callOnCancelledForWaitingCallbacks(key);
+                removeWaitingCallbacksAndExecuteNextWorker(context, key);
+            }
+        };
+    }
+
+    private void removeWaitingCallbacksAndExecuteNextWorker(@NonNull final Context context,
+            @NonNull final K key) {
+        if (mLog.isDebugEnabled()) {
+            mLog.debug(LOG_REMOVE_CALLBACKS, getNameForLog(key));
+        }
+        mWaitingCallbacks.remove(key);
+        executeNextWorker(context);
+    }
+
+    private void registerWaitingCallback(@NonNull final K key,
+            @NonNull final AsyncCallback<V, Exception> callback) {
         List<AsyncCallback<V, Exception>> callbacks = mWaitingCallbacks.get(key);
         if (callbacks == null) {
             if (mLog.isDebugEnabled()) {
@@ -126,7 +133,10 @@ public abstract class MemoryCache<K, V> {
             }
             callbacks.add(callback);
         }
+    }
 
+    private void scheduleWorker(@NonNull final Context context, @NonNull final K key,
+            @NonNull final Worker<K, V> worker) {
         if (mLog.isDebugEnabled()) {
             mLog.debug("Schedule worker for key {}", getNameForLog(key));
         }
