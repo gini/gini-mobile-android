@@ -483,9 +483,7 @@ public class NetworkRequestsManagerTest {
             @Override
             public CancellationToken delete(@NonNull final String giniApiDocumentId,
                     @NonNull final GiniCaptureNetworkCallback<Result, Error> callback) {
-                return () -> {
-                    callback.cancelled();
-                };
+                return callback::cancelled;
             }
         });
         final NetworkRequestsManager networkRequestsManager =
