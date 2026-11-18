@@ -728,9 +728,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         }
         showAlertIfOpenWithDocumentAndAppIsDefault(activity,
                 mMultiPageDocument, MultiPageReviewFragment.this::showAlertDialog)
-                .thenRun(() -> {
-                    uploadDocuments();
-                });
+                .thenRun(this::uploadDocuments);
     }
 
     private void uploadDocuments() {
