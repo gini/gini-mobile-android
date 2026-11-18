@@ -727,11 +727,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
             observeViewTree();
         }
         showAlertIfOpenWithDocumentAndAppIsDefault(activity,
-                mMultiPageDocument, (message, positiveButtonTitle, positiveButtonClickListener, negativeButtonTitle, negativeButtonClickListener, cancelListener) -> {
-                    MultiPageReviewFragment.this.showAlertDialog(message, positiveButtonTitle,
-                            positiveButtonClickListener,
-                            negativeButtonTitle, negativeButtonClickListener, cancelListener);
-                })
+                mMultiPageDocument, MultiPageReviewFragment.this::showAlertDialog)
                 .thenRun(() -> {
                     uploadDocuments();
                 });
