@@ -486,9 +486,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                             return;
                         }
                         getView().waitForViewLayout()
-                                .thenRun(() -> {
-                                    onViewLayoutFinished();
-                                });
+                                .thenRun(AnalysisScreenPresenter.this::onViewLayoutFinished);
                     }
 
                     @Override
