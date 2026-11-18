@@ -210,29 +210,38 @@ public abstract class MemoryCache<K, V> {
 
     private void executeNextWorker(@NonNull final Context context) {
         mLog.debug("Execute next worker");
-        final Worker worker = mWorkerQueue.peek();
+        final Worker<K, V> worker = mWorkerQueue.peek();
         if (worker != null) {
-            if (!mRunningWorkers.contains(worker)
-                    && mRunningWorkers.size() < mRunningWorkersLimit) {
-                mRunningWorkers.add(worker);
-                mWorkerQueue.poll();
-                if (mLog.isDebugEnabled()) {
-                    mLog.debug("Execute queued worker for key {}", getNameForLog(worker.getSubject()));
-                }
-                worker.execute(context);
-            } else {
-                if (mLog.isDebugEnabled()) {
-                    mLog.debug("Cannot execute worker for key {}. Running worker limit reached.",
-                            getNameForLog(worker.getSubject()));
-                }
-            }
+            executeQueuedWorker(context, worker);
         } else {
             mLog.debug("No queued workers");
-            if (mRunningWorkers.isEmpty() && !mWaitingCallbacks.isEmpty()) {
-                mLog.error("{} dangling callbacks", mWaitingCallbacks.size());
-                if (DEBUG) {
-                    logDanglingCallbacks();
-                }
+            reportDanglingCallbacks();
+        }
+    }
+
+    private void executeQueuedWorker(@NonNull final Context context,
+            @NonNull final Worker<K, V> worker) {
+        if (!mRunningWorkers.contains(worker)
+                && mRunningWorkers.size() < mRunningWorkersLimit) {
+            mRunningWorkers.add(worker);
+            mWorkerQueue.poll();
+            if (mLog.isDebugEnabled()) {
+                mLog.debug("Execute queued worker for key {}", getNameForLog(worker.getSubject()));
+            }
+            worker.execute(context);
+        } else {
+            if (mLog.isDebugEnabled()) {
+                mLog.debug("Cannot execute worker for key {}. Running worker limit reached.",
+                        getNameForLog(worker.getSubject()));
+            }
+        }
+    }
+
+    private void reportDanglingCallbacks() {
+        if (mRunningWorkers.isEmpty() && !mWaitingCallbacks.isEmpty()) {
+            mLog.error("{} dangling callbacks", mWaitingCallbacks.size());
+            if (DEBUG) {
+                logDanglingCallbacks();
             }
         }
     }
