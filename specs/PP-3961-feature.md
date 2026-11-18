@@ -388,8 +388,10 @@ upper-casing ("normalised").
   selection sheet for QR / combined is PP-3966).
 - **R12 (MUST, happy):** "Cancel transfer" ends the flow through `AnalysisFragmentImpl.showIbanMismatch`'s
   cancel action (phase 1, unchanged).
-- **R13 (MUST, happy):** The warning is shown in every `ProductTag`, CX mode included, as long as the CX
-  "no extractions" check (`isCxEmptyExtractions`) did not already end the flow.
+- **R13 (MUST, happy):** The warning is not shown in CX mode (`ProductTag.CxExtractions`): the extractions
+  are handed on as without fraud signals. bank-sdk's `CxExtractionsFilter` drops the flat `iban`, and the
+  bank reads the CX account from `crossBorderPayment.creditorAccountNumber`, so a chosen IBAN would not
+  reach it. Product decision (2026-11-16): no fraud warning for CX. Every other `ProductTag` shows it.
 - **R14 (MUST, happy):** Country names are shown in the language of the SDK's strings: German with the
   default `values` strings ("Aus Polen, nicht aus dem Land des Absenders"), English with `values-en`
   ("From Poland, not the sender’s country"). An unknown country code is shown as the code itself.
@@ -571,7 +573,7 @@ Use different IBANs and countries in every fixture so a hardcoded result cannot 
    extractions without `fraudSignals` (R11)
 3. Flag off with valid signals → no `showIbanMismatch`, `onExtractionsAvailable` as today (R8)
 4. Flag on, no `fraudSignals` → no `showIbanMismatch` (R8)
-5. CX mode (`ProductTag.CxExtractions`) with `crossBorderPayment` + signals → `showIbanMismatch` called (R13)
+5. CX mode (`ProductTag.CxExtractions`) with `crossBorderPayment` + signals → no `showIbanMismatch`, extractions handed on (R13)
 
 Commands: `./gradlew capture-sdk:sdk:testDebugUnitTest bank-sdk:sdk:testDebugUnitTest`, then
 `/gini-check` (lint, detekt, ktlint) and `./gradlew capture-sdk:sdk:apiCheck`.
@@ -603,9 +605,9 @@ Commands: `./gradlew capture-sdk:sdk:testDebugUnitTest bank-sdk:sdk:testDebugUni
   the label is open: the design for this case is "TBA" in PP-3518/PP-3966, so each row repeats
   "Printed on the document" for now. If design asks for one shared label or numbered labels, only
   `ibanMismatchContent` in `IBANMismatchWarningScreen.kt` changes; the mapper and R4 stay.
-- **CX mode data (confidence: LOW — confirm with backend / a CX test document):** decided to show the
-  warning in CX mode. Whether CX responses carry `fraudSignals` and `extractions.iban` candidates is
-  unverified; without candidates the QR part is dropped by R7.
+- **CX mode:** first decided to show the warning in CX mode. Changed on 2026-11-16 after review
+  (PR 1030): the chosen IBAN only replaces the flat `iban`, which bank-sdk drops in CX mode, and product
+  decided CX gets no fraud warning. See R13.
 
 ## Build notes (phase 2)
 

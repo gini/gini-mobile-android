@@ -7,17 +7,12 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.tappableElement
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -45,11 +40,9 @@ import net.gini.android.capture.ui.theme.modifier.tabletMaxWidth
  * [footer] sits at the bottom of the sheet while the content fits and scrolls away with the
  * content once it does not.
  *
- * The sheet's window is edge-to-edge, and Material pads only the content, and only at the top
- * and bottom. With three-button navigation the bar is tappable system UI, at the bottom in
- * portrait and, on most phones, at the side in landscape, so the sheet itself keeps out of it
- * on the bottom and both sides and the scrim shows behind the bar. The gesture bar is not
- * tappable and reports no inset, so the sheet still runs under it as Material intends.
+ * With three-button navigation the sheet stops before the navigation bar, at the bottom in
+ * portrait and, on most phones, at the side in landscape, and the scrim shows behind the bar.
+ * With gesture navigation the sheet runs under the gesture bar as Material intends.
  *
  * The sheet refuses every dismissal path: the back button, the back gesture, taps on the scrim
  * and swipes. It shows no drag handle. The host removes the composable when the user has chosen
@@ -81,9 +74,7 @@ fun GiniBottomSheetScaffold(
         onDismissRequest = {},
         modifier = modifier
             .statusBarsPadding()
-            .windowInsetsPadding(
-                WindowInsets.tappableElement.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom)
-            )
+            .sheetTappableElementPadding()
             .then(
                 if (paneTitle != null) {
                     Modifier.semantics { this.paneTitle = paneTitle }
