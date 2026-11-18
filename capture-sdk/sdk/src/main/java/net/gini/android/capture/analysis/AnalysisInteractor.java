@@ -65,9 +65,7 @@ public class AnalysisInteractor {
             networkRequestsManager.upload(mApp, document);
         }
         return networkRequestsManager.analyze(multiPageDocument)
-                .handle((requestResult, throwable) -> {
-                    return toResultHolder(requestResult, throwable);
-                });
+                .handle(this::toResultHolder);
     }
 
     /**
