@@ -32,6 +32,8 @@ import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockClientConfig
 import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockScenario
 import net.gini.android.capture.GiniCapture
 import org.junit.After
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Assume
 import org.junit.Before
 import org.junit.Rule
@@ -203,6 +205,15 @@ abstract class WarningBottomSheetTestBase {
     }
 
     protected fun uploadFixtureInvoiceAndProcess(assetName: String) {
+        uploadFixtureInvoiceToReview(assetName)
+        reviewScreen.clickProcessButton()
+    }
+
+    /**
+     * [uploadFixtureInvoiceAndProcess] up to the review screen, for a test that does something
+     * there (turning the device, for example) before it clicks "Process" itself.
+     */
+    protected fun uploadFixtureInvoiceToReview(assetName: String) {
         imageUploader.copyImageToDownloads(getApplicationContext(), assetName)
         mainScreen.clickPhotoPaymentButton()
         onboardingScreen.clickSkipButtonIfPresent()
@@ -212,7 +223,23 @@ abstract class WarningBottomSheetTestBase {
         imageUploader.clickAddButton()
         idlingResource.waitForIdle()
         reviewScreen.assertReviewTitleIsDisplayed()
-        reviewScreen.clickProcessButton()
+    }
+
+    /**
+     * What "Proceed anyway" on the Credit Note warning must lead to: the extraction screen, the
+     * sheet gone, and no amount. The value is asserted, not the row — the example app re-adds
+     * `amountToPay` as an empty row (see `CreditNoteWarningTests.test6`).
+     */
+    protected fun assertProceedResult() {
+        assertTrue(
+            "Extraction screen did not appear",
+            extractionScreen.assertExtractionScreenIsDisplayed()
+        )
+        assertFalse("Warning must be dismissed", warningBottomSheet.isSheetDisplayed())
+        assertFalse(
+            "amountToPay must be empty on the credit note proceed path",
+            extractionScreen.isExtractionFieldFilled("amountToPay")
+        )
     }
 
     /**

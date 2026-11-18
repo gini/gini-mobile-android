@@ -91,7 +91,9 @@ run_group "duedate" \
 
 run_group "creditnote" \
   CreditNoteWarningTests \
-  CreditNoteMockBackendTests
+  CreditNoteMockBackendTests \
+  CreditNoteLocaleFontScaleTests \
+  CreditNoteLandscapeDarkTests
 
 run_group "ingredientbrand" \
   IngredientBrandTests \

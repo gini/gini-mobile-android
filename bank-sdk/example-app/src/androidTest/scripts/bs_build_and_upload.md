@@ -71,6 +71,17 @@ Both are also triggered by `bs_run_all_groups.sh`.
 
 ---
 
+### Credit Note shard (PP-3877)
+
+| Script | Classes | Notes |
+|---|---|---|
+| `bs_run_group_creditnote.sh` | `CreditNoteWarningTests`, `CreditNoteLocaleFontScaleTests`, `CreditNoteLandscapeDarkTests` | Real backend, real document (`credit_note.png`). Need the `/configurations` flag `creditNoteHintEnabled` on for the API client. Expected **skips**: `CreditNoteLocaleFontScaleTests` below Android 13, its 200 % font tests where the device refuses the font size, the dark + landscape test where dark mode cannot be switched. |
+| | `CreditNoteMockBackendTests` | Mock backend. No network and no server flag. |
+
+The same four classes run in the `creditnote` group of `bs_run_all_groups.sh` and `bs_run_release.sh`. They cover 15 of the 18 cases of the Xray folder "Credit Note Feature"; the three TalkBack cases stay manual.
+
+---
+
 ## Output APKs
 
 Both are written by Gradle into the `bank-sdk/example-app/build/outputs/apk/` folder:

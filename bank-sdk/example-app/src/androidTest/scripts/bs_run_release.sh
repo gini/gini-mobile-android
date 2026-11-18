@@ -176,7 +176,10 @@ run_group "duedate" \
   SchedulePaymentBottomSheetTests
 
 run_group "creditnote" \
-  CreditNoteWarningTests
+  CreditNoteWarningTests \
+  CreditNoteMockBackendTests \
+  CreditNoteLocaleFontScaleTests \
+  CreditNoteLandscapeDarkTests
 
 # File upload. ErrorScreenTests#test2_verifyNetworkErrorScreen auto-skips on
 # BrowserStack (the device network can't be disabled there); it still runs locally.
