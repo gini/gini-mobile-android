@@ -12,7 +12,6 @@ import static org.mockito.Mockito.verify;
 
 import android.content.Context;
 
-import java.util.Random;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.document.GiniCaptureDocument;
 import net.gini.android.capture.document.GiniCaptureDocumentHelper;
@@ -370,6 +369,7 @@ public class NetworkRequestsManagerTest {
             throws Exception {
         // Given
         final Queue<Runnable> uploadCompletionRunnables = new ConcurrentLinkedQueue<>();
+        final CountDownLatch analysisRequested = new CountDownLatch(1);
         // Simulate upload delays and queue completion to be executed on the main thread
         final GiniCaptureNetworkService networkService = spy(new GiniCaptureNetworkServiceStub() {
             @Override
@@ -377,7 +377,8 @@ public class NetworkRequestsManagerTest {
                     @NonNull final GiniCaptureNetworkCallback<Result, Error> callback) {
                 final Thread delayThread = new Thread(() -> {
                     try {
-                        Thread.sleep(200 + new Random().nextInt(300));
+                        // Complete the uploads only after the analysis was requested
+                        analysisRequested.await();
                         uploadCompletionRunnables.add(() -> {
                             callback.success(new Result(DEFAULT_DOCUMENT_ID, DEFAULT_DOCUMENT_FILENAME));
                         });
@@ -403,7 +404,10 @@ public class NetworkRequestsManagerTest {
                 new AtomicReference<>();
         final Thread waitThread = new Thread(() -> {
             try {
-                requestResult.set(networkRequestsManager.analyze(multiPageDocument).get());
+                final CompletableFuture<AnalysisNetworkRequestResult<GiniCaptureMultiPageDocument>>
+                        analysis = networkRequestsManager.analyze(multiPageDocument);
+                analysisRequested.countDown();
+                requestResult.set(analysis.get());
             } catch (final InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
