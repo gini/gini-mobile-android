@@ -26,6 +26,7 @@ import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty;
 
+import java.util.Collections;
 import java.util.HashSet;
 
 public class ZoomInPreviewFragment extends Fragment {
@@ -34,7 +35,7 @@ public class ZoomInPreviewFragment extends Fragment {
     private ImageDocument mImageDocument;
 
     private RotatableTouchImageViewContainer mRotatableTouchImageViewContainer;
-    private final UserAnalyticsScreen screenName = UserAnalyticsScreen.ReviewZoom.INSTANCE;
+    private static final UserAnalyticsScreen screenName = UserAnalyticsScreen.ReviewZoom.INSTANCE;
     private UserAnalyticsEventTracker userAnalyticsEventTracker = null;
 
     public static ZoomInPreviewFragment newInstance(ImageDocument imageDocument) {
@@ -68,11 +69,7 @@ public class ZoomInPreviewFragment extends Fragment {
         setupInputHandlers(view);
         if (userAnalyticsEventTracker != null) {
             userAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                        }
-                    });
+                    new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
         }
         return view;
     }
@@ -81,11 +78,7 @@ public class ZoomInPreviewFragment extends Fragment {
         view.findViewById(R.id.gc_action_close).setOnClickListener(v -> {
             if (userAnalyticsEventTracker != null) {
                 userAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
-                        new HashSet<UserAnalyticsEventProperty>() {
-                            {
-                                add(new UserAnalyticsEventProperty.Screen(screenName));
-                            }
-                        });
+                        new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
             }
             NavHostFragment.findNavController(this).popBackStack();
         });
@@ -98,11 +91,7 @@ public class ZoomInPreviewFragment extends Fragment {
             public void handleOnBackPressed() {
                 if (userAnalyticsEventTracker != null) {
                     userAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
-                            new HashSet<UserAnalyticsEventProperty>() {
-                                {
-                                    add(new UserAnalyticsEventProperty.Screen(screenName));
-                                }
-                            });
+                            new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
                 }
                 remove();
                 NavHostFragment.findNavController(ZoomInPreviewFragment.this).popBackStack();
@@ -137,7 +126,7 @@ public class ZoomInPreviewFragment extends Fragment {
 
                         @Override
                         public void onError(final Exception exception) {
-                            //showPreviewError(context);
+                            // Preview errors are not surfaced on the zoom screen
                         }
 
                         @Override

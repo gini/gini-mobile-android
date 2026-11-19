@@ -46,7 +46,7 @@ public class RendererLollipopTest {
     }
 
     @Test
-    public void should_renderToBitmap_pdfWithoutPassword() throws Exception {
+    public void should_renderToBitmap_pdfWithoutPassword() {
         // Given
         final RendererLollipop renderer = new RendererLollipop(sPdfContentUri,
                 ApplicationProvider.getApplicationContext());
@@ -57,7 +57,7 @@ public class RendererLollipopTest {
     }
 
     @Test
-    public void should_returnNullBitmap_whenRendering_pdfWithPassword() throws Exception {
+    public void should_returnNullBitmap_whenRendering_pdfWithPassword() {
         // Given
         final RendererLollipop renderer = new RendererLollipop(sPdfWithPasswordContentUri,
                 ApplicationProvider.getApplicationContext());
@@ -68,7 +68,7 @@ public class RendererLollipopTest {
     }
 
     @Test
-    public void should_getPageCount_forPdfWithoutPassword() throws Exception {
+    public void should_getPageCount_forPdfWithoutPassword() {
         // Given
         final RendererLollipop renderer = new RendererLollipop(sPdfContentUri,
                 ApplicationProvider.getApplicationContext());
@@ -79,7 +79,7 @@ public class RendererLollipopTest {
     }
 
     @Test
-    public void should_returnZeroPageCount_forPdfWithPassword() throws Exception {
+    public void should_returnZeroPageCount_forPdfWithPassword() {
         // Given
         final RendererLollipop renderer = new RendererLollipop(sPdfWithPasswordContentUri,
                 ApplicationProvider.getApplicationContext());
@@ -90,7 +90,7 @@ public class RendererLollipopTest {
     }
 
     @Test
-    public void should_detectPdfWithPassword() throws Exception {
+    public void should_detectPdfWithPassword() {
         // Given
         final RendererLollipop renderer = new RendererLollipop(sPdfWithPasswordContentUri,
                 ApplicationProvider.getApplicationContext());
@@ -101,7 +101,7 @@ public class RendererLollipopTest {
     }
 
     @Test
-    public void should_detectPdfWithoutPassword() throws Exception {
+    public void should_detectPdfWithoutPassword() {
         // Given
         final RendererLollipop renderer = new RendererLollipop(sPdfContentUri,
                 ApplicationProvider.getApplicationContext());

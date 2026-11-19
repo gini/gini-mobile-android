@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-/**
+/*
  * Created by Alpar Szotyori on 17.02.2020.
  *
  * Copyright (c) 2020 Gini GmbH.

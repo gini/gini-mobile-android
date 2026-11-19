@@ -6,7 +6,6 @@ package net.gini.android.capture.tracking;
  * Copyright (c) 2020 Gini GmbH.
  */
 
-import android.app.Activity;
 
 import net.gini.android.capture.GiniCapture;
 

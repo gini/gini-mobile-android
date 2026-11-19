@@ -2,6 +2,7 @@ package net.gini.android.capture.analysis
 
 import android.app.Activity
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
@@ -42,8 +43,9 @@ import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.EventTrackingHelper
 
 @Suppress("TooManyFunctions")
-internal class AnalysisScreenPresenterExtension(
-    private val view: View
+internal class AnalysisScreenPresenterExtension @JvmOverloads constructor(
+    private val view: View,
+    private val mainDispatcher: CoroutineDispatcher = Dispatchers.Main,
 ) {
 
     var listener: AnalysisFragmentListener? = null
@@ -493,7 +495,7 @@ internal class AnalysisScreenPresenterExtension(
     private fun doWhenEducationFinished(action: () -> Unit) {
         scope.launch {
             educationMutex.withLock {
-                withContext(Dispatchers.Main) {
+                withContext(mainDispatcher) {
                     action()
                 }
             }

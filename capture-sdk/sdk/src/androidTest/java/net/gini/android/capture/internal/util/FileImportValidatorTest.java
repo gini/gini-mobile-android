@@ -52,7 +52,7 @@ public class FileImportValidatorTest {
 
     @RequiresDevice
     @Test
-    public void should_acceptPDF_withOnePage_andWithoutPassword() throws Exception {
+    public void should_acceptPDF_withOnePage_andWithoutPassword() {
         // Given
         final FileImportValidator fileImportValidator = new FileImportValidator(
                 ApplicationProvider.getApplicationContext(), FILE_SIZE_LIMIT);
@@ -64,7 +64,7 @@ public class FileImportValidatorTest {
 
     @RequiresDevice
     @Test
-    public void should_NotAcceptPDF_withOnePage_andWithPassword() throws Exception {
+    public void should_NotAcceptPDF_withOnePage_andWithPassword() {
         // Given
         final FileImportValidator fileImportValidator = new FileImportValidator(
                 ApplicationProvider.getApplicationContext(), FILE_SIZE_LIMIT);

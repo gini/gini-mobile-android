@@ -9,7 +9,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-/**
+/*
  * Created by Alpar Szotyori on 11.12.2017.
  *
  * Copyright (c) 2017 Gini GmbH.

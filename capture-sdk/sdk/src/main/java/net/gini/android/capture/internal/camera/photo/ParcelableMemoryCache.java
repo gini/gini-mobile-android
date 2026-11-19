@@ -54,28 +54,25 @@ public enum ParcelableMemoryCache {
     private static final int REMOVE_BITMAP = 4;
     private static final int REMOVE_ENTRIES_WITH_TAG = 5;
 
-    private static final Handler mHandler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
-        @Override
-        public boolean handleMessage(@NonNull Message msg) {
-            switch (msg.what) {
-                case STORE_BYTE_ARRAY:
-                    INSTANCE.doStoreByteArray((TokenWithPayload<byte[]>) msg.obj);
-                    return true;
-                case REMOVE_BYTE_ARRAY:
-                    INSTANCE.doRemoveByteArray((Token) msg.obj);
-                    return true;
-                case STORE_BITMAP:
-                    INSTANCE.doStoreBitmap((TokenWithPayload<Bitmap>) msg.obj);
-                    return true;
-                case REMOVE_BITMAP:
-                    INSTANCE.doRemoveBitmap((Token) msg.obj);
-                    return true;
-                case REMOVE_ENTRIES_WITH_TAG:
-                    INSTANCE.doRemoveEntriesWithTag((String) msg.obj);
-                    return true;
-                default:
-                    return false;
-            }
+    private static final Handler mHandler = new Handler(Looper.getMainLooper(), msg -> {
+        switch (msg.what) {
+            case STORE_BYTE_ARRAY:
+                INSTANCE.doStoreByteArray((TokenWithPayload<byte[]>) msg.obj);
+                return true;
+            case REMOVE_BYTE_ARRAY:
+                INSTANCE.doRemoveByteArray((Token) msg.obj);
+                return true;
+            case STORE_BITMAP:
+                INSTANCE.doStoreBitmap((TokenWithPayload<Bitmap>) msg.obj);
+                return true;
+            case REMOVE_BITMAP:
+                INSTANCE.doRemoveBitmap((Token) msg.obj);
+                return true;
+            case REMOVE_ENTRIES_WITH_TAG:
+                INSTANCE.doRemoveEntriesWithTag((String) msg.obj);
+                return true;
+            default:
+                return false;
         }
     });
 
@@ -109,9 +106,9 @@ public enum ParcelableMemoryCache {
         public static final Creator<Token> CREATOR = new Creator<Token>() {
             @Override
             public Token createFromParcel(final Parcel source) {
-                final int token = source.readInt();
-                final String tag = source.readString();
-                return new Token(token, tag);
+                final int parceledTokenId = source.readInt();
+                final String parceledTag = source.readString();
+                return new Token(parceledTokenId, parceledTag);
             }
 
             @Override

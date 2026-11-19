@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
@@ -69,6 +70,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -81,7 +84,7 @@ import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLay
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewScreenEvent;
 
-/**
+/*
  * Created by Alpar Szotyori on 07.05.2018.
  * <p>
  * Copyright (c) 2018 Gini GmbH.
@@ -121,11 +124,11 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     private boolean mShouldScrollToLastPage = false;
     private CancelListener mCancelListener;
     private int mScrollToPosition = -1;
-    private final String KEY_SHOULD_SCROLL_TO_LAST_PAGE = "GC_SHOULD_SCROLL_TO_LAST_PAGE";
-    private final String KEY_SCROLL_TO_POSITION = "GC_SHOULD_SCROLL_TO_LAST_PAGE";
+    private static final String KEY_SHOULD_SCROLL_TO_LAST_PAGE = "GC_SHOULD_SCROLL_TO_LAST_PAGE";
+    private static final String KEY_SCROLL_TO_POSITION = "GC_SHOULD_SCROLL_TO_LAST_PAGE";
     private UserAnalyticsEventTracker mUserAnalyticsEventTracker;
 
-    private final UserAnalyticsScreen screenName = UserAnalyticsScreen.Review.INSTANCE;
+    private static final UserAnalyticsScreen screenName = UserAnalyticsScreen.Review.INSTANCE;
 
     private SnappedItemChangeRecyclerViewListener mAnalyticsPageScrolledListener;
 
@@ -149,11 +152,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         mUserAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
         if (mUserAnalyticsEventTracker != null) {
             mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                        }
-                    });
+                    new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
         }
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
@@ -161,11 +160,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
                 trackReviewScreenEvent(ReviewScreenEvent.BACK);
                 if (mUserAnalyticsEventTracker != null) {
                     mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
-                            new HashSet<UserAnalyticsEventProperty>() {
-                                {
-                                    add(new UserAnalyticsEventProperty.Screen(screenName));
-                                }
-                            });
+                            new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
                 }
                 setEnabled(false);
                 remove();
@@ -199,9 +194,8 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     }
 
     private void setCameraFragmentResultListener() {
-        getParentFragmentManager().setFragmentResultListener(CameraFragment.REQUEST_KEY, getViewLifecycleOwner(), (requestKey, result) -> {
-            mShouldScrollToLastPage = result.getBoolean(CameraFragment.RESULT_KEY_SHOULD_SCROLL_TO_LAST_PAGE);
-        });
+        getParentFragmentManager().setFragmentResultListener(CameraFragment.REQUEST_KEY, getViewLifecycleOwner(),
+                (requestKey, result) -> mShouldScrollToLastPage = result.getBoolean(CameraFragment.RESULT_KEY_SHOULD_SCROLL_TO_LAST_PAGE));
     }
 
     @Override
@@ -361,7 +355,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
             return;
 
         //Custom LayoutManager for keeping the page in the middle
-        mSnapManager = new MiddlePageManager(requireContext(), MiddlePageManager.HORIZONTAL, false);
+        mSnapManager = new MiddlePageManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
         mRecyclerView.setLayoutManager(mSnapManager);
         mRecyclerView.setClipToPadding(false);
 
@@ -404,51 +398,51 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-
-                //Wait to state goes in IDLE
-                //Make the middle page rect blue
-                //Update position of tablayout
-                //Save the position for screen change
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-
-                    View viewAtPosition = showHideBlueRect(View.VISIBLE);
-
-                    if (viewAtPosition != null) {
-                        int position = mRecyclerView.getChildAdapterPosition(viewAtPosition);
-                        updateTabIndicatorPosition(position);
-                        setScrollToPosition(position);
-                        if (position < mMultiPageDocument.getDocuments().size() - 1)
-                            mShouldScrollToLastPage = false;
-                    }
-
+                    onPageScrollSettled();
                 } else if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
                     showHideBlueRect(View.INVISIBLE);
                 }
             }
-
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-            }
         });
 
-        //Scroll to the last captured document
-        if (mMultiPageDocument.getDocuments().size() > 1) {
-            if (mShouldScrollToLastPage) {
-                scrollToCorrectPosition(mMultiPageDocument.getDocuments().size() - 1, true);
-            } else {
-                if (getScrollPosition() > -1)
-                    scrollToCorrectPosition(getScrollPosition(), true);
-                else scrollToCorrectPosition(mMultiPageDocument.getDocuments().size() - 1, true);
-            }
-        }
-
-        //If there is one document highlight it
-        if (mMultiPageDocument.getDocuments().size() == 1) {
-            mRecyclerView.post(() -> showHideBlueRect(View.VISIBLE));
-        }
+        scrollToInitialPage();
 
         mRecyclerView.addOnScrollListener(mAnalyticsPageScrolledListener);
+    }
+
+    /**
+     * Once scrolling is idle: highlight the middle page, update the tab layout position and
+     * remember the position for configuration changes.
+     */
+    private void onPageScrollSettled() {
+        final View viewAtPosition = showHideBlueRect(View.VISIBLE);
+        if (viewAtPosition == null) {
+            return;
+        }
+        final int position = mRecyclerView.getChildAdapterPosition(viewAtPosition);
+        updateTabIndicatorPosition(position);
+        setScrollToPosition(position);
+        if (position < mMultiPageDocument.getDocuments().size() - 1) {
+            mShouldScrollToLastPage = false;
+        }
+    }
+
+    /**
+     * Scrolls to the last captured document (or the remembered position) and highlights the
+     * only document if there is just one.
+     */
+    private void scrollToInitialPage() {
+        final int documentCount = mMultiPageDocument.getDocuments().size();
+        if (documentCount > 1) {
+            if (!mShouldScrollToLastPage && getScrollPosition() > -1) {
+                scrollToCorrectPosition(getScrollPosition(), true);
+            } else {
+                scrollToCorrectPosition(documentCount - 1, true);
+            }
+        } else if (documentCount == 1) {
+            mRecyclerView.post(() -> showHideBlueRect(View.VISIBLE));
+        }
     }
 
 
@@ -550,11 +544,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
                             trackReviewScreenEvent(ReviewScreenEvent.BACK);
                             if (mUserAnalyticsEventTracker != null) {
                                 mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
-                                        new HashSet<UserAnalyticsEventProperty>() {
-                                            {
-                                                add(new UserAnalyticsEventProperty.Screen(screenName));
-                                            }
-                                        });
+                                        new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
                             }
                             onBack();
                         }));
@@ -576,11 +566,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         ClickListenerExtKt.setIntervalClickListener(mAddPagesButton, v -> {
             if (mUserAnalyticsEventTracker != null) {
                 mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.ADD_PAGES_TAPPED,
-                        new HashSet<UserAnalyticsEventProperty>() {
-                            {
-                                add(new UserAnalyticsEventProperty.Screen(screenName));
-                            }
-                        });
+                        new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
             }
             NavHostFragment.findNavController(this).navigate(MultiPageReviewFragmentDirections.toCameraFragmentForAddingPages());
         });
@@ -634,7 +620,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
 
     private void deleteFromMultiPageDocument(@NonNull final ImageDocument document) {
         mMultiPageDocument.getDocuments().remove(document);
-        if (mMultiPageDocument.getDocuments().size() == 0
+        if (mMultiPageDocument.getDocuments().isEmpty()
                 && GiniCapture.hasInstance()) {
             GiniCapture.getInstance().internal().getImageMultiPageDocumentMemoryStore().clear();
         }
@@ -669,13 +655,13 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     }
 
     private void updateNextButtonVisibility() {
-        if (mMultiPageDocument.getDocuments().size() == 0) {
+        if (mMultiPageDocument.getDocuments().isEmpty()) {
             setNextButtonEnabled(false);
             return;
         }
 
         boolean uploadFailed = false;
-        for (final Boolean uploadSuccess : mDocumentUploadResults.values()) {
+        for (final boolean uploadSuccess : mDocumentUploadResults.values()) {
             if (!uploadSuccess) {
                 uploadFailed = true;
                 break;
@@ -707,13 +693,9 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         if (mUserAnalyticsEventTracker != null) {
             mUserAnalyticsEventTracker.trackEvent(
                     UserAnalyticsEvent.PROCEED_TAPPED,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                            add(new UserAnalyticsEventProperty
-                                    .DocumentPageNumber(mMultiPageDocument.getDocuments().size()));
-                        }
-                    }
+                    new HashSet<>(Arrays.asList(
+                            new UserAnalyticsEventProperty.Screen(screenName),
+                            new UserAnalyticsEventProperty .DocumentPageNumber(mMultiPageDocument.getDocuments().size())))
             );
         }
         mNextClicked = true;
@@ -745,27 +727,8 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
             observeViewTree();
         }
         showAlertIfOpenWithDocumentAndAppIsDefault(activity,
-                mMultiPageDocument, new FileImportHelper.ShowAlertCallback() {
-                    @Override
-                    public void showAlertDialog(@NonNull final String message,
-                                                @NonNull final String positiveButtonTitle,
-                                                @NonNull final DialogInterface.OnClickListener
-                                                        positiveButtonClickListener,
-                                                @Nullable final String negativeButtonTitle,
-                                                @Nullable final DialogInterface.OnClickListener
-                                                        negativeButtonClickListener,
-                                                @Nullable final DialogInterface.OnCancelListener cancelListener) {
-                        MultiPageReviewFragment.this.showAlertDialog(message, positiveButtonTitle,
-                                positiveButtonClickListener,
-                                negativeButtonTitle, negativeButtonClickListener, cancelListener);
-                    }
-                })
-                .thenRun(new Runnable() {
-                    @Override
-                    public void run() {
-                        uploadDocuments();
-                    }
-                });
+                mMultiPageDocument, this::showAlertDialog)
+                .thenRun(this::uploadDocuments);
     }
 
     private void uploadDocuments() {
@@ -934,15 +897,12 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     public void onDestroy() {
         super.onDestroy();
 
-        if (!mInstanceStateSaved) {
-            // Instance state wasn't saved meaning that this fragment won't restart
-            if (!mNextClicked) {
-                // Delete documents because the Multi-Page Review Fragment
-                // acts as the root screen and when it's destroyed it means
-                // the user will exit the SDK
-                deleteUploadedDocuments();
-                clearMultiPageDocument();
-            }
+        // Instance state wasn't saved meaning that this fragment won't restart and the user
+        // did not proceed to the next screen: delete the documents because the Multi-Page Review
+        // Fragment acts as the root screen and when it's destroyed the user will exit the SDK
+        if (!mInstanceStateSaved && !mNextClicked) {
+            deleteUploadedDocuments();
+            clearMultiPageDocument();
         }
 
         if (mPreviewFragmentListener != null) {
@@ -962,9 +922,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
                 networkRequestsManager.cancel(mMultiPageDocument);
                 networkRequestsManager.delete(mMultiPageDocument)
                         .handle((CompletableFuture.BiFun<NetworkRequestResult<GiniCaptureDocument>, Throwable, Void>) (requestResult, throwable) -> {
-                            for (final Object document : mMultiPageDocument.getDocuments()) {
-                                final GiniCaptureDocument giniCaptureDocument =
-                                        (GiniCaptureDocument) document;
+                            for (final GiniCaptureDocument giniCaptureDocument : mMultiPageDocument.getDocuments()) {
                                 networkRequestsManager.cancel(giniCaptureDocument);
                                 networkRequestsManager.delete(giniCaptureDocument);
                             }
@@ -1003,11 +961,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     public void onPageClicked(@NonNull ImageDocument document) {
         if (mUserAnalyticsEventTracker != null) {
             mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.FULL_SCREEN_PAGE_TAPPED,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                        }
-                    });
+                    new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
         }
         NavHostFragment.findNavController(this).navigate(MultiPageReviewFragmentDirections.toZoomInPreviewFragment(document));
     }
@@ -1015,11 +969,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     private void trackPageSwipedAnalyticsEvent() {
         if (mUserAnalyticsEventTracker != null) {
             mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.PAGE_SWIPED,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                        }
-                    });
+                    new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
         }
     }
 }

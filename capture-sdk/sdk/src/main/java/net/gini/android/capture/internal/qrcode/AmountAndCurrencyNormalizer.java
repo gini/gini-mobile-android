@@ -1,14 +1,12 @@
 package net.gini.android.capture.internal.qrcode;
 
-import android.text.TextUtils;
-
 import java.math.BigDecimal;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-/**
+/*
  * Created by Alpar Szotyori on 12.12.2017.
  *
  * Copyright (c) 2017 Gini GmbH.
@@ -28,7 +26,7 @@ final class AmountAndCurrencyNormalizer {
      */
     @NonNull
     static String normalizeAmount(@Nullable final String amount, @NonNull final String currency) {
-        if (!TextUtils.isEmpty(amount)) {
+        if (amount != null && !amount.isEmpty()) {
             try {
                 BigDecimal amountBigDecimal = new BigDecimal(amount.replace(",", "."));
                 if (amountBigDecimal.scale() < 2) {
@@ -36,6 +34,7 @@ final class AmountAndCurrencyNormalizer {
                 }
                 return amountBigDecimal.toPlainString() + ":" + currency;
             } catch (final NumberFormatException ignored) {
+                // Not a valid amount: fall through and return an empty string
             }
         }
         return "";
@@ -49,7 +48,7 @@ final class AmountAndCurrencyNormalizer {
      */
     @NonNull
     static String normalizeCurrency(@Nullable final String currency) {
-        return TextUtils.isEmpty(currency) ? "" : currency.toUpperCase(Locale.ENGLISH);
+        return currency == null || currency.isEmpty() ? "" : currency.toUpperCase(Locale.ENGLISH);
     }
 
     private AmountAndCurrencyNormalizer() {

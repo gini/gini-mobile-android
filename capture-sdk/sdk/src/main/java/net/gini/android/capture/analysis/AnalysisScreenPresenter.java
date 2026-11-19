@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
+import java.time.ZoneId;
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.BankSDKBridge;
 import net.gini.android.capture.Document;
@@ -57,7 +58,7 @@ import kotlin.Unit;
 
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
-/**
+/*
  * Created by Alpar Szotyori on 08.05.2019.
  * <p>
  * Copyright (c) 2019 Gini GmbH.
@@ -307,96 +308,104 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
             return Unit.INSTANCE;
         });
         mAnalysisInteractor.analyzeMultiPageDocument(mMultiPageDocument)
-                .handle(new CompletableFuture.BiFun<
-                        AnalysisInteractor.ResultHolder, Throwable, Void>() {
-                    @Override
-                    public Void apply(final AnalysisInteractor.ResultHolder analysisResult,
-                                      final Throwable throwable) {
-                        // fraudSignals is for the SDK's own fraud warning only and must never
-                        // reach the integrator or the feedback.
-                        final AnalysisInteractor.ResultHolder resultHolder =
-                                withoutFraudSignals(analysisResult);
+                .handle((analysisResult, throwable) -> {
 
-                        stopScanAnimation();
-                        if (isStopped()) {
-                            return null;
-                        }
-                        if (throwable != null) {
-                            handleAnalysisError(throwable);
-                            return null;
-                        }
-                        RemoteAnalyzedDocument remoteAnalyzedDocument =
-                                new RemoteAnalyzedDocument(
-                                        resultHolder.getDocumentId(),
-                                        resultHolder.getDocumentFileName()
-                                );
-                        final AnalysisInteractor.Result result = resultHolder.getResult();
-                        boolean shouldClearImageCaches = true;
-                        switch (result) {
-                            case SUCCESS_NO_EXTRACTIONS:
-                                mAnalysisCompleted = true;
-                                extension.getLastAnalyzedDocumentProvider()
-                                        .update(remoteAnalyzedDocument);
-                                try {
-                                    extension.getAttachDocToTransactionDialogProvider()
-                                            .update(remoteAnalyzedDocument);
-                                } catch (Exception ignored) {
-
-                                }
-                                proceedSuccessNoExtractions();
-                                break;
-                            case SUCCESS_WITH_EXTRACTIONS: {
-
-                                mAnalysisCompleted = true;
-                                extension.getLastAnalyzedDocumentProvider()
-                                        .update(remoteAnalyzedDocument);
-                                try {
-                                    extension.getAttachDocToTransactionDialogProvider()
-                                            .update(remoteAnalyzedDocument);
-                                } catch (Exception ignored) {
-
-                                }
-
-                                // Read from the unstripped result: resultHolder has no fraudSignals.
-                                // No warning in CX mode: the bank reads the CX account from
-                                // crossBorderPayment, so a chosen IBAN would not reach it.
-                                final IBANMismatchArgs ibanMismatchArgs = isCxMode()
-                                        ? null
-                                        : extension.ibanMismatchArgs(analysisResult);
-                                if (resultHolder.getExtractions().isEmpty() && !isCxMode()) {
-                                    proceedSuccessNoExtractions();
-                                } else if (isCxEmptyExtractions(resultHolder)) {
-                                    proceedSuccessNoExtractions();
-                                } else if (ibanMismatchArgs != null) {
-                                    // The fraud warning goes ahead of every other warning, and
-                                    // "Proceed anyway" continues into them.
-                                    successResultHolder = resultHolder;
-                                    shouldClearImageCaches = false;
-                                    extension.showIbanMismatchWarning(
-                                            ibanMismatchArgs,
-                                            isSavingInvoicesInProgress,
-                                            () -> {
-                                                showHintOrProceed(resultHolder);
-                                                return Unit.INSTANCE;
-                                            });
-                                } else {
-                                    shouldClearImageCaches = false;
-                                    showHintOrProceed(resultHolder);
-                                }
-                            }
-                            case NO_NETWORK_SERVICE:
-                                break;
-                            default:
-                                throw new UnsupportedOperationException(
-                                        "Unknown AnalysisInteractor result: " + result);
-                        }
-                        if (result != AnalysisInteractor.Result.NO_NETWORK_SERVICE
-                                && shouldClearImageCaches) {
-                            clearSavedImages();
-                        }
+                    stopScanAnimation();
+                    if (isStopped()) {
                         return null;
                     }
+                    if (throwable != null) {
+                        handleAnalysisError(throwable);
+                        return null;
+                    }
+                    handleAnalysisResult(analysisResult);
+                    return null;
                 });
+    }
+
+    /**
+     * @param analysisResult the holder as the analysis delivered it, including fraudSignals
+     */
+    private void handleAnalysisResult(@NonNull final AnalysisInteractor.ResultHolder analysisResult) {
+        // fraudSignals is for the SDK's own fraud warning only and must never
+        // reach the integrator or the feedback.
+        final AnalysisInteractor.ResultHolder resultHolder = withoutFraudSignals(analysisResult);
+        final RemoteAnalyzedDocument remoteAnalyzedDocument = new RemoteAnalyzedDocument(
+                resultHolder.getDocumentId(),
+                resultHolder.getDocumentFileName()
+        );
+        final AnalysisInteractor.Result result = resultHolder.getResult();
+        boolean shouldClearImageCaches = true;
+        switch (result) {
+            case SUCCESS_NO_EXTRACTIONS:
+                mAnalysisCompleted = true;
+                updateAnalyzedDocumentProviders(remoteAnalyzedDocument);
+                proceedSuccessNoExtractions();
+                break;
+            case SUCCESS_WITH_EXTRACTIONS:
+                mAnalysisCompleted = true;
+                updateAnalyzedDocumentProviders(remoteAnalyzedDocument);
+                shouldClearImageCaches = handleSuccessWithExtractions(analysisResult, resultHolder);
+                break;
+            case NO_NETWORK_SERVICE:
+                break;
+            default:
+                throw new UnsupportedOperationException(
+                        "Unknown AnalysisInteractor result: " + result);
+        }
+        if (result != AnalysisInteractor.Result.NO_NETWORK_SERVICE
+                && shouldClearImageCaches) {
+            clearSavedImages();
+        }
+    }
+
+    private void updateAnalyzedDocumentProviders(
+            @NonNull final RemoteAnalyzedDocument remoteAnalyzedDocument) {
+        extension.getLastAnalyzedDocumentProvider().update(remoteAnalyzedDocument);
+        try {
+            extension.getAttachDocToTransactionDialogProvider().update(remoteAnalyzedDocument);
+        } catch (Exception ignored) {
+            // The provider is only available when the SDK is used through the Bank SDK
+        }
+    }
+
+    /**
+     * Continues the flow for an analysis which returned extractions.
+     *
+     * @param analysisResult the holder as the analysis delivered it, including fraudSignals
+     * @param resultHolder   the same holder with fraudSignals stripped
+     * @return {@code true} if the saved images may be cleared right away, {@code false} if the
+     * extractions are still needed by the screen shown next
+     */
+    private boolean handleSuccessWithExtractions(
+            @NonNull final AnalysisInteractor.ResultHolder analysisResult,
+            @NonNull final AnalysisInteractor.ResultHolder resultHolder) {
+        // Read from the unstripped result: resultHolder has no fraudSignals.
+        // No warning in CX mode: the bank reads the CX account from
+        // crossBorderPayment, so a chosen IBAN would not reach it.
+        final IBANMismatchArgs ibanMismatchArgs = isCxMode()
+                ? null
+                : extension.ibanMismatchArgs(analysisResult);
+        if ((resultHolder.getExtractions().isEmpty() && !isCxMode())
+                || isCxEmptyExtractions(resultHolder)) {
+            proceedSuccessNoExtractions();
+            return true;
+        }
+        if (ibanMismatchArgs != null) {
+            // The fraud warning goes ahead of every other warning, and
+            // "Proceed anyway" continues into them.
+            successResultHolder = resultHolder;
+            extension.showIbanMismatchWarning(
+                    ibanMismatchArgs,
+                    isSavingInvoicesInProgress,
+                    () -> {
+                        showHintOrProceed(resultHolder);
+                        return Unit.INSTANCE;
+                    });
+        } else {
+            showHintOrProceed(resultHolder);
+        }
+        return false;
     }
 
     /**
@@ -477,12 +486,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                             return;
                         }
                         getView().waitForViewLayout()
-                                .thenRun(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        onViewLayoutFinished();
-                                    }
-                                });
+                                .thenRun(AnalysisScreenPresenter.this::onViewLayoutFinished);
                     }
 
                     @Override
@@ -758,7 +762,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     }
     private int calculateRemainingDays(@NonNull String paymentDueDate) {
         try {
-            LocalDate today = LocalDate.now();
+            LocalDate today = LocalDate.now(ZoneId.systemDefault());
             LocalDate dueDate = LocalDate.parse(paymentDueDate);
 
             return (int) ChronoUnit.DAYS.between(today, dueDate);

@@ -17,7 +17,7 @@ import androidx.annotation.Nullable;
 
 import net.gini.android.capture.R;
 
-/**
+/*
  * Created by Alpar Szotyori on 19.02.2018.
  *
  * Copyright (c) 2018 Gini GmbH.
@@ -127,23 +127,17 @@ public class RotatableImageViewContainer extends FrameLayout {
                     getHeight());
         }
 
-        widthAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(final ValueAnimator valueAnimator) {
-                final int width = (int) valueAnimator.getAnimatedValue();
-                final ViewGroup.LayoutParams layoutParams = mImageView.getLayoutParams();
-                layoutParams.width = width;
-                mImageView.requestLayout();
-            }
+        widthAnimation.addUpdateListener(valueAnimator -> {
+            final int width = (int) valueAnimator.getAnimatedValue();
+            final ViewGroup.LayoutParams layoutParams = mImageView.getLayoutParams();
+            layoutParams.width = width;
+            mImageView.requestLayout();
         });
-        heightAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(final ValueAnimator valueAnimator) {
-                final int height = (int) valueAnimator.getAnimatedValue();
-                final ViewGroup.LayoutParams layoutParams = mImageView.getLayoutParams();
-                layoutParams.height = height;
-                mImageView.requestLayout();
-            }
+        heightAnimation.addUpdateListener(valueAnimator -> {
+            final int height = (int) valueAnimator.getAnimatedValue();
+            final ViewGroup.LayoutParams layoutParams = mImageView.getLayoutParams();
+            layoutParams.height = height;
+            mImageView.requestLayout();
         });
 
         final ObjectAnimator rotateAnimation = ObjectAnimator.ofFloat(mImageView, "rotation",

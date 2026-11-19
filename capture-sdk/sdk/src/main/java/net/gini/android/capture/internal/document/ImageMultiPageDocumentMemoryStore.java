@@ -5,7 +5,7 @@ import net.gini.android.capture.document.ImageMultiPageDocument;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-/**
+/*
  * Created by Alpar Szotyori on 08.05.2018.
  *
  * Copyright (c) 2018 Gini GmbH.

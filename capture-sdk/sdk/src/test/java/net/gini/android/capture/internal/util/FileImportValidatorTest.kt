@@ -36,6 +36,12 @@ class FileImportValidatorTest {
             addExtensionMimeTypeMapping("heic", "image/heic")
             addExtensionMimeTypeMapping("jpg", "image/jpeg")
             addExtensionMimeTypeMapping("webp", "image/webp")
+            addExtensionMimeTypeMapping("png", "image/png")
+            addExtensionMimeTypeMapping("gif", "image/gif")
+            addExtensionMimeTypeMapping("heif", "image/heif")
+            addExtensionMimeTypeMapping("heics", "image/heic-sequence")
+            addExtensionMimeTypeMapping("heifs", "image/heif-sequence")
+            addExtensionMimeTypeMapping("xml", "text/xml")
             // Android's real MimeTypeMap maps "bin" to application/octet-stream — verified on a
             // device (Android 16). Without this mapping the shadow returns null for ".bin" and
             // the generic-extension case below would pass without ever being exercised.
@@ -105,6 +111,27 @@ class FileImportValidatorTest {
         val uri = createUri(byteArrayOf(0xFF.toByte(), 0xD8.toByte(), 0xFF.toByte()), ".jpg")
 
         assertThat(validator().matchesCriteria(uri)).isTrue()
+    }
+
+    @Test
+    @Config(sdk = [28])
+    fun `accepts png and gif`() {
+        assertThat(validator().matchesCriteria(createUri(ByteArray(8), ".png"))).isTrue()
+        assertThat(validator().matchesCriteria(createUri(ByteArray(8), ".gif"))).isTrue()
+    }
+
+    @Test
+    @Config(sdk = [28])
+    fun `accepts xml`() {
+        assertThat(validator().matchesCriteria(createUri("<invoice/>".toByteArray(), ".xml"))).isTrue()
+    }
+
+    @Test
+    @Config(sdk = [28])
+    fun `accepts the other heif mime types on api 28`() {
+        assertThat(validator().matchesCriteria(createUri(heicBytes(), ".heif"))).isTrue()
+        assertThat(validator().matchesCriteria(createUri(heicBytes(), ".heics"))).isTrue()
+        assertThat(validator().matchesCriteria(createUri(heicBytes(), ".heifs"))).isTrue()
     }
 
     @Test

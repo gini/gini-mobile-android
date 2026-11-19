@@ -9,6 +9,8 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import net.gini.android.capture.network.Error
+import net.gini.android.capture.network.GiniCaptureNetworkCallback
 import net.gini.android.capture.network.GiniCaptureNetworkService
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
@@ -238,7 +240,139 @@ class GiniCaptureSendTransferSummaryTest {
 
     // endregion
 
+    // region typed overload — instant payment
+
+    @Test
+    fun `typed SEPA overload sends the instant payment preference when it is set`() {
+        buildGiniCaptureWith(ProductTag.SepaExtractions)
+        val specificSlot = slot<Map<String, GiniCaptureSpecificExtraction>>()
+        every { mockNetworkService.sendFeedback(capture(specificSlot), any(), any()) } just Runs
+
+        GiniCapture.sendTransferSummary(
+            "Acme GmbH",
+            "REF-003",
+            "Invoice May",
+            "DE89370400440532013000",
+            "COBADEFFXXX",
+            Amount(java.math.BigDecimal("75.00"), AmountCurrency.EUR),
+            true
+        )
+
+        assertThat(specificSlot.captured["instantPayment"]?.value).isEqualTo("true")
+    }
+
+    // endregion
+
+    // region network requests cleanup
+
+    @Test
+    fun `SEPA - network requests are cleaned up once the feedback succeeded`() {
+        buildGiniCaptureWith(ProductTag.SepaExtractions)
+        val callback = sendTransferSummaryAndCaptureCallback()
+
+        callback.success(null)
+
+        verify(exactly = 1) { mockNetworkService.cleanup() }
+    }
+
+    @Test
+    fun `SEPA - network requests are cleaned up once the feedback failed`() {
+        buildGiniCaptureWith(ProductTag.SepaExtractions)
+        val callback = sendTransferSummaryAndCaptureCallback()
+
+        callback.failure(Error("feedback failed"))
+
+        verify(exactly = 1) { mockNetworkService.cleanup() }
+    }
+
+    @Test
+    fun `CX - network requests are cleaned up once the feedback was cancelled`() {
+        buildGiniCaptureWith(ProductTag.CxExtractions)
+        val callback = sendTransferSummaryAndCaptureCallback()
+
+        callback.cancelled()
+
+        verify(exactly = 1) { mockNetworkService.cleanup() }
+    }
+
+    @Test
+    fun `network requests are not cleaned up before the feedback finished`() {
+        buildGiniCaptureWith(ProductTag.SepaExtractions)
+
+        sendTransferSummaryAndCaptureCallback()
+
+        verify(exactly = 0) { mockNetworkService.cleanup() }
+    }
+
+    private fun sendTransferSummaryAndCaptureCallback(): GiniCaptureNetworkCallback<Void?, Error> {
+        val callbackSlot = slot<GiniCaptureNetworkCallback<Void?, Error>>()
+        every { mockNetworkService.sendFeedback(any(), any(), capture(callbackSlot)) } just Runs
+        every { mockNetworkService.cleanup() } just Runs
+
+        GiniCapture.sendTransferSummary(mapOf("creditorName" to "Acme Ltd"))
+
+        return callbackSlot.captured
+    }
+
+    // endregion
+
+    // region no network service
+
+    @Test
+    fun `CX - no-op when no network service was set`() {
+        buildGiniCaptureWithoutNetworkService(ProductTag.CxExtractions)
+
+        GiniCapture.sendTransferSummary(mapOf("creditorName" to "Acme Ltd"))
+
+        verify(exactly = 0) { mockNetworkService.sendFeedback(any(), any(), any()) }
+    }
+
+    @Test
+    fun `SEPA - no-op when no network service was set`() {
+        buildGiniCaptureWithoutNetworkService(ProductTag.SepaExtractions)
+
+        GiniCapture.sendTransferSummary(mapOf("iban" to "DE89370400440532013000"))
+
+        verify(exactly = 0) { mockNetworkService.sendFeedback(any(), any(), any()) }
+    }
+
+    // endregion
+
+    // region Skonto
+
+    @Test
+    fun `Skonto - sends the amount to pay and the Skonto discount as a compound extraction`() {
+        buildGiniCaptureWith(ProductTag.SepaExtractions)
+        val specificSlot = slot<Map<String, GiniCaptureSpecificExtraction>>()
+        val compoundSlot = slot<Map<String, GiniCaptureCompoundExtraction>>()
+        every {
+            mockNetworkService.sendFeedback(capture(specificSlot), capture(compoundSlot), any())
+        } just Runs
+
+        GiniCapture.sendTransferSummaryForSkonto(
+            Amount(java.math.BigDecimal("97.00"), AmountCurrency.EUR),
+            "97.00:EUR",
+            "3.456",
+            "2026-12-01"
+        )
+
+        assertThat(specificSlot.captured["amountToPay"]?.value).isEqualTo("97.00:EUR")
+        val skontoDiscounts = compoundSlot.captured["skontoDiscounts"]!!.specificExtractionMaps[0]
+        assertThat(skontoDiscounts["skontoAmountToPayCalculated"]?.value).isEqualTo("97.00:EUR")
+        // The percentage is cut off after two decimals, not rounded
+        assertThat(skontoDiscounts["skontoPercentageDiscountedCalculated"]?.value).isEqualTo("3.45%")
+        assertThat(skontoDiscounts["skontoDueDateCalculated"]?.value).isEqualTo("2026-12-01")
+    }
+
+    // endregion
+
     // region helpers
+
+    private fun buildGiniCaptureWithoutNetworkService(productTag: ProductTag) {
+        GiniCapture.newInstance(context)
+            .setProductTag(productTag)
+            .build()
+    }
 
     private fun buildGiniCaptureWith(productTag: ProductTag) {
         GiniCapture.newInstance(context)

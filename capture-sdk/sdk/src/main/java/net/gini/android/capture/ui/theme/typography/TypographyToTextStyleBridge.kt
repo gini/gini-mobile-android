@@ -35,12 +35,10 @@ import kotlin.concurrent.getOrSet
 fun textStyleFromAttribute(
     @AttrRes attr: Int,
     density: Density = Density(LocalContext.current),
-    setTextColors: Boolean = true
 ): TextStyle {
     return textStyleFromTextAppearance(
         getResourceFromAttr(LocalContext.current, attr),
         density,
-        setTextColors
     )
 }
 
@@ -48,7 +46,6 @@ fun textStyleFromAttribute(
 fun textStyleFromTextAppearance(
     @StyleRes id: Int,
     density: Density = Density(LocalContext.current),
-    setTextColors: Boolean = true
 ): TextStyle {
     return LocalContext.current.obtainStyledAttributes(
         id,
@@ -139,9 +136,9 @@ fun textStyleFromTextAppearance(
                         0f
                     ).em
                 }
-                // FIXME: Normally we'd use TextUnit.Unspecified,
-                // but this can cause a crash due to mismatched Sp and Em TextUnits
-                // https://issuetracker.google.com/issues/182881244
+                // Workaround: normally we'd use TextUnit.Unspecified, but this can cause a
+                // crash due to mismatched Sp and Em TextUnits. Nothing to change on our side
+                // until https://issuetracker.google.com/issues/182881244 is resolved.
                 else -> 0.em
             }
         )

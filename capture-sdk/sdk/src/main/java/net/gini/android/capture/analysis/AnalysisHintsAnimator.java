@@ -19,7 +19,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.ViewPropertyAnimatorCompat;
 import androidx.core.view.ViewPropertyAnimatorListenerAdapter;
 
-/**
+/*
  * Created by Alpar Szotyori on 09.05.2019.
  *
  * Copyright (c) 2019 Gini GmbH.
@@ -88,12 +88,9 @@ class AnalysisHintsAnimator {
     }
 
     public void start() {
-        mHintCycleRunnable = new Runnable() {
-            @Override
-            public void run() {
-                mHintAnimation = getSlideDownAnimation();
-                mHintAnimation.start();
-            }
+        mHintCycleRunnable = () -> {
+            mHintAnimation = getSlideDownAnimation();
+            mHintAnimation.start();
         };
         mHandler.postDelayed(mHintCycleRunnable, HINT_START_DELAY);
     }

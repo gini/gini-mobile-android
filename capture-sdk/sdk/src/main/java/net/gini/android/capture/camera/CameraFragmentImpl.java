@@ -25,6 +25,7 @@ import android.widget.TextView;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.annotation.UiThread;
 import androidx.annotation.VisibleForTesting;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -116,6 +117,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -157,6 +159,9 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private static final long HIDE_QRCODE_DETECTED_POPUP_DELAY_MS = 2000;
     private static final long DIFFERENT_QRCODE_DETECTED_POPUP_DELAY_MS = 1000;
     private static final Logger LOG = LoggerFactory.getLogger(CameraFragmentImpl.class);
+    private static final String FAILED_TO_OPEN_CAMERA_MESSAGE = "Failed to open camera";
+    private static final String FAILED_TO_SAVE_PICTURE_MESSAGE =
+            "Failed to take picture: could not save picture to disk";
 
     private static final UserAnalyticsScreen.CameraAccess sScreenNamePermission =
             UserAnalyticsScreen.CameraAccess.INSTANCE;
@@ -231,7 +236,6 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     UserAnalyticsEventTracker mUserAnalyticsEventTracker;
 
 
-    private ConstraintLayout mLayoutRoot;
     private View mPoweredByGiniView;
     private ViewGroup mCameraPreviewContainer;
     private View mCameraPreview;
@@ -275,7 +279,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
     private IBANRecognizerFilter ibanRecognizerFilter;
     private CropToCameraFrameTextRecognizer cropToCameraFrameTextRecognizer;
-    private final UserAnalyticsScreen screenName = UserAnalyticsScreen.Camera.INSTANCE;
+    private static final UserAnalyticsScreen screenName = UserAnalyticsScreen.Camera.INSTANCE;
     private View mDetectionErrorDismissButton;
 
     CameraFragmentImpl(@NonNull final FragmentImplCallback fragment, @NonNull final CancelListener cancelListener, final boolean addPages) {
@@ -819,7 +823,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             final ImageMultiPageDocument multiPageDocument =
                     GiniCapture.getInstance().internal()
                             .getImageMultiPageDocumentMemoryStore().getMultiPageDocument();
-            if (multiPageDocument != null && multiPageDocument.getDocuments().size() > 0) {
+            if (multiPageDocument != null && !multiPageDocument.getDocuments().isEmpty()) {
                 mMultiPageDocument = multiPageDocument;
                 mInMultiPageState = true;
                 updatePhotoThumbnail();
@@ -910,10 +914,10 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             return;
         }
 
-        final float offsetX = (float) (previewViewSize.width - mCameraPreviewContainer.getWidth()) / 2.0f;
-        final float centerOffsetX = (float) mCameraFocusIndicator.getWidth() / 2.0f;
-        final float offsetY = (float) (previewViewSize.height - mCameraPreviewContainer.getHeight()) / 2.0f;
-        final float centerOffsetY = (float) mCameraFocusIndicator.getHeight() / 2.0f;
+        final float offsetX = (previewViewSize.width - mCameraPreviewContainer.getWidth()) / 2.0f;
+        final float centerOffsetX = mCameraFocusIndicator.getWidth() / 2.0f;
+        final float offsetY = (previewViewSize.height - mCameraPreviewContainer.getHeight()) / 2.0f;
+        final float centerOffsetY = mCameraFocusIndicator.getHeight() / 2.0f;
 
         mCameraFocusIndicator.setX(point.x - offsetX - centerOffsetX);
         mCameraFocusIndicator.setY(point.y - offsetY - centerOffsetY);
@@ -939,20 +943,20 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                                 case NO_BACK_CAMERA:
                                 case OPEN_FAILED:
                                     handleError(GiniCaptureError.ErrorCode.CAMERA_OPEN_FAILED,
-                                            "Failed to open camera", cameraException);
+                                            FAILED_TO_OPEN_CAMERA_MESSAGE, cameraException);
                                     break;
                                 case NO_PREVIEW:
                                     handleError(GiniCaptureError.ErrorCode.CAMERA_NO_PREVIEW,
-                                            "Failed to open camera", cameraException);
+                                            FAILED_TO_OPEN_CAMERA_MESSAGE, cameraException);
                                     break;
                                 case SHOT_FAILED:
                                     handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
-                                            "Failed to open camera", cameraException);
+                                            FAILED_TO_OPEN_CAMERA_MESSAGE, cameraException);
                                     break;
                             }
                         } else {
                             handleError(GiniCaptureError.ErrorCode.CAMERA_UNKNOWN,
-                                    "Failed to open camera", throwable.getCause());
+                                    FAILED_TO_OPEN_CAMERA_MESSAGE, throwable.getCause());
                         }
                     } else {
                         LOG.info("Camera opened");
@@ -1026,7 +1030,6 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     }
 
     private void bindViews(final View view) {
-        mLayoutRoot = view.findViewById(R.id.gc_root);
         mCameraPreviewContainer = view.findViewById(R.id.gc_camera_preview_container);
         mImageCorners = view.findViewById(R.id.gc_camera_frame);
         mCameraFocusIndicator = view.findViewById(R.id.gc_camera_focus_indicator);
@@ -1088,58 +1091,64 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     }
 
     private void setTopBarInjectedViewContainer() {
-        if (GiniCapture.hasInstance()) {
-            topAdapterInjectedViewContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(GiniCapture.getInstance().internal().getNavigationBarTopAdapterInstance(), injectedViewAdapter -> {
-                if (mFragment.getActivity() == null)
-                    return;
-
-                if (isOnlyQRCodeScanningEnabled()) {
-                    injectedViewAdapter.setNavButtonType(NavButtonType.CLOSE);
-                } else if (mMultiPageDocument != null && !mMultiPageDocument.getDocuments().isEmpty()) {
-                    injectedViewAdapter.setNavButtonType(NavButtonType.BACK);
-                } else {
-                    injectedViewAdapter.setNavButtonType(NavButtonType.CLOSE);
-                }
-
-                if (isOnlyQRCodeScanningEnabled()) {
-                    injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_camera_info_label_only_qr));
-                } else {
-                    if (ContextHelper.isTablet(mFragment.getActivity())) {
-                        if (isQRCodeScanningAvailable()) {
-                            injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_camera_info_label_invoice_and_qr));
-                        } else {
-                            injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_camera_info_label_only_invoice));
-                        }
-                    } else {
-                        if (ContextHelper.isPortraitOrientation(mFragment.getActivity()))
-                            injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_title_camera));
-                        else if (isQRCodeScanningAvailable())
-                            injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_camera_top_bar_title_landscape));
-                        else
-                            injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_camera_info_label_only_invoice));
-                    }
-                }
-
-                if (!isOnlyQRCodeScanningEnabled()) {
-                    injectedViewAdapter.setMenuResource(R.menu.gc_camera);
-                    injectedViewAdapter.setOnMenuItemClickListener(new IntervalToolbarMenuItemIntervalClickListener(item -> {
-                        if (item.getItemId() == R.id.gc_action_show_onboarding) {
-                            startHelpActivity();
-                        } else {
-                            throw new UnsupportedOperationException("Unknown menu item id. Please don't call our OnMenuItemClickListener for custom menu items.");
-                        }
-                        return true;
-                    }));
-                }
-
-                injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> {
-                    trackCameraAccessPermissionRequiredCloseClickedEventIfNeeded();
-                    trackCameraScreenCloseTappedEventIfNeeded();
-                    onBackPressed();
-                }));
-            }));
-
+        if (!GiniCapture.hasInstance()) {
+            return;
         }
+        topAdapterInjectedViewContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(GiniCapture.getInstance().internal().getNavigationBarTopAdapterInstance(), injectedViewAdapter -> {
+            final Activity activity = mFragment.getActivity();
+            if (activity == null)
+                return;
+
+            injectedViewAdapter.setNavButtonType(getTopBarNavButtonType());
+            injectedViewAdapter.setTitle(activity.getString(getTopBarTitleRes(activity)));
+
+            if (!isOnlyQRCodeScanningEnabled()) {
+                injectedViewAdapter.setMenuResource(R.menu.gc_camera);
+                injectedViewAdapter.setOnMenuItemClickListener(new IntervalToolbarMenuItemIntervalClickListener(item -> {
+                    if (item.getItemId() == R.id.gc_action_show_onboarding) {
+                        startHelpActivity();
+                    } else {
+                        throw new UnsupportedOperationException("Unknown menu item id. Please don't call our OnMenuItemClickListener for custom menu items.");
+                    }
+                    return true;
+                }));
+            }
+
+            injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> {
+                trackCameraAccessPermissionRequiredCloseClickedEventIfNeeded();
+                trackCameraScreenCloseTappedEventIfNeeded();
+                onBackPressed();
+            }));
+        }));
+    }
+
+    @NonNull
+    private NavButtonType getTopBarNavButtonType() {
+        if (isOnlyQRCodeScanningEnabled()) {
+            return NavButtonType.CLOSE;
+        }
+        if (mMultiPageDocument != null && !mMultiPageDocument.getDocuments().isEmpty()) {
+            return NavButtonType.BACK;
+        }
+        return NavButtonType.CLOSE;
+    }
+
+    @StringRes
+    private int getTopBarTitleRes(@NonNull final Activity activity) {
+        if (isOnlyQRCodeScanningEnabled()) {
+            return R.string.gc_camera_info_label_only_qr;
+        }
+        if (ContextHelper.isTablet(activity)) {
+            return isQRCodeScanningAvailable()
+                    ? R.string.gc_camera_info_label_invoice_and_qr
+                    : R.string.gc_camera_info_label_only_invoice;
+        }
+        if (ContextHelper.isPortraitOrientation(activity)) {
+            return R.string.gc_title_camera;
+        }
+        return isQRCodeScanningAvailable()
+                ? R.string.gc_camera_top_bar_title_landscape
+                : R.string.gc_camera_info_label_only_invoice;
     }
 
 
@@ -1156,10 +1165,6 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                                     .getLoadingIndicatorAdapterInstance().getViewAdapter());
             mLoadingIndicator.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(adapterInstance, injectedViewAdapter -> {
             }));
-//            mLoadingIndicator.setInjectedViewAdapter(GiniCapture.getInstance().getloadingIndicatorAdapter());
-
-//            if (mLoadingIndicator.getInjectedViewAdapter() != null)
-//                mLoadingIndicator.getInjectedViewAdapter().onHidden();
         }
     }
 
@@ -1230,9 +1235,6 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     }
 
     private boolean isDocumentImportEnabled(@NonNull final Activity activity) {
-//        return getDocumentImportEnabledFileTypes()
-//                != DocumentImportEnabledFileTypes.NONE
-//                && FileChooserActivity.canChooseFiles(activity);
         return getDocumentImportEnabledFileTypes()
                 != DocumentImportEnabledFileTypes.NONE
                 && FileChooserFragment.canChooseFiles(activity);
@@ -1243,12 +1245,9 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             if (mUserAnalyticsEventTracker != null) {
                 mUserAnalyticsEventTracker.trackEvent(
                         UserAnalyticsEvent.CAPTURE_TAPPED,
-                        new HashSet<UserAnalyticsEventProperty>() {
-                            {
-                                add(new UserAnalyticsEventProperty.Screen(screenName));
-                                add(new UserAnalyticsEventProperty.IbanDetectionLayerVisible(isIbanDetectedOnceForUserAnalytics));
-                            }
-                        }
+                        new HashSet<>(Arrays.asList(
+                                new UserAnalyticsEventProperty.Screen(screenName),
+                                new UserAnalyticsEventProperty.IbanDetectionLayerVisible(isIbanDetectedOnceForUserAnalytics)))
                 );
             }
             onCameraTriggerClicked();
@@ -1258,12 +1257,9 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             if (mUserAnalyticsEventTracker != null) {
                 mUserAnalyticsEventTracker.trackEvent(
                         UserAnalyticsEvent.FLASH_TAPPED,
-                        new HashSet<UserAnalyticsEventProperty>() {
-                            {
-                                add(new UserAnalyticsEventProperty.Screen(screenName));
-                                add(new UserAnalyticsEventProperty.FlashActive(mCameraController.isFlashEnabled()));
-                            }
-                        }
+                        new HashSet<>(Arrays.asList(
+                                new UserAnalyticsEventProperty.Screen(screenName),
+                                new UserAnalyticsEventProperty.FlashActive(mCameraController.isFlashEnabled())))
                 );
             }
             mIsFlashEnabled = !mCameraController.isFlashEnabled();
@@ -1273,11 +1269,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         ClickListenerExtKt.setIntervalClickListener(mButtonImportDocument, v -> {
             if (mUserAnalyticsEventTracker != null) {
                 mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.IMPORT_FILES_TAPPED,
-                        new HashSet<UserAnalyticsEventProperty>() {
-                            {
-                                add(new UserAnalyticsEventProperty.Screen(screenName));
-                            }
-                        });
+                        new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
             }
             showFileChooser();
         });
@@ -1286,20 +1278,16 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             if (mUserAnalyticsEventTracker != null) {
                 mUserAnalyticsEventTracker.trackEvent(
                         UserAnalyticsEvent.MULTIPLE_PAGES_CAPTURED_TAPPED,
-                        new HashSet<UserAnalyticsEventProperty>() {
-                            {
-                                add(new UserAnalyticsEventProperty.Screen(screenName));
-                                add(new UserAnalyticsEventProperty.DocumentPageNumber(mMultiPageDocument.getDocuments().size()));
-                            }
-                        }
+                        new HashSet<>(Arrays.asList(
+                                new UserAnalyticsEventProperty.Screen(screenName),
+                                new UserAnalyticsEventProperty.DocumentPageNumber(mMultiPageDocument.getDocuments().size())))
                 );
             }
             onBackPressed();
         });
 
-        ClickListenerExtKt.setIntervalClickListener(mDetectionErrorDismissButton, v -> {
-            mDetectionErrorLayout.setVisibility(View.GONE);
-        });
+        ClickListenerExtKt.setIntervalClickListener(mDetectionErrorDismissButton,
+                v -> mDetectionErrorLayout.setVisibility(View.GONE));
     }
 
     @VisibleForTesting
@@ -1386,12 +1374,9 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             if (mUserAnalyticsEventTracker != null) {
                 mUserAnalyticsEventTracker.trackEvent(
                         UserAnalyticsEvent.QR_CODE_SCANNED,
-                        new HashSet<UserAnalyticsEventProperty>() {
-                            {
-                                add(new UserAnalyticsEventProperty.Screen(screenName));
-                                add(new UserAnalyticsEventProperty.QrCodeValid(validQRCode));
-                            }
-                        }
+                        new HashSet<>(Arrays.asList(
+                                new UserAnalyticsEventProperty.Screen(screenName),
+                                new UserAnalyticsEventProperty.QrCodeValid(validQRCode)))
                 );
             }
             shouldSendUserAnalyticsTrackerForQrCodes = false;
@@ -1642,41 +1627,43 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 return;
             }
             handleMultiPageDocumentAndCallListener(activity, data, uris);
-        } else {
-            final Uri uri = IntentHelper.getUri(data);
-            if (uri == null) {
-                LOG.error("Document import failed: Intent has no Uri");
-                showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
-                return;
-            }
-            if (!UriHelper.isUriInputStreamAvailable(uri, activity)) {
-                LOG.error("Document import failed: InputStream not available for the Uri");
-                showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
-                return;
-            }
+            return;
+        }
+        final Uri uri = IntentHelper.getUri(data);
+        if (uri == null) {
+            LOG.error("Document import failed: Intent has no Uri");
+            showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
+            return;
+        }
+        if (!UriHelper.isUriInputStreamAvailable(uri, activity)) {
+            LOG.error("Document import failed: InputStream not available for the Uri");
+            showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
+            return;
+        }
 
-            if (isImage(data, activity)) {
-                handleMultiPageDocumentAndCallListener(activity, data,
-                        Collections.singletonList(uri));
-            } else {
-                final int fileSizeLimit;
-                if (GiniCapture.hasInstance()) {
-                    fileSizeLimit = GiniCapture.getInstance().getImportedFileSizeBytesLimit();
-                } else {
-                    fileSizeLimit = FILE_SIZE_LIMIT;
-                }
-                final FileImportValidator fileImportValidator = new FileImportValidator(activity, fileSizeLimit);
-                if (fileImportValidator.matchesCriteria(data, uri)) {
-                    createSinglePageDocumentAndCallListener(data, activity);
-                } else {
-                    final FileImportValidator.Error error = fileImportValidator.getError();
-                    if (error != null) {
-                        Error errorClass = new Error(error);
-                        ErrorType errorType = ErrorType.typeFromError(errorClass, getGetEInvoiceFeatureEnabledUseCase().invoke());
-                        showGenericInvalidFileError(errorType);
-                    }
-                }
-            }
+        if (isImage(data, activity)) {
+            handleMultiPageDocumentAndCallListener(activity, data,
+                    Collections.singletonList(uri));
+        } else {
+            importNonImageDocumentFromIntent(activity, data, uri);
+        }
+    }
+
+    private void importNonImageDocumentFromIntent(@NonNull final Activity activity,
+            @NonNull final Intent data, @NonNull final Uri uri) {
+        final int fileSizeLimit = GiniCapture.hasInstance()
+                ? GiniCapture.getInstance().getImportedFileSizeBytesLimit()
+                : FILE_SIZE_LIMIT;
+        final FileImportValidator fileImportValidator = new FileImportValidator(activity, fileSizeLimit);
+        if (fileImportValidator.matchesCriteria(data, uri)) {
+            createSinglePageDocumentAndCallListener(data, activity);
+            return;
+        }
+        final FileImportValidator.Error error = fileImportValidator.getError();
+        if (error != null) {
+            final Error errorClass = new Error(error);
+            final ErrorType errorType = ErrorType.typeFromError(errorClass, getGetEInvoiceFeatureEnabledUseCase().invoke());
+            showGenericInvalidFileError(errorType);
         }
     }
 
@@ -2026,12 +2013,9 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         if (mUserAnalyticsEventTracker != null) {
             mUserAnalyticsEventTracker.trackEvent(
                     UserAnalyticsEvent.ERROR_DIALOG_SHOWN,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                            add(new UserAnalyticsEventProperty.ErrorMessage(errorMessage));
-                        }
-                    }
+                    new HashSet<>(Arrays.asList(
+                            new UserAnalyticsEventProperty.Screen(screenName),
+                            new UserAnalyticsEventProperty.ErrorMessage(errorMessage)))
             );
         }
         final Activity activity = mFragment.getActivity();
@@ -2059,9 +2043,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 },
                 null,
                 null,
-                (dialogInterface -> {
-                    resetGenericDialogState();
-                }));
+                dialogInterface -> resetGenericDialogState());
     }
 
     private void resetGenericDialogState() {
@@ -2077,96 +2059,82 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                     throwable);
             mCameraController.startPreview();
             setmIsTakingPicture(false);
-        } else {
-            if (photo != null) {
-                LOG.info("Picture taken");
-                getUpdateFlowTypeUseCase().execute(FlowType.Photo.INSTANCE);
-                setQrInvoiceRetrievalRunning(false);
-                showActivityIndicatorAndDisableInteraction();
-                photo.edit()
-                        .crop(mCameraPreview, getRectForCroppingFromImageFrame())
-                        .compressByDefault().applyAsync(new PhotoEdit.PhotoEditCallback() {
-                            @Override
-                            public void onDone(@NonNull final Photo result) {
-                                hideActivityIndicatorAndEnableInteraction();
-                                if (mInMultiPageState) {
-                                    final ImageDocument document = createSavedDocument(result);
-                                    if (document == null) {
-                                        handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
-                                                "Failed to take picture: could not save picture to disk",
-                                                null);
-                                        mCameraController.startPreview();
-                                        setmIsTakingPicture(false);
-                                        return;
-                                    }
-                                    mMultiPageDocument.addDocument(document);
-                                    mPhotoThumbnail.setImage(new PhotoThumbnail.ThumbnailBitmap(result.getBitmapPreview(),
-                                            document.getRotationForDisplay()));
-                                    mPhotoThumbnail.setImageCount(mMultiPageDocument.getDocuments().size());
-                                    proceedToMultiPageReviewScreen(true);
-                                } else {
-                                    if (isMultiPageEnabled()) {
-                                        final ImageDocument document = createSavedDocument(result);
-                                        if (document == null) {
-                                            handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
-                                                    "Failed to take picture: could not save picture to disk",
-                                                    null);
-                                            mCameraController.startPreview();
-                                            setmIsTakingPicture(false);
-                                            return;
-                                        }
-                                        mInMultiPageState = true;
-                                        mMultiPageDocument = new ImageMultiPageDocument(
-                                                Document.Source.newCameraSource(), ImportMethod.NONE);
-                                        GiniCapture.getInstance().internal()
-                                                .getImageMultiPageDocumentMemoryStore()
-                                                .setMultiPageDocument(mMultiPageDocument);
-                                        mMultiPageDocument.addDocument(document);
-                                        mPhotoThumbnail.setImage(
-                                                new PhotoThumbnail.ThumbnailBitmap(result.getBitmapPreview(),
-                                                        document.getRotationForDisplay()));
-                                        mPhotoThumbnail.setImageCount(mMultiPageDocument.getDocuments().size());
-                                        proceedToMultiPageReviewScreen(true);
-                                        setmIsTakingPicture(false);
-                                    } else {
-                                        final ImageDocument document = createSavedDocument(result);
-                                        if (document == null) {
-                                            handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
-                                                    "Failed to take picture: could not save picture to disk",
-                                                    null);
-                                            mCameraController.startPreview();
-                                            setmIsTakingPicture(false);
-                                            return;
-                                        }
-                                        final ImageMultiPageDocument multiPageDocument = new ImageMultiPageDocument(
-                                                Document.Source.newCameraSource(), ImportMethod.NONE);
-                                        GiniCapture.getInstance().internal()
-                                                .getImageMultiPageDocumentMemoryStore()
-                                                .setMultiPageDocument(multiPageDocument);
-                                        multiPageDocument.addDocument(document);
-                                        proceedToMultiPageReviewScreen(false);
-                                        setmIsTakingPicture(false);
-                                    }
-                                    mCameraController.startPreview();
-                                }
-                            }
-
-                            @Override
-                            public void onFailed() {
-                                hideActivityIndicatorAndEnableInteraction();
-                                handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
-                                        "Failed to take picture: picture compression failed", null);
-                                mCameraController.startPreview();
-                                setmIsTakingPicture(false);
-                            }
-                        });
-            } else {
-                handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
-                        "Failed to take picture: no picture from the camera", null);
-                mCameraController.startPreview();
-                setmIsTakingPicture(false);
-            }
+            return;
         }
+        if (photo == null) {
+            handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
+                    "Failed to take picture: no picture from the camera", null);
+            mCameraController.startPreview();
+            setmIsTakingPicture(false);
+            return;
+        }
+        LOG.info("Picture taken");
+        getUpdateFlowTypeUseCase().execute(FlowType.Photo.INSTANCE);
+        setQrInvoiceRetrievalRunning(false);
+        showActivityIndicatorAndDisableInteraction();
+        photo.edit()
+                .crop(mCameraPreview, getRectForCroppingFromImageFrame())
+                .compressByDefault().applyAsync(new PhotoEdit.PhotoEditCallback() {
+                    @Override
+                    public void onDone(@NonNull final Photo result) {
+                        hideActivityIndicatorAndEnableInteraction();
+                        onPictureEdited(result);
+                    }
+
+                    @Override
+                    public void onFailed() {
+                        hideActivityIndicatorAndEnableInteraction();
+                        handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
+                                "Failed to take picture: picture compression failed", null);
+                        mCameraController.startPreview();
+                        setmIsTakingPicture(false);
+                    }
+                });
+    }
+
+    private void onPictureEdited(@NonNull final Photo result) {
+        final ImageDocument document = createSavedDocument(result);
+        if (document == null) {
+            handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
+                    FAILED_TO_SAVE_PICTURE_MESSAGE,
+                    null);
+            mCameraController.startPreview();
+            setmIsTakingPicture(false);
+            return;
+        }
+        if (mInMultiPageState) {
+            addPageToMultiPageDocumentAndProceed(document, result);
+            return;
+        }
+        if (isMultiPageEnabled()) {
+            mInMultiPageState = true;
+            mMultiPageDocument = new ImageMultiPageDocument(
+                    Document.Source.newCameraSource(), ImportMethod.NONE);
+            GiniCapture.getInstance().internal()
+                    .getImageMultiPageDocumentMemoryStore()
+                    .setMultiPageDocument(mMultiPageDocument);
+            addPageToMultiPageDocumentAndProceed(document, result);
+            setmIsTakingPicture(false);
+        } else {
+            final ImageMultiPageDocument multiPageDocument = new ImageMultiPageDocument(
+                    Document.Source.newCameraSource(), ImportMethod.NONE);
+            GiniCapture.getInstance().internal()
+                    .getImageMultiPageDocumentMemoryStore()
+                    .setMultiPageDocument(multiPageDocument);
+            multiPageDocument.addDocument(document);
+            proceedToMultiPageReviewScreen(false);
+            setmIsTakingPicture(false);
+        }
+        mCameraController.startPreview();
+    }
+
+    private void addPageToMultiPageDocumentAndProceed(@NonNull final ImageDocument document,
+            @NonNull final Photo photo) {
+        mMultiPageDocument.addDocument(document);
+        mPhotoThumbnail.setImage(new PhotoThumbnail.ThumbnailBitmap(photo.getBitmapPreview(),
+                document.getRotationForDisplay()));
+        mPhotoThumbnail.setImageCount(mMultiPageDocument.getDocuments().size());
+        proceedToMultiPageReviewScreen(true);
     }
 
     private Rect getRectForCroppingFromImageFrame() {
@@ -2201,7 +2169,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 (dialogInterface, i) -> {
                     dialogInterface.dismiss();
                     resetGenericDialogState();
-                }, (dialogInterface) -> {
+                }, dialogInterface -> {
                     dialogInterface.dismiss();
                     resetGenericDialogState();
                 });
@@ -2212,6 +2180,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         if (!GiniCapture.hasInstance()) {
             LOG.error(
                     "Cannot save document. GiniCapture instance not available. Create it with GiniCapture.newInstance().");
+            return null;
         }
         final Activity activity = mFragment.getActivity();
         if (activity == null) {
@@ -2313,11 +2282,6 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             trackCameraAccessPermissionRequiredShownEvent();
             mLayoutNoPermission.setVisibility(View.VISIBLE);
         }
-    }
-
-    private boolean isNoPermissionViewVisible() {
-        return mLayoutNoPermission != null
-                && mLayoutNoPermission.getVisibility() == View.VISIBLE;
     }
 
     private void inflateNoPermissionStub() {
@@ -2433,62 +2397,74 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         mCameraController.setPreviewCallback(new CameraInterface.PreviewCallback() {
             @Override
             public void onPreviewFrame(@NonNull Image image, @NonNull Size imageSize, int rotation, @NonNull CameraInterface.PreviewFrameCallback previewFrameCallback) {
-                AtomicInteger previewFrameReferenceCount = new AtomicInteger();
-                if (ibanRecognizerFilter != null) {
-                    previewFrameReferenceCount.getAndIncrement();
-                }
-                if (mPaymentQRCodeReader != null) {
-                    previewFrameReferenceCount.getAndIncrement();
-                }
-
-                if (ibanRecognizerFilter != null) {
-                    try {
-                        if (cropToCameraFrameTextRecognizer != null) {
-                            cropToCameraFrameTextRecognizer.setCameraPreviewSize(new Size(mCameraPreview.getWidth(), mCameraPreview.getHeight()));
-                            cropToCameraFrameTextRecognizer.setImageSizeAndRotation(imageSize, rotation);
-                            cropToCameraFrameTextRecognizer.setCameraFrameRect(getRectForCroppingFromImageFrame());
-                        }
-
-                        ibanRecognizerFilter.processImage(image, imageSize.width, imageSize.height, rotation, () -> {
-                            previewFrameReferenceCount.getAndDecrement();
-                            if (previewFrameReferenceCount.get() == 0) {
-                                previewFrameCallback.onReleaseFrame();
-                            }
-                        });
-                    } catch (Exception e) {
-                        LOG.error("Failed to process image for IBAN recognition", e);
-                        previewFrameReferenceCount.getAndDecrement();
-                        if (previewFrameReferenceCount.get() == 0) {
-                            previewFrameCallback.onReleaseFrame();
-                        }
-                    }
-                }
-
-                if (mPaymentQRCodeReader != null) {
-                    mPaymentQRCodeReader.readFromImage(image, imageSize, rotation, () -> {
-                        previewFrameReferenceCount.getAndDecrement();
-                        if (previewFrameReferenceCount.get() == 0) {
-                            previewFrameCallback.onReleaseFrame();
-                        }
-                    });
-                }
+                processPreviewFrame(image, imageSize, rotation, previewFrameCallback);
             }
 
             @Override
             public void onPreviewFrame(@NonNull byte[] image, @NonNull Size imageSize, int rotation) {
-                if (mPaymentQRCodeReader != null) {
-                    mPaymentQRCodeReader.readFromByteArray(image, imageSize, rotation);
-                }
-                if (ibanRecognizerFilter != null) {
-                    try {
-                        ibanRecognizerFilter.processByteArray(image, imageSize.width, imageSize.height, rotation, () -> {
-                        });
-                    } catch (Exception e) {
-                        LOG.error("Failed to process image for IBAN recognition", e);
-                    }
-                }
+                processPreviewFrame(image, imageSize, rotation);
             }
         });
+    }
+
+    private void processPreviewFrame(@NonNull final Image image, @NonNull final Size imageSize,
+            final int rotation, @NonNull final CameraInterface.PreviewFrameCallback previewFrameCallback) {
+        // The frame is released once every consumer has finished with it
+        final AtomicInteger previewFrameReferenceCount = new AtomicInteger();
+        if (ibanRecognizerFilter != null) {
+            previewFrameReferenceCount.getAndIncrement();
+        }
+        if (mPaymentQRCodeReader != null) {
+            previewFrameReferenceCount.getAndIncrement();
+        }
+
+        if (ibanRecognizerFilter != null) {
+            recognizeIbanInPreviewFrame(image, imageSize, rotation,
+                    () -> releasePreviewFrameWhenUnused(previewFrameReferenceCount, previewFrameCallback));
+        }
+
+        if (mPaymentQRCodeReader != null) {
+            mPaymentQRCodeReader.readFromImage(image, imageSize, rotation,
+                    () -> releasePreviewFrameWhenUnused(previewFrameReferenceCount, previewFrameCallback));
+        }
+    }
+
+    private void recognizeIbanInPreviewFrame(@NonNull final Image image, @NonNull final Size imageSize,
+            final int rotation, @NonNull final IBANRecognizerFilter.ProcessingListener processingListener) {
+        try {
+            if (cropToCameraFrameTextRecognizer != null) {
+                cropToCameraFrameTextRecognizer.setCameraPreviewSize(new Size(mCameraPreview.getWidth(), mCameraPreview.getHeight()));
+                cropToCameraFrameTextRecognizer.setImageSizeAndRotation(imageSize, rotation);
+                cropToCameraFrameTextRecognizer.setCameraFrameRect(getRectForCroppingFromImageFrame());
+            }
+            ibanRecognizerFilter.processImage(image, imageSize.width, imageSize.height, rotation, processingListener);
+        } catch (Exception e) {
+            LOG.error("Failed to process image for IBAN recognition", e);
+            processingListener.onProcessingFinished();
+        }
+    }
+
+    private static void releasePreviewFrameWhenUnused(@NonNull final AtomicInteger referenceCount,
+            @NonNull final CameraInterface.PreviewFrameCallback previewFrameCallback) {
+        referenceCount.getAndDecrement();
+        if (referenceCount.get() == 0) {
+            previewFrameCallback.onReleaseFrame();
+        }
+    }
+
+    private void processPreviewFrame(@NonNull final byte[] image, @NonNull final Size imageSize,
+            final int rotation) {
+        if (mPaymentQRCodeReader != null) {
+            mPaymentQRCodeReader.readFromByteArray(image, imageSize, rotation);
+        }
+        if (ibanRecognizerFilter != null) {
+            try {
+                ibanRecognizerFilter.processByteArray(image, imageSize.width, imageSize.height, rotation, () -> {
+                });
+            } catch (Exception e) {
+                LOG.error("Failed to process image for IBAN recognition", e);
+            }
+        }
     }
 
     @VisibleForTesting
@@ -2565,11 +2541,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private void trackCameraScreenCloseTappedEventIfNeeded() {
         if ((mLayoutNoPermission == null || mLayoutNoPermission.getVisibility() != View.VISIBLE) && mUserAnalyticsEventTracker != null) {
             mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                        }
-                    });
+                    new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
         }
 
     }
@@ -2577,22 +2549,14 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private void trackCameraScreenShownEvent() {
         if (mUserAnalyticsEventTracker != null) {
             mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                        }
-                    });
+                    new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
         }
     }
 
     private void trackCameraScreenHelpTappedIfNeeded() {
         if ((mLayoutNoPermission == null || mLayoutNoPermission.getVisibility() != View.VISIBLE) && mUserAnalyticsEventTracker != null)
             mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.HELP_TAPPED,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                        }
-                    });
+                    new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
 
     }
 
@@ -2600,11 +2564,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         if (mUserAnalyticsEventTracker != null) {
             mUserAnalyticsEventTracker.trackEvent(
                     UserAnalyticsEvent.SCREEN_SHOWN,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(sScreenNamePermission));
-                        }
-                    }
+                    new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(sScreenNamePermission)))
             );
         }
     }
@@ -2612,33 +2572,21 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private void trackCameraAccessPermissionRequiredGetAccessClickedEvent() {
         if (mUserAnalyticsEventTracker != null) {
             mUserAnalyticsEventTracker.trackEvent(
-                    UserAnalyticsEvent.GIVE_ACCESS_TAPPED, new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(sScreenNamePermission));
-                        }
-                    });
+                    UserAnalyticsEvent.GIVE_ACCESS_TAPPED, new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(sScreenNamePermission))));
         }
     }
 
     private void trackCameraAccessPermissionRequiredHelpClickedEventIfNeeded() {
         if (mLayoutNoPermission != null && mLayoutNoPermission.getVisibility() == View.VISIBLE && mUserAnalyticsEventTracker != null)
             mUserAnalyticsEventTracker.trackEvent(
-                    UserAnalyticsEvent.HELP_TAPPED, new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(sScreenNamePermission));
-                        }
-                    });
+                    UserAnalyticsEvent.HELP_TAPPED, new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(sScreenNamePermission))));
 
     }
 
     private void trackCameraAccessPermissionRequiredCloseClickedEventIfNeeded() {
         if (mLayoutNoPermission != null && mLayoutNoPermission.getVisibility() == View.VISIBLE && mUserAnalyticsEventTracker != null)
             mUserAnalyticsEventTracker.trackEvent(
-                    UserAnalyticsEvent.CLOSE_TAPPED, new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(sScreenNamePermission));
-                        }
-                    });
+                    UserAnalyticsEvent.CLOSE_TAPPED, new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(sScreenNamePermission))));
 
     }
 

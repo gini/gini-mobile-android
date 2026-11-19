@@ -51,7 +51,7 @@ public class ProvidersAdapter extends RecyclerView.Adapter<ProvidersItemViewHold
             case SEPARATOR:
                 return createSeparatorItemViewHolder(parent);
             default:
-                return null;
+                throw new IllegalArgumentException("Unknown provider item view type: " + viewType);
         }
     }
 

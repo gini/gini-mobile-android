@@ -65,19 +65,14 @@ public class Helpers {
     }
 
     private static byte[] inputStreamToByteArray(final InputStream inputStream) throws IOException {
-        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        byte[] bytes;
-        try {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             final byte[] buffer = new byte[8192];
             int readBytes;
             while ((readBytes = inputStream.read(buffer)) != -1) {
                 outputStream.write(buffer, 0, readBytes);
             }
-            bytes = outputStream.toByteArray();
-        } finally {
-            outputStream.close();
+            return outputStream.toByteArray();
         }
-        return bytes;
     }
 
     public static Document createDocument(final byte[] jpeg, final int orientation,
@@ -110,24 +105,14 @@ public class Helpers {
     public static void copyAssetToStorage(@NonNull final String assetFilePath,
             @NonNull final String storageDirPath) throws IOException {
         final AssetManager assetManager = ApplicationProvider.getApplicationContext().getAssets();
-        InputStream inputStream = null;
-        OutputStream outputStream = null;
-        try {
-            inputStream = assetManager.open(assetFilePath);
+        try (InputStream inputStream = assetManager.open(assetFilePath)) {
             final File file = new File(storageDirPath,
                     Uri.parse(assetFilePath).getLastPathSegment());
-            if (file.exists() || file.createNewFile()) {
-                outputStream = new FileOutputStream(file);
-                copyFile(inputStream, outputStream);
-            } else {
+            if (!file.exists() && !file.createNewFile()) {
                 throw new IOException("Could not create file: " + file.getAbsolutePath());
             }
-        } finally {
-            if (inputStream != null) {
-                inputStream.close();
-            }
-            if (outputStream != null) {
-                outputStream.close();
+            try (OutputStream outputStream = new FileOutputStream(file)) {
+                copyFile(inputStream, outputStream);
             }
         }
     }
@@ -155,20 +140,11 @@ public class Helpers {
                 ApplicationProvider.getApplicationContext().getExternalFilesDir(null)
                         + File.separator +
                         filename);
-        FileOutputStream fileOutputStream = null;
-        try {
-            if (!file.exists() && !file.createNewFile()) {
-                throw new IOException("Could not create file: " + file.getAbsolutePath());
-            }
-            fileOutputStream = new FileOutputStream(file);
+        if (!file.exists() && !file.createNewFile()) {
+            throw new IOException("Could not create file: " + file.getAbsolutePath());
+        }
+        try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
             fileOutputStream.write(data, 0, data.length);
-        } finally {
-            if (fileOutputStream != null) {
-                try {
-                    fileOutputStream.close();
-                } catch (final IOException ignored) {
-                }
-            }
         }
     }
 
@@ -197,29 +173,28 @@ public class Helpers {
         int yIndex = 0;
         int uvIndex = frameSize;
 
-        int a, R, G, B, Y, U, V;
+        int r, g, b, y, u, v;
         int index = 0;
         for (int j = 0; j < height; j++) {
             for (int i = 0; i < width; i++) {
 
-                a = (argb[index] & 0xff000000) >> 24; // a is not used obviously
-                R = (argb[index] & 0xff0000) >> 16;
-                G = (argb[index] & 0xff00) >> 8;
-                B = (argb[index] & 0xff) >> 0;
+                r = (argb[index] & 0xff0000) >> 16;
+                g = (argb[index] & 0xff00) >> 8;
+                b = argb[index] & 0xff;
 
                 // well known RGB to YUV algorithm
-                Y = ((66 * R + 129 * G + 25 * B + 128) >> 8) + 16;
-                U = ((-38 * R - 74 * G + 112 * B + 128) >> 8) + 128;
-                V = ((112 * R - 94 * G - 18 * B + 128) >> 8) + 128;
+                y = ((66 * r + 129 * g + 25 * b + 128) >> 8) + 16;
+                u = ((-38 * r - 74 * g + 112 * b + 128) >> 8) + 128;
+                v = ((112 * r - 94 * g - 18 * b + 128) >> 8) + 128;
 
-                // NV21 has a plane of Y and interleaved planes of VU each sampled by a factor of 2
-                //    meaning for every 4 Y pixels there are 1 V and 1 U.  Note the sampling is every other
+                // NV21 has a plane of y and interleaved planes of VU each sampled by a factor of 2
+                //    meaning for every 4 y pixels there are 1 v and 1 u.  Note the sampling is every other
                 //    pixel AND every other scanline.
-                yuv420sp[yIndex++] = (byte) ((Y < 0) ? 0 : ((Y > 255) ? 255 : Y));
+                yuv420sp[yIndex++] = (byte) ((y < 0) ? 0 : ((y > 255) ? 255 : y));
                 if (j % 2 == 0 && index % 2 == 0
                         && yuv420sp.length > uvIndex + 2) {
-                    yuv420sp[uvIndex++] = (byte) ((V < 0) ? 0 : ((V > 255) ? 255 : V));
-                    yuv420sp[uvIndex++] = (byte) ((U < 0) ? 0 : ((U > 255) ? 255 : U));
+                    yuv420sp[uvIndex++] = (byte) ((v < 0) ? 0 : ((v > 255) ? 255 : v));
+                    yuv420sp[uvIndex++] = (byte) ((u < 0) ? 0 : ((u > 255) ? 255 : u));
                 }
 
                 index++;
@@ -241,7 +216,7 @@ public class Helpers {
         return new File(Helpers.getFileProviderDir(), assetFilePath);
     }
 
-    private static File createAndGetFileProviderDir() throws IOException {
+    private static File createAndGetFileProviderDir() {
         final File fileProviderDir = getFileProviderDir();
         if (!fileProviderDir.exists()) {
             //noinspection ResultOfMethodCallIgnored

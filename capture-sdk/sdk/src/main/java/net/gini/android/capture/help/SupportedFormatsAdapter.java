@@ -34,18 +34,18 @@ public class SupportedFormatsAdapter extends
         RecyclerView.Adapter<SupportedFormatsAdapter.FormatItemViewHolder> {
 
     private final List<Enum> mItems;
-    private Boolean isQRDocument;
+    private final boolean isQRDocument;
     private final boolean isEInvoiceEnabled;
     private final boolean isWeroQRCodeScanningEnabled;
 
-    public SupportedFormatsAdapter(Boolean isQrCodeDocument) {
+    public SupportedFormatsAdapter(final boolean isQrCodeDocument) {
         this(isQrCodeDocument,
                 CaptureSdkJavaInterop.getEInvoiceFeatureEnabledUseCase().invoke(),
                 CaptureSdkJavaInterop.getWeroQRCodeScanningEnabledUseCase().invoke());
     }
 
     @VisibleForTesting
-    SupportedFormatsAdapter(Boolean isQrCodeDocument,
+    SupportedFormatsAdapter(final boolean isQrCodeDocument,
                             boolean isEInvoiceEnabled,
                             boolean isWeroQRCodeScanningEnabled) {
         isQRDocument = isQrCodeDocument;

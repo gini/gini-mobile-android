@@ -2,7 +2,6 @@ package net.gini.android.capture.camera;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.Document;
@@ -17,7 +16,7 @@ import net.gini.android.capture.internal.fileimport.AbstractImportImageUrisAsync
 
 import androidx.annotation.NonNull;
 
-/**
+/*
  * Created by Alpar Szotyori on 23.03.2018.
  *
  * Copyright (c) 2018 Gini GmbH.

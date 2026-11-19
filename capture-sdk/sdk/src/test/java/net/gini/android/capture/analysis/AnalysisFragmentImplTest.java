@@ -76,7 +76,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         IngredientBrandTestKoin.unload();
         AnalysisFragmentCompatFake.sFragmentImplFactory = null;
         DialogShadow.cleanup();
@@ -85,7 +85,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_forwardAnalysisFragmentInterfaceMethods_toPresenter() throws Exception {
+    public void should_forwardAnalysisFragmentInterfaceMethods_toPresenter() {
         // Given
         final AnalysisScreenPresenter presenter = mock(AnalysisScreenPresenter.class);
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
@@ -96,13 +96,10 @@ public class AnalysisFragmentImplTest {
 
             // When
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.setListener(mock(AnalysisFragmentListener.class));
-                        }
+                    activity -> {
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
+                        analysisFragment.setListener(mock(AnalysisFragmentListener.class));
                     });
 
             // Then
@@ -124,11 +121,8 @@ public class AnalysisFragmentImplTest {
                                 Document.Source.newCameraSource(), Document.ImportMethod.NONE);
                         final AnalysisFragmentImpl analysisFragmentImpl = new AnalysisFragmentImpl(
                                 fragment,
-                                new CancelListener() {
-                                    @Override
-                                    public void onCancelFlow() {
-                                        // No-op
-                                    }
+                                () -> {
+                                    // No-op
                                 },
                                 document, null, false) {
 
@@ -150,7 +144,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_notShowScanAnimation_byDefault() throws Exception {
+    public void should_notShowScanAnimation_byDefault() {
         // Given
         GiniCapture.newInstance(InstrumentationRegistry.getInstrumentation().getTargetContext())
                 .setGiniCaptureNetworkService(mock(GiniCaptureNetworkService.class))
@@ -174,7 +168,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_showScanAnimation_whenRequested() throws Exception {
+    public void should_showScanAnimation_whenRequested() {
         // Given
         GiniCapture.newInstance(InstrumentationRegistry.getInstrumentation().getTargetContext())
                 .setGiniCaptureNetworkService(mock(GiniCaptureNetworkService.class))
@@ -188,16 +182,12 @@ public class AnalysisFragmentImplTest {
 
             // When
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
+                    activity -> {
 
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
 
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-
-                            analysisFragment.showScanAnimation(false);
-                        }
+                        analysisFragment.showScanAnimation(false);
                     });
 
             // Then
@@ -208,7 +198,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_hideScanAnimation_whenRequested() throws Exception {
+    public void should_hideScanAnimation_whenRequested() {
         // Given
         GiniCapture.newInstance(InstrumentationRegistry.getInstrumentation().getTargetContext())
                 .setGiniCaptureNetworkService(mock(GiniCaptureNetworkService.class))
@@ -222,14 +212,11 @@ public class AnalysisFragmentImplTest {
 
             // When
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showScanAnimation(false);
-                            analysisFragment.hideScanAnimation();
-                        }
+                    activity -> {
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
+                        analysisFragment.showScanAnimation(false);
+                        analysisFragment.hideScanAnimation();
                     });
 
             // Then
@@ -240,7 +227,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_waitForViewLayout_whenRequested() throws Exception {
+    public void should_waitForViewLayout_whenRequested() {
         // Given
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
                 new AtomicReference<>();
@@ -253,15 +240,12 @@ public class AnalysisFragmentImplTest {
 
             // When
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            final CompletableFuture<Void> future =
-                                    analysisFragment.waitForViewLayout();
-                            futureRef.set(future);
-                        }
+                    activity -> {
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
+                        final CompletableFuture<Void> future =
+                                analysisFragment.waitForViewLayout();
+                        futureRef.set(future);
                     });
         }
 
@@ -272,7 +256,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_showPdfTitle() throws Exception {
+    public void should_showPdfTitle() {
         // Given
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
                 new AtomicReference<>();
@@ -282,13 +266,10 @@ public class AnalysisFragmentImplTest {
 
             // When
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showPdfTitle("PdfTitle");
-                        }
+                    activity -> {
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
+                        analysisFragment.showPdfTitle("PdfTitle");
                     });
 
             // Then
@@ -298,7 +279,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_getSize_forPdfPreview() throws Exception {
+    public void should_getSize_forPdfPreview() {
         // Given
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
                 new AtomicReference<>();
@@ -311,13 +292,10 @@ public class AnalysisFragmentImplTest {
             pdfPreviewSize = new AtomicReference<>();
 
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            pdfPreviewSize.set(analysisFragment.getPdfPreviewSize());
-                        }
+                    activity -> {
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
+                        pdfPreviewSize.set(analysisFragment.getPdfPreviewSize());
                     });
 
             // Then
@@ -343,13 +321,10 @@ public class AnalysisFragmentImplTest {
             bitmap = photo.getBitmapPreview();
 
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showBitmap(bitmap, 0);
-                        }
+                    activity -> {
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
+                        analysisFragment.showBitmap(bitmap, 0);
                     });
 
             // Then
@@ -372,13 +347,10 @@ public class AnalysisFragmentImplTest {
             final Bitmap bitmap = photo.getBitmapPreview();
 
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showBitmap(bitmap, 180);
-                        }
+                    activity -> {
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
+                        analysisFragment.showBitmap(bitmap, 180);
                     });
 
             // Then
@@ -387,7 +359,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_showAlertDialog() throws Exception {
+    public void should_showAlertDialog() {
         // Given
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
                 new AtomicReference<>();
@@ -397,18 +369,15 @@ public class AnalysisFragmentImplTest {
 
             // When
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showAlertDialog("Message",
-                                    "PositiveButtonTitle",
-                                    mock(DialogInterface.OnClickListener.class),
-                                    "NegativeButtonTitle",
-                                    mock(DialogInterface.OnClickListener.class),
-                                    mock(DialogInterface.OnCancelListener.class));
-                        }
+                    activity -> {
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
+                        analysisFragment.showAlertDialog("Message",
+                                "PositiveButtonTitle",
+                                mock(DialogInterface.OnClickListener.class),
+                                "NegativeButtonTitle",
+                                mock(DialogInterface.OnClickListener.class),
+                                mock(DialogInterface.OnCancelListener.class));
                     });
 
             // Then
@@ -417,7 +386,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_showHints() throws Exception {
+    public void should_showHints() {
         // Given
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
                 new AtomicReference<>();
@@ -429,13 +398,10 @@ public class AnalysisFragmentImplTest {
             // When
             hints = AnalysisHint.getArray();
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showHints(hints);
-                        }
+                    activity -> {
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
+                        analysisFragment.showHints(hints);
                     });
 
             // Then
@@ -457,22 +423,16 @@ public class AnalysisFragmentImplTest {
 
             // When
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            try {
-                                analysisFragment.showWarning(WarningType.SCHEDULE_PAYMENT,
-                                        "13.08.2026", new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                // no-op: the call must fail before running this
-                                            }
-                                        }, null);
-                            } catch (final IllegalArgumentException e) {
-                                thrownRef.set(e);
-                            }
+                    activity -> {
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
+                        try {
+                            analysisFragment.showWarning(WarningType.SCHEDULE_PAYMENT,
+                                    "13.08.2026", () -> {
+                                        // no-op: the call must fail before running this
+                                    }, null);
+                        } catch (final IllegalArgumentException e) {
+                            thrownRef.set(e);
                         }
                     });
 
@@ -492,21 +452,15 @@ public class AnalysisFragmentImplTest {
 
             // When
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            activity.findViewById(R.id.gc_analysis_hint_container)
-                                    .setVisibility(android.view.View.VISIBLE);
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showWarning(WarningType.PAYMENT_DUE_DATE,
-                                    "13.08.2026", new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            // no-op: the test only verifies hint suppression
-                                        }
-                                    }, null);
-                        }
+                    activity -> {
+                        activity.findViewById(R.id.gc_analysis_hint_container)
+                                .setVisibility(android.view.View.VISIBLE);
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
+                        analysisFragment.showWarning(WarningType.PAYMENT_DUE_DATE,
+                                "13.08.2026", () -> {
+                                    // no-op: the test only verifies hint suppression
+                                }, null);
                     });
 
             // Then
@@ -527,26 +481,17 @@ public class AnalysisFragmentImplTest {
 
             // When
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            activity.findViewById(R.id.gc_analysis_hint_container)
-                                    .setVisibility(android.view.View.VISIBLE);
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showWarning(WarningType.SCHEDULE_PAYMENT,
-                                    "13.08.2026", new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            // no-op: the test only verifies hint suppression
-                                        }
-                                    }, new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            // no-op: the test only verifies hint suppression
-                                        }
-                                    });
-                        }
+                    activity -> {
+                        activity.findViewById(R.id.gc_analysis_hint_container)
+                                .setVisibility(android.view.View.VISIBLE);
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
+                        analysisFragment.showWarning(WarningType.SCHEDULE_PAYMENT,
+                                "13.08.2026", () -> {
+                                    // no-op: the test only verifies hint suppression
+                                }, () -> {
+                                    // no-op: the test only verifies hint suppression
+                                });
                     });
 
             // Then
@@ -567,21 +512,15 @@ public class AnalysisFragmentImplTest {
 
             // When
             scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            activity.findViewById(R.id.gc_analysis_hint_container)
-                                    .setVisibility(android.view.View.VISIBLE);
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showWarning(
-                                    WarningType.DOCUMENT_MARKED_AS_PAID, null, new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            // no-op: the test only verifies hint suppression
-                                        }
-                                    }, null);
-                        }
+                    activity -> {
+                        activity.findViewById(R.id.gc_analysis_hint_container)
+                                .setVisibility(android.view.View.VISIBLE);
+                        final AnalysisFragmentImpl analysisFragment =
+                                analysisFragmentImplRef.get();
+                        analysisFragment.showWarning(
+                                WarningType.DOCUMENT_MARKED_AS_PAID, null, () -> {
+                                    // no-op: the test only verifies hint suppression
+                                }, null);
                     });
 
             // Then
@@ -592,7 +531,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_startPresenter_onStart() throws Exception {
+    public void should_startPresenter_onStart() {
         // Given
         final AnalysisScreenPresenter presenter = mock(AnalysisScreenPresenter.class);
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
@@ -607,7 +546,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_stopHintsAnimatior_onStop() throws Exception {
+    public void should_stopHintsAnimatior_onStop() {
         // Given
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
                 new AtomicReference<>();
@@ -624,7 +563,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void shold_stopPresenter_onDestroy() throws Exception {
+    public void shold_stopPresenter_onDestroy() {
         // Given
         final AnalysisScreenPresenter presenter = mock(AnalysisScreenPresenter.class);
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
@@ -642,7 +581,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_finishPresenter_onDestroy_whenActivity_isFinishing() throws Exception {
+    public void should_finishPresenter_onDestroy_whenActivity_isFinishing() {
         // Given
         final AnalysisScreenPresenter presenter = mock(AnalysisScreenPresenter.class);
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
@@ -660,7 +599,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_notFinishPresenter_onDestroy_whenActivity_isNotFinishing() throws Exception {
+    public void should_notFinishPresenter_onDestroy_whenActivity_isNotFinishing() {
         // Given
         final AnalysisScreenPresenter presenter = mock(AnalysisScreenPresenter.class);
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =

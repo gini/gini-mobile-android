@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Parcel;
 
+import java.util.Objects;
 import net.gini.android.capture.internal.util.MimeType;
 import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLogger;
@@ -106,6 +107,20 @@ public class PdfDocument extends GiniCaptureDocument {
      *
      * @suppress
      */
+    @Override
+    public boolean equals(final Object o) {
+        if (!super.equals(o)) {
+            return false;
+        }
+        final PdfDocument that = (PdfDocument) o;
+        return Objects.equals(filename, that.filename);
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * super.hashCode() + (filename != null ? filename.hashCode() : 0);
+    }
+
     @Override
     public int describeContents() {
         return 0;

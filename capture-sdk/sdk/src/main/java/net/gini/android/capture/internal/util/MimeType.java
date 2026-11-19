@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
+/*
  * Created by Alpar Szotyori on 27.03.2018.
  *
  * Copyright (c) 2018 Gini GmbH.
@@ -58,7 +58,10 @@ public enum MimeType {
         return mMimeType;
     }
 
-    public boolean equals(final String mimeType) { // NOPMD
+    /**
+     * @return {@code true} if the given mime type string denotes this mime type
+     */
+    public boolean matches(final String mimeType) {
         return mMimeType.equals(mimeType);
     }
 }

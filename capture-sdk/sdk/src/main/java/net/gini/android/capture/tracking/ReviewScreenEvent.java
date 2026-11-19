@@ -6,7 +6,6 @@ package net.gini.android.capture.tracking;
  * Copyright (c) 2020 Gini GmbH.
  */
 
-import android.app.Activity;
 
 /**
  * Events triggered on the review screen.

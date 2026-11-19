@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.Date;
 
 /**
  * <p>
@@ -91,7 +90,7 @@ public final class GiniCaptureDebug {
         if (!sEnabled) {
             return;
         }
-        final long time = new Date().getTime();
+        final long time = System.currentTimeMillis();
         final String jpegFilename = time + suffix + ".jpeg";
         final File giniCaptureDir = createGiniCaptureDir(context);
         if (giniCaptureDir == null) {
@@ -99,7 +98,7 @@ public final class GiniCaptureDebug {
             return;
         }
         final File jpegFile = new File(giniCaptureDir, jpegFilename);
-        PhotoFactory.newPhotoFromDocument((ImageDocument) document).saveToFile(jpegFile);
+        PhotoFactory.newPhotoFromDocument(document).saveToFile(jpegFile);
         LOG.debug("Document written to {}", jpegFile.getAbsolutePath());
     }
 

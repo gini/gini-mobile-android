@@ -4,7 +4,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
-import java.text.DecimalFormatSymbols
 
 class DecimalInputVisualTransformation(
     private val currencyCode: String,
@@ -27,7 +26,6 @@ class DecimalInputVisualTransformation(
     }
 
     class CustomOffsetMapping(
-        private val formattingSymbols: DecimalFormatSymbols = DecimalFormatSymbols.getInstance(),
         private val source: String,
         private val formatted: String,
     ) : OffsetMapping {
@@ -44,9 +42,6 @@ class DecimalInputVisualTransformation(
          */
 
         override fun originalToTransformed(offset: Int): Int {
-            val thousandSeparatorCount =
-                formatted.count { it == formattingSymbols.groupingSeparator }
-
             val lastIndex = when (source.length) {
                 in 1..3 -> formatted.length
                 4 -> 5

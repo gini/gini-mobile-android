@@ -36,12 +36,15 @@ import java.util.LinkedHashMap;
 import java.util.Queue;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+
+import jersey.repackaged.jsr166e.CompletableFuture;
 
 /**
  * Created by Alpar Szotyori on 16.04.2018.
@@ -152,7 +155,7 @@ public class NetworkRequestsManagerTest {
                 networkRequestsManager.upload(mContext, document).get();
         // Then
         assertThat(firstRequestResult).isEqualTo(secondRequestResult);
-        Mockito.verify(mGiniCaptureNetworkService)
+        verify(mGiniCaptureNetworkService)
                 .upload(eq(document), any(GiniCaptureNetworkCallback.class));
     }
 
@@ -252,25 +255,21 @@ public class NetworkRequestsManagerTest {
             throws Exception {
         // Given
         final Queue<Runnable> uploadCompletionRunnables = new ConcurrentLinkedQueue<>();
+        final CountDownLatch deletionRequested = new CountDownLatch(1);
         // Simulate upload delays and queue completion to be executed on the main thread
         final GiniCaptureNetworkService networkService = spy(new GiniCaptureNetworkServiceStub() {
             @Override
             public CancellationToken upload(@NonNull final Document document,
                     @NonNull final GiniCaptureNetworkCallback<Result, Error> callback) {
-                final Thread delayThread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep((long) (200 + Math.random() * 300));
-                            uploadCompletionRunnables.add(new Runnable() {
-                                @Override
-                                public void run() {
-                                    callback.success(new Result(DEFAULT_DOCUMENT_ID, DEFAULT_DOCUMENT_FILENAME));
-                                }
-                            });
-                        } catch (final InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                final Thread delayThread = new Thread(() -> {
+                    try {
+                        // Complete the upload only after the deletion was requested
+                        deletionRequested.await();
+                        uploadCompletionRunnables.add(() -> {
+                            callback.success(new Result(DEFAULT_DOCUMENT_ID, DEFAULT_DOCUMENT_FILENAME));
+                        });
+                    } catch (final InterruptedException e) {
+                        e.printStackTrace();
                     }
                 });
                 delayThread.start();
@@ -285,14 +284,14 @@ public class NetworkRequestsManagerTest {
         // Wait for completion on a secondary thread
         final AtomicReference<NetworkRequestResult<GiniCaptureDocument>> requestResult =
                 new AtomicReference<>();
-        final Thread waitThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    requestResult.set(networkRequestsManager.delete(document).get());
-                } catch (final InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
+        final Thread waitThread = new Thread(() -> {
+            try {
+                final CompletableFuture<NetworkRequestResult<GiniCaptureDocument>> deletion =
+                        networkRequestsManager.delete(document);
+                deletionRequested.countDown();
+                requestResult.set(deletion.get());
+            } catch (final InterruptedException | ExecutionException e) {
+                e.printStackTrace();
             }
         });
         waitThread.start();
@@ -321,8 +320,7 @@ public class NetworkRequestsManagerTest {
         final ImageMultiPageDocument multiPageDocument =
                 GiniCaptureDocumentHelper.newMultiPageDocument();
         // When
-        final NetworkRequestResult<GiniCaptureDocument> requestResult =
-                networkRequestsManager.delete(multiPageDocument).get();
+        networkRequestsManager.delete(multiPageDocument).get();
     }
 
     @Test
@@ -371,25 +369,21 @@ public class NetworkRequestsManagerTest {
             throws Exception {
         // Given
         final Queue<Runnable> uploadCompletionRunnables = new ConcurrentLinkedQueue<>();
+        final CountDownLatch analysisRequested = new CountDownLatch(1);
         // Simulate upload delays and queue completion to be executed on the main thread
         final GiniCaptureNetworkService networkService = spy(new GiniCaptureNetworkServiceStub() {
             @Override
             public CancellationToken upload(@NonNull final Document document,
                     @NonNull final GiniCaptureNetworkCallback<Result, Error> callback) {
-                final Thread delayThread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep((long) (200 + Math.random() * 300));
-                            uploadCompletionRunnables.add(new Runnable() {
-                                @Override
-                                public void run() {
-                                    callback.success(new Result(DEFAULT_DOCUMENT_ID, DEFAULT_DOCUMENT_FILENAME));
-                                }
-                            });
-                        } catch (final InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                final Thread delayThread = new Thread(() -> {
+                    try {
+                        // Complete the uploads only after the analysis was requested
+                        analysisRequested.await();
+                        uploadCompletionRunnables.add(() -> {
+                            callback.success(new Result(DEFAULT_DOCUMENT_ID, DEFAULT_DOCUMENT_FILENAME));
+                        });
+                    } catch (final InterruptedException e) {
+                        e.printStackTrace();
                     }
                 });
                 delayThread.start();
@@ -408,14 +402,14 @@ public class NetworkRequestsManagerTest {
         // Wait for completion on a secondary thread
         final AtomicReference<NetworkRequestResult<GiniCaptureMultiPageDocument>> requestResult =
                 new AtomicReference<>();
-        final Thread waitThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    requestResult.set(networkRequestsManager.analyze(multiPageDocument).get());
-                } catch (final InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
+        final Thread waitThread = new Thread(() -> {
+            try {
+                final CompletableFuture<AnalysisNetworkRequestResult<GiniCaptureMultiPageDocument>>
+                        analysis = networkRequestsManager.analyze(multiPageDocument);
+                analysisRequested.countDown();
+                requestResult.set(analysis.get());
+            } catch (final InterruptedException | ExecutionException e) {
+                e.printStackTrace();
             }
         });
         waitThread.start();
@@ -489,12 +483,7 @@ public class NetworkRequestsManagerTest {
             @Override
             public CancellationToken delete(@NonNull final String giniApiDocumentId,
                     @NonNull final GiniCaptureNetworkCallback<Result, Error> callback) {
-                return new CancellationToken() {
-                    @Override
-                    public void cancel() {
-                        callback.cancelled();
-                    }
-                };
+                return callback::cancelled;
             }
         });
         final NetworkRequestsManager networkRequestsManager =

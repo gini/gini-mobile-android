@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.os.Build
 import android.telephony.TelephonyManager
+import androidx.core.os.ConfigurationCompat
 import org.slf4j.LoggerFactory
 import java.util.Locale
 
@@ -54,7 +55,9 @@ class DeviceInfo(private val context: Context) {
                 packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
                 return packageInfo.versionName
             } catch (e: PackageManager.NameNotFoundException) {
+                // The own package should always be found; report an unknown version otherwise
             } catch (e: Exception) {
+                // Package info is not essential for analytics; report an unknown version
             }
             return null
         }
@@ -88,19 +91,8 @@ class DeviceInfo(private val context: Context) {
 
 
         private val locale: Locale
-            get() {
-                val configuration = Resources.getSystem().configuration
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    val localeList = configuration.locales
-                    if (localeList.isEmpty) {
-                        return Locale.getDefault()
-                    } else {
-                        return localeList.get(0)
-                    }
-                } else {
-                    return configuration.locale
-                }
-            }
+            get() = ConfigurationCompat.getLocales(Resources.getSystem().configuration)[0]
+                ?: Locale.getDefault()
 
         private fun fetchLanguage(): String {
             return locale.language

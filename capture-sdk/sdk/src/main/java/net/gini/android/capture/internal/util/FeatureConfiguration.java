@@ -3,7 +3,7 @@ package net.gini.android.capture.internal.util;
 import net.gini.android.capture.DocumentImportEnabledFileTypes;
 import net.gini.android.capture.GiniCapture;
 
-/**
+/*
  * Created by Alpar Szotyori on 05.03.2018.
  *
  * Copyright (c) 2018 Gini GmbH.

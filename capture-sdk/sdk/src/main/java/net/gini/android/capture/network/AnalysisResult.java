@@ -10,7 +10,7 @@ import java.util.Map;
 
 import androidx.annotation.NonNull;
 
-/**
+/*
  * Created by Alpar Szotyori on 29.01.2018.
  * <p>
  * Copyright (c) 2018 Gini GmbH.

@@ -6,7 +6,7 @@ import net.gini.android.capture.internal.util.MimeType;
 
 import androidx.annotation.NonNull;
 
-/**
+/*
  * Created by Alpar Szotyori on 17.04.2018.
  *
  * Copyright (c) 2018 Gini GmbH.
@@ -49,10 +49,5 @@ public class PdfMultiPageDocument extends
     @Override
     public int describeContents() {
         return 0;
-    }
-
-    @Override
-    public void writeToParcel(@NonNull final Parcel dest, final int flags) {
-        super.writeToParcel(dest, flags);
     }
 }

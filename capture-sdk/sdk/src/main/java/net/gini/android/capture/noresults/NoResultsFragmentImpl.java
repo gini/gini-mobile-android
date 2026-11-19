@@ -36,6 +36,8 @@ import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 
 import static android.view.View.GONE;
@@ -59,7 +61,7 @@ class NoResultsFragmentImpl {
     private EnterManuallyButtonListener mListener;
     private TextView mTitleTextView;
     private UserAnalyticsEventTracker mUserAnalyticsEventTracker;
-    private final UserAnalyticsScreen screenName = UserAnalyticsScreen.NoResults.INSTANCE;
+    private static final UserAnalyticsScreen screenName = UserAnalyticsScreen.NoResults.INSTANCE;
 
     NoResultsFragmentImpl(@NonNull final FragmentImplCallback fragment,
                           @NonNull final Document document,
@@ -98,12 +100,9 @@ class NoResultsFragmentImpl {
                     )
             );
             mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                            add(new UserAnalyticsEventProperty.DocumentId(mDocument.getId()));
-                        }
-                    }
+                    new HashSet<>(Arrays.asList(
+                            new UserAnalyticsEventProperty.Screen(screenName),
+                            new UserAnalyticsEventProperty.DocumentId(mDocument.getId())))
             );
         }
         if (shouldAllowRetakeImages()) {
@@ -119,11 +118,7 @@ class NoResultsFragmentImpl {
         ClickListenerExtKt.setIntervalClickListener(enterManuallyButton, v -> {
             if (mUserAnalyticsEventTracker != null) {
                 mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.ENTER_MANUALLY_TAPPED,
-                        new HashSet<UserAnalyticsEventProperty>() {
-                            {
-                                add(new UserAnalyticsEventProperty.Screen(screenName));
-                            }
-                        });
+                        new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
             }
             mListener.onEnterManuallyPressed();
         });
@@ -201,9 +196,8 @@ class NoResultsFragmentImpl {
                                         ? mFragment.getActivity().getString(R.string.gc_title_no_results)
                                         : ""
                         );
-                        injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> {
-                            navigateToCameraScreen(UserAnalyticsEvent.CLOSE_TAPPED);
-                        }));
+                        injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(
+                                v -> navigateToCameraScreen(UserAnalyticsEvent.CLOSE_TAPPED)));
                     }
             ));
         }
@@ -212,11 +206,7 @@ class NoResultsFragmentImpl {
     private void navigateToCameraScreen(UserAnalyticsEvent event) {
         if (mUserAnalyticsEventTracker != null) {
             mUserAnalyticsEventTracker.trackEvent(event,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                        }
-                    });
+                    new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
         }
         mFragment.findNavController().navigate(NoResultsFragmentDirections.toCameraFragment());
     }

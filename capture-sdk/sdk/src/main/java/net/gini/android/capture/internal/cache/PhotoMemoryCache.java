@@ -13,7 +13,7 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 
-/**
+/*
  * Created by Alpar Szotyori on 16.03.2018.
  *
  * Copyright (c) 2018 Gini GmbH.

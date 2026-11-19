@@ -26,7 +26,6 @@ import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -66,9 +65,10 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
     // MTRANS_X and MTRANS_Y are the other values used. prevMatrix is the matrix
     // saved prior to the screen rotating.
     //
-    private Matrix matrix, prevMatrix;
+    private Matrix matrix;
+    private Matrix prevMatrix;
 
-    private static enum State {
+    private enum State {
         NONE,
         DRAG,
         ZOOM,
@@ -96,12 +96,16 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
     //
     // Size of view and previous view size (ie before rotation)
     //
-    private int prevViewWidth, prevViewHeight;
+    private int prevViewWidth;
+    private int prevViewHeight;
 
     //
     // Size of image when it is stretched to fit view. Before and After rotation.
     //
-    private float matchViewWidth, matchViewHeight, prevMatchViewWidth, prevMatchViewHeight;
+    private float matchViewWidth;
+    private float matchViewHeight;
+    private float prevMatchViewWidth;
+    private float prevMatchViewHeight;
 
     private ScaleGestureDetector mScaleDetector;
     private GestureDetector mGestureDetector;
@@ -758,17 +762,10 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
         matrix.getValues(m);
         final float x = m[Matrix.MTRANS_X];
 
-        if (getImageWidth() < getWidth()) {
-            return false;
-
-        } else if (x >= -1 && direction < 0) {
-            return false;
-
-        } else if (Math.abs(x) + getWidth() + 1 >= getImageWidth() && direction > 0) {
-            return false;
-        }
-
-        return true;
+        final boolean imageFitsView = getImageWidth() < getWidth();
+        final boolean atLeftEdge = x >= -1 && direction < 0;
+        final boolean atRightEdge = Math.abs(x) + getWidth() + 1 >= getImageWidth() && direction > 0;
+        return !imageFitsView && !atLeftEdge && !atRightEdge;
     }
 
     /**
@@ -1149,7 +1146,8 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
     private class Fling implements Runnable {
 
         CompatScroller scroller;
-        int currX, currY;
+        int currX;
+        int currY;
 
         Fling(final int velocityX, final int velocityY) {
             setState(State.FLING);
@@ -1179,7 +1177,7 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
                 minY = maxY = startY;
             }
 
-            scroller.fling(startX, startY, (int) velocityX, (int) velocityY, minX,
+            scroller.fling(startX, startY, velocityX, velocityY, minX,
                     maxX, minY, maxY);
             currX = startX;
             currY = startY;
@@ -1303,12 +1301,5 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
             this.focusY = focusY;
             this.scaleType = scaleType;
         }
-    }
-
-    private void printMatrixInfo() {
-        final float[] n = new float[9];
-        matrix.getValues(n);
-        Log.d(DEBUG, "Scale: " + n[Matrix.MSCALE_X] + " TransX: " + n[Matrix.MTRANS_X] + " TransY: "
-                + n[Matrix.MTRANS_Y]);
     }
 }

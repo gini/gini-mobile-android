@@ -1,6 +1,6 @@
 package net.gini.android.capture.network;
 
-/**
+/*
  * Created by Alpar Szotyori on 22.02.2018.
  *
  * Copyright (c) 2018 Gini GmbH.

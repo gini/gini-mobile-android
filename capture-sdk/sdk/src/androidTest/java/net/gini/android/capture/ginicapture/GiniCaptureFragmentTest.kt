@@ -16,7 +16,7 @@ import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureFragment
-import net.gini.android.capture.GiniCaptureHelperForInstrumentationTests
+import net.gini.android.capture.GiniCaptureInstanceTestHelper
 import net.gini.android.capture.di.CaptureSdkIsolatedKoinContext
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.internal.document.ImageMultiPageDocumentMemoryStore
@@ -69,7 +69,7 @@ class GiniCaptureFragmentTest {
      * the [GiniBankConfigurationProvider], for that we need to load and unload the module,
      * other wise an exception will be thrown from koin for not loaded module.
      * In the end, we need to set the mocked [GiniCapture] instance, and we have a helper class
-     * [GiniCaptureHelperForInstrumentationTests] for that.
+     * [GiniCaptureInstanceTestHelper] for that.
      *
      * */
 
@@ -96,7 +96,7 @@ class GiniCaptureFragmentTest {
             InjectedViewAdapterInstance(DefaultLoadingIndicatorAdapter())
         )
 
-        GiniCaptureHelperForInstrumentationTests.setGiniCaptureInstance(giniCapture)
+        GiniCaptureInstanceTestHelper.setGiniCaptureInstance(giniCapture)
     }
 
 
