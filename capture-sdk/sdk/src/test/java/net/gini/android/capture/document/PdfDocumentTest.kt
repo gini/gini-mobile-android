@@ -38,6 +38,20 @@ class PdfDocumentTest {
     }
 
     @Test
+    fun `has no filename when it cannot be determined from the uri`() {
+        val document = PdfDocument(
+            null,
+            Uri.fromFile(File(context.cacheDir, "missing.pdf")),
+            Document.Source.newExternalSource(),
+            Document.ImportMethod.PICKER
+        )
+
+        document.loadFilename(context)
+
+        assertThat(document.filename).isNull()
+    }
+
+    @Test
     fun `hash code takes the filename into account`() {
         val document = newPdfDocument()
         val hashCodeWithoutFilename = document.hashCode()
