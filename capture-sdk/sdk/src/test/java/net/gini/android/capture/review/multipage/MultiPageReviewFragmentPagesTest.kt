@@ -32,6 +32,7 @@ import net.gini.android.capture.document.ImageDocument
 import net.gini.android.capture.document.ImageDocumentFake
 import net.gini.android.capture.document.ImageMultiPageDocument
 import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
+import net.gini.android.capture.network.GiniCaptureNetworkService
 import net.gini.android.capture.saveinvoiceslocally.GetSaveInvoicesLocallyFeatureEnabledUseCase
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import org.junit.After
@@ -195,6 +196,34 @@ class MultiPageReviewFragmentPagesTest {
             val tabIndicator = fragment.requireView().findViewById<TabLayout>(R.id.gc_tab_indicator)
             assertThat(tabIndicator.tabCount).isEqualTo(3)
         }
+    }
+
+    @Test
+    fun `clears the pages when the screen is left without proceeding`() {
+        GiniCapture.Builder()
+            .setMultiPageEnabled(true)
+            .setGiniCaptureNetworkService(mockk<GiniCaptureNetworkService>(relaxed = true))
+            .build()
+        storeMultiPageDocument(pageCount = 2)
+
+        launchReviewFragment { }
+
+        assertThat(
+            GiniCapture.getInstance().internal().imageMultiPageDocumentMemoryStore.multiPageDocument
+        ).isNull()
+    }
+
+    @Test
+    fun `keeps the pages when the screen is left to analyze them`() {
+        val multiPageDocument = storeMultiPageDocument(pageCount = 2)
+
+        launchReviewFragment { fragment ->
+            fragment.onNextButtonClicked()
+        }
+
+        assertThat(
+            GiniCapture.getInstance().internal().imageMultiPageDocumentMemoryStore.multiPageDocument
+        ).isSameInstanceAs(multiPageDocument)
     }
 
     private fun storeMultiPageDocument(pageCount: Int): ImageMultiPageDocument {
