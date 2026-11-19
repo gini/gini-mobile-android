@@ -11,6 +11,7 @@ import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.hasClickAction
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isSelectable
 import androidx.compose.ui.test.isSelected
@@ -21,7 +22,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import net.gini.android.capture.R
-import net.gini.android.capture.internal.iban.formatIbanForDisplay
+import net.gini.android.capture.internal.iban.formatIbanForSpeech
 import net.gini.android.capture.ui.components.GiniComposableStyleProviderConfig
 import net.gini.android.capture.ui.theme.GiniTheme
 import org.junit.Rule
@@ -200,11 +201,13 @@ class IBANSelectionSheetTest {
     }
 
     /**
-     * The row of [iban]. A row is one merged node holding the label and the formatted IBAN as
-     * texts; the label repeats on the printed rows, so the IBAN identifies the row.
+     * The row of [iban]. A row is one node described by its label and the spelled-out IBAN; the
+     * label repeats on the printed rows, so the IBAN identifies the row.
      */
     private fun row(iban: String): SemanticsNodeInteraction =
-        composeRule.onNode(hasText(formatIbanForDisplay(iban)) and isSelectable())
+        composeRule.onNode(
+            hasContentDescription(formatIbanForSpeech(iban), substring = true) and isSelectable()
+        )
 
     private fun continueButton(): SemanticsNodeInteraction =
         composeRule.onNode(hasText(string(R.string.gc_fraud_select_iban_continue)) and hasClickAction())
