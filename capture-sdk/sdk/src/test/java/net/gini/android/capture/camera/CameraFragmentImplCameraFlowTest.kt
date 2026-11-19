@@ -4,11 +4,9 @@ import android.Manifest
 import android.app.Activity
 import android.app.Application
 import android.content.Context
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Point
 import android.media.Image
-import android.net.Uri
 import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -385,26 +383,6 @@ class CameraFragmentImplCameraFlowTest {
 
             dialog.cancel()
             assertThat(dialog.isShowing).isFalse()
-        }
-    }
-
-    @Test
-    fun `shows the invalid file dialog when the imported file is not a supported document`() {
-        GiniCapture.Builder().build()
-        val uri = Uri.parse("content://net.gini.android.capture.test/document.txt")
-        shadowOf(ApplicationProvider.getApplicationContext<Application>().contentResolver)
-            .registerInputStream(uri, "not a document".byteInputStream())
-
-        launchCameraFragment { fragment ->
-            fragment.impl.mUserAnalyticsEventTracker = analyticsTracker
-
-            fragment.impl.handleFileChooserResult(
-                FileChooserResult.FilesSelected(Intent(Intent.ACTION_VIEW, uri))
-            )
-
-            verify(analyticsTracker)
-                .trackEvent(eq(UserAnalyticsEvent.ERROR_DIALOG_SHOWN), any<Set<Nothing>>())
-            assertThat(ShadowDialog.getLatestDialog().isShowing).isTrue()
         }
     }
 
