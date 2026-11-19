@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -48,8 +49,8 @@ fun GiniLabeledValue(
         modifier = modifier
             .fillMaxWidth()
             .semantics(mergeDescendants = true) {
-                // Set on the merged node, not on the value Text: a contentDescription inside a
-                // merged node would replace the whole announcement and drop label and hint.
+                // The description stands for the whole row: label, spoken value and hint. The
+                // texts below are cleared from semantics in that case, see the Column.
                 if (valueContentDescription != null) {
                     contentDescription = listOfNotNull(label, valueContentDescription, hint)
                         .joinToString(separator = ", ")
@@ -62,7 +63,17 @@ fun GiniLabeledValue(
             leadingContent()
         }
         Column(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .then(
+                    if (valueContentDescription != null) {
+                        // Merging adds the texts to the row's description instead of replacing
+                        // them, and TalkBack would read the row twice.
+                        Modifier.clearAndSetSemantics {}
+                    } else {
+                        Modifier
+                    }
+                ),
             verticalArrangement = Arrangement.spacedBy(TEXT_SPACING),
         ) {
             Text(
