@@ -7,8 +7,11 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Point
 import android.media.Image
+import android.provider.Settings
 import android.view.View
+import android.widget.ImageButton
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.testing.FragmentScenario
@@ -30,12 +33,15 @@ import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import jersey.repackaged.jsr166e.CompletableFuture
+import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureError
 import net.gini.android.capture.GiniCaptureHelper
 import net.gini.android.capture.R
 import net.gini.android.capture.di.CaptureSdkIsolatedKoinContext
 import net.gini.android.capture.document.ImageDocument
+import net.gini.android.capture.document.ImageDocumentFake
+import net.gini.android.capture.document.ImageMultiPageDocument
 import net.gini.android.capture.internal.camera.api.CameraInterface
 import net.gini.android.capture.internal.camera.photo.Photo
 import net.gini.android.capture.internal.camera.photo.PhotoEdit
@@ -43,6 +49,7 @@ import net.gini.android.capture.internal.fileimport.FileChooserResult
 import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
 import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.internal.util.Size
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
 import org.junit.After
@@ -72,6 +79,9 @@ class CameraFragmentImplCameraFlowTest {
     private lateinit var fragmentListener: CameraFragmentListener
     private lateinit var analyticsTracker: UserAnalyticsEventTracker
 
+    private val application: Application
+        get() = ApplicationProvider.getApplicationContext()
+
     @Before
     fun setUp() {
         CaptureSdkIsolatedKoinContext.koin.loadModules(listOf(koinTestModule))
@@ -96,6 +106,7 @@ class CameraFragmentImplCameraFlowTest {
     @After
     fun tearDown() {
         GiniCaptureHelper.setGiniCaptureInstance(null)
+        UserAnalytics.cleanup()
         CaptureSdkIsolatedKoinContext.koin.unloadModules(listOf(koinTestModule))
     }
 
@@ -177,6 +188,39 @@ class CameraFragmentImplCameraFlowTest {
 
             assertCameraShotFailedWasReported()
             verify(navController, never()).navigate(any<NavDirections>())
+        }
+    }
+
+    @Test
+    fun `reports an error when the picture cannot be saved because GiniCapture was cleaned up`() {
+        GiniCapture.Builder().build()
+        val photo = newPhoto()
+        whenever(cameraController.takePicture()).thenReturn(CompletableFuture.completedFuture(photo))
+
+        launchCameraFragment { fragment ->
+            GiniCaptureHelper.setGiniCaptureInstance(null)
+
+            takePicture(fragment)
+
+            assertCameraShotFailedWasReported()
+            verify(navController, never()).navigate(CameraFragmentDirections.toReviewFragment(false))
+        }
+    }
+
+    @Test
+    fun `adds the picture to the pages that were already taken`() {
+        GiniCapture.Builder().setMultiPageEnabled(true).build()
+        val existingPages = ImageMultiPageDocument(Document.Source.newCameraSource(), Document.ImportMethod.NONE)
+        existingPages.addDocument(ImageDocumentFake())
+        GiniCapture.getInstance().internal().imageMultiPageDocumentMemoryStore.setMultiPageDocument(existingPages)
+        val photo = newPhoto()
+        whenever(cameraController.takePicture()).thenReturn(CompletableFuture.completedFuture(photo))
+
+        launchCameraFragment { fragment ->
+            takePicture(fragment)
+
+            assertThat(existingPages.documents).hasSize(2)
+            assertThat(storedMultiPageDocument()).isSameInstanceAs(existingPages)
         }
     }
 
@@ -348,6 +392,89 @@ class CameraFragmentImplCameraFlowTest {
                 .isEqualTo(fragment.getString(R.string.gc_camera_info_label_only_invoice))
         }
     }
+
+    @Test
+    @Config(qualifiers = "land")
+    fun `shows the landscape title on phones in landscape with QR code scanning`() {
+        GiniCapture.Builder().setQRCodeScanningEnabled(true).build()
+
+        launchCameraFragment { fragment ->
+            assertThat(topBarTitle(fragment))
+                .isEqualTo(fragment.getString(R.string.gc_camera_top_bar_title_landscape))
+        }
+    }
+
+    @Test
+    @Config(qualifiers = "sw600dp")
+    fun `shows the invoice and QR code title on tablets with QR code scanning`() {
+        GiniCapture.Builder().setQRCodeScanningEnabled(true).build()
+
+        launchCameraFragment { fragment ->
+            assertThat(topBarTitle(fragment))
+                .isEqualTo(fragment.getString(R.string.gc_camera_info_label_invoice_and_qr))
+        }
+    }
+
+    @Test
+    fun `goes back when the top bar navigation button is clicked`() {
+        GiniCapture.Builder().build()
+        UserAnalytics.initialize(application)
+
+        launchCameraFragment { fragment ->
+            val toolbar = fragment.requireView().findViewById<Toolbar>(R.id.gc_navigation_bar)
+
+            toolbar.children.filterIsInstance<ImageButton>().first().performClick()
+
+            verify(navController).popBackStack()
+        }
+    }
+
+    // endregion
+
+    // region Missing camera permission
+
+    @Test
+    fun `opens the app settings when access is requested on the missing permission view`() {
+        GiniCapture.Builder().build()
+        UserAnalytics.initialize(application)
+        shadowOf(application).denyPermissions(Manifest.permission.CAMERA)
+
+        launchCameraFragment { fragment ->
+            fragment.requireView().findViewById<View>(R.id.gc_button_camera_no_permission).performClick()
+
+            assertThat(shadowOf(application).nextStartedActivity.action)
+                .isEqualTo(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        }
+    }
+
+    @Test
+    fun `opens the help screen from the missing permission view`() {
+        GiniCapture.Builder().build()
+        UserAnalytics.initialize(application)
+        shadowOf(application).denyPermissions(Manifest.permission.CAMERA)
+
+        launchCameraFragment { fragment ->
+            fragment.impl.startHelpActivity()
+
+            verify(navController).navigate(CameraFragmentDirections.toHelpFragment())
+        }
+    }
+
+    @Test
+    fun `opens the help screen from the camera`() {
+        GiniCapture.Builder().build()
+        UserAnalytics.initialize(application)
+
+        launchCameraFragment { fragment ->
+            fragment.impl.startHelpActivity()
+
+            verify(navController).navigate(CameraFragmentDirections.toHelpFragment())
+        }
+    }
+
+    // endregion
+
+    // region Top bar in QR code only mode
 
     @Test
     fun `shows the QR code only title when only QR code scanning is enabled`() {
