@@ -4,7 +4,6 @@ import android.os.SystemClock
 import androidx.test.espresso.Espresso.pressBack
 import net.gini.android.bank.sdk.exampleapp.ui.resources.CreditNoteFixtures
 import net.gini.android.bank.sdk.exampleapp.ui.resources.ScreenLoadingIndicatorConfigurator
-import net.gini.android.bank.sdk.exampleapp.ui.screens.AnalysisScreen
 import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockScenario
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -33,7 +32,6 @@ import org.junit.Test
  */
 class IngredientBrandTests : WarningBottomSheetTestBase() {
 
-    private val analysisScreen = AnalysisScreen()
 
     /** R1, R3, R7: the badge in its designed place and the Gini mark instead of the spinner. */
     @Test

@@ -80,8 +80,11 @@ run_group "ui" \
 run_group "digitalinvoice" \
   DigitalInvoiceScreenTests DigitalInvoiceEditButtonTests
 
+# NoResultsMockBackendTests' three QR tests always skip on BrowserStack (no QR code in
+# front of the camera) — expected, see bs_run_group_extraction.sh.
 run_group "extraction" \
-  ExtractionScreenTests ReviewScreenTests NoResultsTests ProductTagConfigurationTests
+  ExtractionScreenTests ReviewScreenTests NoResultsTests NoResultsMockBackendTests \
+  ProductTagConfigurationTests
 
 run_group "import" \
   ImportPdfImageTests FileImportErrorDialogTests ErrorScreenTests OpenWithTest
@@ -114,6 +117,13 @@ run_group "ingredientbrand" \
 BS_DISABLE_ANIMATIONS=false run_group "ingredientbrand_education" \
   IngredientBrandEducationTests \
   IngredientBrandLandscapeEducationTests
+
+# Canned backend — every error screen on demand, including no internet (PP-3918).
+# Only this class: bs_run_group_errorscreens.sh also lists ErrorScreenTests, NoResultsTests,
+# FileImportErrorDialogTests and an OpenWithTest method, which run here in the import and
+# extraction groups already.
+run_group "errorscreens" \
+  ErrorAndNoResultScreenMockBackendTests
 
 # DigitalInvoiceSkontoTests is left out on purpose — see bs_run_group_smoke.sh's header.
 run_group "smokejourneys" \

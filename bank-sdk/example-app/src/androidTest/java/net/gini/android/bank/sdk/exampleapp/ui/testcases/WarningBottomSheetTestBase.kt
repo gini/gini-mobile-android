@@ -19,6 +19,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.resources.ReturnAssistantSkontoCo
 import net.gini.android.bank.sdk.exampleapp.ui.resources.TransactionDocsConfigurator
 import net.gini.android.bank.sdk.exampleapp.ui.resources.RetryRule
 import net.gini.android.bank.sdk.exampleapp.ui.resources.SimpleIdlingResource
+import net.gini.android.bank.sdk.exampleapp.ui.screens.AnalysisScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.CaptureScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.ConfigurationScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.DigitalInvoiceScreen
@@ -27,6 +28,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.screens.MainScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.OnboardingScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.ReviewScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.WarningBottomSheetScreen
+import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockAnalysisFailure
 import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockBackend
 import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockClientConfiguration
 import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockScenario
@@ -74,6 +76,7 @@ abstract class WarningBottomSheetTestBase {
     protected val extractionScreen = ExtractionScreen()
     protected val warningBottomSheet = WarningBottomSheetScreen()
     protected val digitalInvoiceScreen = DigitalInvoiceScreen()
+    protected val analysisScreen = AnalysisScreen()
     protected lateinit var idlingResource: SimpleIdlingResource
 
     private val testProperties = Properties().apply {
@@ -157,6 +160,7 @@ abstract class WarningBottomSheetTestBase {
      * [ingredientBrandScreens] and [qrCodeEducationEnabled] are server-side too; both default to
      * off. [analysisDelayMillis] keeps the analysis pending that long, so a test can look at the
      * Analysis screen while it runs. [configurationFails] makes the `/configurations` request fail.
+     * [analysisFailure] picks the error screen for [UiTestMockScenario.ANALYSIS_ERROR].
      *
      * [fraudSignalsEnabled] is the server-side gate of the fraud prevention (IBAN mismatch)
      * warning; [alreadyPaidHintEnabled], [paymentDueHintEnabled] and [paymentScheduleHintEnabled]
@@ -177,7 +181,8 @@ abstract class WarningBottomSheetTestBase {
         fraudSignalsEnabled: Boolean = false,
         alreadyPaidHintEnabled: Boolean = false,
         paymentDueHintEnabled: Boolean = false,
-        paymentScheduleHintEnabled: Boolean = false
+        paymentScheduleHintEnabled: Boolean = false,
+        analysisFailure: UiTestMockAnalysisFailure = UiTestMockAnalysisFailure.GENERIC
     ) {
         UiTestMockBackend.arm(
             scenario = scenario,
@@ -193,7 +198,8 @@ abstract class WarningBottomSheetTestBase {
                 paymentScheduleHintEnabled = paymentScheduleHintEnabled
             ),
             analysisDelayMillis = analysisDelayMillis,
-            configurationFails = configurationFails
+            configurationFails = configurationFails,
+            analysisFailure = analysisFailure
         )
     }
 
@@ -214,6 +220,28 @@ abstract class WarningBottomSheetTestBase {
         idlingResource.waitForIdle()
         reviewScreen.assertReviewTitleIsDisplayed()
         reviewScreen.clickProcessButton()
+    }
+
+    /**
+     * Opens the camera and waits for it to detect a SEPA payment QR code. Camera image injection
+     * is not available for Espresso (BrowserStack rejects it), so the camera must really see one:
+     * on a local device hold the back camera in front of `src/androidTest/assets/sepa_payment_qr_poster.png`.
+     * When nothing is detected within [QR_DETECTION_TIMEOUT_MS] the test is SKIPPED (an
+     * `Assume`, never retried by [RetryRule]) — never passed, never failed. On BrowserStack the
+     * camera only sees the device rack, so every caller always skips there.
+     *
+     * Shared by the QR-driven suites ([IngredientBrandQrOverlayTests], [NoResultsMockBackendTests])
+     * so the skip rule has one definition. [IngredientBrandLandscapeTests] has its own `openCameraInLandscapeAndScanQrCode`
+     * because it turns the device between two scans.
+     */
+    protected fun openCameraAndScanQrCode() {
+        mainScreen.clickPhotoPaymentButton()
+        onboardingScreen.clickSkipButtonIfPresent()
+        Assume.assumeTrue(
+            "No SEPA payment QR code in front of the camera — hold the device in front of " +
+                "sepa_payment_qr_poster.png. Always skipped on BrowserStack.",
+            analysisScreen.waitForQrCodeDetected(QR_DETECTION_TIMEOUT_MS)
+        )
     }
 
     protected fun uploadFixtureInvoiceAndProcess(assetName: String) {
@@ -297,5 +325,10 @@ abstract class WarningBottomSheetTestBase {
     private fun cancelTestIfRunOnCi() {
         val ignoreTests = testProperties["ignoreLocalTests"] as? String
         Assume.assumeTrue(ignoreTests != "true")
+    }
+
+    companion object {
+        /** How long [openCameraAndScanQrCode] gives the camera to detect a QR code before skipping. */
+        const val QR_DETECTION_TIMEOUT_MS = 20_000L
     }
 }

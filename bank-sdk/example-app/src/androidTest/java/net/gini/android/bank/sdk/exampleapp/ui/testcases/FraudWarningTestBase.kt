@@ -2,7 +2,6 @@ package net.gini.android.bank.sdk.exampleapp.ui.testcases
 
 import android.os.SystemClock
 import net.gini.android.bank.sdk.exampleapp.ui.resources.CreditNoteFixtures
-import net.gini.android.bank.sdk.exampleapp.ui.screens.AnalysisScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.FraudWarningScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.IbanSelectionScreen
 import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockBackend
@@ -29,7 +28,6 @@ abstract class FraudWarningTestBase : WarningBottomSheetTestBase() {
 
     protected val fraudWarning = FraudWarningScreen()
     protected val ibanSelection = IbanSelectionScreen()
-    protected val analysisScreen = AnalysisScreen()
 
     /**
      * Arms the mock with [scenario] and runs the photo-picker flow up to "Process".

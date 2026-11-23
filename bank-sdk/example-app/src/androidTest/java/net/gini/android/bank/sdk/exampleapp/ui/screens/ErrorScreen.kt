@@ -38,6 +38,16 @@ class ErrorScreen {
         return caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 
+    // The error screen opens only after the analysis call returns, which can take longer on
+    // remote (BrowserStack) devices than the 5s the check* methods below wait. Wait for the header
+    // first, like NoResultScreen.waitForNoResultScreen.
+    fun waitForErrorHeader(timeoutMs: Long = ERROR_SCREEN_TIMEOUT_MS): Boolean {
+        val errorHeader = device.findObject(
+            UiSelector().resourceId("net.gini.android.bank.sdk.exampleapp:id/gc_error_header")
+        )
+        return errorHeader.waitForExists(timeoutMs)
+    }
+
     fun checkErrorTextDisplayed(): Boolean {
         val errorText = device.findObject(
             UiSelector().className("android.widget.TextView").text("Error").index(1)
@@ -115,5 +125,6 @@ class ErrorScreen {
 
     companion object {
         private const val INTERNET_POLL_TIMEOUT_MS = 5000L
+        private const val ERROR_SCREEN_TIMEOUT_MS = 30_000L
     }
 }

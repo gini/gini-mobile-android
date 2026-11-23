@@ -23,7 +23,9 @@ import org.junit.Rule
 import org.junit.Test
 
 /**
- * Test class for No Result screen.
+ * Test class for No Result screen, reached by importing a document (Xray PP-3190, PP-3192,
+ * PP-3193) against the real Gini API. The camera-sourced cases of the same Xray folder are in
+ * [NoResultsMockBackendTests].
  */
 class NoResultsTests {
     @get:Rule(order = Int.MIN_VALUE)
@@ -51,6 +53,10 @@ class NoResultsTests {
         IdlingRegistry.getInstance().register(idlingResource)
     }
 
+    /**
+     * TC-020 / PP-3435 (smoke) and the upload half of PP-2904. The camera half is
+     * [ErrorAndNoResultScreenMockBackendTests.test9_cameraPhotoNoResults_showsNoResultScreen].
+     */
     @Test
     fun test1_uploadInvalidImageAndClickEnterManuallyButton_NavigatesToMainScreen() {
         imageUploader.copyImageToDownloads(getApplicationContext(), "image-no-result.png")
@@ -92,6 +98,11 @@ class NoResultsTests {
         val isEnterManuallyButtonVisible = noResultScreen.checkElementWithTextIsDisplayed(net.gini.android.capture.R.string.gc_noresults_enter_manually)
         assertEquals(true, isEnterManuallyButtonVisible)
 
+        // Retake images exists only for camera-sourced documents (NoResultsFragmentImpl.shouldAllowRetakeImages);
+        // an import must not show it. The camera variants live in NoResultsMockBackendTests.
+        val isRetakeImagesButtonVisible = noResultScreen.checkElementWithTextIsDisplayed(net.gini.android.capture.R.string.gc_noresults_retake_images)
+        assertEquals(false, isRetakeImagesButtonVisible)
+
         noResultScreen.clickEnterManuallyButton()
 
         val isDescriptionTitleVisible = mainScreen.assertDescriptionTitle()
@@ -99,6 +110,10 @@ class NoResultsTests {
     }
 
 
+    /**
+     * TC-021 / PP-3436 (smoke) and PP-2907. PP-2907 expects an error dialog for a non-invoice
+     * file, but on Android a valid non-invoice PDF opens the No Results screen.
+     */
     @Test
     fun test2_uploadInvalidPdfAndClickEnterManuallyButton_NavigatesToMainScreen() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -111,6 +126,8 @@ class NoResultsTests {
         captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("test-pdf-no-results.pdf")
         idlingResource.waitForIdle()
+        // Wait for the no-result screen to load (depends on the network response) before asserting.
+        noResultScreen.waitForNoResultScreen(net.gini.android.capture.R.string.gc_title_no_results)
         val isNoResultTitleVisible = noResultScreen.checkElementWithTextIsDisplayed(net.gini.android.capture.R.string.gc_title_no_results)
         assertEquals(true, isNoResultTitleVisible)
 
@@ -144,6 +161,11 @@ class NoResultsTests {
         idlingResource.waitForIdle()
         val isEnterManuallyButtonVisible = noResultScreen.checkElementWithTextIsDisplayed(net.gini.android.capture.R.string.gc_noresults_enter_manually)
         assertEquals(true, isEnterManuallyButtonVisible)
+
+        // Retake images exists only for camera-sourced documents (NoResultsFragmentImpl.shouldAllowRetakeImages);
+        // an import must not show it. The camera variants live in NoResultsMockBackendTests.
+        val isRetakeImagesButtonVisible = noResultScreen.checkElementWithTextIsDisplayed(net.gini.android.capture.R.string.gc_noresults_retake_images)
+        assertEquals(false, isRetakeImagesButtonVisible)
 
         noResultScreen.clickEnterManuallyButton()
 

@@ -10,11 +10,16 @@ import net.gini.android.bank.sdk.exampleapp.ui.MainActivity
 import net.gini.android.bank.sdk.exampleapp.ui.resources.ImageUploader
 import net.gini.android.bank.sdk.exampleapp.ui.resources.PdfUploader
 import net.gini.android.bank.sdk.exampleapp.ui.resources.SimpleIdlingResource
+import net.gini.android.bank.sdk.exampleapp.ui.screens.AnalysisScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.CaptureScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.FileImportErrorDialog
 import net.gini.android.bank.sdk.exampleapp.ui.screens.MainScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.OnboardingScreen
+import net.gini.android.capture.internal.util.FileImportValidator
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
+import org.junit.Assume
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -36,6 +41,7 @@ class FileImportErrorDialogTests {
     private val onboardingScreen = OnboardingScreen()
     private val captureScreen = CaptureScreen()
     private val fileImportErrorDialog = FileImportErrorDialog()
+    private val analysisScreen = AnalysisScreen()
     private val pdfUploader = PdfUploader()
     private val imageUploader = ImageUploader()
     private lateinit var idlingResource: SimpleIdlingResource
@@ -46,6 +52,7 @@ class FileImportErrorDialogTests {
         IdlingRegistry.getInstance().register(idlingResource)
     }
 
+    /** PP-2906 (Error & No result screens) and TC-024 / PP-3439 (smoke) — password-protected PDF. */
     @Test
     fun test1_importPasswordProtectedFileAndVerifyErrorDialogIsDisplayed() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -120,6 +127,7 @@ class FileImportErrorDialogTests {
         )
     }
 
+    /** PP-2909 — too many pages. The Xray case says 3; the Android limit is 10. */
     @Test
     fun test2_importTooManyPagesFileAndVerifyErrorDialogIsDisplayed() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -138,7 +146,59 @@ class FileImportErrorDialogTests {
         assertEquals(true, isContentPanelVisible)
     }
 
+    /**
+     * PP-2908 — a PDF over the 10 MB limit is refused with the "too large" dialog.
+     *
+     * The file is generated on the device (see [PdfUploader.writeLargePdfToDownloads]), so it
+     * needs the MediaStore Downloads API from Android 10. The dialog has no body text
+     * (`gc_error_file_import_size_text` is empty), so only its title is checked, plus that the
+     * Analysis screen never opens.
+     */
+    @Test
+    fun test4_importLargerThanTenMbPdfAndVerifyErrorDialogIsDisplayed() {
+        Assume.assumeTrue(
+            "Generating the file needs MediaStore.Downloads (Android 10+)",
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+        )
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val tooLargePdf = "too-large-generated-${System.currentTimeMillis()}.pdf"
+        val tooLargePdfUri = pdfUploader.writeLargePdfToDownloads(context, tooLargePdf, TOO_LARGE_PDF_BYTES)
+        // Deleted again at the end, so runs do not fill Downloads with 11 MB copies.
+        try {
+            mainScreen.clickPhotoPaymentButton()
+            onboardingScreen.clickSkipButtonIfPresent()
+            captureScreen.clickFilesButton()
+            captureScreen.clickFiles()
+            idlingResource.waitForIdle()
+            pdfUploader.uploadPdfFromFiles(tooLargePdf)
+            idlingResource.waitForIdle()
+
+            assertTrue(
+                "The \"too large\" dialog never appeared",
+                fileImportErrorDialog.waitForDialog(net.gini.android.capture.R.string.gc_error_file_import_size_title)
+            )
+            val sizeTitle = context.getString(net.gini.android.capture.R.string.gc_error_file_import_size_title)
+            val isContentPanelVisible = fileImportErrorDialog.checkContentIsDisplayed(
+                net.gini.android.capture.R.string.gc_error_file_import_size_title,
+                sizeTitle
+            )
+            assertEquals(true, isContentPanelVisible)
+            assertFalse(
+                "The Analysis screen must not open for a file over the size limit",
+                analysisScreen.waitForAnalysisScreen(ANALYSIS_ABSENT_WAIT_MS)
+            )
+        } finally {
+            context.contentResolver.delete(tooLargePdfUri, null, null)
+        }
+    }
+
     private companion object {
+        /** One MB over `FileImportValidator.FILE_SIZE_LIMIT`. */
+        const val TOO_LARGE_PDF_BYTES = FileImportValidator.FILE_SIZE_LIMIT + 1024L * 1024L
+
+        /** How long the test watches for an Analysis screen that must never come. */
+        const val ANALYSIS_ABSENT_WAIT_MS = 3_000L
+
         /** One more than the picker's cap, so the cap itself is what is measured. */
         const val ATTEMPTED_PICTURES = 11
 

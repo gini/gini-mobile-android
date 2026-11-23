@@ -13,6 +13,7 @@ import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.util.CancellationToken
+import java.net.UnknownHostException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -37,7 +38,8 @@ internal class UiTestMockNetworkService(
     private val scenario: UiTestMockScenario,
     private val clientConfiguration: UiTestMockClientConfiguration,
     private val analysisDelayMillis: Long = 0,
-    private val configurationFails: Boolean = false
+    private val configurationFails: Boolean = false,
+    private val analysisFailure: UiTestMockAnalysisFailure = UiTestMockAnalysisFailure.GENERIC
 ) : GiniCaptureNetworkService {
 
     private val mainHandler = Handler(Looper.getMainLooper())
@@ -64,7 +66,7 @@ internal class UiTestMockNetworkService(
     ): CancellationToken {
         val deliver = Runnable {
             if (scenario == UiTestMockScenario.ANALYSIS_ERROR) {
-                callback.failure(Error(ANALYSIS_ERROR_MESSAGE))
+                callback.failure(analysisError())
                 return@Runnable
             }
             callback.success(
@@ -139,6 +141,20 @@ internal class UiTestMockNetworkService(
     override fun cleanup() = Unit
 
     // ── payloads ────────────────────────────────────────────────────────────────────────────────
+
+    /** The `Error` for [analysisFailure], built the way the real network service reports it. */
+    private fun analysisError(): Error {
+        val statusCode = analysisFailure.statusCode
+        return when {
+            statusCode != null ->
+                Error(statusCode, emptyMap(), RuntimeException(ANALYSIS_ERROR_MESSAGE))
+
+            analysisFailure == UiTestMockAnalysisFailure.NO_CONNECTION ->
+                Error(ANALYSIS_ERROR_MESSAGE, UnknownHostException(ANALYSIS_ERROR_MESSAGE))
+
+            else -> Error(ANALYSIS_ERROR_MESSAGE)
+        }
+    }
 
     private fun specificExtractions(): Map<String, GiniCaptureSpecificExtraction> = when {
         scenario == UiTestMockScenario.NO_RESULTS -> emptyMap()

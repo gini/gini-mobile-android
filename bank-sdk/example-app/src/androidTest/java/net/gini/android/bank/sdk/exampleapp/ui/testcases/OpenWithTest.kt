@@ -3,6 +3,7 @@ package net.gini.android.bank.sdk.exampleapp.ui.testcases
 import android.app.Activity
 import android.content.Intent
 import androidx.core.net.toFile
+import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
@@ -13,6 +14,9 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiSelector
 import kotlinx.coroutines.runBlocking
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.exampleapp.ExampleApp
@@ -23,6 +27,8 @@ import net.gini.android.bank.sdk.exampleapp.ui.CaptureFlowHostActivity
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity
 import net.gini.android.bank.sdk.exampleapp.ui.SplashActivity
 import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -118,6 +124,41 @@ class OpenWithTest {
     }
 
     /**
+     * PP-2910 (adapted) — a file type the SDK does not accept never starts the capture flow.
+     *
+     * The Xray case expects an error dialog, but Android has none on this path: the SDK's Files
+     * picker only offers PDF/XML, so an unsupported type can only arrive through "open with". There
+     * the SDK rejects it and the example app shows a Toast and finishes `MainActivity` — both with
+     * the default Intent-based API (`onCaptureResult`) and the Uri-based one (`abortOpenWith`).
+     * The Toast is not read: Toasts are unreliable to find on API 30+.
+     *
+     * No Espresso `onView` here. On the Intent-based path nothing decrements the open-with idling
+     * resource after an error, so Espresso would wait for it until its timeout.
+     */
+    @Test
+    fun opening_unsupported_file_with_MainActivity_does_not_start_Bank_SDK() {
+        val intent = Intent(ApplicationProvider.getApplicationContext(), MainActivity::class.java).apply {
+            action = Intent.ACTION_VIEW
+            setDataAndType(getAssetFileStorageUri("unsupported.txt"), "text/plain")
+        }
+
+        val scenario = ActivityScenario.launch<MainActivity>(intent)
+
+        val deadline = System.currentTimeMillis() + REJECTED_FILE_TIMEOUT_MS
+        while (scenario.state != Lifecycle.State.DESTROYED && System.currentTimeMillis() < deadline) {
+            Thread.sleep(POLL_INTERVAL_MS)
+        }
+        assertEquals(
+            "MainActivity should finish after the SDK rejects a text/plain file",
+            Lifecycle.State.DESTROYED,
+            scenario.state
+        )
+        val extractions = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+            .findObject(UiSelector().resourceId("net.gini.android.bank.sdk.exampleapp:id/recyclerview_extractions"))
+        assertFalse("The extractions screen must not open for a rejected file", extractions.exists())
+    }
+
+    /**
      * Drains the "OpenWith" counting idling resource so this attempt starts from an idle state.
      *
      * The resource lives on the [ExampleApp] instance, so its count outlives a single attempt: the
@@ -166,5 +207,10 @@ class OpenWithTest {
          * It exists purely so a broken increment/decrement pairing can never spin here forever.
          */
         const val MAX_IDLING_DRAIN_DECREMENTS = 10
+
+        /** How long the rejected-file test waits for `MainActivity` to finish. */
+        const val REJECTED_FILE_TIMEOUT_MS = 10_000L
+
+        const val POLL_INTERVAL_MS = 250L
     }
 }
