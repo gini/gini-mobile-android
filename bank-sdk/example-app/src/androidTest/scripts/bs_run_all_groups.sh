@@ -104,6 +104,11 @@ BS_DISABLE_ANIMATIONS=false run_group "ingredientbrand_education" \
   IngredientBrandEducationTests \
   IngredientBrandLandscapeEducationTests
 
+# Onboarding swipe, Skip and Get Started (PP-3883). Only this class: bs_run_group_onboarding.sh
+# also lists OnboardingScreenTests, which runs here in the ui group already.
+run_group "onboarding" \
+  OnboardingNavigationTests
+
 # DigitalInvoiceSkontoTests is left out on purpose — see bs_run_group_smoke.sh's header.
 run_group "smokejourneys" \
   SmokeJourneyTests \
