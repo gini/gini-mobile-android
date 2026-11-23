@@ -2,6 +2,9 @@ package net.gini.android.capture.analysis.fraud
 
 import android.content.Context
 import androidx.annotation.StringRes
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
@@ -128,6 +131,43 @@ class IBANSelectionSheetTest {
         row(FIRST_PRINTED_IBAN).assertIsNotSelected()
         row(SECOND_PRINTED_IBAN).assertIsSelected()
         composeRule.onAllNodes(isSelected()).assertCountEquals(1)
+    }
+
+    @Test
+    fun `the sheet lists the IBANs of new arguments and forgets nothing it was told`() {
+        var args by mutableStateOf(ARGS)
+        composeRule.setContent {
+            GiniTheme {
+                IBANSelectionSheet(
+                    args = args,
+                    onDismiss = { dismissCount++ },
+                    onContinue = { continuedWith += it },
+                    composableProviderConfig = null,
+                )
+            }
+        }
+        row(QR_IBAN).click()
+        row(QR_IBAN).assertIsSelected()
+
+        args = ARGS.copy(printedIbans = listOf(IBANMismatchIban(FIRST_PRINTED_IBAN, hintCountryCode = "DE")))
+
+        composeRule.onAllNodes(isSelectable()).assertCountEquals(2)
+        row(SECOND_PRINTED_IBAN).assertDoesNotExist()
+        // The choice is the sheet's own state and outlives the new arguments
+        row(QR_IBAN).assertIsSelected()
+        continueButton().click()
+        assertReported(QR_IBAN)
+    }
+
+    @Test
+    fun `every Continue without a choice keeps the error and reports nothing`() {
+        setSheet(expectTablet = false)
+
+        continueButton().click()
+        continueButton().click()
+
+        errorText().assertExists()
+        assertNothingReported()
     }
 
     // endregion

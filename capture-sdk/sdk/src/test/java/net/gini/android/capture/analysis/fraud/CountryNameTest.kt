@@ -20,4 +20,15 @@ class CountryNameTest {
     fun `returns the code itself for an unknown country`() {
         assertThat(countryDisplayName("XQ", Locale.ENGLISH)).isEqualTo("XQ")
     }
+
+    @Test
+    fun `returns the code itself when it is not a well-formed region`() {
+        assertThat(countryDisplayName("Germany", Locale.ENGLISH)).isEqualTo("Germany")
+        assertThat(countryDisplayName("D-", Locale.GERMAN)).isEqualTo("D-")
+    }
+
+    @Test
+    fun `returns the code itself when it is empty`() {
+        assertThat(countryDisplayName("", Locale.ENGLISH)).isEmpty()
+    }
 }
