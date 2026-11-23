@@ -2,7 +2,9 @@ package net.gini.android.capture.analysis.fraud
 
 import android.content.Context
 import androidx.annotation.StringRes
+import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.semantics.SemanticsActions
@@ -160,6 +162,37 @@ class IBANSelectionSheetTest {
     }
 
     @Test
+    fun `the sheet keeps the choice and the error when its host recomposes`() {
+        var hostRecompositions by mutableIntStateOf(0)
+        composeRule.setContent {
+            GiniTheme {
+                // Read here so the host recomposes while the sheet's inputs stay the same
+                Text(text = "$HOST_LABEL $hostRecompositions")
+                IBANSelectionSheet(
+                    args = ARGS,
+                    onDismiss = { dismissCount++ },
+                    onContinue = { continuedWith += it },
+                    composableProviderConfig = null,
+                )
+            }
+        }
+        continueButton().click()
+
+        hostRecompositions++
+        composeRule.onNodeWithText("$HOST_LABEL 1").assertExists()
+        errorText().assertExists()
+
+        row(FIRST_PRINTED_IBAN).click()
+        hostRecompositions++
+        composeRule.onNodeWithText("$HOST_LABEL 2").assertExists()
+
+        row(FIRST_PRINTED_IBAN).assertIsSelected()
+        errorText().assertDoesNotExist()
+        continueButton().click()
+        assertReported(FIRST_PRINTED_IBAN)
+    }
+
+    @Test
     fun `every Continue without a choice keeps the error and reports nothing`() {
         setSheet(expectTablet = false)
 
@@ -282,6 +315,7 @@ class IBANSelectionSheetTest {
         const val QR_IBAN = "PL61109010140000071219812874"
         const val FIRST_PRINTED_IBAN = "DE89370400440532013000"
         const val SECOND_PRINTED_IBAN = "AT611904300234573201"
+        const val HOST_LABEL = "Host"
 
         val ALL_IBANS = listOf(QR_IBAN, FIRST_PRINTED_IBAN, SECOND_PRINTED_IBAN)
 

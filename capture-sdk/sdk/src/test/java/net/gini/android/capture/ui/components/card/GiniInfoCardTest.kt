@@ -1,6 +1,12 @@
 package net.gini.android.capture.ui.components.card
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -55,6 +61,35 @@ class GiniInfoCardTest {
     }
 
     @Test
+    fun `the card follows the state its host keeps`() {
+        var content by mutableStateOf(FIRST)
+        var container by mutableStateOf(Color.Red)
+        var hostRecompositions by mutableIntStateOf(0)
+        composeRule.setContent {
+            GiniTheme {
+                // Read here so the host recomposes while the card's inputs stay the same
+                Text(text = "$HOST_LABEL $hostRecompositions")
+                GiniInfoCard(
+                    modifier = Modifier.padding(8.dp),
+                    colors = GiniInfoCardColors.colors(containerColor = container),
+                ) {
+                    Text(text = content)
+                }
+            }
+        }
+
+        hostRecompositions++
+        composeRule.onNodeWithText("$HOST_LABEL 1").assertExists()
+        composeRule.onNodeWithText(FIRST).assertExists()
+
+        content = SECOND
+        container = Color.Green
+
+        composeRule.onNodeWithText(FIRST).assertDoesNotExist()
+        composeRule.onNodeWithText(SECOND).assertExists()
+    }
+
+    @Test
     fun `the default container color comes from the theme`() {
         lateinit var colors: GiniInfoCardColors
         var expected = Color.Unspecified
@@ -87,6 +122,7 @@ class GiniInfoCardTest {
     private companion object {
         const val FIRST = "Sender"
         const val SECOND = "Elektro Brandt GmbH · Germany"
+        const val HOST_LABEL = "Host"
         val CONTENT_PADDING = 12.dp
     }
 }

@@ -2,7 +2,9 @@ package net.gini.android.capture.analysis.fraud
 
 import android.content.Context
 import androidx.annotation.StringRes
+import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.semantics.SemanticsActions
@@ -162,6 +164,37 @@ class IBANMismatchWarningScreenTest {
         // The new arguments offer nothing to choose, so "Proceed anyway" reports at once
         button(R.string.gc_proceed_anyway).click()
         assertProceededWith(null)
+    }
+
+    @Test
+    fun `the screen keeps its state when its host recomposes`() {
+        var hostRecompositions by mutableIntStateOf(0)
+        composeRule.setContent {
+            GiniTheme {
+                // Read here so the host recomposes while the screen's inputs stay the same
+                Text(text = "$HOST_LABEL $hostRecompositions")
+                IBANMismatchWarningScreen(
+                    args = COMBINED_ARGS,
+                    onCancel = { cancelCount++ },
+                    onProceed = { proceededWith += it },
+                    composableProviderConfig = null,
+                )
+            }
+        }
+        protectionRow().click()
+        button(R.string.gc_proceed_anyway).click()
+        selectionRow(QR_IBAN).click()
+
+        hostRecompositions++
+        composeRule.onNodeWithText("$HOST_LABEL 1").assertExists()
+
+        // Still expanded, still open, still chosen
+        composeRule
+            .onNodeWithText(string(R.string.gc_fraud_protection_body), useUnmergedTree = true)
+            .assertExists()
+        selectionTitle().assertExists()
+        button(R.string.gc_fraud_select_iban_continue).click()
+        assertProceededWith(QR_IBAN)
     }
 
     @Test
@@ -350,6 +383,7 @@ class IBANMismatchWarningScreenTest {
         const val PRINTED_IBAN = "DE89370400440532013000"
         const val SECOND_PRINTED_IBAN = "AT611904300234573201"
         const val SENDER = "Elektro Brandt GmbH"
+        const val HOST_LABEL = "Host"
 
         val QR_VS_PRINTED_ARGS = IBANMismatchArgs(
             type = IBANMismatchType.QR_VS_PRINTED,
