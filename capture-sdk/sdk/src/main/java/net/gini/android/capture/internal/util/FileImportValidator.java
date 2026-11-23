@@ -195,7 +195,7 @@ public class FileImportValidator {
             final int fileSize = UriHelper.getFileSizeFromUri(fileUri, mContext);
             return fileSize < fileSizeBytesLimit;
         } catch (final IllegalStateException e) {
-            LOG.error("Could not retrieve file size for uri: {}", fileUri, e);
+            LOG.error("Could not retrieve file size for uri: {}", LogSanitizer.sanitize(fileUri), e);
         }
         return false;
     }
