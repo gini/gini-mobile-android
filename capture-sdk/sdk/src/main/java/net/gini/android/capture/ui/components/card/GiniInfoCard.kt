@@ -44,7 +44,7 @@ private val CONTENT_PADDING = 12.dp
 @GiniScreenPreviewUiModes
 @GiniScreenPreviewSizes
 @Composable
-private fun GiniInfoCardPreview() {
+internal fun GiniInfoCardPreview() {
     GiniTheme {
         Surface(color = GiniTheme.colorScheme.dialogs.container) {
             GiniInfoCard(modifier = Modifier.padding(24.dp)) {

@@ -92,7 +92,7 @@ private val TITLE_DESCRIPTION_SPACING = 12.dp
 @GiniScreenPreviewUiModes
 @GiniScreenPreviewSizes
 @Composable
-private fun GiniHeaderBlockPreview() {
+internal fun GiniHeaderBlockPreview() {
     GiniTheme {
         Surface(color = GiniTheme.colorScheme.dialogs.container) {
             GiniHeaderBlock(

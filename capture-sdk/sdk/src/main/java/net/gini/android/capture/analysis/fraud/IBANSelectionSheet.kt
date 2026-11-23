@@ -394,7 +394,7 @@ private val combinedPreviewArgs = IBANSelectionArgs(
 @GiniScreenPreviewUiModes
 @GiniScreenPreviewSizes
 @Composable
-private fun IBANSelectionInitialPreview() {
+internal fun IBANSelectionInitialPreview() {
     IBANSelectionSheetPreview(
         args = previewArgs,
     )
@@ -403,7 +403,7 @@ private fun IBANSelectionInitialPreview() {
 @GiniScreenPreviewUiModes
 @GiniScreenPreviewSizes
 @Composable
-private fun IBANSelectionErrorPreview() {
+internal fun IBANSelectionErrorPreview() {
     IBANSelectionSheetPreview(
         args = previewArgs,
         showError = true,
@@ -413,7 +413,7 @@ private fun IBANSelectionErrorPreview() {
 @GiniScreenPreviewUiModes
 @GiniScreenPreviewSizes
 @Composable
-private fun IBANSelectionSelectedPreview() {
+internal fun IBANSelectionSelectedPreview() {
     IBANSelectionSheetPreview(
         args = previewArgs,
         selectedIban = PREVIEW_QR_IBAN,
@@ -423,7 +423,7 @@ private fun IBANSelectionSelectedPreview() {
 @Preview(name = "Combined, selected", uiMode = Configuration.UI_MODE_NIGHT_NO, showBackground = true)
 @Preview(name = "Combined, selected, dark", uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 @Composable
-private fun IBANSelectionCombinedSelectedPreview() {
+internal fun IBANSelectionCombinedSelectedPreview() {
     IBANSelectionSheetPreview(
         args = combinedPreviewArgs,
         selectedIban = PREVIEW_QR_IBAN,
@@ -432,7 +432,7 @@ private fun IBANSelectionCombinedSelectedPreview() {
 
 @Preview(name = "Combined, error", uiMode = Configuration.UI_MODE_NIGHT_NO, showBackground = true)
 @Composable
-private fun IBANSelectionCombinedErrorPreview() {
+internal fun IBANSelectionCombinedErrorPreview() {
     IBANSelectionSheetPreview(
         args = combinedPreviewArgs,
         showError = true,

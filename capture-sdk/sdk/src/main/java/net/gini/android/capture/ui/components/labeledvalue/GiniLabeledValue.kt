@@ -103,7 +103,7 @@ private val TEXT_SPACING = 4.dp
 @GiniScreenPreviewUiModes
 @GiniScreenPreviewSizes
 @Composable
-private fun GiniLabeledValuePreview() {
+internal fun GiniLabeledValuePreview() {
     GiniTheme {
         Surface(color = GiniTheme.colorScheme.dialogs.container) {
             Column(

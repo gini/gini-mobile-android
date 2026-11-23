@@ -156,7 +156,7 @@ private val FOOTER_BOTTOM_PADDING = 16.dp
 
 @GiniScreenPreviewUiModes
 @Composable
-private fun GiniBottomSheetScaffoldBodyPreview() {
+internal fun GiniBottomSheetScaffoldBodyPreview() {
     GiniTheme {
         Surface(color = GiniTheme.colorScheme.dialogs.container) {
             Column(modifier = Modifier.width(360.dp)) {

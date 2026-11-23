@@ -147,7 +147,7 @@ private val BUTTON_BORDER_WIDTH = 1.dp
 @GiniScreenPreviewUiModes
 @GiniScreenPreviewSizes
 @Composable
-private fun GiniActionFooterPreview() {
+internal fun GiniActionFooterPreview() {
     GiniTheme {
         Surface(color = GiniTheme.colorScheme.dialogs.container) {
             Column(

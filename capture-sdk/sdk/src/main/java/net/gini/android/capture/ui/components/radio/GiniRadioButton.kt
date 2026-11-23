@@ -50,7 +50,7 @@ fun GiniRadioButton(
 @GiniScreenPreviewUiModes
 @GiniScreenPreviewSizes
 @Composable
-private fun GiniRadioButtonPreview() {
+internal fun GiniRadioButtonPreview() {
     GiniTheme {
         Surface(color = GiniTheme.colorScheme.dialogs.container) {
             Column(modifier = Modifier.padding(8.dp)) {

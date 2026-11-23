@@ -142,7 +142,7 @@ private val MIN_TOUCH_TARGET = 48.dp
 @GiniScreenPreviewUiModes
 @GiniScreenPreviewSizes
 @Composable
-private fun GiniExpandableInfoRowPreview() {
+internal fun GiniExpandableInfoRowPreview() {
     GiniTheme {
         Surface(color = GiniTheme.colorScheme.dialogs.container) {
             var expanded by rememberSaveable { mutableStateOf(false) }

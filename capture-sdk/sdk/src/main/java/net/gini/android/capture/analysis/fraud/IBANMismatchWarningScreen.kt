@@ -293,7 +293,7 @@ private val ROW_VERTICAL_PADDING = 12.dp
 @GiniScreenPreviewUiModes
 @GiniScreenPreviewSizes
 @Composable
-private fun IBANMismatchQrVsPrintedPreview() {
+internal fun IBANMismatchQrVsPrintedPreview() {
     IBANMismatchContentPreview(
         IBANMismatchArgs(
             type = IBANMismatchType.QR_VS_PRINTED,
@@ -306,7 +306,7 @@ private fun IBANMismatchQrVsPrintedPreview() {
 @GiniScreenPreviewUiModes
 @GiniScreenPreviewSizes
 @Composable
-private fun IBANMismatchCountryPreview() {
+internal fun IBANMismatchCountryPreview() {
     IBANMismatchContentPreview(
         IBANMismatchArgs(
             type = IBANMismatchType.COUNTRY,
@@ -323,7 +323,7 @@ private fun IBANMismatchCountryPreview() {
 @GiniScreenPreviewUiModes
 @GiniScreenPreviewSizes
 @Composable
-private fun IBANMismatchCombinedPreview() {
+internal fun IBANMismatchCombinedPreview() {
     IBANMismatchContentPreview(combinedPreviewArgs)
 }
 
@@ -333,7 +333,7 @@ private fun IBANMismatchCombinedPreview() {
     showBackground = true,
 )
 @Composable
-private fun IBANMismatchCombinedTwoPrintedPreview() {
+internal fun IBANMismatchCombinedTwoPrintedPreview() {
     IBANMismatchContentPreview(
         args = combinedPreviewArgs.copy(
             printedIbans = combinedPreviewArgs.printedIbans +
