@@ -63,7 +63,7 @@ internal object IBANMismatchArgsMapper {
     ): List<String> {
         val qrKey = normalizeIban(qrIban)
         return extractions[IBAN_KEY]?.candidates.orEmpty()
-            .mapNotNull { it.value?.trim()?.takeIf(String::isNotEmpty) }
+            .mapNotNull { it.value.trim().takeIf(String::isNotEmpty) }
             .distinctBy(::normalizeIban)
             .filter { normalizeIban(it) != qrKey }
     }
