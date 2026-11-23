@@ -33,12 +33,22 @@ import java.util.regex.Pattern
  * that can be dragged down: a downward swipe on content that is already at the top would drag
  * the sheet and could dismiss it.
  *
+ * ## Values that are spoken differently
+ *
+ * A row that sets a spoken value (`GiniLabeledValue` with `valueContentDescription`, used for
+ * every IBAN) clears its texts from the accessibility tree and exposes one content description
+ * instead: "label, spoken value, hint". The written value is then in no node at all, so a lookup
+ * also tries [spokenForm] of the text against the content descriptions.
+ *
  * @param anchorTexts texts of which at least one is on screen whenever the sheet is open
  * @param canScrollUp whether a downward swipe is safe on this sheet
+ * @param spokenForm how a text is written in a content description when it differs from the text
+ * on screen, or `null` when it does not
  */
 internal class ComposeSheetFinder(
     private val anchorTexts: () -> List<String>,
     private val canScrollUp: Boolean,
+    private val spokenForm: (String) -> String? = { null },
 ) {
 
     private val device: UiDevice
@@ -83,9 +93,14 @@ internal class ComposeSheetFinder(
             null
         }
 
-    /** The node with exactly [text], or whose content description contains it; no scrolling. */
+    /**
+     * The node with exactly [text], or whose content description contains it or its
+     * [spokenForm]; no scrolling.
+     */
     fun findTextNow(text: String): UiObject2? =
-        findNow(By.text(text)) ?: findNow(By.descContains(text))
+        findNow(By.text(text))
+            ?: findNow(By.descContains(text))
+            ?: spokenForm(text)?.let { findNow(By.descContains(it)) }
 
     /**
      * Like [findTextNow], but scrolls the sheet until the node is on screen. Returns `null` when
@@ -156,11 +171,15 @@ internal class ComposeSheetFinder(
         }
     }
 
-    /** The texts in [box] that are on screen, with their positions, as a scroll snapshot. */
+    /**
+     * The texts and content descriptions in [box] that are on screen, with their positions, as a
+     * scroll snapshot. The descriptions count too: an IBAN row has no text node, and a viewport
+     * that holds only such rows would otherwise look the same before and after a scroll.
+     */
     private fun visibleTexts(box: UiObject2): List<String> =
-        box.findObjects(By.text(ANY_TEXT))
+        (box.findObjects(By.text(ANY_TEXT)) + box.findObjects(By.desc(ANY_TEXT)))
             .filterNot { it.visibleBounds.isEmpty }
-            .map { "${it.text}@${it.visibleBounds.top}" }
+            .map { "${it.text}|${it.contentDescription}@${it.visibleBounds.top}" }
 
     private fun waitUntil(timeoutMs: Long, condition: () -> Boolean): Boolean {
         val end = SystemClock.uptimeMillis() + timeoutMs

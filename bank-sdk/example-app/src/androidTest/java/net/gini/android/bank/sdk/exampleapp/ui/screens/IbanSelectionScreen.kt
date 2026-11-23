@@ -39,7 +39,8 @@ class IbanSelectionScreen {
                 continueLabel
             )
         },
-        canScrollUp = false
+        canScrollUp = false,
+        spokenForm = FraudTexts::spokenFormOf
     )
 
     fun waitForSheet(timeoutMs: Long = SHEET_TIMEOUT): Boolean = finder.waitUntilShown(timeoutMs)

@@ -13,7 +13,8 @@ import net.gini.android.capture.R as CaptureR
  * The warning is Compose in its own `ModalBottomSheet` window and has no test tags, so every node
  * is found by its text, resolved from capture-sdk's string resources at runtime (see
  * [FraudTexts]). Lookups are scoped to the warning's window and scroll its content when needed —
- * see [ComposeSheetFinder].
+ * see [ComposeSheetFinder]. An IBAN row has no text node; it is found by the spoken IBAN in its
+ * content description.
  *
  * The three warning types share the protection row and the two buttons, so a state is always
  * identified by its title, never by the shared texts.
@@ -48,7 +49,8 @@ class FraudWarningScreen {
             )
         },
         // The warning refuses swipes (sheetGesturesEnabled = false), so scrolling up is safe.
-        canScrollUp = true
+        canScrollUp = true,
+        spokenForm = FraudTexts::spokenFormOf
     )
 
     val protectionBody: String
