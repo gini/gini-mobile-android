@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 
 import net.gini.android.capture.internal.util.FeatureConfiguration;
 
-/**
+/*
  * Created by Alpar Szotyori on 08.12.2017.
  *
  * Copyright (c) 2017 Gini GmbH.

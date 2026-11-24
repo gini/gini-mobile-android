@@ -3,7 +3,7 @@ package net.gini.android.capture.internal.ui;
 import android.content.DialogInterface;
 
 import androidx.annotation.NonNull;
-/**
+/*
  * Created by Alpar Szotyori on 05.06.2018.
  *
  * Copyright (c) 2018 Gini GmbH.

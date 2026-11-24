@@ -60,6 +60,7 @@ import net.gini.android.capture.view.NavigationBarTopAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -92,7 +93,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
     private InjectedViewContainer<CustomLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
     private boolean isScanAnimationActive;
-    private final UserAnalyticsScreen screenName = UserAnalyticsScreen.Analysis.INSTANCE;
+    private static final UserAnalyticsScreen screenName = UserAnalyticsScreen.Analysis.INSTANCE;
     UserAnalyticsEventTracker userAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
     AnalysisFragmentExtension fragmentExtension = new AnalysisFragmentExtension();
 
@@ -139,11 +140,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
             userAnalyticsEventTracker.trackEvent(
                     UserAnalyticsEvent.SCREEN_SHOWN,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                        }
-                    }
+                    new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName)))
             );
         }
     }
@@ -159,7 +156,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     @Override
-    void showScanAnimation(Boolean isSavingInvoicesLocallyEnabled) {
+    void showScanAnimation(boolean isSavingInvoicesLocallyEnabled) {
         mAnalysisMessageTextView.setVisibility(View.VISIBLE);
         isScanAnimationActive = true;
         if (injectedLoadingIndicatorContainer != null)
@@ -242,7 +239,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
      * @param folderUri The folder URI to check.
      * @return True if the URI is valid and write permission is granted.
      */
-    private Boolean haveSavePermission(String folderUri) {
+    private boolean haveSavePermission(String folderUri) {
         return folderUri != null && !folderUri.isEmpty() &&
                 SAFHelper.INSTANCE.hasWritePermission(
                         Objects.requireNonNull(mFragment.getActivity()), Uri.parse(folderUri));
@@ -280,7 +277,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
                 SAF_STORAGE_URI_KEY,
                 Objects.requireNonNull(mFragment.getActivity()));
 
-        Boolean haveSavePermission = haveSavePermission(folderUri);
+        final boolean haveSavePermission = haveSavePermission(folderUri);
         if (haveSavePermission)
             saveInvoices(folderUri);
         else {
@@ -505,9 +502,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
                 injectedViewAdapter.setNavButtonType(NavButtonType.CLOSE);
                 injectedViewAdapter.setTitle(mFragment.getActivity().getResources().getString(R.string.gc_title_analysis));
 
-                injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> {
-                    onBack();
-                }));
+                injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> onBack()));
             }));
         }
     }
@@ -562,11 +557,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         if (!popBackStack) {
             if (userAnalyticsEventTracker != null) {
                 userAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
-                        new HashSet<UserAnalyticsEventProperty>() {
-                            {
-                                add(new UserAnalyticsEventProperty.Screen(screenName));
-                            }
-                        });
+                        new HashSet<>(Collections.singletonList(new UserAnalyticsEventProperty.Screen(screenName))));
             }
 
             trackAnalysisScreenEvent(AnalysisScreenEvent.CANCEL);

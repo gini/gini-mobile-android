@@ -7,7 +7,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import net.gini.android.capture.BuildConfig
 import net.gini.android.capture.internal.network.AmplitudeEventModel
 import net.gini.android.capture.internal.network.AmplitudeRootModel
 import net.gini.android.capture.internal.network.NetworkRequestsManager
@@ -79,7 +78,6 @@ internal class AmplitudeUserAnalyticsEventTracker(
         val finalProperties = superPropertiesMap.plus(propertiesMap)
         val c: Calendar = Calendar.getInstance(TimeZone.getTimeZone("Europe/Berlin"))
 
-        val version = BuildConfig.VERSION_NAME
         events.add(
             AmplitudeEventModel(
                 userId = uniqueIdProvider.getUniqueId(KEY_DEVICE_ID),

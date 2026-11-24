@@ -13,7 +13,7 @@ import net.gini.android.capture.internal.util.Size;
 
 import java.util.List;
 
-/**
+/*
  * Created by Alpar Szotyori on 11.12.2017.
  *
  * Copyright (c) 2017 Gini GmbH.
@@ -60,14 +60,11 @@ class QRCodeDetectorHandler extends Handler {
             final List<String> qrCodes = mQRCodeDetectorTask.detect(imageData.image,
                     imageData.imageSize, imageData.rotation);
             if (!qrCodes.isEmpty()) {
-                mUIExecutor.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mListener.onQRCodesDetected(qrCodes);
-                    }
+                mUIExecutor.runOnUiThread(() -> {
+                    mListener.onQRCodesDetected(qrCodes);
                 });
             }
-            mUIExecutor.runOnUiThread(() -> imageData.callback.onDetectionFinished());
+            mUIExecutor.runOnUiThread(imageData.callback::onDetectionFinished);
         } catch (Exception e) {
             mUIExecutor.runOnUiThread(() -> mListener.onQRCodeScannerError(e));
         }

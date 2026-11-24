@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
-/**
+/*
  * Created by Alpar Szotyori on 15.03.2018.
  *
  * Copyright (c) 2018 Gini GmbH.

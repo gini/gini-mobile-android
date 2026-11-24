@@ -1,6 +1,7 @@
 package net.gini.android.capture.internal.util
 
 import android.content.DialogInterface
+import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.common.truth.Truth.assertThat
@@ -56,6 +57,34 @@ class AlertDialogHelperCompatTest {
         assertThat(dialog.getButton(DialogInterface.BUTTON_POSITIVE).currentTextColor)
             .isEqualTo(activity.getColor(R.color.gc_accent_01))
     }
+
+    @Test
+    fun `dialog window is secure when screenshots are disallowed`() {
+        GiniCapture.newInstance(activity).setAllowScreenshots(false).build()
+
+        val dialog = showDialog()
+
+        assertThat(dialog.isSecure()).isTrue()
+    }
+
+    @Test
+    fun `dialog window is not secure when screenshots are allowed`() {
+        GiniCapture.newInstance(activity).setAllowScreenshots(true).build()
+
+        val dialog = showDialog()
+
+        assertThat(dialog.isSecure()).isFalse()
+    }
+
+    @Test
+    fun `dialog window is not secure without a GiniCapture instance`() {
+        val dialog = showDialog()
+
+        assertThat(dialog.isSecure()).isFalse()
+    }
+
+    private fun AlertDialog.isSecure(): Boolean =
+        (window!!.attributes.flags and WindowManager.LayoutParams.FLAG_SECURE) != 0
 
     private fun showDialog(): AlertDialog {
         AlertDialogHelperCompat.showAlertDialog(activity, "message", "ok", { _, _ -> }, "cancel", { _, _ -> }, null)

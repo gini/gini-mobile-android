@@ -770,7 +770,7 @@ public final class net/gini/android/capture/analysis/LastAnalyzedDocumentProvide
 	public static final field $stable I
 	public fun <init> (Lkotlinx/coroutines/CoroutineDispatcher;Lnet/gini/android/capture/tracking/useranalytics/UserAnalyticsEventTracker;)V
 	public final fun clear ()V
-	public final fun getData ()Lkotlinx/coroutines/flow/MutableStateFlow;
+	public final fun getData ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun provide ()Lnet/gini/android/capture/analysis/RemoteAnalyzedDocument;
 	public final fun update (Lnet/gini/android/capture/analysis/RemoteAnalyzedDocument;)V
 }
@@ -1553,14 +1553,15 @@ public class net/gini/android/capture/document/ImageMultiPageDocument : net/gini
 	public fun <init> (Lnet/gini/android/capture/Document$Source;Lnet/gini/android/capture/Document$ImportMethod;)V
 	public fun <init> (Lnet/gini/android/capture/document/ImageDocument;)V
 	public fun describeContents ()I
-	public fun writeToParcel (Landroid/os/Parcel;I)V
 }
 
 public class net/gini/android/capture/document/PdfDocument : net/gini/android/capture/document/GiniCaptureDocument {
 	public static final field CREATOR Landroid/os/Parcelable$Creator;
 	public fun describeContents ()I
+	public fun equals (Ljava/lang/Object;)Z
 	public static fun fromUri (Landroid/net/Uri;Lnet/gini/android/capture/Document$ImportMethod;)Lnet/gini/android/capture/document/PdfDocument;
 	public fun getFilename ()Ljava/lang/String;
+	public fun hashCode ()I
 	public fun loadFilename (Landroid/content/Context;)V
 	public fun writeToParcel (Landroid/os/Parcel;I)V
 }
@@ -1570,7 +1571,6 @@ public class net/gini/android/capture/document/PdfMultiPageDocument : net/gini/a
 	public fun <init> (Lnet/gini/android/capture/Document$Source;Lnet/gini/android/capture/Document$ImportMethod;)V
 	public fun <init> (Lnet/gini/android/capture/document/PdfDocument;)V
 	public fun describeContents ()I
-	public fun writeToParcel (Landroid/os/Parcel;I)V
 }
 
 public final class net/gini/android/capture/document/QRCodeDocument : net/gini/android/capture/document/GiniCaptureDocument {
@@ -1587,7 +1587,6 @@ public class net/gini/android/capture/document/QRCodeMultiPageDocument : net/gin
 	public fun <init> (Lnet/gini/android/capture/Document$Source;Lnet/gini/android/capture/Document$ImportMethod;)V
 	public fun <init> (Lnet/gini/android/capture/document/QRCodeDocument;)V
 	public fun describeContents ()I
-	public fun writeToParcel (Landroid/os/Parcel;I)V
 }
 
 public final class net/gini/android/capture/document/XmlDocument : net/gini/android/capture/document/GiniCaptureDocument {
@@ -1809,7 +1808,7 @@ public final class net/gini/android/capture/help/PhotoTipsHelpFragment$Companion
 }
 
 public class net/gini/android/capture/help/SupportedFormatsAdapter : androidx/recyclerview/widget/RecyclerView$Adapter {
-	public fun <init> (Ljava/lang/Boolean;)V
+	public fun <init> (Z)V
 	public fun getItemCount ()I
 	public fun getItemViewType (I)I
 	public synthetic fun onBindViewHolder (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;I)V
@@ -2880,12 +2879,12 @@ public final class net/gini/android/capture/internal/util/ApplicationHelper {
 public final class net/gini/android/capture/internal/util/BundleHelperKt {
 	public static final fun fromMap (Ljava/util/Map;)Landroid/os/Bundle;
 	public static final fun fromMapList (Ljava/util/List;)Ljava/util/List;
-	public static final fun toMap (Landroid/os/Bundle;)Ljava/util/Map;
-	public static final fun toMap (Landroid/os/Bundle;Ljava/lang/ClassLoader;)Ljava/util/Map;
-	public static synthetic fun toMap$default (Landroid/os/Bundle;Ljava/lang/ClassLoader;ILjava/lang/Object;)Ljava/util/Map;
-	public static final fun toMapList (Ljava/util/List;)Ljava/util/List;
-	public static final fun toMapList (Ljava/util/List;Ljava/lang/ClassLoader;)Ljava/util/List;
-	public static synthetic fun toMapList$default (Ljava/util/List;Ljava/lang/ClassLoader;ILjava/lang/Object;)Ljava/util/List;
+	public static final fun toMap (Landroid/os/Bundle;Ljava/lang/Class;)Ljava/util/Map;
+	public static final fun toMap (Landroid/os/Bundle;Ljava/lang/Class;Ljava/lang/ClassLoader;)Ljava/util/Map;
+	public static synthetic fun toMap$default (Landroid/os/Bundle;Ljava/lang/Class;Ljava/lang/ClassLoader;ILjava/lang/Object;)Ljava/util/Map;
+	public static final fun toMapList (Ljava/util/List;Ljava/lang/Class;)Ljava/util/List;
+	public static final fun toMapList (Ljava/util/List;Ljava/lang/Class;Ljava/lang/ClassLoader;)Ljava/util/List;
+	public static synthetic fun toMapList$default (Ljava/util/List;Ljava/lang/Class;Ljava/lang/ClassLoader;ILjava/lang/Object;)Ljava/util/List;
 }
 
 public abstract interface class net/gini/android/capture/internal/util/CancelListener {
@@ -2983,8 +2982,8 @@ public final class net/gini/android/capture/internal/util/MimeType : java/lang/E
 	public static final field TEXT_XML Lnet/gini/android/capture/internal/util/MimeType;
 	public static final field UNKNOWN Lnet/gini/android/capture/internal/util/MimeType;
 	public fun asString ()Ljava/lang/String;
-	public fun equals (Ljava/lang/String;)Z
 	public static fun fromString (Ljava/lang/String;)Lnet/gini/android/capture/internal/util/MimeType;
+	public fun matches (Ljava/lang/String;)Z
 	public static fun valueOf (Ljava/lang/String;)Lnet/gini/android/capture/internal/util/MimeType;
 	public static fun values ()[Lnet/gini/android/capture/internal/util/MimeType;
 }
@@ -4891,8 +4890,7 @@ public final class net/gini/android/capture/ui/components/textinput/amount/Decim
 
 public final class net/gini/android/capture/ui/components/textinput/amount/DecimalInputVisualTransformation$CustomOffsetMapping : androidx/compose/ui/text/input/OffsetMapping {
 	public static final field $stable I
-	public fun <init> (Ljava/text/DecimalFormatSymbols;Ljava/lang/String;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/text/DecimalFormatSymbols;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 	public fun originalToTransformed (I)I
 	public fun transformedToOriginal (I)I
 }
@@ -5687,8 +5685,8 @@ public final class net/gini/android/capture/ui/theme/typography/GiniTypographyKt
 }
 
 public final class net/gini/android/capture/ui/theme/typography/TypographyToTextStyleBridgeKt {
-	public static final fun textStyleFromAttribute (ILandroidx/compose/ui/unit/Density;ZLandroidx/compose/runtime/Composer;II)Landroidx/compose/ui/text/TextStyle;
-	public static final fun textStyleFromTextAppearance (ILandroidx/compose/ui/unit/Density;ZLandroidx/compose/runtime/Composer;II)Landroidx/compose/ui/text/TextStyle;
+	public static final fun textStyleFromAttribute (ILandroidx/compose/ui/unit/Density;Landroidx/compose/runtime/Composer;II)Landroidx/compose/ui/text/TextStyle;
+	public static final fun textStyleFromTextAppearance (ILandroidx/compose/ui/unit/Density;Landroidx/compose/runtime/Composer;II)Landroidx/compose/ui/text/TextStyle;
 }
 
 public final class net/gini/android/capture/util/AccessibilityHelpersKt {

@@ -11,7 +11,7 @@ import net.gini.android.capture.internal.util.Size;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 
-/**
+/*
  * Created by Alpar Szotyori on 08.12.2017.
  *
  * Copyright (c) 2017 Gini GmbH.

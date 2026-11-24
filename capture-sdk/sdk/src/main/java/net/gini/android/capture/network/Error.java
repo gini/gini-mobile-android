@@ -6,7 +6,6 @@ package net.gini.android.capture.network;
  * Copyright (c) 2018 Gini GmbH.
  */
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +26,6 @@ public class Error {
     private Integer mStatusCode;
     private Map<String, List<String>> mHeaders;
     private FileImportValidator.Error mFileImportErrors;
-    private Exception mException;
 
     /**
      * Create a new error.

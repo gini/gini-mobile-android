@@ -5,7 +5,7 @@ package net.gini.android.capture
  *
  * Interface used by [CaptureFlowFragment] to dispatch Bank SDK properties to Capture SDK.
  */
-interface BankSDKBridge {
+fun interface BankSDKBridge {
 
     /**
      * This method is implemented in `CaptureFlowFragment` to send the Bank SDK properties to the Capture SDK.

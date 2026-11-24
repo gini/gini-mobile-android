@@ -19,7 +19,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 public class UserCommentBuilderTest {
 
     @Test
-    public void should_createUserComment_withPredeterminedOrder_ofKeys() throws Exception {
+    public void should_createUserComment_withPredeterminedOrder_ofKeys() {
         // Given
         final Exif.UserCommentBuilder builder = Exif.userCommentBuilder();
         // When
@@ -42,7 +42,7 @@ public class UserCommentBuilderTest {
     }
 
     @Test
-    public void should_addImportMethod_ifSet() throws Exception {
+    public void should_addImportMethod_ifSet() {
         // Given
         final Exif.UserCommentBuilder builder = Exif.userCommentBuilder();
         // When

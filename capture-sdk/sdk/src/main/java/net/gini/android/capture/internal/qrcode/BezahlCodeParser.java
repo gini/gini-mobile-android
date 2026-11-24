@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 
 import net.gini.android.capture.internal.iban.IBANValidator;
 
-/**
+/*
  * Created by Alpar Szotyori on 11.12.2017.
  *
  * Copyright (c) 2017 Gini GmbH.

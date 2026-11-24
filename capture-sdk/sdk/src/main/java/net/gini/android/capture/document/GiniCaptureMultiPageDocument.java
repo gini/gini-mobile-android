@@ -13,7 +13,7 @@ import java.util.Map;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-/**
+/*
  * Created by Alpar Szotyori on 19.02.2018.
  *
  * Copyright (c) 2018 Gini GmbH.
@@ -91,7 +91,7 @@ public class GiniCaptureMultiPageDocument<T extends GiniCaptureDocument,
     }
 
     @Override
-    public void loadData(@NonNull final Context context,
+    public synchronized void loadData(@NonNull final Context context,
             @NonNull final AsyncCallback<byte[], Exception> callback) {
         loadImageDocuments(0, context, callback);
     }

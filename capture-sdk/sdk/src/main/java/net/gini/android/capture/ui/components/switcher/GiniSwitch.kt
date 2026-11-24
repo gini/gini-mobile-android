@@ -3,7 +3,7 @@
 package net.gini.android.capture.ui.components.switcher
 
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import net.gini.android.capture.ui.theme.GiniTheme
 
 @Composable
@@ -25,7 +26,7 @@ fun GiniSwitch(
     onCheckedChange: (Boolean) -> Unit,
     giniSwitchColors: GiniSwitchColors = GiniSwitchColors.colors(),
 ) {
-    CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
+    CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides Dp.Unspecified) {
 
         Switch(modifier = modifier.scale(0.7f),
             checked = checked,

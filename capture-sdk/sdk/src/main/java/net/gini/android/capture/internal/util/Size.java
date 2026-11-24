@@ -20,7 +20,7 @@ public class Size implements Comparable<Size> {
     public int compareTo(@NonNull final Size other) {
         final int area = width * height;
         final int areaOther = other.width * other.height;
-        return area - areaOther;
+        return Integer.compare(area, areaOther);
     }
 
     @Override

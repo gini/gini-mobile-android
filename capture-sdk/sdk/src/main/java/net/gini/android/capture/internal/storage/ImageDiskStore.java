@@ -21,7 +21,7 @@ import java.util.UUID;
 
 import static net.gini.android.capture.util.UriHelper.getFileExtension;
 
-/**
+/*
  * Created by Alpar Szotyori on 20.03.2018.
  *
  * Copyright (c) 2018 Gini GmbH.
@@ -82,6 +82,7 @@ public class ImageDiskStore {
                 try {
                     inputStream.close();
                 } catch (final IOException ignored) {
+                    // The stream was fully consumed; nothing to recover from
                 }
             }
         }
@@ -98,14 +99,14 @@ public class ImageDiskStore {
     @Nullable
     private File createFile(final Uri uri) {
         final File file = new File(uri.getPath());
-        if (!file.exists()) {
-            try {
-                //noinspection ResultOfMethodCallIgnored
-                file.createNewFile();
-            } catch (final IOException e) {
-                LOG.error("Failed to create file", e);
+        try {
+            if (!file.exists() && !file.createNewFile()) {
+                LOG.error("Failed to create file {}", file.getAbsolutePath());
                 return null;
             }
+        } catch (final IOException e) {
+            LOG.error("Failed to create file", e);
+            return null;
         }
         return file;
     }
@@ -113,39 +114,22 @@ public class ImageDiskStore {
     @VisibleForTesting
     void writeToFile(@NonNull final File file, @NonNull final byte[] bytes)
             throws IOException {
-        OutputStream outputStream = null;
-        try {
-            outputStream = new FileOutputStream(file);
+        try (OutputStream outputStream = new FileOutputStream(file)) {
             outputStream.write(bytes);
             outputStream.flush();
-        } finally {
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
-                } catch (final IOException ignore) {
-                }
-            }
         }
     }
 
     private void writeToFile(@NonNull final File file, @NonNull final InputStream inputStream)
             throws IOException {
-        OutputStream outputStream = null;
-        try {
-            outputStream = new BufferedOutputStream(new FileOutputStream(file), 65536);
+        try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file),
+                65536)) {
             final byte[] buffer = new byte[8192];
             int read;
             while ((read = inputStream.read(buffer)) != -1) {
                 outputStream.write(buffer, 0, read);
             }
             outputStream.flush();
-        } finally {
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
-                } catch (final IOException ignore) {
-                }
-            }
         }
     }
 
@@ -164,9 +148,7 @@ public class ImageDiskStore {
     }
 
     public void delete(@NonNull final Uri uri) {
-        final File file = new File(uri.getPath());
-        //noinspection ResultOfMethodCallIgnored
-        file.delete();
+        deleteFile(new File(uri.getPath()));
     }
 
     public static void clear(@NonNull final Context context) {
@@ -177,12 +159,16 @@ public class ImageDiskStore {
         final File[] files = storeDir.listFiles();
         if (files != null) {
             for (final File file : files) {
-                //noinspection ResultOfMethodCallIgnored
-                file.delete();
+                deleteFile(file);
             }
         }
-        //noinspection ResultOfMethodCallIgnored
-        storeDir.delete();
+        deleteFile(storeDir);
+    }
+
+    private static void deleteFile(@NonNull final File file) {
+        if (!file.delete()) {
+            LOG.warn("Failed to delete {}", file.getAbsolutePath());
+        }
     }
 
     @NonNull

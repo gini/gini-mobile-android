@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 
 import net.gini.android.capture.internal.iban.IBANValidator;
 
-/**
+/*
  * Created by Alpar Szotyori on 11.12.2017.
  *
  * Copyright (c) 2017 Gini GmbH.
@@ -44,7 +44,7 @@ class EPC069_12Parser implements QRCodeParser<PaymentQRCodeData> {
         // Replace occurrences of the line separators "\r\n" and "\r\r\n" with the line feed character "\n"
         // and split the string into lines with either the new line (\n) or carriage feed (\r) delimiter.
         final String[] lines = qrCodeContent.replaceAll("\r\r?\n", "\n")
-                .split("\n|\r", 12);
+                .split("[\n\r]", 12);
         if (lines.length == 0 || !"BCD".equals(lines[0])) {
             throw new IllegalArgumentException(
                     "QRCode content does not conform to the EPC069-12 format.");
@@ -67,7 +67,7 @@ class EPC069_12Parser implements QRCodeParser<PaymentQRCodeData> {
 
     @NonNull
     private String processAmount(@Nullable final String amount) {
-        if (TextUtils.isEmpty(amount)) {
+        if (amount == null || amount.isEmpty()) {
             return "";
         }
         return amount.length() > 3 ? amount.substring(3) : "";

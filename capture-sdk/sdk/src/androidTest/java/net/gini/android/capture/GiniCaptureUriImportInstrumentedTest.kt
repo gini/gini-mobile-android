@@ -39,7 +39,7 @@ class GiniCaptureUriImportInstrumentedTest {
 
     @After
     fun tearDown() {
-        GiniCaptureHelperForInstrumentationTests.setGiniCaptureInstance(null)
+        GiniCaptureInstanceTestHelper.setGiniCaptureInstance(null)
         listOf(PDF, PDF_WITH_PASSWORD, IMAGE, QR_CODE_IMAGE, XML).forEach {
             try {
                 Helpers.deleteAssetFileFromContentUri(it)

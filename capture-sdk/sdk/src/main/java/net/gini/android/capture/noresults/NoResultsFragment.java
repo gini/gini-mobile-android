@@ -31,7 +31,7 @@ import net.gini.android.capture.internal.util.CancelListener;
 public class NoResultsFragment extends Fragment implements FragmentImplCallback {
 
     private NoResultsFragmentImpl mFragmentImpl;
-    private final String ARGS_DOCUMENT = "GC_ARGS_DOCUMENT";
+    private static final String ARGS_DOCUMENT = "GC_ARGS_DOCUMENT";
 
     public void setListeners(@Nullable final EnterManuallyButtonListener listener) {
         mListener = listener;

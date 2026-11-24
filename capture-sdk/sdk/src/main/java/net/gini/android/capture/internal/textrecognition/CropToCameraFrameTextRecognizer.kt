@@ -7,7 +7,9 @@ import net.gini.android.capture.internal.util.Size
 /**
  * Text recognizer which crops the recognized text from an actual text recognizer to the camera frame.
  */
-internal class CropToCameraFrameTextRecognizer(private val actualTextRecognizer: TextRecognizer): TextRecognizer {
+internal class CropToCameraFrameTextRecognizer(
+    private val actualTextRecognizer: TextRecognizer
+) : TextRecognizer by actualTextRecognizer {
 
     var cameraPreviewSize: Size = Size(1, 1)
         /**
@@ -169,10 +171,6 @@ internal class CropToCameraFrameTextRecognizer(private val actualTextRecognizer:
         (boundingBox.right * scaleX).toInt(),
         (boundingBox.bottom * scaleY).toInt()
     )
-
-    override fun close() {
-        actualTextRecognizer.close()
-    }
 
 
 }

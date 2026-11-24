@@ -19,7 +19,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Queue;
 
-/**
+/*
  * Created by Alpar Szotyori on 21.03.2018.
  *
  * Copyright (c) 2018 Gini GmbH.
@@ -58,69 +58,103 @@ public abstract class MemoryCache<K, V> {
 
     public void get(@NonNull final Context context, @NonNull final K key,
             @NonNull final AsyncCallback<V, Exception> callback) {
-        mLog.debug("Get for key {}", getNameForLog(key));
+        if (mLog.isDebugEnabled()) {
+            mLog.debug("Get for key {}", getNameForLog(key));
+        }
         if (mCache.get(key) != null) {
             final V value = mCache.get(key);
-            mLog.debug("Return cached {}", getNameForLog(value));
+            if (mLog.isDebugEnabled()) {
+                mLog.debug("Return cached {}", getNameForLog(value));
+            }
             callback.onSuccess(value);
             return;
         }
 
         mLog.debug("Create worker");
         final Worker<K, V> worker = createWorker(mRunningWorkers, key,
-                new AsyncCallback<V, Exception>() {
-                    @Override
-                    public void onSuccess(final V result) {
-                        mLog.debug("Worker finished with result {}", getNameForLog(result));
-                        mCache.put(key, result);
-                        callOnSuccessForWaitingCallbacks(key, result);
-                        mLog.debug(LOG_REMOVE_CALLBACKS, getNameForLog(key));
-                        mWaitingCallbacks.remove(key);
-                        executeNextWorker(context);
-                    }
+                createWorkerCallback(context, key));
+        registerWaitingCallback(key, callback);
+        scheduleWorker(context, key, worker);
+    }
 
-                    @Override
-                    public void onError(final Exception exception) {
-                        mLog.error("Worker finished with error", exception);
-                        callOnErrorForWaitingCallbacks(key, exception);
-                        mLog.debug(LOG_REMOVE_CALLBACKS, getNameForLog(key));
-                        mWaitingCallbacks.remove(key);
-                        executeNextWorker(context);
-                    }
+    private AsyncCallback<V, Exception> createWorkerCallback(@NonNull final Context context,
+            @NonNull final K key) {
+        return new AsyncCallback<V, Exception>() {
+            @Override
+            public void onSuccess(final V result) {
+                if (mLog.isDebugEnabled()) {
+                    mLog.debug("Worker finished with result {}", getNameForLog(result));
+                }
+                mCache.put(key, result);
+                callOnSuccessForWaitingCallbacks(key, result);
+                removeWaitingCallbacksAndExecuteNextWorker(context, key);
+            }
 
-                    @Override
-                    public void onCancelled() {
-                        mLog.error("Worker was cancelled");
-                        callOnCancelledForWaitingCallbacks(key);
-                        mLog.debug(LOG_REMOVE_CALLBACKS, getNameForLog(key));
-                        mWaitingCallbacks.remove(key);
-                        executeNextWorker(context);
-                    }
-                });
+            @Override
+            public void onError(final Exception exception) {
+                mLog.error("Worker finished with error", exception);
+                callOnErrorForWaitingCallbacks(key, exception);
+                removeWaitingCallbacksAndExecuteNextWorker(context, key);
+            }
 
+            @Override
+            public void onCancelled() {
+                mLog.error("Worker was cancelled");
+                callOnCancelledForWaitingCallbacks(key);
+                removeWaitingCallbacksAndExecuteNextWorker(context, key);
+            }
+        };
+    }
+
+    private void removeWaitingCallbacksAndExecuteNextWorker(@NonNull final Context context,
+            @NonNull final K key) {
+        if (mLog.isDebugEnabled()) {
+            mLog.debug(LOG_REMOVE_CALLBACKS, getNameForLog(key));
+        }
+        mWaitingCallbacks.remove(key);
+        executeNextWorker(context);
+    }
+
+    private void registerWaitingCallback(@NonNull final K key,
+            @NonNull final AsyncCallback<V, Exception> callback) {
         List<AsyncCallback<V, Exception>> callbacks = mWaitingCallbacks.get(key);
         if (callbacks == null) {
-            mLog.debug("First callback {} registered for key {}", getNameForLog(callback),
-                    getNameForLog(key));
+            if (mLog.isDebugEnabled()) {
+                mLog.debug("First callback {} registered for key {}", getNameForLog(callback),
+                        getNameForLog(key));
+            }
             callbacks = new ArrayList<>();
             callbacks.add(callback);
             mWaitingCallbacks.put(key, callbacks);
         } else {
-            mLog.debug("Additional callback {} registered for key {}", getNameForLog(callback),
-                    getNameForLog(key));
+            if (mLog.isDebugEnabled()) {
+                mLog.debug("Additional callback {} registered for key {}", getNameForLog(callback),
+                        getNameForLog(key));
+            }
             callbacks.add(callback);
         }
+    }
 
-        mLog.debug("Schedule worker for key {}", getNameForLog(key));
+    private void scheduleWorker(@NonNull final Context context, @NonNull final K key,
+            @NonNull final Worker<K, V> worker) {
+        if (mLog.isDebugEnabled()) {
+            mLog.debug("Schedule worker for key {}", getNameForLog(key));
+        }
         if (!mRunningWorkers.contains(worker) && mRunningWorkers.size() < mRunningWorkersLimit) {
-            mLog.debug("Execute worker for key {}", getNameForLog(key));
+            if (mLog.isDebugEnabled()) {
+                mLog.debug("Execute worker for key {}", getNameForLog(key));
+            }
             mRunningWorkers.add(worker);
             worker.execute(context);
         } else if (!mWorkerQueue.contains(worker)) {
-            mLog.debug("Queue worker for key {}", getNameForLog(key));
+            if (mLog.isDebugEnabled()) {
+                mLog.debug("Queue worker for key {}", getNameForLog(key));
+            }
             mWorkerQueue.add(worker);
         } else {
-            mLog.debug("Worker already queued for key {}", getNameForLog(key));
+            if (mLog.isDebugEnabled()) {
+                mLog.debug("Worker already queued for key {}", getNameForLog(key));
+            }
         }
     }
 
@@ -128,8 +162,10 @@ public abstract class MemoryCache<K, V> {
         final List<AsyncCallback<V, Exception>> callbacks = mWaitingCallbacks.get(key);
         if (callbacks != null) {
             for (final AsyncCallback<V, Exception> waitingCallback : callbacks) {
-                mLog.debug(LOG_INVOKE_CALLBACK,
-                        getNameForLog(waitingCallback), getNameForLog(key));
+                if (mLog.isDebugEnabled()) {
+                    mLog.debug(LOG_INVOKE_CALLBACK,
+                            getNameForLog(waitingCallback), getNameForLog(key));
+                }
                 waitingCallback.onSuccess(result);
             }
         }
@@ -139,8 +175,10 @@ public abstract class MemoryCache<K, V> {
         final List<AsyncCallback<V, Exception>> callbacks = mWaitingCallbacks.get(key);
         if (callbacks != null) {
             for (final AsyncCallback<V, Exception> waitingCallback : callbacks) {
-                mLog.debug(LOG_INVOKE_CALLBACK,
-                        getNameForLog(waitingCallback), getNameForLog(key));
+                if (mLog.isDebugEnabled()) {
+                    mLog.debug(LOG_INVOKE_CALLBACK,
+                            getNameForLog(waitingCallback), getNameForLog(key));
+                }
                 waitingCallback.onError(exception);
             }
         }
@@ -150,8 +188,10 @@ public abstract class MemoryCache<K, V> {
         final List<AsyncCallback<V, Exception>> callbacks = mWaitingCallbacks.get(key);
         if (callbacks != null) {
             for (final AsyncCallback<V, Exception> waitingCallback : callbacks) {
-                mLog.debug(LOG_INVOKE_CALLBACK,
-                        getNameForLog(waitingCallback), getNameForLog(key));
+                if (mLog.isDebugEnabled()) {
+                    mLog.debug(LOG_INVOKE_CALLBACK,
+                            getNameForLog(waitingCallback), getNameForLog(key));
+                }
                 waitingCallback.onCancelled();
             }
         }
@@ -170,25 +210,38 @@ public abstract class MemoryCache<K, V> {
 
     private void executeNextWorker(@NonNull final Context context) {
         mLog.debug("Execute next worker");
-        final Worker worker = mWorkerQueue.peek();
+        final Worker<K, V> worker = mWorkerQueue.peek();
         if (worker != null) {
-            if (!mRunningWorkers.contains(worker)
-                    && mRunningWorkers.size() < mRunningWorkersLimit) {
-                mRunningWorkers.add(worker);
-                mWorkerQueue.poll();
+            executeQueuedWorker(context, worker);
+        } else {
+            mLog.debug("No queued workers");
+            reportDanglingCallbacks();
+        }
+    }
+
+    private void executeQueuedWorker(@NonNull final Context context,
+            @NonNull final Worker<K, V> worker) {
+        if (!mRunningWorkers.contains(worker)
+                && mRunningWorkers.size() < mRunningWorkersLimit) {
+            mRunningWorkers.add(worker);
+            mWorkerQueue.poll();
+            if (mLog.isDebugEnabled()) {
                 mLog.debug("Execute queued worker for key {}", getNameForLog(worker.getSubject()));
-                worker.execute(context);
-            } else {
+            }
+            worker.execute(context);
+        } else {
+            if (mLog.isDebugEnabled()) {
                 mLog.debug("Cannot execute worker for key {}. Running worker limit reached.",
                         getNameForLog(worker.getSubject()));
             }
-        } else {
-            mLog.debug("No queued workers");
-            if (mRunningWorkers.isEmpty() && !mWaitingCallbacks.isEmpty()) {
-                mLog.error("{} dangling callbacks", mWaitingCallbacks.size());
-                if (DEBUG) {
-                    logDanglingCallbacks();
-                }
+        }
+    }
+
+    private void reportDanglingCallbacks() {
+        if (mRunningWorkers.isEmpty() && !mWaitingCallbacks.isEmpty()) {
+            mLog.error("{} dangling callbacks", mWaitingCallbacks.size());
+            if (DEBUG) {
+                logDanglingCallbacks();
             }
         }
     }
@@ -197,8 +250,10 @@ public abstract class MemoryCache<K, V> {
         for (final Map.Entry<K, List<AsyncCallback<V, Exception>>> entry
                 : mWaitingCallbacks.entrySet()) {
             for (final AsyncCallback<V, Exception> waitingCallback : entry.getValue()) {
-                mLog.error("Dangling callback {} for key {}", getNameForLog(waitingCallback),
-                        getNameForLog(entry.getKey()));
+                if (mLog.isErrorEnabled()) {
+                    mLog.error("Dangling callback {} for key {}", getNameForLog(waitingCallback),
+                            getNameForLog(entry.getKey()));
+                }
             }
         }
     }

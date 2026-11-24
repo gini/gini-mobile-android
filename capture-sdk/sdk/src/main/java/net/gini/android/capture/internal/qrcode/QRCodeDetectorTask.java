@@ -5,10 +5,11 @@ import android.media.Image;
 import net.gini.android.capture.internal.util.Size;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import androidx.annotation.NonNull;
 
-/**
+/*
  * Created by Alpar Szotyori on 11.12.2017.
  *
  * Copyright (c) 2017 Gini GmbH.
@@ -25,11 +26,11 @@ public interface QRCodeDetectorTask {
 
     @NonNull
     List<String> detect(@NonNull final Image image, @NonNull final Size imageSize,
-                        final int rotation) throws Exception;
+                        final int rotation) throws ExecutionException, InterruptedException;
 
     @NonNull
     List<String> detect(@NonNull final byte[] image, @NonNull final Size imageSize,
-                        final int rotation) throws Exception;
+                        final int rotation) throws ExecutionException, InterruptedException;
 
     void checkAvailability(@NonNull final Callback callback);
 

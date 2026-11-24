@@ -3,7 +3,7 @@ package net.gini.android.capture.internal.qrcode;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
-/**
+/*
  * Created by Alpar Szotyori on 15.04.2019.
  *
  * Copyright (c) 2019 Gini GmbH.

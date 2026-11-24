@@ -6,7 +6,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.OpenableColumns;
-import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
 import net.gini.android.capture.internal.util.HeicHeader;
@@ -50,6 +49,7 @@ public final class UriHelper {
                 try {
                     inputStream.close();
                 } catch (final IOException ignored) {
+                    // The stream was only opened for reading; nothing to recover from
                 }
             }
         }
@@ -69,11 +69,13 @@ public final class UriHelper {
             inputStream = context.getContentResolver().openInputStream(uri);
             return inputStream != null;
         } catch (final IOException ignored) {
+            // Not being able to open the stream means it is not available
         } finally {
             if (inputStream != null) {
                 try {
                     inputStream.close();
                 } catch (final IOException ignored) {
+                    // The stream was only opened for reading; nothing to recover from
                 }
             }
         }
@@ -95,8 +97,8 @@ public final class UriHelper {
         final Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
         if (cursor == null) {
             final String filename = getFilenameForPath(uri.getPath());
-            if (TextUtils.isEmpty(filename)) {
-                throw new IllegalStateException("Could not retrieve fhe filename");
+            if (filename == null || filename.isEmpty()) {
+                throw new IllegalStateException("Could not retrieve the filename");
             }
             return filename;
         }
@@ -198,7 +200,7 @@ public final class UriHelper {
      * absent or the generic "some bytes" type.
      */
     private static boolean namesTheType(@Nullable final String mimeType) {
-        return mimeType != null && !MimeType.APPLICATION_OCTET_STREAM.equals(mimeType);
+        return mimeType != null && !MimeType.APPLICATION_OCTET_STREAM.matches(mimeType);
     }
 
     @Nullable

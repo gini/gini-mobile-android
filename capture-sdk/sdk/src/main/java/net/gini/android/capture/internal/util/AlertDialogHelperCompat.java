@@ -13,7 +13,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.internal.ui.runtimecolors.RuntimeColors;
-/**
+/*
  * Created by Alpar Szotyori on 04.02.2019.
  *
  * Copyright (c) 2019 Gini GmbH.
@@ -47,10 +47,9 @@ public final class AlertDialogHelperCompat {
                 .setNegativeButton(negativeButtonTitle, negativeButtonClickListener)
                 .setOnCancelListener(cancelListener)
                 .create();
-        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().getAllowScreenshots()) {
-            if (alertDialog.getWindow() != null) {
-                WindowExtensionsKt.disallowScreenshots(alertDialog.getWindow());
-            }
+        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().getAllowScreenshots()
+                && alertDialog.getWindow() != null) {
+            WindowExtensionsKt.disallowScreenshots(alertDialog.getWindow());
         }
         alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.show();

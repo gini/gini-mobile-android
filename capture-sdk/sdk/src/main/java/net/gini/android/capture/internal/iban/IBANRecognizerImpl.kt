@@ -129,12 +129,8 @@ internal class IBANRecognizerImpl @JvmOverloads constructor(
     }
 
     private fun checkWidthAndHeight(width: Int, height: Int) {
-        if (width == 0) {
-            throw IllegalArgumentException("Image width is 0")
-        }
-        if (height == 0) {
-            throw IllegalArgumentException("Image height is 0")
-        }
+        require(width != 0) { "Image width is 0" }
+        require(height != 0) { "Image height is 0" }
     }
 
     private fun singleLineIBANs(text: String): List<String> {

@@ -2,6 +2,7 @@ package net.gini.android.capture.error
 
 import android.content.DialogInterface
 import android.os.Bundle
+import androidx.core.os.BundleCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -103,8 +104,8 @@ class ErrorFragment : Fragment(), FragmentImplCallback {
         fragment: FragmentImplCallback,
         arguments: Bundle?
     ): ErrorFragmentImpl {
-        val document = arguments?.getParcelable<Document>(ARGS_DOCUMENT)
-        val error = arguments?.getSerializable(ARGS_ERROR) as? ErrorType
+        val document = arguments?.let { BundleCompat.getParcelable(it, ARGS_DOCUMENT, Document::class.java) }
+        val error = arguments?.let { BundleCompat.getSerializable(it, ARGS_ERROR, ErrorType::class.java) }
         val customError = arguments?.getString(ARGS_CUSTOM_ERROR)
         return ErrorFragmentImpl(fragment, cancelListener, document, error, customError)
     }

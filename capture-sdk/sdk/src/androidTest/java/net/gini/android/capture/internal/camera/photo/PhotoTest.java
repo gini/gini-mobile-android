@@ -31,7 +31,7 @@ public class PhotoTest {
     }
 
     @AfterClass
-    public static void teardownClass() throws IOException {
+    public static void teardownClass() {
         TEST_JPEG = null;
     }
 

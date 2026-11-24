@@ -80,7 +80,7 @@ public interface FragmentImplCallback {
             findNavController().navigate(navDirections);
         } catch (Exception exception) {
             Logger logger = LoggerFactory.getLogger(FragmentImplCallback.class);
-            logger.error("Navigation exception " + exception.getMessage());
+            logger.error("Navigation exception {}", exception.getMessage());
         }
     }
 }

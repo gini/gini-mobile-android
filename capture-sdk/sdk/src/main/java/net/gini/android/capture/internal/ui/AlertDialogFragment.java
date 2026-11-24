@@ -20,7 +20,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.internal.util.WindowExtensionsKt;
 
-/**
+/*
  * Created by Alpar Szotyori on 05.06.2018.
  *
  * Copyright (c) 2018 Gini GmbH.
@@ -61,10 +61,9 @@ public class AlertDialogFragment extends DialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().getAllowScreenshots()) {
-            if (getDialog() != null && getDialog().getWindow() != null) {
-                WindowExtensionsKt.disallowScreenshots(getDialog().getWindow());
-            }
+        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().getAllowScreenshots()
+                && getDialog() != null && getDialog().getWindow() != null) {
+            WindowExtensionsKt.disallowScreenshots(getDialog().getWindow());
         }
     }
 
@@ -99,26 +98,20 @@ public class AlertDialogFragment extends DialogFragment {
             builder.setMessage(mMessage);
         }
         if (mPositiveButtonTitle != 0) {
-            builder.setPositiveButton(mPositiveButtonTitle, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(final DialogInterface dialog, final int which) {
-                    final FragmentActivity activity = getActivity();
-                    if (activity instanceof AlertDialogFragmentListener) {
-                        ((AlertDialogFragmentListener) activity).onPositiveButtonClicked(
-                                dialog, mDialogId);
-                    }
+            builder.setPositiveButton(mPositiveButtonTitle, (dialog, which) -> {
+                final FragmentActivity activity = getActivity();
+                if (activity instanceof AlertDialogFragmentListener) {
+                    ((AlertDialogFragmentListener) activity).onPositiveButtonClicked(
+                            dialog, mDialogId);
                 }
             });
         }
         if (mNegativeButtonTitle != 0) {
-            builder.setNegativeButton(mNegativeButtonTitle, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(final DialogInterface dialog, final int which) {
-                    final FragmentActivity activity = getActivity();
-                    if (activity instanceof AlertDialogFragmentListener) {
-                        ((AlertDialogFragmentListener) activity).onNegativeButtonClicked(dialog,
-                                mDialogId);
-                    }
+            builder.setNegativeButton(mNegativeButtonTitle, (dialog, which) -> {
+                final FragmentActivity activity = getActivity();
+                if (activity instanceof AlertDialogFragmentListener) {
+                    ((AlertDialogFragmentListener) activity).onNegativeButtonClicked(dialog,
+                            mDialogId);
                 }
             });
         }

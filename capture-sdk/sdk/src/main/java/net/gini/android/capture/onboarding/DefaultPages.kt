@@ -3,6 +3,7 @@ package net.gini.android.capture.onboarding
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
 import net.gini.android.capture.onboarding.view.ImageOnboardingIllustrationAdapter
+import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
 
 /**
  * Default onboarding pages.
@@ -63,36 +64,37 @@ sealed class DefaultPages(val onboardingPage: OnboardingPage) {
          */
         @JvmStatic
         fun asArrayList(isMultiPageEnabled: Boolean, isQRCodeScanningEnabled: Boolean): ArrayList<OnboardingPage> {
+            val giniCapture = if (GiniCapture.hasInstance()) GiniCapture.getInstance() else null
             val list = mutableListOf(
-                Page1().apply {
-                    if (GiniCapture.hasInstance() && GiniCapture.getInstance().onboardingAlignCornersIllustrationAdapter != null) {
-                        onboardingPage.illustrationAdapter = GiniCapture.getInstance().onboardingAlignCornersIllustrationAdapter
-                    }
-                }.onboardingPage,
-                Page2().apply {
-                    if (GiniCapture.hasInstance() && GiniCapture.getInstance().onboardingLightingIllustrationAdapter != null) {
-                        onboardingPage.illustrationAdapter = GiniCapture.getInstance().onboardingLightingIllustrationAdapter
-                    }
-                }.onboardingPage
+                Page1().onboardingPage
+                    .withCustomIllustration(giniCapture?.onboardingAlignCornersIllustrationAdapter),
+                Page2().onboardingPage
+                    .withCustomIllustration(giniCapture?.onboardingLightingIllustrationAdapter)
             )
             if (isMultiPageEnabled) {
                 list.add(
-                    Page3().apply {
-                        if (GiniCapture.hasInstance() && GiniCapture.getInstance().onboardingMultiPageIllustrationAdapter != null) {
-                            onboardingPage.illustrationAdapter = GiniCapture.getInstance().onboardingMultiPageIllustrationAdapter
-                        }
-                    }.onboardingPage
+                    Page3().onboardingPage
+                        .withCustomIllustration(giniCapture?.onboardingMultiPageIllustrationAdapter)
                 )
             }
             if (isQRCodeScanningEnabled) {
-                list.add(Page4().apply {
-                    if (GiniCapture.hasInstance() && GiniCapture.getInstance().onboardingQRCodeIllustrationAdapter != null) {
-                        onboardingPage.illustrationAdapter =
-                            GiniCapture.getInstance().onboardingQRCodeIllustrationAdapter
-                    }
-                }.onboardingPage)
+                list.add(
+                    Page4().onboardingPage
+                        .withCustomIllustration(giniCapture?.onboardingQRCodeIllustrationAdapter)
+                )
             }
             return ArrayList(list)
+        }
+
+        /**
+         * Replaces the default illustration with the custom one, if the client configured any.
+         */
+        private fun OnboardingPage.withCustomIllustration(
+            customAdapter: OnboardingIllustrationAdapter?
+        ): OnboardingPage = apply {
+            if (customAdapter != null) {
+                illustrationAdapter = customAdapter
+            }
         }
     }
 }

@@ -45,11 +45,9 @@ data class Amount(
         @Throws(IllegalArgumentException::class)
         fun parse(amountStr: String): Amount {
             val amountParts = amountStr.split(":").also {
-                if (it.size != 2) {
-                    throw IllegalArgumentException(
-                        "Invalid amount format for value: $amountStr. " +
-                                "Should be `value:currency_code`"
-                    )
+                require(it.size == 2) {
+                    "Invalid amount format for value: $amountStr. " +
+                            "Should be `value:currency_code`"
                 }
             }
 

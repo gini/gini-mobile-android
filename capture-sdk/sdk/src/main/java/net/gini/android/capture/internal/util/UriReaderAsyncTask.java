@@ -37,7 +37,7 @@ public class UriReaderAsyncTask extends AsyncTask<Uri, Void, byte[]> {
         } catch (final IOException e) {
             mException = e;
         }
-        return null;
+        return new byte[0];
     }
 
     @Override

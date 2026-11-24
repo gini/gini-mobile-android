@@ -133,11 +133,8 @@ public final class GiniCaptureFileImport {
                         }
                     });
             asyncTask.execute(uris.toArray(new Uri[uris.size()]));
-            return new CancellationToken() {
-                @Override
-                public void cancel() {
-                    // No-op
-                }
+            return () -> {
+                // No-op
             };
         }
     }
