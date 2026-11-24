@@ -16,8 +16,7 @@ import androidx.annotation.Nullable;
 import net.gini.android.capture.internal.util.FileImportValidator;
 
 /**
- * Used by the {@link GiniCaptureNetworkService} and {@link GiniCaptureNetworkApi} to return error
- * messages.
+ * Used by the {@link GiniCaptureNetworkService} to return error messages.
  */
 public class Error {
 
