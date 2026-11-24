@@ -253,7 +253,7 @@ class GiniCaptureDefaultNetworkServiceTest {
         // Then
         assertThat(error.cause).isSameInstanceAs(exception)
         assertThat(error.statusCode).isNull()
-        assertThat(error.message).isEqualTo("Unable to resolve host")
+        assertThat(error.message).isEqualTo("Request failed: java.net.UnknownHostException")
     }
 
     @Test
@@ -269,7 +269,7 @@ class GiniCaptureDefaultNetworkServiceTest {
         // Then
         assertThat(error.cause).isSameInstanceAs(exception)
         assertThat(error.statusCode).isNull()
-        assertThat(error.message).isEqualTo("Unable to resolve host")
+        assertThat(error.message).isEqualTo("Request failed: java.net.UnknownHostException")
     }
 
     @Test

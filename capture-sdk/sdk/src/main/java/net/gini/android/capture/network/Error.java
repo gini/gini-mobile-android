@@ -52,8 +52,9 @@ public class Error {
     /**
      * Create a new error with status code and headers.
      *
-     * The error message is the exception's message. If it has none, then the message names the
-     * exception or, without an exception, the status code.
+     * The error message names the status code or, without one, the type of the exception. It
+     * never contains the exception's message, because for API errors that is the response body.
+     * Use {@link #getCause()} to get the exception.
      *
      * @param statusCode API response status code
      * @param headers API response headers
@@ -69,14 +70,11 @@ public class Error {
     @NonNull
     private static String createMessage(@Nullable final Integer statusCode,
             @Nullable final Throwable exception) {
-        if (exception != null && exception.getMessage() != null) {
-            return exception.getMessage();
-        }
-        if (exception != null) {
-            return exception.getClass().getName();
-        }
         if (statusCode != null) {
             return "Request failed with status code " + statusCode;
+        }
+        if (exception != null) {
+            return "Request failed: " + exception.getClass().getName();
         }
         return "Request failed";
     }
