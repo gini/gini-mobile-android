@@ -53,13 +53,33 @@ public class Error {
     /**
      * Create a new error with status code and headers.
      *
+     * The error message is the exception's message. If it has none, then the message names the
+     * exception or, without an exception, the status code.
+     *
      * @param statusCode API response status code
      * @param headers API response headers
+     * @param exception the cause of the error
      */
     public Error(final Integer statusCode,final Map<String, List<String>> headers, final Throwable exception) {
         mStatusCode = statusCode;
         mHeaders = headers;
         mCause = exception;
+        mMessage = createMessage(statusCode, exception);
+    }
+
+    @NonNull
+    private static String createMessage(@Nullable final Integer statusCode,
+            @Nullable final Throwable exception) {
+        if (exception != null && exception.getMessage() != null) {
+            return exception.getMessage();
+        }
+        if (exception != null) {
+            return exception.getClass().getName();
+        }
+        if (statusCode != null) {
+            return "Request failed with status code " + statusCode;
+        }
+        return "Request failed";
     }
 
     /**
@@ -69,6 +89,7 @@ public class Error {
      */
     public Error(FileImportValidator.Error fileImportErrors) {
         mFileImportErrors = fileImportErrors;
+        mMessage = "File import failed: " + fileImportErrors;
     }
 
     /**

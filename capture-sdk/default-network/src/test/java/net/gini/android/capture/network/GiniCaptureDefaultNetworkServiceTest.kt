@@ -253,6 +253,7 @@ class GiniCaptureDefaultNetworkServiceTest {
         // Then
         assertThat(error.cause).isSameInstanceAs(exception)
         assertThat(error.statusCode).isNull()
+        assertThat(error.message).isEqualTo("Unable to resolve host")
     }
 
     @Test
@@ -268,6 +269,7 @@ class GiniCaptureDefaultNetworkServiceTest {
         // Then
         assertThat(error.cause).isSameInstanceAs(exception)
         assertThat(error.statusCode).isNull()
+        assertThat(error.message).isEqualTo("Unable to resolve host")
     }
 
     @Test
@@ -321,6 +323,8 @@ class GiniCaptureDefaultNetworkServiceTest {
         // Then
         assertThat(error.statusCode).isEqualTo(503)
         assertThat(error.headers).isEqualTo(headers)
+        // No exception to take the message from
+        assertThat(error.message).isEqualTo("Request failed with status code 503")
     }
 
     /**
