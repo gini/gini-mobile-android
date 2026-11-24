@@ -69,6 +69,14 @@ All three media files are always uploaded. BrowserStack places them in the devic
 
 Both are also triggered by `bs_run_all_groups.sh`.
 
+### Onboarding shard (PP-3883)
+
+| Script | Classes | Notes |
+|---|---|---|
+| `bs_run_group_onboarding.sh` | `OnboardingScreenTests`, `OnboardingNavigationTests` | Every test mapped to the Xray folder "Onboarding Screens" (PP-3410…PP-3414), in one build; each entry names its cases. `OnboardingScreenTests` walks the pages with Next (PP-3410); `OnboardingNavigationTests` swipes back and forth (PP-3411) and checks that Skip on pages 1–3 and Get Started open the camera (PP-3412…PP-3414). No network. Every case needs a fresh install, which the `clearPackageData` flag in the build payload provides. |
+
+`bs_run_all_groups.sh` runs only `OnboardingNavigationTests` in its `onboarding` group, because `OnboardingScreenTests` already runs in its `ui` group.
+
 ---
 
 ## Output APKs
