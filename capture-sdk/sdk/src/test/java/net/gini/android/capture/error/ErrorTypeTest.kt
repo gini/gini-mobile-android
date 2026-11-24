@@ -10,6 +10,7 @@ import net.gini.android.capture.internal.util.FileImportValidator
 import org.junit.Before
 import org.junit.Test
 import org.koin.dsl.module
+import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import net.gini.android.capture.network.Error as GiniError
@@ -39,6 +40,31 @@ class ErrorTypeTest {
 
         // Then
         assertThat(errorType).isEqualTo(ErrorType.NO_CONNECTION)
+    }
+
+    @Test
+    fun `typeFromError should return NO_CONNECTION when UnknownHostException is a nested cause`() {
+        // Given
+        // A failed session request reaches the SDK wrapped in another exception
+        val error = GiniError(null, null, IOException("Session request failed", UnknownHostException()))
+
+        // When
+        val errorType = ErrorType.typeFromError(error)
+
+        // Then
+        assertThat(errorType).isEqualTo(ErrorType.NO_CONNECTION)
+    }
+
+    @Test
+    fun `typeFromError should return GENERAL when no cause in the chain is UnknownHostException`() {
+        // Given
+        val error = GiniError(null, null, IOException("outer", IllegalStateException("inner")))
+
+        // When
+        val errorType = ErrorType.typeFromError(error)
+
+        // Then
+        assertThat(errorType).isEqualTo(ErrorType.GENERAL)
     }
 
     @Test

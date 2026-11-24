@@ -382,11 +382,17 @@ internal constructor(
             }
 
             is Resource.Error -> {
-                val error = Error(compositeDocumentAndExtractionsResource.formattedErrorMessage)
+                // The status code and the exception have to reach the callback: the error
+                // screen's type (e.g. "no connection") is derived from them.
+                val error = Error(
+                    compositeDocumentAndExtractionsResource.responseStatusCode,
+                    compositeDocumentAndExtractionsResource.responseHeaders,
+                    compositeDocumentAndExtractionsResource.exception
+                )
                 LOG.error(
                     "Document analysis failed for documents {}: {}",
                     LogSanitizer.sanitize(giniApiDocumentIdRotationMap),
-                    LogSanitizer.sanitize(error.message)
+                    LogSanitizer.sanitize(compositeDocumentAndExtractionsResource.formattedErrorMessage)
                 )
                 callback.failure(error)
             }
