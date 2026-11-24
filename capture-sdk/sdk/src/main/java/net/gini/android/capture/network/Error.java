@@ -20,7 +20,7 @@ import net.gini.android.capture.internal.util.FileImportValidator;
  */
 public class Error {
 
-    private String mMessage;
+    private final String mMessage;
     private Throwable mCause;
 
     private Integer mStatusCode;
