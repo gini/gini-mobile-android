@@ -34,6 +34,8 @@ import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockClientConfig
 import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockScenario
 import net.gini.android.capture.GiniCapture
 import org.junit.After
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Assume
 import org.junit.Before
 import org.junit.Rule
@@ -160,6 +162,10 @@ abstract class WarningBottomSheetTestBase {
      * Analysis screen while it runs. [configurationFails] makes the `/configurations` request fail.
      * [analysisFailure] picks the error screen for [UiTestMockScenario.ANALYSIS_ERROR].
      *
+     * [fraudSignalsEnabled] is the server-side gate of the fraud prevention (IBAN mismatch)
+     * warning; [alreadyPaidHintEnabled], [paymentDueHintEnabled] and [paymentScheduleHintEnabled]
+     * are the server-side gates of the other Analysis screen hints. All four default to off.
+     *
      * Must be called before the photo payment button is clicked, like [configureHints]. Cleared
      * in [tearDown].
      */
@@ -172,6 +178,10 @@ abstract class WarningBottomSheetTestBase {
         qrCodeEducationEnabled: Boolean = false,
         analysisDelayMillis: Long = 0,
         configurationFails: Boolean = false,
+        fraudSignalsEnabled: Boolean = false,
+        alreadyPaidHintEnabled: Boolean = false,
+        paymentDueHintEnabled: Boolean = false,
+        paymentScheduleHintEnabled: Boolean = false,
         analysisFailure: UiTestMockAnalysisFailure = UiTestMockAnalysisFailure.GENERIC
     ) {
         UiTestMockBackend.arm(
@@ -181,7 +191,11 @@ abstract class WarningBottomSheetTestBase {
                 returnAssistantEnabled = returnAssistantEnabled,
                 skontoEnabled = skontoEnabled,
                 ingredientBrandScreens = ingredientBrandScreens,
-                qrCodeEducationEnabled = qrCodeEducationEnabled
+                qrCodeEducationEnabled = qrCodeEducationEnabled,
+                fraudSignalsEnabled = fraudSignalsEnabled,
+                alreadyPaidHintEnabled = alreadyPaidHintEnabled,
+                paymentDueHintEnabled = paymentDueHintEnabled,
+                paymentScheduleHintEnabled = paymentScheduleHintEnabled
             ),
             analysisDelayMillis = analysisDelayMillis,
             configurationFails = configurationFails,
@@ -231,6 +245,15 @@ abstract class WarningBottomSheetTestBase {
     }
 
     protected fun uploadFixtureInvoiceAndProcess(assetName: String) {
+        uploadFixtureInvoiceToReview(assetName)
+        reviewScreen.clickProcessButton()
+    }
+
+    /**
+     * [uploadFixtureInvoiceAndProcess] up to the review screen, for a test that does something
+     * there (turning the device, for example) before it clicks "Process" itself.
+     */
+    protected fun uploadFixtureInvoiceToReview(assetName: String) {
         imageUploader.copyImageToDownloads(getApplicationContext(), assetName)
         mainScreen.clickPhotoPaymentButton()
         onboardingScreen.clickSkipButtonIfPresent()
@@ -240,7 +263,23 @@ abstract class WarningBottomSheetTestBase {
         imageUploader.clickAddButton()
         idlingResource.waitForIdle()
         reviewScreen.assertReviewTitleIsDisplayed()
-        reviewScreen.clickProcessButton()
+    }
+
+    /**
+     * What "Proceed anyway" on the Credit Note warning must lead to: the extraction screen, the
+     * sheet gone, and no amount. The value is asserted, not the row — the example app re-adds
+     * `amountToPay` as an empty row (see `CreditNoteWarningTests.test6`).
+     */
+    protected fun assertProceedResult() {
+        assertTrue(
+            "Extraction screen did not appear",
+            extractionScreen.assertExtractionScreenIsDisplayed()
+        )
+        assertFalse("Warning must be dismissed", warningBottomSheet.isSheetDisplayed())
+        assertFalse(
+            "amountToPay must be empty on the credit note proceed path",
+            extractionScreen.isExtractionFieldFilled("amountToPay")
+        )
     }
 
     /**

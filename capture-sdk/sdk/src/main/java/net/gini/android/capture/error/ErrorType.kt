@@ -101,6 +101,17 @@ enum class ErrorType(
         }
 
 
+        /**
+         * The [UnknownHostException] is not always the direct cause: a failed session request
+         * is wrapped in an `ApiException` by the API library before it gets here.
+         */
+        private fun isCausedByUnknownHost(error: Error): Boolean =
+            generateSequence(error.cause) { it.cause }
+                .take(MAX_CAUSE_DEPTH)
+                .any { it is UnknownHostException }
+
+        private const val MAX_CAUSE_DEPTH = 10
+
         const val ERROR_KEY = "error"
         const val GRANT_VALUE = "invalid_grant"
 
@@ -108,7 +119,7 @@ enum class ErrorType(
         @JvmStatic
         fun typeFromError(error: Error, isEInvoiceEnabled: Boolean = false): ErrorType {
 
-            if (error.cause != null && (error.cause is UnknownHostException)) {
+            if (isCausedByUnknownHost(error)) {
                 return NO_CONNECTION
             }
 

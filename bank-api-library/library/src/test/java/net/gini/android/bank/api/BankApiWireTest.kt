@@ -186,6 +186,7 @@ class BankApiWireTest {
         assertThat(configuration.isSkontoEnabled).isTrue()
         assertThat(configuration.isReturnAssistantEnabled).isFalse()
         assertThat(configuration.amplitudeApiKey).isEqualTo("amplitude-key-1")
+        assertThat(configuration.isFraudSignalsEnabled).isTrue()
     }
 
     @Test
@@ -328,7 +329,8 @@ class BankApiWireTest {
                 "alreadyPaidHintEnabled": true,
                 "paymentDueHintEnabled": false,
                 "savePhotosLocallyEnabled": true,
-                "unsupportedQRCodeWarningEnabled": false
+                "unsupportedQRCodeWarningEnabled": false,
+                "fraudSignalsEnabled": true
             }
         """.trimIndent()
 

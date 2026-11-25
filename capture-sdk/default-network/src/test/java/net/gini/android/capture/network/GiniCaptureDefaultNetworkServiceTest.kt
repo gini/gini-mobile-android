@@ -10,15 +10,21 @@ import io.mockk.every
 import io.mockk.mockk
 import net.gini.android.bank.api.BankApiDocumentManager
 import net.gini.android.bank.api.GiniBankAPI
+import net.gini.android.bank.api.models.ExtractionsContainer
 import net.gini.android.capture.Document
+import net.gini.android.capture.error.ErrorType
 import net.gini.android.capture.internal.network.Configuration
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.core.api.Resource
+import net.gini.android.core.api.requests.ApiException
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Shadows.shadowOf
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import java.util.Date
 import net.gini.android.bank.api.models.Configuration as BankConfig
+import net.gini.android.core.api.models.Document as ApiDocument
 
 /**
  * Created by Alpár Szotyori on 25.02.22.
@@ -134,7 +140,8 @@ class GiniCaptureDefaultNetworkServiceTest {
             isPaymentDueHintEnabled = true,
             isPaymentScheduleHintEnabled = true,
             isCreditNoteHintEnabled = true,
-            ingredientBrandScreens = listOf("Analysis")
+            ingredientBrandScreens = listOf("Analysis"),
+            isFraudSignalsEnabled = true,
         )
 
         // Add more stubs if mapBankConfigurationToConfiguration uses other properties
@@ -175,6 +182,7 @@ class GiniCaptureDefaultNetworkServiceTest {
         // mapBankConfigurationToConfiguration and this assertion fails, instead of the default
         // network silently discarding the backend flag.
         assertThat(captured!!.ingredientBrandScreens).containsExactly("Analysis")
+        assertThat(captured!!.isFraudSignalsEnabled).isTrue()
     }
 
     @Test
@@ -231,4 +239,163 @@ class GiniCaptureDefaultNetworkServiceTest {
         shadowOf(Looper.getMainLooper()).idle()
         assertThat(called).isTrue()
     }
+
+    @Test
+    fun `analyze passes the exception to the failure callback when creating the composite document fails`() {
+        // Given
+        val exception = UnknownHostException("Unable to resolve host")
+
+        // When
+        val error = analyzeAndGetFailure(
+            compositeDocumentResource = Resource.Error(message = exception.message, exception = exception)
+        )
+
+        // Then
+        assertThat(error.cause).isSameInstanceAs(exception)
+        assertThat(error.statusCode).isNull()
+        assertThat(error.message).isEqualTo("Request failed: java.net.UnknownHostException")
+    }
+
+    @Test
+    fun `analyze passes the exception to the failure callback when getting the extractions fails`() {
+        // Given
+        val exception = UnknownHostException("Unable to resolve host")
+
+        // When
+        val error = analyzeAndGetFailure(
+            extractionsResource = Resource.Error(message = exception.message, exception = exception)
+        )
+
+        // Then
+        assertThat(error.cause).isSameInstanceAs(exception)
+        assertThat(error.statusCode).isNull()
+        assertThat(error.message).isEqualTo("Request failed: java.net.UnknownHostException")
+    }
+
+    @Test
+    fun `analyze failure maps to the no connection error when the session request failed offline`() {
+        // Given
+        // The shape core-api-library produces when its session interceptor can't reach the host
+        val sessionFailure = ApiException(
+            message = "Session request failed",
+            cause = UnknownHostException("Unable to resolve host")
+        )
+
+        // When
+        val error = analyzeAndGetFailure(
+            compositeDocumentResource = Resource.Error.fromApiException(sessionFailure)
+        )
+
+        // Then
+        assertThat(ErrorType.typeFromError(error)).isEqualTo(ErrorType.NO_CONNECTION)
+    }
+
+    @Test
+    fun `analyze failure maps to the upload error when the request timed out`() {
+        // Given
+        val exception = SocketTimeoutException("timeout")
+
+        // When
+        val error = analyzeAndGetFailure(
+            compositeDocumentResource = Resource.Error(message = exception.message, exception = exception)
+        )
+
+        // Then
+        // Same mapping as for an upload timeout. Showing the no connection error for timeouts
+        // instead is an open product question - update this test when that is decided.
+        assertThat(ErrorType.typeFromError(error)).isEqualTo(ErrorType.UPLOAD)
+    }
+
+    @Test
+    fun `analyze passes the response status code and headers to the failure callback`() {
+        // Given
+        val headers = mapOf("Retry-After" to listOf("120"))
+
+        // When
+        val error = analyzeAndGetFailure(
+            compositeDocumentResource = Resource.Error(
+                message = "Service unavailable",
+                responseStatusCode = 503,
+                responseHeaders = headers
+            )
+        )
+
+        // Then
+        assertThat(error.statusCode).isEqualTo(503)
+        assertThat(error.headers).isEqualTo(headers)
+        // No exception to take the message from
+        assertThat(error.message).isEqualTo("Request failed with status code 503")
+    }
+
+    /**
+     * Uploads a page successfully, then runs the analysis with the given Gini Bank API
+     * responses and returns the error passed to the failure callback.
+     */
+    private fun analyzeAndGetFailure(
+        compositeDocumentResource: Resource<ApiDocument> = Resource.Success(
+            createApiDocument("id2", ApiDocument.SourceClassification.COMPOSITE)
+        ),
+        extractionsResource: Resource<ExtractionsContainer> = Resource.Success(mockk())
+    ): Error {
+        UserAnalytics.initialize(getApplicationContext())
+        val partialDocument = createApiDocument("id1", ApiDocument.SourceClassification.SCANNED)
+
+        val documentManager = mockk<BankApiDocumentManager>()
+        coEvery {
+            documentManager.createPartialDocument(any(), any(), null, null, any())
+        } returns Resource.Success(partialDocument)
+        coEvery {
+            documentManager.createCompositeDocument(any<LinkedHashMap<ApiDocument, Int>>(), any(), any())
+        } returns compositeDocumentResource
+        coEvery { documentManager.getAllExtractionsWithPolling(any()) } returns extractionsResource
+
+        val bankApi = mockk<GiniBankAPI>()
+        every { bankApi.documentManager } returns documentManager
+
+        val networkService = GiniCaptureDefaultNetworkService(bankApi, null, getApplicationContext())
+
+        val captureDocument = mockk<Document>()
+        every { captureDocument.id } returns "id"
+        every { captureDocument.data } returns byteArrayOf()
+        every { captureDocument.mimeType } returns "image/jpeg"
+        every { captureDocument.generateUploadMetadata(getApplicationContext()) } returns ""
+
+        networkService.upload(captureDocument, mockk(relaxed = true))
+        shadowOf(Looper.getMainLooper()).idle()
+
+        var failure: Error? = null
+        networkService.analyze(
+            linkedMapOf(partialDocument.id to 0),
+            object : GiniCaptureNetworkCallback<AnalysisResult, Error> {
+                override fun success(result: AnalysisResult) {
+                    error("Should not succeed")
+                }
+
+                override fun failure(error: Error) {
+                    failure = error
+                }
+
+                override fun cancelled() {
+                    error("Should not cancel")
+                }
+            }
+        )
+        shadowOf(Looper.getMainLooper()).idle()
+
+        return checkNotNull(failure) { "The failure callback was not called" }
+    }
+
+    private fun createApiDocument(id: String, sourceClassification: ApiDocument.SourceClassification) =
+        ApiDocument(
+            id,
+            ApiDocument.ProcessingState.COMPLETED,
+            "filename-$id",
+            1,
+            Date(),
+            Date(),
+            sourceClassification,
+            Uri.EMPTY,
+            listOf(),
+            listOf()
+        )
 }
