@@ -16,12 +16,11 @@ import androidx.annotation.Nullable;
 import net.gini.android.capture.internal.util.FileImportValidator;
 
 /**
- * Used by the {@link GiniCaptureNetworkService} and {@link GiniCaptureNetworkApi} to return error
- * messages.
+ * Used by the {@link GiniCaptureNetworkService} to return error messages.
  */
 public class Error {
 
-    private String mMessage;
+    private final String mMessage;
     private Throwable mCause;
 
     private Integer mStatusCode;
@@ -53,13 +52,31 @@ public class Error {
     /**
      * Create a new error with status code and headers.
      *
+     * The error message names the status code or, without one, the type of the exception. It
+     * never contains the exception's message, because for API errors that is the response body.
+     * Use {@link #getCause()} to get the exception.
+     *
      * @param statusCode API response status code
      * @param headers API response headers
+     * @param exception the cause of the error
      */
     public Error(final Integer statusCode,final Map<String, List<String>> headers, final Throwable exception) {
         mStatusCode = statusCode;
         mHeaders = headers;
         mCause = exception;
+        mMessage = createMessage(statusCode, exception);
+    }
+
+    @NonNull
+    private static String createMessage(@Nullable final Integer statusCode,
+            @Nullable final Throwable exception) {
+        if (statusCode != null) {
+            return "Request failed with status code " + statusCode;
+        }
+        if (exception != null) {
+            return "Request failed: " + exception.getClass().getName();
+        }
+        return "Request failed";
     }
 
     /**
@@ -69,6 +86,7 @@ public class Error {
      */
     public Error(FileImportValidator.Error fileImportErrors) {
         mFileImportErrors = fileImportErrors;
+        mMessage = "File import failed: " + fileImportErrors;
     }
 
     /**
