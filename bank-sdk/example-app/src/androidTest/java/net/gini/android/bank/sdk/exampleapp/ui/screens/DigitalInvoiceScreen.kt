@@ -8,6 +8,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.Direction
 import androidx.test.uiautomator.UiCollection
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
@@ -116,8 +117,13 @@ class DigitalInvoiceScreen {
      * every structural id — both roots are `gsb_line_item` and both switches are
      * `gbs_enable_switch` (see `gbs_item_digital_invoice_skonto.xml` and
      * `gbs_item_digital_invoice_line_item.xml`). The only reliable difference is what each
-     * row contains: `gbs_skonto_amount` is unique to the Skonto row and `gbs_description`
-     * to a line item.
+     * row contains: the Skonto row's `gbs_per_unit` always reads the SDK's
+     * `gbs_skonto_screen_title` ("Skonto"), where a line item's shows its unit price.
+     *
+     * Not matched on `gbs_skonto_amount`, although it is unique to the Skonto row: the adapter
+     * sets it GONE whenever the discount is off, and a GONE view is not in the accessibility
+     * tree — so a row switched off, expired or cash-only would not be found. Nor on a missing
+     * `gbs_description`: a line-item row whose top is scrolled out of view has none either.
      *
      * The existing [clickArticleSwitch] disambiguates with `.index(1)` instead, which is why
      * it stopped working once a Skonto row joined the list — a positional selector indexes
@@ -127,9 +133,60 @@ class DigitalInvoiceScreen {
         device.wait(Until.hasObject(By.res(AppResources.resId(ROW_ROOT))), SKONTO_ROW_TIMEOUT)
         return device.findObjects(By.res(AppResources.resId(ROW_ROOT)))
             .firstOrNull { row ->
-                row.findObject(By.res(AppResources.resId(SKONTO_ROW_MARKER))) != null
+                row.findObject(By.res(AppResources.resId(SKONTO_ROW_TITLE)).text(skontoTitle())) != null
             }
     }
+
+    private fun skontoTitle(): String =
+        InstrumentationRegistry.getInstrumentation().targetContext
+            .getString(net.gini.android.bank.sdk.R.string.gbs_skonto_screen_title)
+
+    private fun requireSkontoRow(): UiObject2 =
+        skontoRow() ?: error("No Skonto row on the digital invoice screen.")
+
+    private fun UiObject2.childText(id: String): String? =
+        findObject(By.res(AppResources.resId(id)))?.text
+
+    /** The saved amount on the Skonto row, e.g. "-1,26 EUR", or `null` while the discount is off. */
+    fun skontoRowAmountText(): String? = requireSkontoRow().childText(SKONTO_ROW_AMOUNT)
+
+    /** The grey info text on the Skonto row, or `null` when the row shows none. */
+    fun skontoRowMessageText(): String? = requireSkontoRow().childText(SKONTO_ROW_MESSAGE)
+
+    /**
+     * The Skonto row's Edit button, or `null` when the row has none.
+     *
+     * The Skonto row is the last item of the list, and Edit is its bottom view. With both the
+     * saved amount and the info text shown (an active discount with an edge case, e.g. "pay
+     * today") the row is tall enough that Edit sits below the visible list, where UiAutomator does
+     * not see it — so the list is scrolled to its end once before giving up.
+     */
+    private fun skontoRowEditButton(): UiObject2? {
+        requireSkontoRow().findObject(By.res(AppResources.resId(EDIT_BUTTON)))?.let { return it }
+        device.findObject(By.res(AppResources.resId(LINE_ITEMS)))?.scroll(Direction.DOWN, 1f)
+        return requireSkontoRow().findObject(By.res(AppResources.resId(EDIT_BUTTON)))
+    }
+
+    private fun requireSkontoRowEditButton(): UiObject2 =
+        skontoRowEditButton() ?: error("The Skonto row has no $EDIT_BUTTON.")
+
+    fun isSkontoRowEditButtonDisplayed(): Boolean = skontoRowEditButton() != null
+
+    /** `false` while the discount is off: the adapter disables the Edit button then. */
+    fun isSkontoRowEditButtonEnabled(): Boolean = requireSkontoRowEditButton().isEnabled
+
+    /** Opens the Skonto screen of the Return Assistant. */
+    fun clickSkontoRowEditButton() {
+        requireSkontoRowEditButton().click()
+    }
+
+    /** The footer's "… sparen" / "Save …" text, or `null` while the discount is off. */
+    fun footerSkontoSavedAmountText(): String? =
+        device.findObject(By.res(AppResources.resId(FOOTER_SAVED_AMOUNT)))?.text
+
+    /** The footer's "…% Skonto" label, or `null` while the discount is off. */
+    fun footerSkontoDiscountLabelText(): String? =
+        device.findObject(By.res(AppResources.resId(FOOTER_DISCOUNT_LABEL)))?.text
 
     /** A line-item row (the first one), identified by the description only it carries. */
     private fun lineItemRow(): UiObject2? {
@@ -146,9 +203,7 @@ class DigitalInvoiceScreen {
 
     fun isSkontoRowDisplayed(): Boolean = skontoRow() != null
 
-    fun isSkontoRowToggleChecked(): Boolean =
-        (skontoRow() ?: error("No Skonto row on the digital invoice screen."))
-            .enableSwitch().isChecked
+    fun isSkontoRowToggleChecked(): Boolean = requireSkontoRow().enableSwitch().isChecked
 
     /**
      * Flips the Skonto row's toggle and waits for the flip to land.
@@ -348,11 +403,20 @@ class DigitalInvoiceScreen {
         private const val ROW_ROOT = "gsb_line_item"
         private const val ENABLE_SWITCH = "gbs_enable_switch"
 
-        /** Unique to the Skonto row. */
-        private const val SKONTO_ROW_MARKER = "gbs_skonto_amount"
-
-        /** Unique to a line-item row. */
+        /** Always on a line-item row, never on the Skonto row. */
         private const val LINE_ITEM_MARKER = "gbs_description"
+
+        /** On the Skonto row it holds the Skonto title; on a line item, the unit price. */
+        private const val SKONTO_ROW_TITLE = "gbs_per_unit"
+
+        // Views of the Skonto row (gbs_item_digital_invoice_skonto.xml) and the footer
+        // (gbs_fragment_digital_invoice.xml).
+        private const val SKONTO_ROW_AMOUNT = "gbs_skonto_amount"
+        private const val SKONTO_ROW_MESSAGE = "gbs_message"
+        private const val EDIT_BUTTON = "gbs_edit_button"
+        private const val LINE_ITEMS = "line_items"
+        private const val FOOTER_SAVED_AMOUNT = "skonto_saved_amount"
+        private const val FOOTER_DISCOUNT_LABEL = "skonto_discount_label"
 
         private const val SKONTO_ROW_TIMEOUT = 5_000L
         private const val SWITCH_POLL_INTERVAL = 150L

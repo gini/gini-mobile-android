@@ -102,6 +102,11 @@ run_group "fraud" \
   FraudWarningLandscapeTests \
   FraudSkontoTests
 
+# Skonto + Return Assistant (PP-3916): real backend, plus the mock for the date edge cases.
+run_group "skontora" \
+  SkontoReturnAssistantTests \
+  SkontoReturnAssistantMockBackendTests
+
 run_group "ingredientbrand" \
   IngredientBrandTests \
   IngredientBrandConfigurationTests \

@@ -206,6 +206,26 @@ enum class UiTestMockScenario {
 
     /** [FRAUD_COMBINED] plus the Skonto discount of [FRAUD_QR_MISMATCH_WITH_SKONTO]. */
     FRAUD_COMBINED_WITH_SKONTO,
+
+    /**
+     * An invoice with two `lineItems` **and** a `skontoDiscounts` due today: the SDK's
+     * `SkontoLastDay`. No committed document can print a due date that is today on every run,
+     * which is why the Skonto + RA date edge cases need the mock; the claimable case runs against
+     * the real API (`SkontoReturnAssistantTests`). The values are in [UiTestMockSkontoData].
+     */
+    SKONTO_RETURN_ASSISTANT_EXPIRES_TODAY,
+
+    /** Like [SKONTO_RETURN_ASSISTANT_EXPIRES_TODAY], due yesterday: the SDK's `SkontoExpired`. */
+    SKONTO_RETURN_ASSISTANT_EXPIRED,
+
+    /**
+     * Like [SKONTO_RETURN_ASSISTANT_EXPIRES_TODAY], due in 14 days with `skontoPaymentMethod`
+     * Cash: the SDK's `PayByCashOnly`.
+     */
+    SKONTO_RETURN_ASSISTANT_CASH_ONLY,
+
+    /** Cash payment, due today: the SDK's `PayByCashToday`. */
+    SKONTO_RETURN_ASSISTANT_CASH_TODAY,
 }
 
 /**

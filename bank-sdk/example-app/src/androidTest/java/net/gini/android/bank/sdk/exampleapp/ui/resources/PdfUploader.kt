@@ -8,6 +8,7 @@ import android.provider.MediaStore
 import androidx.annotation.RequiresApi
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiObject
 import androidx.test.uiautomator.UiObjectNotFoundException
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
@@ -55,6 +56,7 @@ class PdfUploader {
         val fileItem = device.findObject(UiSelector().text(file))
         if (fileItem.waitForExists(FILE_TIMEOUT_MS)) {
             fileItem.click()
+            retryTapIfPickerStayedOpen(fileItem)
             return
         }
         val fileList = UiScrollable(UiSelector().scrollable(true))
@@ -63,6 +65,24 @@ class PdfUploader {
             return
         }
         throw UiObjectNotFoundException("\"$file\" is not shown in the file picker, and it has no list to scroll")
+    }
+
+    /**
+     * Taps [fileItem] once more when the picker is still open after the first tap.
+     *
+     * Right after a test copies a new file into Downloads, the picker refreshes its list, and a
+     * tap during that refresh is lost: the file stays listed and the picker never closes (seen on
+     * a Galaxy S22, Android 16, on the first run after each new fixture).
+     *
+     * Only taps while the picker is still in front: after a tap that worked, the SDK's Analysis
+     * screen shows the PDF's file name as its title, so the same text selector would match the
+     * app instead.
+     */
+    private fun retryTapIfPickerStayedOpen(fileItem: UiObject) {
+        if (fileItem.waitUntilGone(PICKER_CLOSE_TIMEOUT_MS)) return
+        if (device.currentPackageName != AppResources.packageName && fileItem.exists()) {
+            fileItem.click()
+        }
     }
 
     private fun navigateToDownloads() {
@@ -133,5 +153,6 @@ class PdfUploader {
     private companion object {
         /** Waits for the picker to list the folder's files before falling back to scrolling. */
         const val FILE_TIMEOUT_MS = 5_000L
+        const val PICKER_CLOSE_TIMEOUT_MS = 3_000L
     }
 }
