@@ -186,6 +186,26 @@ internal class UiTestMockNetworkService(
 
         UiTestMockScenario.FRAUD_COMBINED_WITH_SKONTO ->
             fraudSignals(listOf(qrSignal(), countrySignal())) + skontoDiscounts()
+
+        UiTestMockScenario.SKONTO_RETURN_ASSISTANT_EXPIRES_TODAY,
+        UiTestMockScenario.SKONTO_RETURN_ASSISTANT_EXPIRED,
+        UiTestMockScenario.SKONTO_RETURN_ASSISTANT_CASH_ONLY,
+        UiTestMockScenario.SKONTO_RETURN_ASSISTANT_CASH_TODAY -> {
+            val terms = scenario.skontoTerms()
+            // Two articles whose sum is the amount to pay, so the RA total starts at it.
+            val lineItems = GiniCaptureCompoundExtraction(
+                "lineItems",
+                listOf(
+                    lineItem("UI test article 1", "UITEST-1", UiTestMockSkontoData.FIRST_LINE_ITEM_GROSS),
+                    lineItem("UI test article 2", "UITEST-2", UiTestMockSkontoData.SECOND_LINE_ITEM_GROSS)
+                )
+            )
+            mapOf("lineItems" to lineItems) + skontoDiscounts(
+                dueDateOffsetDays = terms.dueDateOffsetDays,
+                remainingDays = terms.remainingDays,
+                paymentMethod = terms.paymentMethod
+            )
+        }
     }
 
     /**
@@ -266,10 +286,14 @@ internal class UiTestMockNetworkService(
             listOf(lineItem("UI test article", "UITEST-1"))
         )
 
-    private fun lineItem(description: String, artNumber: String) = linkedMapOf(
+    private fun lineItem(
+        description: String,
+        artNumber: String,
+        baseGross: String = LINE_ITEM_GROSS
+    ) = linkedMapOf(
         "description" to extraction("description", description, "text"),
         "quantity" to extraction("quantity", "1", "number"),
-        "baseGross" to extraction("baseGross", LINE_ITEM_GROSS, "amount"),
+        "baseGross" to extraction("baseGross", baseGross, "amount"),
         "artNumber" to extraction("artNumber", artNumber, "text")
     )
 
@@ -284,7 +308,7 @@ internal class UiTestMockNetworkService(
         const val DOCUMENT_ID = "ui-test-mock-document"
         const val DOCUMENT_FILENAME = "ui-test-mock-document.jpg"
         const val CLIENT_ID = "ui-test-mock-client"
-        const val AMOUNT_TO_PAY = "42.00:EUR"
+        const val AMOUNT_TO_PAY = MOCK_AMOUNT_TO_PAY
         const val LINE_ITEM_GROSS = "42.00:EUR"
         const val ANALYSIS_ERROR_MESSAGE = "UI test mock: analysis failed"
         const val CONFIGURATION_ERROR_MESSAGE = "UI test mock: /configurations failed"
@@ -327,19 +351,67 @@ object UiTestMockFraudData {
     const val SKONTO_AMOUNT_TO_PAY = "40.74:EUR"
 }
 
-private const val SKONTO_REMAINING_DAYS = 14
+/**
+ * The amount to pay of every mock invoice. [UiTestMockFraudData.SKONTO_AMOUNT_TO_PAY] is 3 % off it.
+ */
+private const val MOCK_AMOUNT_TO_PAY = "42.00:EUR"
+
+/**
+ * The values of the Skonto + RA scenarios (`SKONTO_RETURN_ASSISTANT*`). Public so the
+ * instrumented tests assert against the same constants the mock serves. The discount itself is
+ * [UiTestMockFraudData.SKONTO_PERCENTAGE] and [UiTestMockFraudData.SKONTO_AMOUNT_TO_PAY], shared
+ * with the fraud scenarios.
+ */
+object UiTestMockSkontoData {
+    /** The invoice's amount to pay, the sum of the two line items: the mock's usual amount. */
+    const val AMOUNT_TO_PAY = MOCK_AMOUNT_TO_PAY
+
+    /** The first line item's gross price. */
+    const val FIRST_LINE_ITEM_GROSS = "30.00:EUR"
+
+    /** The second line item's gross price. */
+    const val SECOND_LINE_ITEM_GROSS = "12.00:EUR"
+
+    /** The days left to claim the discount in [UiTestMockScenario.SKONTO_RETURN_ASSISTANT_CASH_ONLY]. */
+    const val REMAINING_DAYS = 14
+}
+
+/** When the discount is due and how it must be paid, per Skonto + RA scenario. */
+private class SkontoTerms(
+    val dueDateOffsetDays: Int,
+    val remainingDays: Int,
+    val paymentMethod: String
+)
+
+private fun UiTestMockScenario.skontoTerms(): SkontoTerms = when (this) {
+    UiTestMockScenario.SKONTO_RETURN_ASSISTANT_EXPIRES_TODAY -> SkontoTerms(0, 0, PAYMENT_UNSPECIFIED)
+    UiTestMockScenario.SKONTO_RETURN_ASSISTANT_EXPIRED -> SkontoTerms(-1, 0, PAYMENT_UNSPECIFIED)
+    UiTestMockScenario.SKONTO_RETURN_ASSISTANT_CASH_ONLY ->
+        SkontoTerms(UiTestMockSkontoData.REMAINING_DAYS, UiTestMockSkontoData.REMAINING_DAYS, PAYMENT_CASH)
+    UiTestMockScenario.SKONTO_RETURN_ASSISTANT_CASH_TODAY -> SkontoTerms(0, 0, PAYMENT_CASH)
+    else -> error("$this is not a Skonto + RA scenario")
+}
+
+// Names of the SDK's SkontoData.SkontoPaymentMethod — SkontoDataExtractor parses them with valueOf.
+private const val PAYMENT_UNSPECIFIED = "Unspecified"
+private const val PAYMENT_CASH = "Cash"
 
 /**
  * A `skontoDiscounts` compound extraction with the fields `SkontoDataExtractor` requires:
  * [UiTestMockFraudData.SKONTO_PERCENTAGE] % off the scenarios' amount to pay, so
- * [UiTestMockFraudData.SKONTO_AMOUNT_TO_PAY]. The due date is computed from today, so the
- * discount is always claimable and the Skonto screen opens without the expired edge case.
+ * [UiTestMockFraudData.SKONTO_AMOUNT_TO_PAY]. The due date is [dueDateOffsetDays] from today,
+ * computed when the analysis result is built, so a date edge case holds on any day. The defaults
+ * make a claimable discount, so the Skonto screen opens without an edge case.
  * Computed with [Calendar] rather than `java.time`: the example app has no desugaring and runs
  * from API 23. Outside [UiTestMockNetworkService] because it needs none of its state.
  */
-private fun skontoDiscounts(): Map<String, GiniCaptureCompoundExtraction> {
+private fun skontoDiscounts(
+    dueDateOffsetDays: Int = UiTestMockSkontoData.REMAINING_DAYS,
+    remainingDays: Int = UiTestMockSkontoData.REMAINING_DAYS,
+    paymentMethod: String = PAYMENT_UNSPECIFIED
+): Map<String, GiniCaptureCompoundExtraction> {
     val dueDate = Calendar.getInstance().apply {
-        add(Calendar.DAY_OF_YEAR, SKONTO_REMAINING_DAYS)
+        add(Calendar.DAY_OF_YEAR, dueDateOffsetDays)
     }.time.let { SimpleDateFormat("yyyy-MM-dd", Locale.US).format(it) }
     fun extraction(name: String, value: String, entity: String) =
         GiniCaptureSpecificExtraction(name, value, entity, null, emptyList())
@@ -350,8 +422,8 @@ private fun skontoDiscounts(): Map<String, GiniCaptureCompoundExtraction> {
             extraction("skontoAmountToPay", UiTestMockFraudData.SKONTO_AMOUNT_TO_PAY, "amount"),
         "skontoDueDate" to extraction("skontoDueDate", dueDate, "date"),
         "skontoRemainingDays" to
-            extraction("skontoRemainingDays", SKONTO_REMAINING_DAYS.toString(), "numeric"),
-        "skontoPaymentMethod" to extraction("skontoPaymentMethod", "Unspecified", "text")
+            extraction("skontoRemainingDays", remainingDays.toString(), "numeric"),
+        "skontoPaymentMethod" to extraction("skontoPaymentMethod", paymentMethod, "text")
     )
     return mapOf(
         UiTestMockFraudData.SKONTO_DISCOUNTS_KEY to
@@ -375,7 +447,11 @@ private val UiTestMockScenario.isCreditNote: Boolean
         UiTestMockScenario.FRAUD_QR_WITHOUT_OTHER_PRINTED,
         UiTestMockScenario.FRAUD_SIGNALS_MISSING,
         UiTestMockScenario.FRAUD_QR_MISMATCH_WITH_SKONTO,
-        UiTestMockScenario.FRAUD_COMBINED_WITH_SKONTO -> false
+        UiTestMockScenario.FRAUD_COMBINED_WITH_SKONTO,
+        UiTestMockScenario.SKONTO_RETURN_ASSISTANT_EXPIRES_TODAY,
+        UiTestMockScenario.SKONTO_RETURN_ASSISTANT_EXPIRED,
+        UiTestMockScenario.SKONTO_RETURN_ASSISTANT_CASH_ONLY,
+        UiTestMockScenario.SKONTO_RETURN_ASSISTANT_CASH_TODAY -> false
     }
 
 /** Whether the scenario serves the fraud invoice of `fraudInvoiceExtractions`. */
@@ -395,5 +471,9 @@ private val UiTestMockScenario.isFraudScenario: Boolean
         UiTestMockScenario.CREDIT_NOTE_WITH_LINE_ITEMS,
         UiTestMockScenario.INVOICE,
         UiTestMockScenario.NO_RESULTS,
-        UiTestMockScenario.ANALYSIS_ERROR -> false
+        UiTestMockScenario.ANALYSIS_ERROR,
+        UiTestMockScenario.SKONTO_RETURN_ASSISTANT_EXPIRES_TODAY,
+        UiTestMockScenario.SKONTO_RETURN_ASSISTANT_EXPIRED,
+        UiTestMockScenario.SKONTO_RETURN_ASSISTANT_CASH_ONLY,
+        UiTestMockScenario.SKONTO_RETURN_ASSISTANT_CASH_TODAY -> false
     }

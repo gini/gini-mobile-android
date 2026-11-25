@@ -69,6 +69,14 @@ All three media files are always uploaded. BrowserStack places them in the devic
 
 Both are also triggered by `bs_run_all_groups.sh`.
 
+### Skonto + Return Assistant shard (PP-3916)
+
+| Script | Classes | Notes |
+|---|---|---|
+| `bs_run_group_skontora.sh` | `SkontoReturnAssistantTests`, `SkontoReturnAssistantMockBackendTests` | Every test mapped to the Xray folder "Skonto + RA" (PP-2807…PP-2815), one test per case. `SkontoReturnAssistantTests` runs against the **real** backend with `ra_skonto_valid_2028.pdf` (the OTTO invoice: two line items and 3 % Skonto, dated 2028 because the API drops an expired Skonto). `SkontoReturnAssistantMockBackendTests` covers the date edge cases on the mock backend, which computes the due date from today; they skip themselves within 30 minutes of local midnight. |
+
+Also triggered by `bs_run_all_groups.sh`.
+
 ### Onboarding shard (PP-3883)
 
 | Script | Classes | Notes |
