@@ -12,8 +12,11 @@ import androidx.compose.ui.unit.dp
 import net.gini.android.capture.internal.ui.runtimecolors.GiniColorResolver
 import net.gini.android.capture.ui.theme.colors.GiniColorPrimitives
 import net.gini.android.capture.ui.theme.colors.GiniColorScheme
+import net.gini.android.capture.ui.theme.colors.GiniExtendedColors
 import net.gini.android.capture.ui.theme.colors.giniDarkColorScheme
+import net.gini.android.capture.ui.theme.colors.giniDarkExtendedColors
 import net.gini.android.capture.ui.theme.colors.giniLightColorScheme
+import net.gini.android.capture.ui.theme.colors.giniLightExtendedColors
 import net.gini.android.capture.ui.theme.typography.GiniTypography
 import net.gini.android.capture.ui.theme.typography.extractGiniTypography
 
@@ -22,6 +25,10 @@ internal val LocalGiniColors = staticCompositionLocalOf {
 }
 internal val LocalGiniTypography = staticCompositionLocalOf {
     GiniTypography()
+}
+
+internal val LocalGiniExtendedColors = staticCompositionLocalOf {
+    GiniExtendedColors()
 }
 
 @Composable
@@ -43,11 +50,18 @@ fun GiniTheme(
         giniLightColorScheme(giniPrimitives)
     }
 
+    val extendedColors = if (darkMode) {
+        giniDarkExtendedColors(giniPrimitives)
+    } else {
+        giniLightExtendedColors(giniPrimitives)
+    }
+
     val typography = extractGiniTypography()
 
     CompositionLocalProvider(
         LocalGiniTypography provides typography,
-        LocalGiniColors provides colors
+        LocalGiniColors provides colors,
+        LocalGiniExtendedColors provides extendedColors,
     ) {
         MaterialTheme(
             /* colors = ... */
