@@ -57,6 +57,19 @@ internal object GiniSheetColors {
             )
         )
 
+    /**
+     * The fill of a radio button in the error state, behind its error-colored outline:
+     * `gc_error_03` in both modes.
+     */
+    val radioButtonErrorContainer: Color
+        @Composable
+        get() = GiniTheme.primitives.error03
+
+    /** The dot in the middle of a selected radio button: `gc_light_01` in both modes. */
+    val radioButtonDot: Color
+        @Composable
+        get() = GiniTheme.primitives.light01
+
     @Composable
     private fun <T> lightOrDark(light: T, dark: T): T =
         if (GiniTheme.isDarkMode) dark else light

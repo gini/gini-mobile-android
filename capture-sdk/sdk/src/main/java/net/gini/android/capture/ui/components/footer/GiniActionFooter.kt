@@ -28,13 +28,12 @@ import net.gini.android.capture.ui.components.button.outlined.GiniOutlinedButton
 import net.gini.android.capture.ui.compose.GiniScreenPreviewSizes
 import net.gini.android.capture.ui.compose.GiniScreenPreviewUiModes
 import net.gini.android.capture.ui.theme.GiniTheme
+import net.gini.android.capture.ui.theme.modifier.isTablet
 
 /**
  * The action area at the bottom of a sheet: a filled primary button and an optional outlined
- * secondary button. The buttons are stacked in portrait and placed side by side in landscape,
- * each taking half of the width. The split follows orientation rather than width class on
- * purpose: the design stacks the buttons on tablets in portrait and puts them side by side on
- * phones in landscape.
+ * secondary button. The buttons are stacked on phones in portrait and placed side by side, each
+ * taking half of the width, on phones in landscape and on tablets in both orientations.
  *
  * @param primaryText label of the filled button
  * @param onPrimaryClick called when the filled button is tapped
@@ -43,6 +42,7 @@ import net.gini.android.capture.ui.theme.GiniTheme
  * @param secondaryText label of the outlined button; `null` shows the primary button alone
  * @param onSecondaryClick called when the outlined button is tapped
  * @param horizontal whether the buttons sit side by side; defaults to landscape orientation
+ * or a tablet
  * @param primaryColors colors of the filled button
  * @param secondaryColors colors of the outlined button. Its `container` color is drawn as the
  * button's 1dp border; the button itself has no fill, as in the design
@@ -55,7 +55,7 @@ internal fun GiniActionFooter(
     modifier: Modifier = Modifier,
     secondaryText: String? = null,
     onSecondaryClick: () -> Unit = {},
-    horizontal: Boolean = isLandscape(),
+    horizontal: Boolean = isLandscape() || isTablet(),
     primaryColors: GiniButtonColors = GiniButtonColors.colors(),
     secondaryColors: GiniOutlinedButtonColors = GiniOutlinedButtonColors.colors(),
 ) {

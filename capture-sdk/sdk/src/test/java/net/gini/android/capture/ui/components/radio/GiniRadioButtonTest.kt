@@ -2,7 +2,6 @@ package net.gini.android.capture.ui.components.radio
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.RadioButtonColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -31,7 +30,7 @@ import org.junit.runner.RunWith
 
 /**
  * Renders [GiniRadioButton] under Robolectric and checks its selection, click and enabled
- * behaviour, and how [GiniRadioButtonColors] maps onto the Material radio button colors.
+ * behaviour, and which parts [GiniRadioButtonColors] draws in each state.
  */
 @RunWith(AndroidJUnit4::class)
 class GiniRadioButtonTest {
@@ -112,23 +111,59 @@ class GiniRadioButtonTest {
     }
 
     @Test
-    fun `the Material colors follow the Gini colors`() {
-        val material = materialColors(isError = false)
-
-        assertThat(material.selectedColor).isEqualTo(COLORS.selectedColor)
-        assertThat(material.unselectedColor).isEqualTo(COLORS.unselectedColor)
-        assertThat(material.disabledSelectedColor).isEqualTo(COLORS.disabledColor)
-        assertThat(material.disabledUnselectedColor).isEqualTo(COLORS.disabledColor)
+    fun `an unselected button is an outline in the unselected color`() {
+        assertThat(look(selected = false))
+            .isEqualTo(GiniRadioButtonLook(fill = null, outline = COLORS.unselectedColor, dot = null))
     }
 
     @Test
-    fun `the error color replaces the selected and unselected colors`() {
-        val material = materialColors(isError = true)
+    fun `a selected button is a disc in the selected color with a dot`() {
+        assertThat(look(selected = true))
+            .isEqualTo(GiniRadioButtonLook(fill = COLORS.selectedColor, outline = null, dot = DOT))
+    }
 
-        assertThat(material.selectedColor).isEqualTo(COLORS.errorColor)
-        assertThat(material.unselectedColor).isEqualTo(COLORS.errorColor)
-        assertThat(material.disabledSelectedColor).isEqualTo(COLORS.disabledColor)
-        assertThat(material.disabledUnselectedColor).isEqualTo(COLORS.disabledColor)
+    @Test
+    fun `the error state fills the button and outlines it in the error color`() {
+        assertThat(look(selected = false, isError = true)).isEqualTo(
+            GiniRadioButtonLook(fill = ERROR_CONTAINER, outline = COLORS.errorColor, dot = null)
+        )
+    }
+
+    @Test
+    fun `a selected button in the error state is a disc in the error color with a dot`() {
+        assertThat(look(selected = true, isError = true))
+            .isEqualTo(GiniRadioButtonLook(fill = COLORS.errorColor, outline = null, dot = DOT))
+    }
+
+    @Test
+    fun `a disabled button shows the disabled color and no error`() {
+        assertThat(look(selected = false, enabled = false, isError = true))
+            .isEqualTo(GiniRadioButtonLook(fill = null, outline = COLORS.disabledColor, dot = null))
+        assertThat(look(selected = true, enabled = false, isError = true))
+            .isEqualTo(GiniRadioButtonLook(fill = COLORS.disabledColor, outline = null, dot = DOT))
+    }
+
+    @Test
+    fun `unspecified colors fall back to the theme while specified ones are kept`() {
+        lateinit var defaults: GiniRadioButtonColors
+        lateinit var partial: GiniRadioButtonColors
+        lateinit var empty: GiniRadioButtonColors
+        lateinit var full: GiniRadioButtonColors
+        composeRule.setContent {
+            GiniTheme {
+                defaults = GiniRadioButtonColors.colors()
+                partial = GiniRadioButtonColors(selectedColor = COLORS.selectedColor).orDefaults()
+                empty = GiniRadioButtonColors().orDefaults()
+                full = COLORS.orDefaults()
+            }
+        }
+
+        composeRule.runOnIdle {
+            assertThat(partial).isEqualTo(defaults.copy(selectedColor = COLORS.selectedColor))
+            assertThat(empty).isEqualTo(defaults)
+            assertThat(full).isEqualTo(COLORS)
+            assertThat(defaults.unselectedColor).isNotEqualTo(Color.Unspecified)
+        }
     }
 
     @Test
@@ -162,16 +197,19 @@ class GiniRadioButtonTest {
         }
     }
 
-    private fun materialColors(isError: Boolean): RadioButtonColors {
-        lateinit var material: RadioButtonColors
-        composeRule.setContent {
-            GiniTheme { material = COLORS.toMaterialRadioButtonColors(isError) }
-        }
-        return composeRule.runOnIdle { material }
-    }
+    private fun look(selected: Boolean, enabled: Boolean = true, isError: Boolean = false) =
+        COLORS.look(
+            selected = selected,
+            enabled = enabled,
+            isError = isError,
+            errorContainer = ERROR_CONTAINER,
+            dot = DOT,
+        )
 
     private companion object {
         const val HOST_LABEL = "Host"
+        val ERROR_CONTAINER = Color.Magenta
+        val DOT = Color.White
         val COLORS = GiniRadioButtonColors(
             selectedColor = Color.Blue,
             unselectedColor = Color.Gray,

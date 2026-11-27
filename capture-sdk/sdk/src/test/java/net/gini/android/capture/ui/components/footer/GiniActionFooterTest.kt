@@ -1,5 +1,7 @@
 package net.gini.android.capture.ui.components.footer
 
+import android.content.Context
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
@@ -16,8 +18,10 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
+import net.gini.android.capture.R
 import net.gini.android.capture.ui.components.GiniComposableStyleProviderConfig
 import net.gini.android.capture.ui.components.button.filled.GiniButtonColors
 import net.gini.android.capture.ui.components.button.outlined.GiniOutlinedButtonColors
@@ -28,8 +32,9 @@ import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 
 /**
- * Renders [GiniActionFooter] under Robolectric and checks its two layouts (stacked in portrait,
- * side by side in landscape), the optional secondary button and the click callbacks.
+ * Renders [GiniActionFooter] under Robolectric and checks its two layouts (stacked on phones in
+ * portrait, side by side on phones in landscape and on tablets), the optional secondary button
+ * and the click callbacks.
  */
 @RunWith(AndroidJUnit4::class)
 class GiniActionFooterTest {
@@ -54,6 +59,24 @@ class GiniActionFooterTest {
     @Test
     @Config(qualifiers = "land")
     fun `in landscape the buttons sit side by side, equally wide and tall`() {
+        setFooter(secondaryText = SECONDARY)
+
+        assertSideBySide()
+    }
+
+    @Test
+    @Config(qualifiers = TABLET_PORTRAIT_QUALIFIERS)
+    fun `on a tablet in portrait the buttons sit side by side`() {
+        assertDevice(expectTablet = true, expectLandscape = false)
+        setFooter(secondaryText = SECONDARY)
+
+        assertSideBySide()
+    }
+
+    @Test
+    @Config(qualifiers = TABLET_LANDSCAPE_QUALIFIERS)
+    fun `on a tablet in landscape the buttons sit side by side`() {
+        assertDevice(expectTablet = true, expectLandscape = true)
         setFooter(secondaryText = SECONDARY)
 
         assertSideBySide()
@@ -208,6 +231,14 @@ class GiniActionFooterTest {
         }
     }
 
+    /** Guards the premise of a test: the qualifiers have to pick the device under test. */
+    private fun assertDevice(expectTablet: Boolean, expectLandscape: Boolean) {
+        val resources = ApplicationProvider.getApplicationContext<Context>().resources
+        assertThat(resources.getBoolean(R.bool.gc_is_tablet)).isEqualTo(expectTablet)
+        assertThat(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
+            .isEqualTo(expectLandscape)
+    }
+
     private fun assertSideBySide() {
         val primary = bounds(PRIMARY)
         val secondary = bounds(SECONDARY)
@@ -226,5 +257,7 @@ class GiniActionFooterTest {
         const val OTHER_PRIMARY = "Stop"
         const val SECONDARY = "Proceed anyway"
         const val HOST_LABEL = "Host"
+        const val TABLET_PORTRAIT_QUALIFIERS = "sw600dp-w600dp-h960dp-port"
+        const val TABLET_LANDSCAPE_QUALIFIERS = "sw600dp-w960dp-h600dp-land"
     }
 }
