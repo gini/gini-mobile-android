@@ -39,6 +39,7 @@ import net.gini.android.capture.ui.components.sheet.GiniBottomSheetScaffold
 import net.gini.android.capture.ui.compose.GiniScreenPreviewSizes
 import net.gini.android.capture.ui.compose.GiniScreenPreviewUiModes
 import net.gini.android.capture.ui.theme.GiniTheme
+import net.gini.android.capture.ui.theme.LocalGiniExtendedColors
 import java.util.Locale
 
 /**
@@ -218,6 +219,7 @@ private fun IBANMismatchWarningContent(
             colors = GiniHeaderBlockColors.colors(
                 iconContainerColor = GiniTheme.colorScheme.errorHint.container,
                 iconTint = GiniTheme.colorScheme.errorHint.content,
+                descriptionColor = LocalGiniExtendedColors.current.textLabel,
             ),
         )
         Spacer(modifier = Modifier.height(SECTION_SPACING))

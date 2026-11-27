@@ -50,14 +50,15 @@ import net.gini.android.capture.R
 import net.gini.android.capture.ui.components.GiniComposableStyleProviderConfig
 import net.gini.android.capture.ui.components.footer.GiniActionFooter
 import net.gini.android.capture.ui.components.labeledvalue.GiniLabeledValue
+import net.gini.android.capture.ui.components.labeledvalue.GiniLabeledValueColors
 import net.gini.android.capture.ui.components.labeledvalue.GiniLabeledValueItem
 import net.gini.android.capture.ui.components.radio.GiniRadioButton
 import net.gini.android.capture.ui.components.sheet.sheetTappableElementPadding
 import net.gini.android.capture.ui.compose.GiniScreenPreviewSizes
 import net.gini.android.capture.ui.compose.GiniScreenPreviewUiModes
 import net.gini.android.capture.ui.theme.GiniTheme
-import net.gini.android.capture.ui.theme.modifier.isTablet
 import net.gini.android.capture.ui.theme.LocalGiniExtendedColors
+import net.gini.android.capture.ui.theme.modifier.isTablet
 
 /**
  * The IBAN selection sheet: a regular, dismissable modal that wraps its content and asks the
@@ -314,6 +315,10 @@ private fun IBANSelectionContent(
                     value = option.item.value,
                     hint = option.item.hint,
                     valueContentDescription = option.item.valueContentDescription,
+                    // The design gives the selection rows a quieter label than the warning's rows.
+                    colors = GiniLabeledValueColors.colors(
+                        labelColor = GiniTheme.colorScheme.datePicker.text.secondary,
+                    ),
                     leadingContent = {
                         GiniRadioButton(
                             selected = selected,

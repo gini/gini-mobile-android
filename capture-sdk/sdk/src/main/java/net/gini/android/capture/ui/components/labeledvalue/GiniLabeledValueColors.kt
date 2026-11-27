@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import net.gini.android.capture.ui.theme.GiniTheme
+import net.gini.android.capture.ui.theme.LocalGiniExtendedColors
 
 /**
  * Colors of [GiniLabeledValue].
@@ -22,7 +23,7 @@ data class GiniLabeledValueColors(
     companion object {
         @Composable
         fun colors(
-            labelColor: Color = GiniTheme.colorScheme.text.secondary,
+            labelColor: Color = LocalGiniExtendedColors.current.textLabel,
             valueColor: Color = GiniTheme.colorScheme.text.primary,
             hintColor: Color = GiniTheme.colorScheme.errorHint.content,
         ) = GiniLabeledValueColors(
