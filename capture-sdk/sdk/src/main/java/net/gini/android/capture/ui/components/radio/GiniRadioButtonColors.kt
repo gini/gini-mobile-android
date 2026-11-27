@@ -1,7 +1,5 @@
 package net.gini.android.capture.ui.components.radio
 
-import androidx.compose.material3.RadioButtonColors
-import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
@@ -10,10 +8,10 @@ import net.gini.android.capture.ui.theme.GiniTheme
 /**
  * Colors of [GiniRadioButton].
  *
- * @property selectedColor ring and dot when selected
- * @property unselectedColor ring when not selected
- * @property disabledColor ring and dot when disabled
- * @property errorColor ring and dot when the button is in the error state
+ * @property selectedColor the filled disc when selected
+ * @property unselectedColor outline when not selected
+ * @property disabledColor outline, or the filled disc when selected, when disabled
+ * @property errorColor outline, and the dot when selected, in the error state
  */
 @Immutable
 data class GiniRadioButtonColors(
@@ -23,14 +21,41 @@ data class GiniRadioButtonColors(
     val errorColor: Color = Color.Unspecified,
 ) {
 
-    @Composable
-    internal fun toMaterialRadioButtonColors(isError: Boolean): RadioButtonColors =
-        RadioButtonDefaults.colors(
-            selectedColor = if (isError) errorColor else selectedColor,
-            unselectedColor = if (isError) errorColor else unselectedColor,
-            disabledSelectedColor = disabledColor,
-            disabledUnselectedColor = disabledColor,
+    /**
+     * What to draw for a button in the given state. The error look applies to an enabled button
+     * only; a disabled button shows [disabledColor] whatever else is set.
+     *
+     * @param errorContainer fill behind the outline in the error state
+     * @param dot the dot of a selected button outside the error state
+     */
+    internal fun look(
+        selected: Boolean,
+        enabled: Boolean,
+        isError: Boolean,
+        errorContainer: Color,
+        dot: Color,
+    ): GiniRadioButtonLook {
+        val showError = isError && enabled
+        val stateColor = when {
+            !enabled -> disabledColor
+            showError -> errorColor
+            selected -> selectedColor
+            else -> unselectedColor
+        }
+        return GiniRadioButtonLook(
+            fill = when {
+                showError -> errorContainer
+                selected -> stateColor
+                else -> null
+            },
+            outline = stateColor.takeIf { showError || !selected },
+            dot = when {
+                !selected -> null
+                showError -> errorColor
+                else -> dot
+            },
         )
+    }
 
     companion object {
         @Composable
@@ -47,3 +72,16 @@ data class GiniRadioButtonColors(
         )
     }
 }
+
+/**
+ * The parts of a [GiniRadioButton] to draw in one state; `null` leaves a part out.
+ *
+ * @property fill the disc filling the button
+ * @property outline the thin outline around the button
+ * @property dot the dot in the middle
+ */
+internal data class GiniRadioButtonLook(
+    val fill: Color?,
+    val outline: Color?,
+    val dot: Color?,
+)
