@@ -18,7 +18,7 @@ data class GiniBottomSheetScaffoldColors(
     companion object {
         @Composable
         fun colors(
-            containerColor: Color = GiniTheme.colorScheme.dialogs.container,
+            containerColor: Color = GiniTheme.colorScheme.card.container,
         ) = GiniBottomSheetScaffoldColors(
             containerColor = containerColor,
         )

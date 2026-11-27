@@ -57,6 +57,7 @@ import net.gini.android.capture.ui.compose.GiniScreenPreviewSizes
 import net.gini.android.capture.ui.compose.GiniScreenPreviewUiModes
 import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.ui.theme.modifier.isTablet
+import net.gini.android.capture.ui.theme.LocalGiniExtendedColors
 
 /**
  * The IBAN selection sheet: a regular, dismissable modal that wraps its content and asks the
@@ -156,7 +157,7 @@ private fun IBANSelectionBottomSheet(
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         sheetMaxWidth = Dp.Unspecified,
         dragHandle = { BottomSheetDefaults.DragHandle(color = GiniTheme.colorScheme.icons.secondary) },
-        containerColor = GiniTheme.colorScheme.dialogs.container,
+        containerColor = GiniTheme.colorScheme.card.container,
     ) {
         Column(
             modifier = Modifier
@@ -201,7 +202,8 @@ private fun IBANSelectionDialog(
                     }
                 },
             shape = MaterialTheme.shapes.extraLarge,
-            color = GiniTheme.colorScheme.dialogs.container,
+            // The design sets the dialog off from the warning sheet behind it.
+            color = LocalGiniExtendedColors.current.dialogContainer,
         ) {
             Column(
                 modifier = Modifier
