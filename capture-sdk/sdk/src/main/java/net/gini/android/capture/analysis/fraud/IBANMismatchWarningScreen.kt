@@ -219,6 +219,7 @@ private fun IBANMismatchWarningContent(
             colors = GiniHeaderBlockColors.colors(
                 iconContainerColor = GiniTheme.colorScheme.errorHint.container,
                 iconTint = GiniTheme.colorScheme.errorHint.content,
+                descriptionColor = GiniSheetColors.label,
             ),
         )
         Spacer(modifier = Modifier.height(SECTION_SPACING))
