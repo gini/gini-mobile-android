@@ -1,5 +1,6 @@
 package net.gini.android.capture.ui.components.button.outlined
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import net.gini.android.capture.R
@@ -46,15 +48,19 @@ fun GiniOutlinedButton(
         modifier = modifier,
         onClick = onClick,
         shape = RoundedCornerShape(4.dp),
+        // The design draws the outlined button as an outline in the container color with no
+        // fill, so the color behind the button shows through.
         colors = ButtonDefaults.outlinedButtonColors(
-            containerColor = giniButtonColors.container,
+            containerColor = Color.Transparent,
             contentColor = giniButtonColors.content
         ),
+        border = BorderStroke(BORDER_WIDTH, giniButtonColors.container),
     ) {
         content()
     }
 }
 
+private val BORDER_WIDTH = 1.dp
 
 @GiniScreenPreviewUiModes
 @Composable
