@@ -127,13 +127,12 @@ class GiniRadioButtonTest {
         assertThat(look(selected = false, isError = true)).isEqualTo(
             GiniRadioButtonLook(fill = ERROR_CONTAINER, outline = COLORS.errorColor, dot = null)
         )
-        assertThat(look(selected = true, isError = true)).isEqualTo(
-            GiniRadioButtonLook(
-                fill = ERROR_CONTAINER,
-                outline = COLORS.errorColor,
-                dot = COLORS.errorColor,
-            )
-        )
+    }
+
+    @Test
+    fun `a selected button in the error state is a disc in the error color with a dot`() {
+        assertThat(look(selected = true, isError = true))
+            .isEqualTo(GiniRadioButtonLook(fill = COLORS.errorColor, outline = null, dot = DOT))
     }
 
     @Test
@@ -142,6 +141,29 @@ class GiniRadioButtonTest {
             .isEqualTo(GiniRadioButtonLook(fill = null, outline = COLORS.disabledColor, dot = null))
         assertThat(look(selected = true, enabled = false, isError = true))
             .isEqualTo(GiniRadioButtonLook(fill = COLORS.disabledColor, outline = null, dot = DOT))
+    }
+
+    @Test
+    fun `unspecified colors fall back to the theme while specified ones are kept`() {
+        lateinit var defaults: GiniRadioButtonColors
+        lateinit var partial: GiniRadioButtonColors
+        lateinit var empty: GiniRadioButtonColors
+        lateinit var full: GiniRadioButtonColors
+        composeRule.setContent {
+            GiniTheme {
+                defaults = GiniRadioButtonColors.colors()
+                partial = GiniRadioButtonColors(selectedColor = COLORS.selectedColor).orDefaults()
+                empty = GiniRadioButtonColors().orDefaults()
+                full = COLORS.orDefaults()
+            }
+        }
+
+        composeRule.runOnIdle {
+            assertThat(partial).isEqualTo(defaults.copy(selectedColor = COLORS.selectedColor))
+            assertThat(empty).isEqualTo(defaults)
+            assertThat(full).isEqualTo(COLORS)
+            assertThat(defaults.unselectedColor).isNotEqualTo(Color.Unspecified)
+        }
     }
 
     @Test

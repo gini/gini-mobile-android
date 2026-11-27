@@ -32,9 +32,10 @@ import net.gini.android.capture.ui.theme.colors.GiniSheetColors
  * @param onClick called when the button itself is tapped, or `null` to leave clicks to the parent
  * @param modifier applied to the button
  * @param enabled whether the button reacts to input
- * @param isError draws the outline in the error color and fills the circle with the error
- * container color, e.g. when a choice is required but missing
- * @param colors colors, see [GiniRadioButtonColors.colors]
+ * @param isError draws the button in the error color, with the error container color behind
+ * the outline while it is not selected, e.g. when a choice is required but missing
+ * @param colors colors, see [GiniRadioButtonColors.colors]; a [Color.Unspecified] one falls
+ * back to its theme default
  * @param interactionSource the interaction source observed for pressed/focused states
  */
 @Composable
@@ -47,7 +48,7 @@ fun GiniRadioButton(
     colors: GiniRadioButtonColors = GiniRadioButtonColors.colors(),
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
-    val look = colors.look(
+    val look = colors.orDefaults().look(
         selected = selected,
         enabled = enabled,
         isError = isError,

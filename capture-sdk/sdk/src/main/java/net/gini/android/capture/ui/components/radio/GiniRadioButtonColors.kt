@@ -3,6 +3,7 @@ package net.gini.android.capture.ui.components.radio
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.takeOrElse
 import net.gini.android.capture.ui.theme.GiniTheme
 
 /**
@@ -11,7 +12,7 @@ import net.gini.android.capture.ui.theme.GiniTheme
  * @property selectedColor the filled disc when selected
  * @property unselectedColor outline when not selected
  * @property disabledColor outline, or the filled disc when selected, when disabled
- * @property errorColor outline, and the dot when selected, in the error state
+ * @property errorColor outline, or the filled disc when selected, in the error state
  */
 @Immutable
 data class GiniRadioButtonColors(
@@ -22,11 +23,30 @@ data class GiniRadioButtonColors(
 ) {
 
     /**
+     * These colors with every [Color.Unspecified] one replaced by its theme default from
+     * [colors], so a partly specified instance still draws every state.
+     */
+    @Composable
+    internal fun orDefaults(): GiniRadioButtonColors {
+        val defaults = colors()
+        return GiniRadioButtonColors(
+            selectedColor = selectedColor.takeOrElse { defaults.selectedColor },
+            unselectedColor = unselectedColor.takeOrElse { defaults.unselectedColor },
+            disabledColor = disabledColor.takeOrElse { defaults.disabledColor },
+            errorColor = errorColor.takeOrElse { defaults.errorColor },
+        )
+    }
+
+    /**
      * What to draw for a button in the given state. The error look applies to an enabled button
      * only; a disabled button shows [disabledColor] whatever else is set.
      *
-     * @param errorContainer fill behind the outline in the error state
-     * @param dot the dot of a selected button outside the error state
+     * A selected button is always a disc with the [dot] on it, in the error state too: there the
+     * disc takes the [errorColor], which keeps the dot more visible than it would be on the
+     * light [errorContainer].
+     *
+     * @param errorContainer fill behind the outline of an unselected button in the error state
+     * @param dot the dot of a selected button
      */
     internal fun look(
         selected: Boolean,
@@ -44,16 +64,12 @@ data class GiniRadioButtonColors(
         }
         return GiniRadioButtonLook(
             fill = when {
-                showError -> errorContainer
                 selected -> stateColor
+                showError -> errorContainer
                 else -> null
             },
-            outline = stateColor.takeIf { showError || !selected },
-            dot = when {
-                !selected -> null
-                showError -> errorColor
-                else -> dot
-            },
+            outline = stateColor.takeIf { !selected },
+            dot = dot.takeIf { selected },
         )
     }
 
